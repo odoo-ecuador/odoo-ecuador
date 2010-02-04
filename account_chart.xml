@@ -58,17 +58,8 @@
 	      <field name="close_method">balance</field>
 	    </record>
 	    
-		<!-- Chart template -->
-		<record id="ec_chart_template" model="account.chart.template">
-		    <field name="name">Ecuador - Chart of Accounts</field>
-		    <field name="account_root_id" ref="0"/>
-		    <field name="tax_code_root_id" ref="vat_code_tax"/>
-		    <field name="bank_account_view_id" ref="10"/>
-		    <field name="property_account_receivable" ref="4"/>
-		    <field name="property_account_payable" ref="5"/>
-		    <field name="property_account_expense_categ" ref="6"/>
-		    <field name="property_account_income_categ" ref="7"/>		    
-		</record>	    
+	    <!-- Chart template -->
+
 	    
 	<!-- Account Templates -->
     <record name="account.account.template" id="0">
@@ -2343,7 +2334,7 @@
       <field ref="21.05" name="parent_id"/>
     </record>
     <record name="account.account.template" id="21.06">
-      <field name="name">ACREEDORES POR INTERMEDIACION            </field>
+      <field name="name">ACREEDORES POR INTERMEDIACION</field>
       <field name="code">21.06</field>
       <field name="reconcile" eval="False"/>
       <field ref="account_type_view" name="user_type"/>
@@ -4165,7 +4156,7 @@
       <field ref="account_type_asset" name="user_type"/>
       <field name="type">other</field>
       <field ref="74.02.03" name="parent_id"/>
-v    </record>
+    </record>
     <record name="account.account.template" id="74.02.04">
       <field name="name">Intermediación de valores</field>
       <field name="code">74.02.04</field>
@@ -4183,6 +4174,17 @@ v    </record>
       <field ref="7" name="parent_id"/>
     </record>
 
+
+    <record id="ec_chart_template" model="account.chart.template">
+      <field name="name">Ecuador - Chart of Accounts</field>
+      <field name="account_root_id" ref="0"/>
+      <field name="tax_code_root_id" ref="vat_code_tax"/>
+      <field name="bank_account_view_id" ref="10"/>
+      <field name="property_account_receivable" ref="4"/>
+      <field name="property_account_payable" ref="5"/>
+      <field name="property_account_expense_categ" ref="6"/>
+      <field name="property_account_income_categ" ref="7"/>		    
+    </record>	    
 
 </data>
 </openerp>
