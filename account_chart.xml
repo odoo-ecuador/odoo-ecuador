@@ -2767,8 +2767,7 @@
       <field ref="42.03" name="parent_id"/>
     </record>
     <record name="account.account.template" id="42.04">
-      <field name="name">CUSTODIA  REGISTRO
- COMPENSACIÓN Y LIQUIDACIÓN</field>
+      <field name="name">CUSTODIA  REGISTRO COMPENSACIÓN Y LIQUIDACIÓN</field>
       <field name="code">42.04</field>
       <field name="reconcile" eval="False"/>
       <field ref="account_type_view" name="user_type"/>
@@ -3184,8 +3183,7 @@
       <field ref="52.07" name="parent_id"/>
     </record>
     <record name="account.account.template" id="51.08">
-      <field name="name">CUSTODIA  REGISTRO COMPENSACIÓN Y LIQUIDACIÓN 
-</field>
+      <field name="name">CUSTODIA  REGISTRO COMPENSACIÓN Y LIQUIDACIÓN</field>
       <field name="code">51.08</field>
       <field name="reconcile" eval="False"/>
       <field ref="account_type_view" name="user_type"/>
@@ -4167,7 +4165,7 @@
       <field ref="account_type_asset" name="user_type"/>
       <field name="type">other</field>
       <field ref="74.02.03" name="parent_id"/>
-    </record>
+v    </record>
     <record name="account.account.template" id="74.02.04">
       <field name="name">Intermediación de valores</field>
       <field name="code">74.02.04</field>
