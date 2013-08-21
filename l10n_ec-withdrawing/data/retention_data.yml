@@ -1,0 +1,101 @@
+-
+  Cod. Secuencia para Retenciones de Compra
+-
+  !record {model: ir.sequence.type, id: seq_type_account_retention, noupdate: 1}:
+    name: 'Sec. Retenciones en Compra'
+    code: 'account.retention'
+-
+  !record {model: ir.sequence, id: seq_retention_invoice, noupdate: 1}:
+    name: 'Retencion en Facturas de Compra'
+    code: 'account.retention'
+    padding: 8
+-
+  Secuencia para Liq. de Compra
+-
+  !record {model: ir.sequence.type, id: seq_type_liq_purchase, noupdate: 1}:
+    name: 'Secuencia Liquidaciones de Compra'
+    code: 'account.invoice.liq_purchase'
+-
+  !record {model: ir.sequence, id: seq_liq_purchase_invoice, noupdate: 1}:
+    name: 'Liquidaciones de Compra'
+    code: 'account.invoice.liq_purchase'
+    padding: 5
+-
+  Secuencia para Facturas de Venta
+-
+  !record {model: ir.sequence.type, id: seq_type_fact_venta, noupdate: 1}:
+    name: 'Facturas de Venta'
+    code: 'account.out.invoice'
+-
+  !record {model: ir.sequence, id: seq_factura_ventas, noupdate: 1}:
+    name: 'Secuencia Facturas de Venta'
+    code: 'account.out.invoice'
+    padding: 5
+-
+  Secuencia para Notas de Debito
+-
+  !record {model: ir.sequence.type, id: seq_type_notas_debito, noupdate: 1}:
+    name: 'Sec. Notas de Débito'
+    code: 'account.out.refund'
+-
+  !record {model: ir.sequence, id: seq_notas_debito, noupdate: 1}:
+    name: 'Secuencia Notas de Debito'
+    code: 'account.out.refund'
+    padding: 5
+-
+  Diario de Liq. de Compra
+-
+  !record {model: account.journal, id: acc_journal_liq_compra, noupdate: 1}:
+    name: 'Diario Liquidaciones de Compra'
+    type: 'purchase'
+    code: 'DLC'
+    view_id: 'account.account_sp_journal_view'
+-
+  Diario de Compras
+-
+  !record {model: account.journal, id: acc_journal_compras, noupdate: 1}:
+    name: 'Diario de Compras'
+    type: 'purchase'
+    code: 'DC'
+    view_id: 'account.account_sp_journal_view'
+-
+  Diario de Ventas
+-
+  !record {model: account.journal, id: acc_journal_ventas, noupdate: 1}:
+    name: 'Diario de Ventas'
+    type: 'sale'
+    code: 'DV'
+    view_id: 'account.account_sp_journal_view'
+-
+  Diario de Notas de Debito
+-
+  !record {model: account.journal, id: acc_journal_ndebito, noupdate: 1}:
+    name: 'Diario de Notas de Debito'
+    type: 'sale_refund'
+    code: 'DND'
+    view_id: 'account.account_sp_refund_journal_view'
+-
+  Diario de Notas de Credito
+-
+  !record {model: account.journal, id: acc_journal_ncredito, noupdate: 1}:
+    name: 'Diario de Notas de Credito'
+    type: 'purchase_refund'
+    code: 'DNC'
+    view_id: 'account.account_sp_refund_journal_view'
+-
+  Ejercicio Fiscal 
+-
+  !record {model: account.fiscalyear, id: fy2011, noupdate: 1}:
+    code: !eval "'AF%s'% (datetime.now().year)"
+    company_id: base.main_company
+    date_start: !eval "'%s-01-01' %(datetime.now().year)"
+    date_stop: !eval "'%s-12-31' %(datetime.now().year)"
+    name: !eval "'Año Fiscal %s' %(datetime.now().year)"
+-
+  Creo los periodos mensuales para este año fiscal
+-
+  !python {model: account.fiscalyear}: |
+    self.create_period(cr, uid, [ref("fy2011")], {"lang":
+      'es_EC', "active_model": "ir.ui.menu", "active_ids": [ref("account.menu_action_account_fiscalyear_form")],
+      "tz": False, "active_id": ref("account.menu_action_account_fiscalyear_form"),
+      })

@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+    <record id="account.view_category_property_form" model="ir.ui.view">
+      <field name="name">product.category.property.form.inherit</field>
+      <field name="model">product.category</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="product.product_category_form_view"/>
+      <field name="arch" type="xml">
+        <form position="inside">
+		  <group colspan="4">
+            <separator string="Impuestos en Venta" colspan="2"/>
+            <separator string="Impuestos en Compra" colspan="2"/>
+            <field name="taxes_id" nolabel="1" colspan="2"/>
+            <field name="supplier_taxes_id" nolabel="1" colspan="2"/>
+          </group>            
+          <group col="2" colspan="2">
+            <separator string="Accounting Properties" colspan="2"/>
+            <field name="property_account_income_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
+            <field name="property_account_expense_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!--
+       Account Authorisation
+      -->
+    <record id="view_account_auth_tree" model="ir.ui.view">
+      <field name="name">account.auth.tree</field>
+      <field name="model">account.authorisation</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Autorizaciones del SRI">
+          <field name="name" select="1"/>
+          <field name="partner_id" select="1"/>
+          <field name="serie_entidad" select="1"/>
+          <field name="serie_emision" select="1"/>
+          <field name="expiration_date" select="1"/>		  
+          <field name="type_id" select="1"/>
+	</tree>
+      </field>
+    </record>
+    <record id="view_account_retention_graph" model="ir.ui.view">
+      <field name="name">account.retention.graph</field>
+      <field name="model">account.retention</field>
+      <field name="type">graph</field>
+      <field name="arch" type="xml">
+	<graph string="Retenciones a Proveedores" type="bar">
+	  <field name="partner_id"/>
+	  <field name="amount" operator="+"/>
+	</graph>
+      </field>
+    </record>
+    <record id="view_account_auth_form" model="ir.ui.view">
+      <field name="name">account.auth.form</field>
+      <field name="model">account.authorisation</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	    <form string="Autorizaciones SRI">
+          <group col="4" colspan="4">
+            <field name="is_electronic"/>
+            <field name="name"/>
+            <field name="serie_entidad"/>
+            <field name="serie_emision"/>
+            <field name="num_start"/>
+            <field name="num_end"/>
+            <field name="expiration_date"/>
+            <field name="active"/>
+            <field name="type_id"/>
+	        <field name="in_type"/>
+            <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
+            <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
+          </group>
+	    </form>
+      </field>
+    </record>
+
+    <record id="view_account_auth_filter" model="ir.ui.view">
+      <field name="name">account.authorisation.select</field>
+      <field name="model">account.authorisation</field>
+      <field name="type">search</field>
+      <field name="arch" type="xml">
+        <search string="Buscar Autorizaciones">
+          <group col="10" colspan="4">
+            <filter icon="terp-camera_test" string="Activos" domain="[('active','=',True)]" help="Autorizaciones Activas"/>
+            <separator orientation="vertical"/>
+            <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('active','=',False)]" help="Autorizaciones Inactivas"/>
+            <separator orientation="vertical"/>
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="type_id"/>
+          </group>
+          <newline/>
+          <group expand="0" string="Agrupar por...">
+            <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+            <separator orientation="vertical"/>
+	    <filter string="Tipo" domain="[]" context="{'group_by': 'type_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+    <record id="action_account_auth_tree" model="ir.actions.act_window">
+      <field name="name">Autorizaciones de Proveedor</field>
+      <field name="res_model">account.authorisation</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="search_view_id" ref="view_account_auth_filter"/>
+      <field name="context">{'in_type': 'externo'}</field>
+      <field name="domain">[('in_type', '=', 'externo')]</field>
+    </record>
+
+    <menuitem action="action_account_auth_tree" id="menu_action_authorisation" parent="account.menu_finance_payables"/>
+
+    <record id="action_account_authin_tree" model="ir.actions.act_window">
+      <field name="name">Autorizaciones de la Empresa</field>
+      <field name="res_model">account.authorisation</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="search_view_id" ref="view_account_auth_filter"/>
+      <field name="context">{'in_type': 'interno'}</field>
+      <field name="domain">[('in_type', '=', 'interno')]</field>
+    </record>
+
+    <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.menu_journals"/>
+    <!--
+       Partner
+      -->
+    <record id="view_partner_auth_form" model="ir.ui.view">
+      <field name="name">account.partner.auth.form</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+	    <notebook position="inside">
+	      <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
+	        <field name="authorisation_ids" nolabel="1" widget="one2many_list" context="{'in_type':'externo', 'partner_id': active_id}" mode="tree,form">
+	          <tree string="Autorizaciones">
+		        <field name="name" required="1"/>
+		        <field name="serie_emision" required="1"/>
+		        <field name="serie_entidad" required="1"/>
+		        <field name="num_start" required="1"/>
+		        <field name="num_end" required="1"/>
+		        <field name="expiration_date" required="1"/>
+		        <field name="active"/>
+	          </tree>
+	          <form string="Autorización">
+		        <field name="name" required="1"/>
+		        <field name="serie_emision" required="1"/>
+		        <field name="serie_entidad" required="1"/>
+		        <field name="num_start" required="1"/>
+		        <field name="num_end" required="1"/>
+		        <field name="expiration_date" required="1"/>
+		        <field name="active"/>
+		        <field name="type_id"/>
+		        <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')], 'required': [('in_type','=','interno')]}"/>
+		        <field name="in_type"/>		
+	          </form>
+	        </field>
+	      </page>
+	    </notebook>
+      </field>
+    </record>
+
+    <record id="view_partner2_select" model="ir.ui.view">
+      <field name="name">view.partner.select2</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_res_partner_filter"/>
+      <field name="arch" type="xml">
+	    <field name="name" position="before">
+	      <field name="ced_ruc"/>
+	      <field name="ref"/>
+	    </field>
+      </field>
+    </record>
+
+    <record id="view_partner2_tree" model="ir.ui.view">
+      <field name="name">view.partner.tree2</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <xpath expr="/tree/field[@name='name']" position="before">
+	      <field name="ced_ruc"/>
+	    </xpath>
+	    <xpath expr="/tree/field[@name='city']" position="replace">
+	      <field name="credit"/>
+	    </xpath>
+	    <xpath expr="/tree/field[@name='email']" position="replace">
+	      <field name="debit"/>
+	    </xpath>
+      </field>
+    </record>
+
+    <record id="view_partner_cedruc_form" model="ir.ui.view">
+      <field name="name">account.partner.cedruc.form</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+	    <xpath expr="//field[@name='name']" position="before">
+	      <field name="ced_ruc"/>
+	      <field name="type_ced_ruc"/>
+	      <newline/>
+	    </xpath>
+	    <xpath expr="//field[@name='property_account_position']" position="attributes">
+	      <attribute name="required">1</attribute>
+	    </xpath>
+        <xpath expr="//field[@name='lang']" position="replace">
+          <field name="tipo_persona"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!--
+       Grupo de impuestos visible
+      -->
+    <record id="view_account_tax_group_tree" model="ir.ui.view">
+      <field name="name">account.tax.group.tree</field>
+      <field name="model">account.tax</field>
+      <field name="inherit_id" ref="account.view_tax_tree"/>
+      <field name="arch" type="xml">
+	    <xpath expr="//field[@name='name']" position="before">
+	      <field name="tax_group"/>
+          <field name="sec_name"/>
+	    </xpath>
+        <xpath expr="//field[@name='price_include']" position="replace">
+          <field name="base_code_id"/>
+          <field name="tax_code_id"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="view_account_tax_group_form" model="ir.ui.view">
+      <field name="name">account.tax.group.form</field>
+      <field name="model">account.tax</field>
+      <field name="inherit_id" ref="account.view_tax_form"/>
+      <field name="arch" type="xml">
+	    <field name="active" position="after">
+	      <field name="tax_group"/>
+          <field name="sec_name"/>
+	    </field>
+      </field>
+    </record>
+
+    <record id="view_account_tax_search2" model="ir.ui.view">
+      <field name="name">account.tax.tree2</field>
+      <field name="model">account.tax</field>
+      <field name="inherit_id" ref="account.view_account_tax_search"/>
+      <field name="arch" type="xml">
+	    <field name="description" position="after">
+	      <field name="tax_group"/>
+	      <field name="type_tax_use"/>
+	      <field name="active"/>
+	    </field>
+      </field>
+    </record>
+
+    <!--record id="view_account_tax_name_form" model="ir.ui.view">
+      <field name="name">account.tax.name.form</field>
+      <field name="model">account.tax</field>
+      <field name="inherit_id" ref="account.view_tax_form"/>
+      <field name="arch" type="xml">
+	    <field name="name" position="replace">
+	      <field name="name" colspan="4"/>
+	    </field>
+      </field>
+    </record-->
+
+    <record id="view_retention_authinv_form" model="ir.ui.view">
+      <field name="name">account.invoice.authinv.form</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_supplier_form"/>
+      <field name="arch" type="xml">
+	    <xpath expr="//field[@name='fiscal_position']" position="attributes">
+	      <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
+	    </xpath>
+	    <xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
+	      <group colspan="4" col="6">
+		    <field name="retention_ir" invisible="1"/>
+		    <field name="retention_vat" invisible="1"/>                          
+	        <field name="date_due"/>
+	        <field name="create_retention_type" select="1" required="1"/>
+            <field name="sustento_id" required="1" widget="selection"/>
+	        <group attrs="{'invisible': [('create_retention_type','!=','manual')],
+                          'required': ['!',('retention_ir','=',True), ('retention_vat','=',True)]}" colspan="2">
+	          <field name="manual_ret_num"/>
+	        </group>
+	        <group attrs="{'invisible': [('create_retention_type','!=','reserve')]}" colspan="2">
+	          <field name="retention_numbers"/>	    
+	        </group>
+	      </group>
+	    </xpath>
+	    <xpath expr="//field[@name='move_id']" position="after">
+	      <field name="retention_id" context="{'in_type': type}"/>
+	    </xpath>
+	    <xpath expr="/form/notebook/page[@string='Invoice']/group[@col='4']" position="replace">
+	      <group col="6" colspan="2">
+	        <button colspan="2" name="button_reset_taxes" states="draft" string="Compute Taxes" type="object" icon="terp-stock_format-scientific"/>
+	        <field name="amount_vat_cero"/>
+	        <field name="amount_vat"/>
+            <separator colspan="4"/>
+	        <field name="amount_tax"/>
+            <field name="reconciled"/>
+            <field name="amount_pay"/>
+	        <field name="amount_total"/>
+            <separator colspan="2"/>
+	        <field name="state"/>
+	        <field name="residual"/>
+	        <group col="8" colspan="6">
+	          <button name="invoice_cancel" states="draft,proforma2,sale,open" string="Cancel" icon="gtk-cancel"/>
+	          <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="terp-stock_effects-object-colorize"/>
+	          <button name="%(account.action_account_invoice_refund)d" type='action' string='Refund' states='open' icon="gtk-execute"/>
+	          <button name="%(account.action_account_state_open)d" type='action' string='Re-Open' states='paid' icon="gtk-convert" groups="base.group_no_one"/>
+	          <button name="invoice_open" states="draft,proforma2" string="Approve" icon="terp-camera_test"/>
+	          <button name="print_retention" string="Imprimir Retencion" type="object" icon="gtk-print" states="open"/>
+	    </group>
+	  </group>
+	</xpath>
+	<xpath expr="/form/group/group[@col='1']" position="replace">
+	  <field name="auth_inv_id" 
+		 domain="[('partner_id','=',partner_id),('in_type','=','externo')]" 
+		 attrs="{'required': [('type','=','in_invoice')]}"
+		 context="{'default_partner_id': partner_id}"/>
+	</xpath>
+	<xpath expr="//field[@name='fiscal_position']" position="attributes">
+	  <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
+	</xpath>
+      </field>
+    </record>
+    <!--
+       journal views
+       -->
+    <record id="view_journal_auths_form" model="ir.ui.view">
+      <field name="name">account.journal.auths.form</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+	    <field name="view_id" position="after">
+	  <field name="auth_id" context="{'in_type':'interno'}"/>
+	  <field name="auth_ret_id" context="{'in_type': 'interno'}"/>
+	</field>
+      </field>
+    </record>
+
+    <!--
+       Retention object
+      -->
+
+    <record id="view_account_retention_tree" model="ir.ui.view">
+      <field name="name">view.account.retention.tree</field>
+      <field name="model">account.retention</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	    <tree string="Retenciones de Impuestos">
+          <field name="number"/>
+          <field name="partner_id"/>
+          <field name="auth_id" select="1"/>
+          <field name="type" select="1"/>
+	      <field name="in_type"/>
+	      <field name="amount_total"/>
+          <field name="date" select="1"/>
+	      <field name="state" select="1"/>
+	    </tree>
+      </field>
+    </record>
+
+    <record id="view_account_retention_form" model="ir.ui.view">
+      <field name="name">view.account.retention.form</field>
+      <field name="model">account.retention</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	    <form string="Retención de Impuestos">
+          <field name="manual" invisible="1"/>
+          <field name="name"  attrs="{'invisible':[('state','=','done')]}"/>
+          <field name="to_cancel"/>
+	      <field name="number" select="1" attrs="{'invisible':[('state','=','draft')]}"/>
+          <field name="auth_id" select="1"/>
+          <field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+	      <field name="address_id" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+	      <field name="invoice_id" on_change="onchange_invoice(invoice_id)" 
+                 attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+          <field name="type" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+          <field name="date" select="1"/>
+          <field name="in_type" required="1"/>
+	      <field name="num_document" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+	      <field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>	  
+	      <field name="move_cancel_id" invisible="1"/>
+	      <notebook colspan="4">
+	        <page string="Impuestos">
+	          <field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
+		        <tree string="Impuestos Aplicados">
+		          <field name="invoice_id" invisible="1"/>
+		          <field name="fiscal_year"/>
+		          <field name="base"/>
+		          <field name="percent"/>
+                  <field name="base_code_id"/>
+		          <field name="tax_code_id"/>
+                  <field name="tax_group"/>
+		          <field name="amount"/>
+		        </tree>
+	          </field>
+	    </page>
+	  </notebook>
+	  <group colspan="4" col="6">
+	    <field name="state"/>
+	    <field name="amount_total"/>
+        <button name="action_cancel" string="Anular" type="object" icon="gtk-cancel" states="draft,done"/>
+	    <button name="button_validate" string="Validar" type="object" icon="gtk-execute" states="draft"/>
+	  </group>
+	</form>
+      </field>
+    </record>
+
+    <record id="action_account_retention_tree" model="ir.actions.act_window">
+      <field name="name">Documentos de Retención</field>
+      <field name="res_model">account.retention</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem action="action_account_retention_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
+
+    <act_window
+       id="act_window_retention"
+       name="Retención"
+       domain="[('id','=',retention_id)]"
+       src_model="account.invoice"
+       res_model="account.retention"/>
+
+    <act_window
+	id="act_window_move"
+	name="Comprobante Contable"
+	domain="[('id','=',move_id)]"
+	src_model="account.invoice"
+	res_model="account.move"/>	
+
+    <record id="view_invoice_retention_tree2" model="ir.ui.view">
+      <field name="name">view.invoice.retention.tree2</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_tree"/>
+      <field name="arch" type="xml">
+	    <xpath expr="/tree/field[@name='amount_untaxed']" position="replace">
+	      <field name="amount_vat_cero" sum="Total Base 0"/>
+	      <field name="amount_vat" sum="Total Base 12"/>
+	    </xpath>
+	    <xpath expr="/tree/field[@name='origin']" position="replace">
+          <field name="supplier_number" invisible="context.get('type')!='in_invoice'"/>
+        </xpath>
+	    <xpath expr="/tree/field[@name='currency_id']" position="replace"/>
+      </field>
+    </record>
+
+    <!-- 
+       Liquidacion de Compra
+      -->
+
+        <record id="invoice_liq_purchase_form" model="ir.ui.view">
+            <field name="name">account.invoice.liq.purchase.form</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Liquidacion de Compra">
+                    <group col="8" colspan="4">
+                        <field name="journal_id" on_change="onchange_journal_id(journal_id)" widget="selection"/>
+                        <field name="number" readonly="1"/>
+                        <field name="type" invisible="1"/>
+                        <field name="currency_id" width="50"/>
+                        <button name="%(account.action_account_change_currency)d" type="action" icon="terp-stock_effects-object-colorize" string="Change" attrs="{'invisible':[('state','!=','draft')]}" groups="account.group_account_user"/>
+                        <newline/>
+                        <field string="Supplier" name="partner_id" on_change="onchange_partner_id(type,partner_id,date_invoice,payment_term, partner_bank_id,company_id)" context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}"/>
+                        <field domain="[('partner_id','=',partner_id)]" name="address_invoice_id"/>
+                        <field name="fiscal_position" groups="base.group_extended" widget="selection"/>
+                        <newline/>
+                        <field name="date_invoice"/>
+                        <field name="period_id" domain="[('state', '=', 'draft')]" groups="account.group_account_user" widget="selection"/>
+                        <group colspan="2" col="1" groups="account.group_account_user" attrs="{'invisible': [('state','!=','draft')]}">
+                        </group>
+                    </group>
+		    <field name="retention_ir" invisible="1"/>
+		    <field name="retention_vat" invisible="1"/>
+                    <notebook colspan="4">
+                        <page string="Invoice">
+                           <field domain="[('company_id', '=', company_id), ('type', '=', 'payable')]" name="account_id" groups="account.group_account_user"/>
+                            <!--field name="reference_type" nolabel="1" size="0"/>
+                            <field name="reference" nolabel="1"/-->
+                            <field name="date_due"/>
+			    <field name="create_retention_type"/>
+			    <field name="manual_ret_num" attrs="{'invisible': [('create_retention_type','!=','manual')]}"/>
+			    <field name="retention_numbers" attrs="{'invisible': [('create_retention_type','!=','reserve')]}"/>
+                            <field colspan="4" default_get="{'invoice_line': invoice_line, 'address_invoice_id': address_invoice_id, 'partner_id': partner_id, 'price_type': 'price_type' in dir() and price_type or False}" name="invoice_line" nolabel="1">
+                                <tree string="Invoice lines">
+                                    <field name="product_id" on_change="product_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.address_invoice_id, parent.currency_id, {'company_id': parent.company_id})"/>
+                                    <field domain="[('company_id', '=', parent.company_id), ('journal_id', '=', parent.journal_id), ('type', '&lt;&gt;', 'view')]" name="account_id" on_change="onchange_account_id(parent.fiscal_position,account_id)"/>
+                                    <field name="invoice_line_tax_id" view_mode="2" context="{'type':parent.type}" domain="[('parent_id','=',False)]"/>
+                                    <field domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id), ('parent_id', '!=', False)]" name="account_analytic_id" groups="analytic.group_analytic_accounting"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                     <!-- Removed if subtotal is set -->
+                                    <field name="price_subtotal"/>
+                                    <field name="name"/>
+                                    <field invisible="True" name="uos_id"/>
+                                </tree>
+                            </field>
+                            <group col="1" colspan="2">
+                                <field name="tax_line" nolabel="1">
+                                    <tree editable="bottom" string="Taxes">
+                                        <field name="name"/>
+                                        <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)" readonly="1"/>
+                                        <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+
+                                        <field invisible="True" name="base_amount"/>
+                                        <field invisible="True" name="tax_amount"/>
+                                        <field name="factor_base" invisible="True"/>
+                                        <field name="factor_tax" invisible="True"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group col="4" colspan="2">
+                                <button colspan="2" name="button_compute" states="draft" string="Compute Taxes" type="object" icon="terp-stock_format-scientific"/>
+                                <field name="amount_untaxed"/>
+                                <field name="reconciled"/>
+                                <field name="amount_tax"/>
+                                <field name="amount_total"/>
+				<field name="amount_pay"/>
+                                <field name="state"/>
+                                <field name="residual"/>
+                                <group col="6" colspan="4">
+                                    <button name="invoice_cancel" states="draft,proforma2,sale,open" string="Cancel" icon="gtk-cancel"/>
+                                    <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="terp-stock_effects-object-colorize"/>
+                                    <button name="%(account.action_account_invoice_refund)d" type='action' string='Refund' states='open,paid' icon="gtk-execute"/>
+				    <group attrs="{'invisible': [('type','!=','liq_purchase')]}">
+				      <button name="print_liq_purchase" string="Imprimir" type="object" icon="gtk-print" states="open,paid"/>
+				    </group>
+                                    <button name="%(account.action_account_state_open)d" type='action' string='Re-Open' states='paid' icon="gtk-convert" groups="base.group_no_one"/>
+                                    <button name="invoice_open" states="draft,proforma2" string="Approve" icon="terp-camera_test"/>
+				    <button name="invoice_pay_customer" type="object" string="Payment" states="open" icon="gtk-go-forward"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Other Info">
+                            <field domain="[('partner_id', '=', partner_id)]" name="partner_bank_id" on_change="onchange_partner_bank(partner_bank_id)"/>
+                            <field name="company_id" on_change="onchange_company_id(company_id,partner_id,type,invoice_line,currency_id)" widget="selection" groups="base.group_multi_company"/>
+                            <newline/>
+                            <field name="payment_term" widget="selection"/>
+                            <field name="name"/>
+                            <newline/>
+                            <field name="origin" groups="base.group_extended"/>
+                            <field domain="[('partner_id','=',partner_id)]" name="address_contact_id" groups="base.group_extended"/>
+                            <field name="user_id"/>
+                            <field name="move_id" groups="account.group_account_user"/>
+			    <field name="retention_id"/> 
+                            <separator colspan="4" string="Additional Information"/>
+                            <field colspan="4" name="comment" nolabel="1"/>
+                        </page>
+                        <page string="Payments" groups="base.group_extended">
+                            <field name="payment_ids" colspan="4" nolabel="1" >
+                                <tree string="Payments">
+                                    <field name="date" string="Payment Date"/>
+                                    <field name="ref"/>
+                                    <field name="name" groups="base.group_extended"/>
+                                    <field name="journal_id"/>
+                                    <field name="debit"/>
+                                    <field name="credit"/>
+                                    <field name="amount_currency" groups="base.group_extended"/>
+                                    <field name="currency_id" groups="base.group_extended"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_liq_purchase_tree" model="ir.actions.act_window">
+            <field name="name">Liquidaciones de Compra</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="context">{'type':'liq_purchase', 'journal_type': 'purchase'}</field>
+	    <field name="domain">[('type','=','liq_purchase')]</field>
+        </record>
+        <record id="action_liq_purchase_tree_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_liq_purchase_tree"/>
+        </record>
+        <record id="action_liq_purchase_tree_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="invoice_liq_purchase_form"/>
+            <field name="act_window_id" ref="action_liq_purchase_tree"/>
+        </record>
+
+    <menuitem action="action_liq_purchase_tree" id="menu_action_liq_purchase" parent="account.menu_finance_payables"/>
+
+    <!--
+       Customer Invoice
+      -->
+    
+    <record id="view_account_invoice_filter2" model="ir.ui.view">
+      <field name="name">account.invoice.reference.cust2.form</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+      <field name="arch" type="xml">
+	    <xpath expr="/search/group/field[@name='period_id']" position="after">
+	      <field name="retention_ir" string="Retención IR"/>
+	      <field name="retention_vat" string="Retención IVA"/>
+          <field name="supplier_number" invisible="context.get('type')!='in_invoice'"/>
+	    </xpath>
+      </field>
+    </record>
+
+    <record id="view_reference_customer_form" model="ir.ui.view">
+      <field name="name">account.invoice.reference.cust.form</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_form"/>
+      <field name="arch" type="xml">
+	    <field name="name" position="after">
+	      <field name="retention_ir" invisible="1"/>
+	      <field name="retention_vat" invisible="1"/>
+	    </field>
+      </field>
+    </record>
+
+    <!-- Compania -->
+    
+    <record id="view_res_company_ec_form" model="ir.ui.view">
+      <field name="name">account.res.company.ec.form</field>
+      <field name="model">res.company</field>
+      <field name="inherit_id" ref="base.view_company_form"/>
+      <field name="arch" type="xml">
+	<field name="partner_id" position="after">
+	  <field name="ruc_contador"/>
+	  <field name="cedula_rl"/>
+	</field>
+      </field>
+    </record>
+
+    <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/>
+
+    <!-- Retention number cache -->
+
+    <record id="view_account_retention_cache_tree" model="ir.ui.view">
+      <field name="name">account.retention.cache.tree</field>
+      <field name="model">account.retention.cache</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Numeros de Retenciones Reservadas">
+          <field name="name" select="1"/>
+	  <field name="active"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_account_retention_cache_form" model="ir.ui.view">
+      <field name="name">account.retention.cache.form</field>
+      <field name="model">account.retention.cache</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Número de Retenciones Reservadas">
+          <group col="4" colspan="4">
+            <field name="name" required="1"/>
+	    <field name="active"/>
+          </group>
+	</form>
+      </field>
+    </record>
+
+    <record id="action_account_retention_cache" model="ir.actions.act_window">
+      <field name="name">Números de Retención Reservados</field>
+      <field name="res_model">account.retention.cache</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree</field>
+    </record>
+
+
+    <record id="view_account_ats_doc_tree" model="ir.ui.view">
+      <field name="name">account.ats.doc.tree</field>
+      <field name="model">account.ats.doc</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Tipos de Comprobantes Autorizados">
+          <field name="code" select="1"/>
+	  <field name="name"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_account_ats_doc_form" model="ir.ui.view">
+      <field name="name">account.ats.doc.form</field>
+      <field name="model">account.ats.doc</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Tipo de Comprobante Autorizado">
+          <group col="4" colspan="4">
+            <field name="code" required="1"/>
+	    <field name="name"/>
+          </group>
+	</form>
+      </field>
+    </record>
+
+    <record id="action_account_ats_doc" model="ir.actions.act_window">
+      <field name="name">Tipos de Comprobantes Autorizados</field>
+      <field name="res_model">account.ats.doc</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.next_id_27"/>
+
+    <record id="view_account_ats_sustento_tree" model="ir.ui.view">
+      <field name="name">account.ats.sustento.tree</field>
+      <field name="model">account.ats.sustento</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Sustento del Comprobante">
+          <field name="code" select="1"/>
+	  <field name="type"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_account_ats_sustent_form" model="ir.ui.view">
+      <field name="name">account.ats.sustento.form</field>
+      <field name="model">account.ats.sustento</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Sustento del Comprobante">
+          <group col="4" colspan="4">
+            <field name="code" required="1"/>
+	    <field name="type"/>
+          </group>
+	</form>
+      </field>
+    </record>
+
+    <record id="action_account_ats_sustent" model="ir.actions.act_window">
+      <field name="name">Sustento del Comprobante</field>
+      <field name="res_model">account.ats.sustento</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
+  </data>
+</openerp>
