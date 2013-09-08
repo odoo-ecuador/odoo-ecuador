@@ -22,15 +22,13 @@
     'version': '1.1',
     'category': 'Localisation/Account Charts',
     'description': """
-    This is the base module to manage the accounting chart for Ecuador in OpenERP.
+    This is the base module to manage the accounting chart (NIIF) for Ecuador in OpenERP.
     """,
     'author': 'OpenERP SA',
     'depends': [
                 'account',
                 'base_vat',
-                'base_iban',
                 'account_chart',
-                'account_coda',
                 ],
     'init_xml': [],
     'update_xml': [
