@@ -445,16 +445,11 @@ class Invoice(osv.osv):
                 'amount_noret_ir': 0.0,
                 'amount_total': 0.0,
                 'amount_pay': 0.0,
-                'invoice_discount': 0,
-                'amount_discounted': 0.0,
             }
             
             #Total General
-            not_discounted = 0
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
-                if res[invoice.id]['amount_untaxed'] == 0:
-                    res[invoice.id]['invoice_discount'] = 0
             for line in invoice.tax_line:
                 if line.tax_group == 'vat':
                     res[invoice.id]['amount_vat'] += line.base
@@ -484,41 +479,10 @@ class Invoice(osv.osv):
                 res[invoice.id]['amount_vat_cero'] = res[invoice.id]['amount_untaxed']
 
             res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed'] \
-                                            + res[invoice.id]['amount_tax_retention'] - res[invoice.id]['amount_discounted']
+                                            + res[invoice.id]['amount_tax_retention']
             res[invoice.id]['amount_pay']  = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
 
         return res
-
-    def _get_reference_type(self, cr, uid, context=None):
-        '''
-        cr: cursor de la base de datos
-        uid: ID de usuario
-        ids: lista ID del objeto instanciado
-
-        Metodo para crear la lista de tipos de referencia en el documento
-        '''                        
-        return [('invoice_partner','Factura Proveedor'),
-                ('liq_purchase', 'Referencia'),
-                ('retention', 'Retencion Cliente'),
-                ('in_refund', 'Nota de Credito'),
-                ('guia', 'Guía de Remisión'),
-                ('out_refund', 'Nota de Débito'),
-                ('none', 'Ninguna')]
-
-    def _get_ref_type(self, cr, uid, context):
-        self.__logger.info("contexto para referencia %s", context)
-        if context.has_key('type'):
-            if context['type'] == 'in_invoice':
-                return 'invoice_partner'
-            elif context['type'] == 'out_invoice':
-                return 'guia'
-            elif context['type'] == 'liq_purchase':
-                return 'liq_purchase'
-            elif context['type'] == 'out_refund':
-                return 'out_refund'
-            else:
-                return 'in_refund'
-        return 'invoice_partner'
 
     def _get_invoice_line(self, cr, uid, ids, context=None):
         result = {}
@@ -536,13 +500,13 @@ class Invoice(osv.osv):
         if not ids:
             return []
         types = {
-                'out_invoice': 'CI: ',
-                'in_invoice': 'SI: ',
-                'out_refund': 'OR: ',
-                'in_refund': 'SR: ',
-                'liq_purchase': 'LC: ',
+                'out_invoice': _('Invoice'),
+                'in_invoice': _('Supplier Invoice'),
+                'out_refund': _('Refund'),
+                'in_refund': _('Supplier Refund'),
+                'liq_purchase': _('Liquid. de Compra')
                 }
-        return [(r['id'], (r['number']) or types[r['type']] + (r['name'] or '')) for r in self.read(cr, uid, ids, ['type', 'number', 'name'], context, load='_classic_write')]
+        return [(r['id'], '%s %s' % (r['number'] or types[r['type']], r['name'] or '')) for r in self.read(cr, uid, ids, ['type', 'number', 'name'], context, load='_classic_write')]    
 
     def _check_retention(self, cr, uid, ids, field_name, context, args):
         res = {}
@@ -588,7 +552,7 @@ class Invoice(osv.osv):
         for inv in self.browse(cr, uid, ids, context):
             number = '/'
             if inv.type == 'in_invoice' and inv.auth_inv_id:
-                n = inv.reference and inv.reference.zfill(9) or '*'
+                n = inv.supplier_invoice_number and inv.supplier_invoice_number.zfill(9) or '*'
                 number = ''.join([inv.auth_inv_id.serie_entidad,inv.auth_inv_id.serie_emision,n])
             res[inv.id] = number
         return res
@@ -676,17 +640,6 @@ class Invoice(osv.osv):
                                           digits_compute=PRECISION_DP, string='Base No IVA',
                                           store=VAR_STORE,
                                           multi='all'),
-        'invoice_discount': fields.function(_amount_all, method=True,
-                                            digits_compute=dp.get_precision('Account'),
-                                            string='Desc (%)',
-                                            store=VAR_STORE,
-                                            multi='all'),
-        'amount_discounted': fields.function(_amount_all,
-                                             method=True,
-                                             digits_compute=dp.get_precision('Account'),
-                                             string='Descuento',
-                                             store=VAR_STORE,
-                                             multi='all'),
         'create_retention_type': fields.selection([('normal','Automatico'),
                                                    ('manual', 'Manual'),
                                                    ('reserve','Num Reservado'),
@@ -700,12 +653,6 @@ class Invoice(osv.osv):
                                         help = 'Autorizacion del SRI para documento recibido',
                                         readonly=True,
                                         states={'draft': [('readonly', False)]}),
-        'reference': fields.char('Invoice Reference', size=9,
-                                 readonly=True,
-                                 states={'draft':[('readonly',False)]},
-                                 help="The partner reference of this invoice."),
-        'reference_type': fields.selection(_get_reference_type, 'Reference Type',
-                                           required=True, readonly=True),        
         'retention_id': fields.many2one('account.retention', store=True,
                                         string='Retencion de Impuestos',
                                         readonly=True),
@@ -740,15 +687,12 @@ class Invoice(osv.osv):
                                        method=True,
                                        type='char',
                                        help='Num. de documento a usar'),
-        'new_number': fields.char('Nuevo Número', size=16),
         'sustento_id': fields.many2one('account.ats.sustento',
                                        'Sustento del Comprobante'),        
         }
 
     _defaults = {
         'create_retention_type': 'manual',
-        'reference_type': _get_ref_type,
-        'date_invoice': time.strftime('%Y-%m-%d')
         }
 
     # constraint stuff
@@ -778,7 +722,7 @@ class Invoice(osv.osv):
             elif inv.type in ['out_refund', 'in_refund']:
                 return True
             elif inv.type == 'in_invoice' or (inv.type == 'out_invoice' and (inv.retention_vat or inv.retention_ir)):
-                if inv.auth_inv_id.num_start <= int(inv.reference) <= inv.auth_inv_id.num_end:
+                if inv.auth_inv_id.num_start <= int(inv.supplier_invoice_number) <= inv.auth_inv_id.num_end:
                     res = True
             elif inv.type == 'out_invoice':
                 res = True
@@ -811,70 +755,6 @@ class Invoice(osv.osv):
         ('unique_inv_supplier', 'unique(reference,type,partner_id)', u'El numero de factura es unico.'),
     ]    
 
-    def refund(self, cr, uid, ids, date=None, period_id=None, description=None, journal_id=None):
-        """
-        Redefinido metodo para actualizar el campo reference utilizado para numero de referencia
-        numero de factura reembolsada, guia de remision.
-        """
-        invoices = self.read(cr, uid, ids, ['name', 'type', 'number', 'reference', 'comment', 'date_due', 'partner_id', 'address_contact_id', 'address_invoice_id', 'partner_contact', 'partner_insite', 'partner_ref', 'payment_term', 'account_id', 'currency_id', 'invoice_line', 'tax_line', 'journal_id', 'user_id', 'fiscal_position'])
-        obj_invoice_line = self.pool.get('account.invoice.line')
-        obj_invoice_tax = self.pool.get('account.invoice.tax')
-        obj_journal = self.pool.get('account.journal')
-        new_ids = []
-        for invoice in invoices:
-            del invoice['id']
-
-            type_dict = {
-                'out_invoice': 'out_refund', # Customer Invoice
-                'in_invoice': 'in_refund',   # Supplier Invoice
-                'out_refund': 'out_invoice', # Customer Refund
-                'in_refund': 'in_invoice',   # Supplier Refund
-            }
-
-            invoice_lines = obj_invoice_line.read(cr, uid, invoice['invoice_line'])
-            invoice_lines = self._refund_cleanup_lines(cr, uid, invoice_lines)
-
-            tax_lines = obj_invoice_tax.read(cr, uid, invoice['tax_line'])
-            tax_lines = filter(lambda l: l['manual'], tax_lines)
-            tax_lines = self._refund_cleanup_lines(cr, uid, tax_lines)
-            if journal_id:
-                refund_journal_ids = [journal_id]
-            elif invoice['type'] == 'in_invoice':
-                refund_journal_ids = obj_journal.search(cr, uid, [('type','=','purchase_refund')])
-            else:
-                refund_journal_ids = obj_journal.search(cr, uid, [('type','=','sale_refund')])
-
-            if not date:
-                date = time.strftime('%Y-%m-%d')
-            invoice.update({
-                'type': type_dict[invoice['type']],
-                'date_invoice': date,
-                'state': 'draft',
-                'number': False,
-                'invoice_line': invoice_lines,
-                'tax_line': tax_lines,
-                'journal_id': refund_journal_ids,
-                'reference_type': type_dict[invoice['type']],
-                'reference': invoice['number'][8:],
-            })
-            if period_id:
-                invoice.update({
-                    'period_id': period_id,
-                })
-            if description:
-                invoice.update({
-                    'name': description,
-                })
-            # take the id part of the tuple returned for many2one fields
-            for field in ('address_contact_id', 'address_invoice_id', 'partner_id',
-                    'account_id', 'currency_id', 'payment_term', 'journal_id',
-                    'user_id', 'fiscal_position'):
-                invoice[field] = invoice[field] and invoice[field][0]
-            # create the new invoice
-            new_ids.append(self.create(cr, uid, invoice))
-
-        return new_ids
-
     def copy_data(self, cr, uid, id, default=None, context=None):
         res = super(Invoice, self).copy_data(cr, uid, id, default, context=context)
         res.update({'reference': '0',
@@ -883,11 +763,10 @@ class Invoice(osv.osv):
                     'retention_numbers': False})
         return res
 
-    def onchange_partner_id(self, cr, uid, ids, type_doc, partner_id, \
-                            date_invoice=False, payment_term=False, \
-                            partner_bank_id=False, company_id=False):
+    def onchange_partner_id(self, cr, uid, ids, type, partner_id,\
+            date_invoice=False, payment_term=False, partner_bank_id=False, company_id=False):    
         auth_obj = self.pool.get('account.authorisation')
-        res1 = super(Invoice, self).onchange_partner_id(cr, uid, ids, type_doc,
+        res1 = super(Invoice, self).onchange_partner_id(cr, uid, ids, type,
                                                         partner_id, date_invoice,
                                                         payment_term, partner_bank_id,
                                                         company_id)
@@ -940,7 +819,7 @@ class Invoice(osv.osv):
                     ret_data = {'name':'/',
                                 'number': '/',
                                 'invoice_id': inv.id,
-                                'num_document': '%s%s%09d' % (inv.auth_inv_id.serie_emision, inv.auth_inv_id.serie_entidad, int(inv.reference)),
+                                'num_document': inv.supplier_number
                                 'auth_id': inv.journal_id.auth_ret_id.id,
                                 'type': inv.type,
                                 'in_type': 'ret_in_invoice',
@@ -992,8 +871,6 @@ class Invoice(osv.osv):
             if inv.retention_id:
                 ret_obj.action_cancel(cr, uid, [inv.retention_id.id])
         return True
-
-Invoice()
 
 
 class AccountInvoiceLine(osv.osv):
@@ -1124,7 +1001,7 @@ class AccountInvoiceRefund(osv.TransientModel):
         if invoice.type == 'out_invoice':
             number = invoice.number
         else:
-            number = invoice.reference
+            number = invoice.supplier_number
         return number
 
     _defaults = {
