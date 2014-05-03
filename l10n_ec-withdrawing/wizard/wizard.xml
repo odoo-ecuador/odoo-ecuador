@@ -113,5 +113,7 @@
 
     <menuitem action="action_account_retention_cache" id="menu_account_retention_cache" parent="menu_root_retentions"/>
 
-</data>
+
+
+  </data>
 </openerp>
