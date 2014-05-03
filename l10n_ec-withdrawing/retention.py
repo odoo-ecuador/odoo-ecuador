@@ -287,7 +287,7 @@ class account_invoice_tax(osv.osv):
         for line in inv.invoice_line:
             for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
                 val={}
-                tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description'])
+                tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description','porcentaje'])
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
@@ -297,7 +297,7 @@ class account_invoice_tax(osv.osv):
                 val['sequence'] = tax['sequence']
                 val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
                 if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
-                    ret = float(str(tax_group['description'])) / 100
+                    ret = float(str(tax_group['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
                     imp = (abs(tax['amount']) / (ret * bi)) * 100
                     val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100
@@ -733,7 +733,7 @@ class Invoice(osv.osv):
                                                   help=HELP_RET_TEXT,
                                                   states = {'draft': [('readonly', False)]}),        
         
-        'auth_inv_id' : fields.many2one('account.authorisation', 'Autorizacion',
+        'auth_inv_id' : fields.many2one('account.authorisation', 'Autorización SRI',
                                         help = 'Autorizacion del SRI para documento recibido',
                                         readonly=True,
                                         states={'draft': [('readonly', False)]}),
@@ -823,10 +823,16 @@ class Invoice(osv.osv):
             if obj.type == 'out_refund':
                 res = True
             elif obj.type == 'in_invoice' and (obj.retention_ir or obj.retention_vat):
-                if obj.create_retention_type == 'manual' and auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, obj.manual_ret_num):
+                if not obj.journal_id.auth_ret_id:
+                    raise osv.except_osv('Error', u'No se configuró retenciones.')
+                if obj.create_retention_type == 'manual' \
+                  and obj.manual_ret_num>0 and \
+                  auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, obj.manual_ret_num):
                     res = True
+                else:
+                    raise osv.except_osv('Error', u'Error en el número de retención.')
             else:
-                res = False
+                raise osv.except_osv('Error', u'Error en el número de retención.')
         return res
 
     _constraints = [
@@ -908,6 +914,7 @@ class Invoice(osv.osv):
                                 'type': inv.type,
                                 'in_type': 'ret_in_invoice',
                                 'date': inv.date_invoice,
+                                'period_id': inv.period_id.id
                                 }
                     ret_id = ret_obj.create(cr, uid, ret_data)
                     for line in inv.tax_line:

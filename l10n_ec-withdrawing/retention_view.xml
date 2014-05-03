@@ -20,6 +20,12 @@
             <field name="property_account_income_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
             <field name="property_account_expense_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
           </group>
+	  <group name="account_stock_property" string="Account Stock Properties" colspan="2">
+            <field name="property_stock_account_input_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
+            <field name="property_stock_account_output_categ" domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
+            <field name="property_stock_valuation_account_id" domain="[('type','&lt;&gt;','view'), ('type','&lt;&gt;','consolidation')]"/>
+            <field name="property_stock_journal"/>
+          </group>
         </form>
       </field>
     </record>
@@ -226,30 +232,6 @@
       </field>
     </record>
 
-    <!-- record id="view_account_tax_search2" model="ir.ui.view">
-      <field name="name">account.tax.tree2</field>
-      <field name="model">account.tax</field>
-      <field name="inherit_id" ref="account.view_account_tax_search"/>
-      <field name="arch" type="xml">
-	    <field name="description" position="after">
-	      <field name="tax_group"/>
-	      <field name="type_tax_use"/>
-	      <field name="active"/>
-	    </field>
-      </field>
-    </record -->
-
-    <!--record id="view_account_tax_name_form" model="ir.ui.view">
-      <field name="name">account.tax.name.form</field>
-      <field name="model">account.tax</field>
-      <field name="inherit_id" ref="account.view_tax_form"/>
-      <field name="arch" type="xml">
-	    <field name="name" position="replace">
-	      <field name="name" colspan="4"/>
-	    </field>
-      </field>
-    </record-->
-
     <record id="view_retention_authinv_form" model="ir.ui.view">
       <field name="name">account.invoice.authinv.form</field>
       <field name="model">account.invoice</field>
@@ -261,15 +243,21 @@
 	<xpath expr="//field[@name='fiscal_position']" position="attributes">
 	  <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
 	</xpath>
+	<xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
 	<xpath expr="//field[@name='journal_id']" position="after">
-	  <field name="create_retention_type" select="1" required="1"/>
 	  <field name="manual_ret_num"/>
           <field name="sustento_id" required="1" widget="selection"/>
 	  <field name="retention_ir" invisible="1"/>
 	  <field name="retention_vat" invisible="1"/>
 	</xpath>
-	<xpath expr="//field[@name='amount_total']" position="after">
-	  <field name="amount_pay" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
+	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]"/>
+	</xpath>
+	<xpath expr="//field[@name='amount_total']" position="replace">
+	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+	  <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	</xpath>
 	<!-- xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
 	      <button name="invoice_cancel" states="draft,proforma2,sale,open" string="Cancel" icon="gtk-cancel"/>
