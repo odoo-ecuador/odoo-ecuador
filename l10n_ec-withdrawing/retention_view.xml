@@ -134,28 +134,16 @@
       <field name="arch" type="xml">
 	    <notebook position="inside">
 	      <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-	        <field name="authorisation_ids" nolabel="1" widget="one2many_list" context="{'in_type':'externo', 'partner_id': active_id}" mode="tree,form">
+	        <field name="authorisation_ids" nolabel="1" widget="one2many_list" context="{'in_type':'externo', 'default_partner_id': active_id}">
 	          <tree string="Autorizaciones">
-		        <field name="name" required="1"/>
-		        <field name="serie_emision" required="1"/>
-		        <field name="serie_entidad" required="1"/>
-		        <field name="num_start" required="1"/>
-		        <field name="num_end" required="1"/>
-		        <field name="expiration_date" required="1"/>
-		        <field name="active"/>
+		    <field name="name" required="1"/>
+		    <field name="serie_emision" required="1"/>
+		    <field name="serie_entidad" required="1"/>
+		    <field name="num_start" required="1"/>
+		    <field name="num_end" required="1"/>
+		    <field name="expiration_date" required="1"/>
+		    <field name="type_id"/>
 	          </tree>
-	          <form string="Autorización">
-		        <field name="name" required="1"/>
-		        <field name="serie_emision" required="1"/>
-		        <field name="serie_entidad" required="1"/>
-		        <field name="num_start" required="1"/>
-		        <field name="num_end" required="1"/>
-		        <field name="expiration_date" required="1"/>
-		        <field name="active"/>
-		        <field name="type_id"/>
-		        <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')], 'required': [('in_type','=','interno')]}"/>
-		        <field name="in_type"/>		
-	          </form>
 	        </field>
 	      </page>
 	    </notebook>
@@ -195,17 +183,15 @@
       <field name="model">res.partner</field>
       <field name="inherit_id" ref="base.view_partner_form"/>
       <field name="arch" type="xml">
-	    <xpath expr="//field[@name='name']" position="before">
-	      <field name="ced_ruc"/>
-	      <field name="type_ced_ruc"/>
-	      <newline/>
-	    </xpath>
-	    <xpath expr="//field[@name='property_account_position']" position="attributes">
-	      <attribute name="required">1</attribute>
-	    </xpath>
-        <xpath expr="//field[@name='lang']" position="replace">
-          <field name="tipo_persona"/>
-        </xpath>
+	<xpath expr="//field[@name='parent_id']" position="after">
+	  <field name="ced_ruc" placeholder="Cédula / RUC"/>
+	  <field name="type_ced_ruc" placeholder="Tipo de Identificador"/>
+          <field name="tipo_persona" placeholder="Tipo de Persona"/>
+	  <newline/>
+	</xpath>
+	<xpath expr="//field[@name='property_account_position']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
       </field>
     </record>
 
