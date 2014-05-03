@@ -35,8 +35,6 @@ class AccountAtsDoc(osv.osv):
         name = fields.char('Tipo Comprobante', size=64, required=True),
         )
 
-AccountAtsDoc()
-
 
 class AccountAtsSustento(osv.osv):
     _name = 'account.ats.sustento'
@@ -61,8 +59,6 @@ class AccountAtsSustento(osv.osv):
         type = fields.char('Tipo de Sustento', size=64, required=True),
         )
 
-AccountAtsSustento()
-    
 
 class AccountTaxAts(osv.osv):
 
@@ -73,4 +69,4 @@ class AccountTaxAts(osv.osv):
         document_id = fields.many2one('account.ats.doc', string='Tipos Comprobantes Autorizados'),
         )
 
-AccountTaxAts()
+

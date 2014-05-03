@@ -48,8 +48,6 @@ class account_retention_cache(osv.osv):
         'active': True,
         }
 
-account_retention_cache()
-
 
 class AccountAuthorisation(osv.osv):
 
@@ -112,7 +110,6 @@ class AccountAuthorisation(osv.osv):
             values.update({'sequence_id': seq_id})
         return super(AccountAuthorisation, self).create(cr, uid, values, context)
 
-
     def unlink(self, cr, uid, ids, context=None):
         type_obj = self.pool.get('ir.sequence.type')
         for obj in self.browse(cr, uid, ids, context):
@@ -166,8 +163,6 @@ class AccountAuthorisation(osv.osv):
             return True
         return False
 
-AccountAuthorisation()
-
 
 class account_journal(osv.osv):
 
@@ -181,8 +176,6 @@ class account_journal(osv.osv):
                                        string='Autorización de Ret.',
                                        help='Autorizacion utilizada para documentos de retención en Facturas de Proveedor y Liquidaciones de Compra')
         }
-
-account_journal()
 
 
 class account_tax(osv.osv):
