@@ -44,37 +44,5 @@
 
     <menuitem action="action_export_ats" id="menu_export_ats" parent="menu_sri_reporting"/>
 
-    <record id="view_wizard_report_projects" model="ir.ui.view">
-      <field name="name">view.wizard.report.projects</field>
-      <field name="model">wizard.report.project</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="Reporte de Proyectos">
-          <group string="Fechas de Consulta" colspan="4">
-            <field name="fiscalyear_id"/>
-            <field name="period_start" domain="[('fiscalyear_id','=',fiscalyear_id)]"/>
-            <field name="period_end" domain="[('fiscalyear_id','=',fiscalyear_id)]"/>
-          </group>
-          <group string="Nivel de Proyectos" colspan="6">
-            <field name="analytic_id" domain="[('type','=','view'),('parent_id','=',False)]"/>
-            <button icon="gtk-cancel" name="act_cancel" special="cancel" string="Cancelar" type="object"/>
-            <button name="print_report" string="Imprimir" icon="gtk-print" type="object"/>
-          </group>
-        </form>
-      </field>
-    </record>
-
-    <record id="action_wizard_print_report_projects" model="ir.actions.act_window">
-	  <field name="name">Reporte de Proyectos</field>
-	  <field name="type">ir.actions.act_window</field>
-	  <field name="res_model">wizard.report.project</field>
-	  <field name="view_type">form</field>
-	  <field name="view_mode">form</field>
-	  <field name="target">new</field>
-    </record>
-
-    <menuitem name="Reportes Proyectos" id="menu_project_herdo_reporting" parent="account.menu_finance"/>    
-    <menuitem action="action_wizard_print_report_projects" id="menu_wizard_report_projects" parent="menu_project_herdo_reporting"/>
-
   </data>
 </openerp>

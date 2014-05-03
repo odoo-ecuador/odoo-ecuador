@@ -64,7 +64,7 @@
       <field name="model">account.authorisation</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-	    <form string="Autorizaciones SRI">
+	<form string="Autorizaciones SRI">
           <group col="4" colspan="4">
             <field name="is_electronic"/>
             <field name="name"/>
@@ -253,18 +253,17 @@
 	  <field name="retention_vat" invisible="1"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
-	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]"/>
+	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'/>
 	</xpath>
 	<xpath expr="//field[@name='amount_total']" position="replace">
 	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	  <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	</xpath>
+        <xpath expr="//button[@name='invoice_open'][last()]" position="after">
+	  <button name="print_retention" string="Retención" type="object" states="open" icon="gtk-print"/>
+	  <button name="print_move" string="Comprobante" type="object" states="open,paid" icon="gtk-print"/> 
+	</xpath>
 	<!-- xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
-	      <button name="invoice_cancel" states="draft,proforma2,sale,open" string="Cancel" icon="gtk-cancel"/>
-	      <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="terp-stock_effects-object-colorize"/>
-	      <button name="%(account.action_account_invoice_refund)d" type='action' string='Refund' states='open' icon="gtk-execute"/>
-	      <button name="%(account.action_account_state_open)d" type='action' string='Re-Open' states='paid' icon="gtk-convert" groups="base.group_no_one"/>
-	      <button name="invoice_open" states="draft,proforma2" string="Approve" icon="terp-camera_test"/>
 	      <button name="print_retention" string="Imprimir Retencion" type="object" icon="gtk-print" states="open"/>
 	    </group>
 	  </group>
@@ -591,17 +590,18 @@
       </field>
     </record>
 
-    <!-- record id="view_invoice_reference_customer_form" model="ir.ui.view">
+    <record id="view_invoice_reference_customer_form" model="ir.ui.view">
       <field name="name">account.invoice.reference.cust.form</field>
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_form"/>
       <field name="arch" type="xml">
-	<field name="name" position="after">
-	  <field name="retention_ir" invisible="1"/>
-	  <field name="retention_vat" invisible="1"/>
+	<field name="number" position="attributes">
+	  <attribute name="readonly">0</attribute>
+	  <attribute name="required">1</attribute>
+	  <attribute name="attrs">{'readonly': [('state','in',['open','paid'])]}</attribute>
 	</field>
       </field>
-    </record -->
+    </record>
 
     <!-- Compania -->
     

@@ -454,7 +454,27 @@ class Invoice(osv.osv):
             'model': 'account.invoice',
             'datas': datas,
             'nodestroy': True,                        
-            }        
+            }
+
+    def print_move(self, cr, uid, ids, context=None):
+        '''
+        cr: cursor de la base de datos
+        uid: ID de usuario
+        ids: lista ID del objeto instanciado
+
+        Metodo para imprimir comprobante contable
+        '''        
+        if not context:
+            context = {}
+        invoice = self.browse(cr, uid, ids, context)[0]
+        datas = {'ids': [invoice.move_id.id], 'model': 'account.move'}
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'report_move',
+            'model': 'account.move',
+            'datas': datas,
+            'nodestroy': True,                        
+            }
 
     def print_liq_purchase(self, cr, uid, ids, context=None):
         '''
@@ -497,6 +517,8 @@ class Invoice(osv.osv):
                 'datas': datas,
                 'nodestroy': True,            
                 }
+        else:
+            raise except_osv('Aviso', 'No tiene retención')
 
     def _amount_all(self, cr, uid, ids, fields, args, context=None):
         """
@@ -832,7 +854,7 @@ class Invoice(osv.osv):
                 else:
                     raise osv.except_osv('Error', u'Error en el número de retención.')
             else:
-                raise osv.except_osv('Error', u'Error en el número de retención.')
+                res = True
         return res
 
     _constraints = [
