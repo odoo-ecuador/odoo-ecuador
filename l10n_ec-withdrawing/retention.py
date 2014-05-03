@@ -122,7 +122,7 @@ class account_retention(osv.osv):
                                     string='Tipo', states=STATES_VALUE, readonly=True),
         'date': fields.date('Fecha Emision', readonly=True,
                             states={'draft': [('readonly', False)]}, required=True),
-#        'period_id': fields.function(_get_period, method=True, type='many2one', store=True, relation='account.period', string='Periodo'),
+        'period_id': fields.many2one('account.period', 'Periodo', required=True),
         'tax_ids': fields.one2many('account.invoice.tax', 'retention_id',
                                    'Detalle de Impuestos', readonly=True,
                                    states=STATES_VALUE),
@@ -136,9 +136,6 @@ class account_retention(osv.osv):
                                   relation='account.move',
                                   string='Asiento Contable',
                                   readonly=True),
-        'move_cancel_id': fields.many2one('account.move',
-                                          'Asiento de Cancelacion',
-                                          readonly=True),
         'state': fields.selection([('draft','Borrador'),
                                    ('early','Anticipado'),
                                    ('done','Validado'),
@@ -355,23 +352,6 @@ class Invoice(osv.osv):
         res['value']['name'] = sustento.type
         return res
 
-    def button_compute(self, cr, uid, ids, context=None, set_total=True):
-        self.button_reset_taxes(cr, uid, ids, context)
-        for inv in self.browse(cr, uid, ids, context=context):
-            if set_total:
-                self.pool.get('account.invoice').write(cr, uid, [inv.id], {'check_total': inv.amount_total})
-        return True
-
-    def renumerate_invoice(self, cr, uid, ids, context=None):
-        if context is None:
-            context = {}
-        seq_obj = self.pool.get('ir.sequence')
-        for inv in self.browse(cr, uid, ids, context):
-            context.update({'new_number': inv.new_number})
-            self.action_number(cr, uid, ids, context)
-        return True
-        
-    
     def print_invoice(self, cr, uid, ids, context=None):
         '''
         cr: cursor de la base de datos
@@ -433,18 +413,6 @@ class Invoice(osv.osv):
                 'datas': datas,
                 'nodestroy': True,            
                 }
-
-    def _get_type(self, cr, uid, context=None):
-        '''
-        cr: cursor de la base de datos
-        uid: ID de usuario
-        context: Variable goblal del sistema
-        
-        Metodo que devuelve el tipo basado en el contexto
-        '''
-        if context is None:
-            context = {}
-        return context.get('type', 'out_invoice')    
 
     def _amount_all(self, cr, uid, ids, fields, args, context=None):
         """
