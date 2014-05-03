@@ -327,7 +327,7 @@ class account_tax(osv.osv):
         return res
 
     _columns = {
-        'sec_name': fields.char('Descripción Corta', size=128),
+        'porcentaje': fields.char('Porcentaje', size=128), #dirty hack FIXME plz
         'tax_group' : fields.selection([('vat','IVA Diferente de 0%'),
                                         ('vat0','IVA 0%'),
                                         ('novat','No objeto de IVA'),
@@ -344,10 +344,8 @@ class account_tax(osv.osv):
         'tax_group': 'vat',
         }
 
-account_tax()
 
-
-class Partner(osv.Model):
+class Partner(osv.osv):
     
     _name = 'res.partner'
     _inherit = 'res.partner'
