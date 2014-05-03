@@ -769,7 +769,7 @@ class Invoice(osv.osv):
         'retention_id': fields.many2one('account.retention', store=True,
                                         string='Retencion de Impuestos',
                                         readonly=True),
-        'retention_ir': fields.function( _check_retention, store=True,
+        'retention_ir': fields.function( _check_retention, store=False,
                                          string="Tiene Retencion en IR",
                                          method=True, type='boolean',
                                          multi='ret'),
