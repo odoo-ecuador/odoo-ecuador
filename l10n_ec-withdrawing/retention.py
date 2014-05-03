@@ -344,6 +344,90 @@ class Invoice(osv.osv):
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
 
+    def onchange_company_id(self, cr, uid, ids, company_id, part_id, type, invoice_line, currency_id):
+        #TODO: add the missing context parameter when forward-porting in trunk so we can remove
+        #      this hack!
+        context = self.pool['res.users'].context_get(cr, uid)
+
+        val = {}
+        dom = {}
+        obj_journal = self.pool.get('account.journal')
+        account_obj = self.pool.get('account.account')
+        inv_line_obj = self.pool.get('account.invoice.line')
+        if company_id and part_id and type:
+            acc_id = False
+            partner_obj = self.pool.get('res.partner').browse(cr,uid,part_id)
+            if partner_obj.property_account_payable and partner_obj.property_account_receivable:
+                if partner_obj.property_account_payable.company_id.id != company_id and partner_obj.property_account_receivable.company_id.id != company_id:
+                    property_obj = self.pool.get('ir.property')
+                    rec_pro_id = property_obj.search(cr, uid, [('name','=','property_account_receivable'),('res_id','=','res.partner,'+str(part_id)+''),('company_id','=',company_id)])
+                    pay_pro_id = property_obj.search(cr, uid, [('name','=','property_account_payable'),('res_id','=','res.partner,'+str(part_id)+''),('company_id','=',company_id)])
+                    if not rec_pro_id:
+                        rec_pro_id = property_obj.search(cr, uid, [('name','=','property_account_receivable'),('company_id','=',company_id)])
+                    if not pay_pro_id:
+                        pay_pro_id = property_obj.search(cr, uid, [('name','=','property_account_payable'),('company_id','=',company_id)])
+                    rec_line_data = property_obj.read(cr, uid, rec_pro_id, ['name','value_reference','res_id'])
+                    pay_line_data = property_obj.read(cr, uid, pay_pro_id, ['name','value_reference','res_id'])
+                    rec_res_id = rec_line_data and rec_line_data[0].get('value_reference',False) and int(rec_line_data[0]['value_reference'].split(',')[1]) or False
+                    pay_res_id = pay_line_data and pay_line_data[0].get('value_reference',False) and int(pay_line_data[0]['value_reference'].split(',')[1]) or False
+                    if not rec_res_id and not pay_res_id:
+                        raise osv.except_osv(_('Configuration Error!'),
+                            _('Cannot find a chart of account, you should create one from Settings\Configuration\Accounting menu.'))
+                    if type in ('out_invoice', 'out_refund'):
+                        acc_id = rec_res_id
+                    else:
+                        acc_id = pay_res_id
+                    val= {'account_id': acc_id}
+            if ids:
+                if company_id:
+                    inv_obj = self.browse(cr,uid,ids)
+                    for line in inv_obj[0].invoice_line:
+                        if line.account_id:
+                            if line.account_id.company_id.id != company_id:
+                                result_id = account_obj.search(cr, uid, [('name','=',line.account_id.name),('company_id','=',company_id)])
+                                if not result_id:
+                                    raise osv.except_osv(_('Configuration Error!'),
+                                        _('Cannot find a chart of account, you should create one from Settings\Configuration\Accounting menu.'))
+                                inv_line_obj.write(cr, uid, [line.id], {'account_id': result_id[-1]})
+            else:
+                if invoice_line:
+                    for inv_line in invoice_line:
+                        obj_l = account_obj.browse(cr, uid, inv_line[2]['account_id'])
+                        if obj_l.company_id.id != company_id:
+                            raise osv.except_osv(_('Configuration Error!'),
+                                _('Invoice line account\'s company and invoice\'s company does not match.'))
+                        else:
+                            continue
+        if company_id and type:
+            journal_mapping = {
+               'out_invoice': 'sale',
+               'out_refund': 'sale_refund',
+               'in_refund': 'purchase_refund',
+               'in_invoice': 'purchase',
+               'liq_purchase': 'purchase'
+            }
+            journal_type = journal_mapping[type]
+            journal_ids = obj_journal.search(cr, uid, [('company_id','=',company_id), ('type', '=', journal_type)])
+            if journal_ids:
+                val['journal_id'] = journal_ids[0]
+            ir_values_obj = self.pool.get('ir.values')
+            res_journal_default = ir_values_obj.get(cr, uid, 'default', 'type=%s' % (type), ['account.invoice'])
+            for r in res_journal_default:
+                if r[1] == 'journal_id' and r[2] in journal_ids:
+                    val['journal_id'] = r[2]
+            if not val.get('journal_id', False):
+                journal_type_map = dict(obj_journal._columns['type'].selection)
+                journal_type_label = self.pool['ir.translation']._get_source(cr, uid, None, ('code','selection'),
+                                                                             context.get('lang'),
+                                                                             journal_type_map.get(journal_type))
+                raise osv.except_osv(_('Configuration Error!'),
+                                     _('Cannot find any account journal of %s type for this company.\n\nYou can create one in the menu: \nConfiguration\Journals\Journals.') % ('"%s"' % journal_type_label))
+            dom = {'journal_id':  [('id', 'in', journal_ids)]}
+        else:
+            journal_ids = obj_journal.search(cr, uid, [])
+
+        return {'value': val, 'domain': dom}    
+
     def onchange_sustento(self, cr, uid, ids, sustento_id):
         res = {'value': {}}
         if not sustento_id:
@@ -654,10 +738,10 @@ class Invoice(osv.osv):
                                         readonly=True,
                                         states={'draft': [('readonly', False)]}),
         'retention_id': fields.many2one('account.retention', store=True,
-                                        string='Retencion de Impuestos',
+                                        string='Retención de Impuestos',
                                         readonly=True),
         'retention_ir': fields.function( _check_retention, store=False,
-                                         string="Tiene Retencion en IR",
+                                         string="Tiene Retención en IR",
                                          method=True, type='boolean',
                                          multi='ret'),
         'retention_vat': fields.function( _check_retention, store=True,
@@ -665,7 +749,7 @@ class Invoice(osv.osv):
                                           method=True, type='boolean',
                                           multi='ret'),
         'no_retention_ir': fields.function( _check_retention, store=True,
-                                          string='No objeto de Retencion',
+                                          string='No objeto de Retención',
                                           method=True, type='boolean',
                                           multi='ret'),        
         'type': fields.selection([
@@ -680,7 +764,7 @@ class Invoice(osv.osv):
                                               string='Num. de Retención',
                                               help='Lista de Números de Retención reservados',
                                               states = {'draft': [('readonly', False)]}),
-        'manual_ret_num': fields.integer('Num. Retencion', readonly=True,
+        'manual_ret_num': fields.integer('Num. Retención', readonly=True,
                                          states = {'draft': [('readonly', False)]}),
         'num_to_use': fields.function( _get_num_to_use,
                                        string='Núm a Usar',
@@ -819,7 +903,7 @@ class Invoice(osv.osv):
                     ret_data = {'name':'/',
                                 'number': '/',
                                 'invoice_id': inv.id,
-                                'num_document': inv.supplier_number
+                                'num_document': inv.supplier_number,
                                 'auth_id': inv.journal_id.auth_ret_id.id,
                                 'type': inv.type,
                                 'in_type': 'ret_in_invoice',
