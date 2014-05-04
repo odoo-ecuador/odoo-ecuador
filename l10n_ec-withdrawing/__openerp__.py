@@ -35,7 +35,8 @@
                    'retention_view.xml',
                    'retention_report.xml',
                    'retention_wizard.xml',
-                   'security/ir.model.access.csv'],
+#                   'security/ir.model.access.csv'
+                   ],
     'installable': True,
     'active': False,
 }

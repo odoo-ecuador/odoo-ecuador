@@ -43,5 +43,6 @@
     </record>
 
     <menuitem action="action_export_ats" id="menu_export_ats" parent="menu_sri_reporting"/>
+
   </data>
 </openerp>

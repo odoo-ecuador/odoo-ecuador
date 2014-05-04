@@ -202,7 +202,7 @@ class wizard_ats(osv.osv_memory):
                     air.append(detalleAir)
                 detallecompras.append(air)
             flag = False            
-            if inv.retention_ir or inv.retention_vat:
+            if inv.retention_id and (inv.retention_ir or inv.retention_vat):
                 flag = True
                 etree.SubElement(detallecompras, 'estabRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_entidad or '000'
                 etree.SubElement(detallecompras, 'ptoEmiRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_emision or '000'

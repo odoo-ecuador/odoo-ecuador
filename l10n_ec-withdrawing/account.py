@@ -48,8 +48,6 @@ class account_retention_cache(osv.osv):
         'active': True,
         }
 
-account_retention_cache()
-
 
 class AccountAuthorisation(osv.osv):
 
@@ -64,7 +62,7 @@ class AccountAuthorisation(osv.osv):
             return []
         res = []
         for record in self.browse(cr, uid, ids, context=context):
-            name = '%s (%s-%s)' % (record.name, record.num_start, record.num_end)
+            name = '%s (%s-%s)' % (record.type_id.name, record.num_start, record.num_end)
             res.append((record.id, name))
         return res        
     
@@ -111,7 +109,6 @@ class AccountAuthorisation(osv.osv):
             seq_id = seq_obj.create(cr, uid, seq_data)
             values.update({'sequence_id': seq_id})
         return super(AccountAuthorisation, self).create(cr, uid, values, context)
-
 
     def unlink(self, cr, uid, ids, context=None):
         type_obj = self.pool.get('ir.sequence.type')
@@ -166,8 +163,6 @@ class AccountAuthorisation(osv.osv):
             return True
         return False
 
-AccountAuthorisation()
-
 
 class account_journal(osv.osv):
 
@@ -182,8 +177,6 @@ class account_journal(osv.osv):
                                        help='Autorizacion utilizada para documentos de retención en Facturas de Proveedor y Liquidaciones de Compra')
         }
 
-account_journal()
-
 
 class account_tax(osv.osv):
     
@@ -191,17 +184,18 @@ class account_tax(osv.osv):
     _inherit = 'account.tax'
     _order = 'tax_group desc'
 
-    def _unit_compute(self, cr, uid, taxes, price_unit, address_id=None, product=None, partner=None, quantity=0):
-        taxes = self._applicable(cr, uid, taxes, price_unit, address_id, product, partner)
+    def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0):
+        taxes = self._applicable(cr, uid, taxes, price_unit ,product, partner)
         res = []
         cur_price_unit=price_unit
-        obj_partener_address = self.pool.get('res.partner.address')
         for tax in taxes:
             # we compute the amount for the current tax object and append it to the result
             data = {'id':tax.id,
                     'name':tax.description and tax.description + " - " + tax.name or tax.name,
                     'account_collected_id':tax.account_collected_id.id,
                     'account_paid_id':tax.account_paid_id.id,
+                    'account_analytic_collected_id': tax.account_analytic_collected_id.id,
+                    'account_analytic_paid_id': tax.account_analytic_paid_id.id,
                     'base_code_id': tax.base_code_id.id,
                     'ref_base_code_id': tax.ref_base_code_id.id,
                     'sequence': tax.sequence,
@@ -224,8 +218,7 @@ class account_tax(osv.osv):
                 data['tax_amount']=quantity
                # data['amount'] = quantity
             elif tax.type=='code':
-                address = address_id and obj_partener_address.browse(cr, uid, address_id) or None
-                localdict = {'price_unit':cur_price_unit, 'address':address, 'product':product, 'partner':partner}
+                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner}
                 exec tax.python_compute in localdict
                 amount = localdict['result']
                 data['amount'] = amount
@@ -238,7 +231,7 @@ class account_tax(osv.osv):
                 if tax.child_depend:
                     latest = res.pop()
                 amount = amount2
-                child_tax = self._unit_compute(cr, uid, tax.child_ids, amount, address_id, product, partner, quantity)
+                child_tax = self._unit_compute(cr, uid, tax.child_ids, amount, product, partner, quantity)
                 res.extend(child_tax)
                 if tax.child_depend:
                     for r in res:
@@ -256,11 +249,10 @@ class account_tax(osv.osv):
                                 latest[name+'_code_id'] = False
             if tax.include_base_amount:
                 cur_price_unit+=amount2
-        return res    
+        return res
 
-    def _unit_compute_inv(self, cr, uid, taxes, price_unit, address_id=None, product=None, partner=None):
-        taxes = self._applicable(cr, uid, taxes, price_unit, address_id, product, partner)
-        obj_partener_address = self.pool.get('res.partner.address')
+    def _unit_compute_inv(self, cr, uid, taxes, price_unit, product=None, partner=None):
+        taxes = self._applicable(cr, uid, taxes, price_unit,  product, partner)
         res = []
         taxes.reverse()
         cur_price_unit = price_unit
@@ -285,8 +277,7 @@ class account_tax(osv.osv):
                 amount = tax.amount
 
             elif tax.type=='code':
-                address = address_id and obj_partener_address.browse(cr, uid, address_id) or None
-                localdict = {'price_unit':cur_price_unit, 'address':address, 'product':product, 'partner':partner}
+                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner}
                 exec tax.python_compute_inv in localdict
                 amount = localdict['result']
             elif tax.type=='balance':
@@ -304,6 +295,8 @@ class account_tax(osv.osv):
                 'amount': amount,
                 'account_collected_id': tax.account_collected_id.id,
                 'account_paid_id': tax.account_paid_id.id,
+                'account_analytic_collected_id': tax.account_analytic_collected_id.id,
+                'account_analytic_paid_id': tax.account_analytic_paid_id.id,
                 'base_code_id': tax.base_code_id.id,
                 'ref_base_code_id': tax.ref_base_code_id.id,
                 'sequence': tax.sequence,
@@ -314,14 +307,14 @@ class account_tax(osv.osv):
                 'price_unit': cur_price_unit,
                 'tax_code_id': tax.tax_code_id.id,
                 'ref_tax_code_id': tax.ref_tax_code_id.id,
-                'tax_group': tax.tax_group,
+                'tax_group': tax.tax_group
             })
             if tax.child_ids:
                 if tax.child_depend:
                     del res[-1]
                     amount = price_unit
 
-            parent_tax = self._unit_compute_inv(cr, uid, tax.child_ids, amount, address_id, product, partner)
+            parent_tax = self._unit_compute_inv(cr, uid, tax.child_ids, amount, product, partner)
             res.extend(parent_tax)
 
         total = 0.0
@@ -334,7 +327,7 @@ class account_tax(osv.osv):
         return res
 
     _columns = {
-        'sec_name': fields.char('Descripción Corta', size=128),
+        'porcentaje': fields.char('Porcentaje', size=128), #dirty hack FIXME plz
         'tax_group' : fields.selection([('vat','IVA Diferente de 0%'),
                                         ('vat0','IVA 0%'),
                                         ('novat','No objeto de IVA'),
@@ -351,54 +344,8 @@ class account_tax(osv.osv):
         'tax_group': 'vat',
         }
 
-account_tax()
 
-
-class account_tax_template(osv.Model):
-    
-    _name = 'account.tax.template'
-    _inherit = 'account.tax.template'
-    
-    _columns = {
-        'tax_group' : fields.selection([('iva0','IVA 0% x'),('noiva','No objeto de IVA x'),('ret', 'Retención x'),
-                                        ('vat','IVA Diferente de 0%'),
-                                        ('vat0','IVA 0%'),
-                                        ('novat','No objeto de IVA'),
-                                        ('ret_vat', 'Retención de IVA'),
-                                        ('ret_ir', 'Ret. Imp. Renta'), 
-                                        ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
-                                        ('imp_ad', 'Imps. Aduanas'), 
-                                        ('other','Other')], 'Grupo', required=True),
-        }
-
-    _defaults = {
-        'tax_group': 'vat',
-        }
-
-account_tax()
-
-
-class account_tax_template(osv.Model):
-    
-    _name = 'account.tax.template'
-    _inherit = 'account.tax.template'
-    
-    _columns = {
-        'tax_group' : fields.selection([('iva0','IVA 0% x'),('noiva','No objeto de IVA x'),('ret', 'Retención x'),
-                                        ('vat','IVA Diferente de 0%'),
-                                        ('vat0','IVA 0%'),
-                                        ('novat','No objeto de IVA'),
-                                        ('ret_vat', 'Retenciónde IVA'),
-                                        ('ret_ir', 'Ret. Imp. Renta'), 
-                                        ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
-                                        ('imp_ad', 'Imps. Aduanas'), 
-                                        ('other','Other')], 'Grupo'),
-        }
-
-account_tax_template()
-
-
-class Partner(osv.Model):
+class Partner(osv.osv):
     
     _name = 'res.partner'
     _inherit = 'res.partner'
