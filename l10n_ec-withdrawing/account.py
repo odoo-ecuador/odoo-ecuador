@@ -62,7 +62,7 @@ class AccountAuthorisation(osv.osv):
             return []
         res = []
         for record in self.browse(cr, uid, ids, context=context):
-            name = '%s (%s-%s)' % (record.name, record.num_start, record.num_end)
+            name = '%s (%s-%s)' % (record.type_id.name, record.num_start, record.num_end)
             res.append((record.id, name))
         return res        
     

@@ -857,11 +857,27 @@ class Invoice(osv.osv):
                 res = True
         return res
 
-    _constraints = [
-        (check_in_reference,
-         ustr('El número de referencia no pertenece a la autorización seleccionada.'),
-         [ustr('Factura Proveedor'), ustr('Autorización')]),
-        ]
+    def check_invoice_number(self, cr, uid, ids):
+        auth_obj = self.pool.get('account.authorisation')
+        for obj in self.browse(cr, uid, ids):
+            if not obj.type == 'out_invoice':
+                return True
+            if obj.state in ['open', 'paid', 'cancel']:
+                return True
+            if not obj.journal_id.auth_id:
+                raise osv.except_osv('Error', u'Sin configuración de autorización.')
+            auth = obj.journal_id.auth_id
+            if not len(obj.supplier_invoice_number) == 9:
+                raise osv.except_osv('Error', u'Son 9 dígitos en el núm. de Factura.')
+            if not auth_obj.is_valid_number(cr, uid, auth.id, int(obj.supplier_invoice_number)):
+                raise osv.except_osv('Error', u'Número de factura fuera de rango.')
+        return True
+
+    _constraints = [(check_in_reference,
+                    u'El número no pertenece a la autorización.',['Factura Proveedor']),
+                    (check_invoice_number,
+                    u'Número fuera de rango de autorización activa.', ['Número Factura']),
+            ]
 
     _sql_constraints = [
         ('unique_inv_supplier', 'unique(reference,type,partner_id)', u'El numero de factura es unico.'),

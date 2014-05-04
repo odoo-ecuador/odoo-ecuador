@@ -66,8 +66,8 @@
       <field name="arch" type="xml">
 	<form string="Autorizaciones SRI">
           <group col="4" colspan="4">
-            <field name="is_electronic"/>
             <field name="name"/>
+            <field name="is_electronic"/>
             <field name="serie_entidad"/>
             <field name="serie_emision"/>
             <field name="num_start"/>
@@ -287,9 +287,9 @@
       <field name="model">account.journal</field>
       <field name="inherit_id" ref="account.view_account_journal_form"/>
       <field name="arch" type="xml">
-	    <field name="sequence_id" position="after">
-	  <field name="auth_id" context="{'in_type':'interno'}"/>
-	  <field name="auth_ret_id" context="{'in_type': 'interno'}"/>
+	<field name="sequence_id" position="after">
+	  <field name="auth_id" domain="[('in_type','=','interno')]" context="{'in_type':'interno'}"/>
+	  <field name="auth_ret_id" domain="[('in_type','=','interno')]" context="{'in_type': 'interno'}"/>
 	</field>
       </field>
     </record>
@@ -595,10 +595,8 @@
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_form"/>
       <field name="arch" type="xml">
-	<field name="number" position="attributes">
-	  <attribute name="readonly">0</attribute>
-	  <attribute name="required">1</attribute>
-	  <attribute name="attrs">{'readonly': [('state','in',['open','paid'])]}</attribute>
+	<field name="number" position="replace">
+	  <field name="supplier_invoice_number" class="oe_inline" attrs="{'readonly': [('state','!=','draft')], 'required': [('state','=','draft')]}"/>
 	</field>
       </field>
     </record>

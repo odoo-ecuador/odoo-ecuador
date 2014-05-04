@@ -41,35 +41,30 @@ class account_invoice(osv.osv):
         }
 
     def action_number(self, cr, uid, ids, context=None):
-        obj_sequence = self.pool.get('ir.sequence')
+        """
+        Copiado el metodo del ERP
+        CHECK: modificar para numeracion automatica en venta?
+        """
         if context is None:
             context = {}
         #TODO: not correct fix but required a frech values before reading it.
         self.write(cr, uid, ids, {})
 
         for obj_inv in self.browse(cr, uid, ids, context=context):
-            id = obj_inv.id
             invtype = obj_inv.type
+            number = obj_inv.number
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
 
+            self.write(cr, uid, ids, {'internal_number': number})
+
             if invtype in ('in_invoice', 'in_refund'):
-                number = obj_inv.number
-                name = obj_inv.move_id.name
-                self.write(cr, uid, ids, {'internal_number': number, 'invoice_number': name})
                 if not reference:
                     ref = self._convert_ref(cr, uid, number)
                 else:
                     ref = reference
-            else:
-                if not obj_inv.journal_id.auth_id:
-                    raise osv.except_osv('Error', 'No se ha definido una autorizacion en el diario')
-                entidad = obj_inv.journal_id.auth_id.serie_entidad
-                emision = obj_inv.journal_id.auth_id.serie_emision
-                numero = obj_sequence.get_id(cr, uid, obj_inv.journal_id.auth_id.sequence_id.id)
-                new_name = "%s-%s-%s" % (entidad, emision, numero)
-                self.write(cr, uid, ids, {'invoice_number': new_name})
-                ref = self._convert_ref(cr, uid, new_name)
+            else:                
+                ref = self._convert_ref(cr, uid, number)
 
             cr.execute('UPDATE account_move SET ref=%s ' \
                     'WHERE id=%s AND (ref is null OR ref = \'\')',
@@ -82,14 +77,6 @@ class account_invoice(osv.osv):
                     'WHERE account_move_line.move_id = %s ' \
                         'AND account_analytic_line.move_id = account_move_line.id',
                         (ref, move_id))
-
-            for inv_id, name in self.name_get(cr, uid, [id]):
-                ctx = context.copy()
-                if obj_inv.type in ('out_invoice', 'out_refund'):
-                    ctx = self.get_log_context(cr, uid, context=ctx)
-                message = _('Invoice ') + " '" + name + "' "+ _("is validated.")
-                self.log(cr, uid, inv_id, message, context=ctx)
-            self.pool.get('account.invoice.line').asset_create(cr, uid, obj_inv.invoice_line)
         return True
 
-account_invoice()
+    
