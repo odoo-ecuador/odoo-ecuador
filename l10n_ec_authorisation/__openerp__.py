@@ -33,7 +33,7 @@
 #        'data/l10n_ec_authorisation_data.xml',
     ],
     'depends' : [
-        '1l0n_ec_partner',
+        'l10n_ec_partner',
         'account'
     ],
     'js': [
