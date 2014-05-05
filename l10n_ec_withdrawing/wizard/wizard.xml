@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    
+    <record id="view_wizard_rete_grouped_form" model="ir.ui.view">
+      <field name="name">wizard.rete.grouped.form</field>
+      <field name="model">wizard.retention.grouped</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Asistente: Generar Retenciones por Proveedor">
+          <group col="4" colspan="4" states="choose" fill="0">
+	    <separator string="Elija el Proveedor y las facturas que desea agrupar en una retencion." colspan="4"/>
+	    <field name="partner_id" required="1"/>
+	    <field name="period_id" required="1"/>
+	    <field name="invoice_ids" colspan="4" 
+		   domain="[('partner_id','=',partner_id),('period_id','=',period_id),('create_retention_type','=','ret_grouped'),('state','=','open'),('type','in',['in_invoice', 'liq_purchase'])]"/>
+          </group>
+	  <group col="4" colspan="4" states="generate" fill="0">
+	    <separator string="Las retenciones se generaron correctamente." colspan="4"/>
+	  </group>
+	  <field name="state" invisible="1"/>
+          <group colspan="4">
+            <button icon="gtk-cancel" name="act_cancel" special="cancel" states="choose" string="Cancelar" type="object"/>
+            <button icon="gtk-execute" name="act_generate_retention" states="choose" string="Exportar XML" type="object"/>
+	    <button icon="gtk-ok" name="act_cancel" states="generate" string="Cerrar" type="object"/>
+          </group>                    	  
+	</form>
+      </field>
+    </record>
+
+      <record id="action_retention_grouped" model="ir.actions.act_window">
+	<field name="name">Retencion de Varias Facturas</field>
+	<field name="type">ir.actions.act_window</field>
+	<field name="res_model">wizard.retention.grouped</field>
+	<field name="view_type">form</field>
+	<field name="view_mode">form</field>
+	<field name="target">new</field>
+      </record>
+
+      <menuitem name="Retenciones" id="menu_root_retentions" parent="account.menu_finance"/>
+      <menuitem action="action_retention_grouped" id="menu_wizard_grouped_retention" parent="menu_root_retentions"/>
+
+
+    <record id="view_wizard_book_retention_form" model="ir.ui.view">
+      <field name="name">wizard.book.retention.form</field>
+      <field name="model">wizard.book.retention</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Asistente: Reserva de Número de Retención">
+          <group col="4" colspan="4" states="choose" fill="0">
+	    <separator string="Elija el número de retención" colspan="4"/>
+	    <field name="sequence" required="1" on_change="onchange_sequence(sequence)"/>
+	    <field name="book_number" />
+          </group>
+	  <group col="4" colspan="4" states="export" fill="0">
+	    <separator string="Las retenciones se generaron correctamente." colspan="4"/>
+	  </group>
+	  <field name="state" invisible="1"/>
+          <group colspan="4">
+            <button icon="gtk-cancel" name="act_cancel" special="cancel" states="choose" string="Cancelar" type="object"/>
+            <button icon="gtk-execute" name="act_book_number" states="choose" string="Reservar Número" type="object"/>
+	    <button icon="gtk-ok" name="act_cancel" states="export" string="Cerrar" type="object"/>
+          </group>                    	  
+	</form>
+      </field>
+    </record>
+
+      <record id="action_book_retention" model="ir.actions.act_window">
+	<field name="name">Reservar Retención</field>
+	<field name="type">ir.actions.act_window</field>
+	<field name="res_model">wizard.book.retention</field>
+	<field name="view_type">form</field>
+	<field name="view_mode">form</field>
+	<field name="target">new</field>
+      </record>
+
+      <menuitem action="action_book_retention" id="menu_wizard_retention_book" parent="menu_root_retentions"/>
+
+    <!-- Retention number cache -->
+
+    <record id="view_account_retention_cache_tree" model="ir.ui.view">
+      <field name="name">account.retention.cache.tree</field>
+      <field name="model">account.retention.cache</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Numeros de Retenciones Reservadas">
+          <field name="name" select="1"/>
+	  <field name="active"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_account_retention_cache_form" model="ir.ui.view">
+      <field name="name">account.retention.cache.form</field>
+      <field name="model">account.retention.cache</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Número de Retenciones Reservadas">
+          <group col="4" colspan="4" string="Información">
+            <field name="name" required="1"/>
+	    <field name="active"/>
+          </group>
+	</form>
+      </field>
+    </record>
+
+    <record id="action_account_retention_cache" model="ir.actions.act_window">
+      <field name="name">Números de Retención Reservados</field>
+      <field name="res_model">account.retention.cache</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem action="action_account_retention_cache" id="menu_account_retention_cache" parent="menu_root_retentions"/>
+
+
+
+  </data>
+</openerp>

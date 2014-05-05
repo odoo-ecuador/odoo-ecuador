@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+
+    <report auto="False" id="account.account_account_balance" 
+	    menu="False" model="account.account" 
+	    name="account.account.balance1" rml="retention/report/account_balance.rml" string="Trial Balance"/>
+
+    <report auto="False"
+	    id="report_account_move" 
+	    model="account.move"
+	    name="account.move" 
+	    rml="retention/report/report_move.rml" string="Comprobante Contable"/>
+
+    <report auto="False" id="account_bank_statement" model="account.bank.statement"
+            name="bank.statement" rml="retention/report/bank_statement.mako"
+            usage="default" string="Conciliación" header="False" report_type="webkit"/>
+
+    <report auto="False" id="account.retention" model="account.retention"
+            name="account.retention" rml="retention/report/account_retention.mako"
+            usage="default" string="Retención" header="False" report_type="webkit"/>
+    
+    <report auto="False" id="account.account_invoices" model="account.invoice"
+            name="account.invoice2" rml="retention/report/account_invoice.mako"
+            usage="default" string="Factura" header="False" report_type="webkit" menu="False"/>
+
+   <report auto="False" id="account.account_liq" model="account.invoice"
+            name="account.liq" rml="retention/report/account_liq.mako"
+            usage="default" string="Liquidación" header="False" report_type="webkit" menu="False"/>
+
+    <report auto="False" id="analytic.report_herdoiza1" model="account.analytic.account"
+            name="analytic.report.herdoiza1" rml="retention/report/account_analytic_report_herdo1.mako"
+            usage="default" string="Reporte 1" header="False" report_type="webkit"/>
+    
+  </data>
+</openerp>
