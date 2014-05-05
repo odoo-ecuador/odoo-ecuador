@@ -1,8 +1,0 @@
-"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
-"access_account_authorisation","account.authorisation","model_account_authorisation","account.group_account_invoice",1,1,1,0
-"access_account_retention","account.retention","model_account_retention","account.group_account_invoice",1,1,1,0
-"access_account_retention_cache","account.retention.cache","model_account_retention_cache","account.group_account_invoice",1,0,1,0
-"access_account_authorisation1","account.authorisation","model_account_authorisation","base.group_sale_manager",1,1,1,1
-"access_account_authorisation2","account.authorisation","model_account_authorisation","base.group_sale_salesman",1,1,1,1
-"access_account_ats_doc","account.ats.doc","model_account_ats_doc","account.group_account_invoice",1,1,1,0
-"access_account_ats_sustento","account.ats.sustento","model_account_ats_sustento","account.group_account_invoice",1,1,1,0
