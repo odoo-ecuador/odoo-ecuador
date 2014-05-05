@@ -95,7 +95,9 @@ class Partner(osv.osv):
         ]
 
     _sql_constraints = [
-        ('partner_unique', 'unique(ced_ruc,type_ced_ruc,tipo_persona, company_id)',  ustr('El identificador es único.')),
+        ('partner_unique',
+         'unique(ced_ruc,type_ced_ruc,tipo_persona, company_id)',
+         u'El identificador es único.'),
         ]
 
 

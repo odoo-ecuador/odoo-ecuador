@@ -5,28 +5,6 @@
 <!--
    Partner
   -->
-<record id="view_partner_auth_form" model="ir.ui.view">
-  <field name="name">account.partner.auth.form</field>
-  <field name="model">res.partner</field>
-  <field name="inherit_id" ref="base.view_partner_form"/>
-  <field name="arch" type="xml">
-  <notebook position="inside">
-    <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-      <field name="authorisation_ids" nolabel="1" widget="one2many_list" context="{'in_type':'externo', 'default_partner_id': active_id}">
-          <tree string="Autorizaciones">
-        <field name="name" required="1"/>
-        <field name="serie_emision" required="1"/>
-        <field name="serie_entidad" required="1"/>
-        <field name="num_start" required="1"/>
-        <field name="num_end" required="1"/>
-        <field name="expiration_date" required="1"/>
-        <field name="type_id"/>
-        </tree>
-      </field>
-    </page>
-  </notebook>
-  </field>
-</record>
 
 <record id="view_partner2_select" model="ir.ui.view">
   <field name="name">view.partner.select2</field>
@@ -47,12 +25,6 @@
     <xpath expr="/tree/field[@name='name']" position="before">
     <field name="ced_ruc"/>
   </xpath>
-  <xpath expr="/tree/field[@name='city']" position="replace">
-    <field name="credit"/>
-  </xpath>
-  <xpath expr="/tree/field[@name='email']" position="replace">
-    <field name="debit"/>
-  </xpath>
   </field>
 </record>
 
@@ -67,9 +39,9 @@
       <field name="tipo_persona" placeholder="Tipo de Persona"/>
     <newline/>
     </xpath>
-    <xpath expr="//field[@name='property_account_position']" position="attributes">
+    <!-- xpath expr="//field[@name='property_account_position']" position="attributes">
       <attribute name="required">1</attribute>
-    </xpath>
+    </xpath -->
   </field>
 </record>
 
