@@ -25,7 +25,7 @@
     'name' : 'Accounting for Ecuador',
     'version' : '3',
     "category": 'Generic Modules/Accounting',
-    'depends' : ['account_accountant', 'report_webkit',
+    'depends' : ['l10n_ec_authorisation', 'report_webkit'
                 'l10n_ec_partner'],
     'author' : 'Gnuthink Software Cia. Ltda.',
     'description': '''

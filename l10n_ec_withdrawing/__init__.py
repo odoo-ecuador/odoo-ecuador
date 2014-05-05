@@ -21,7 +21,6 @@
 #
 ##############################################################################
 
-import account_ats
 import account
 import retention
 import wizard
