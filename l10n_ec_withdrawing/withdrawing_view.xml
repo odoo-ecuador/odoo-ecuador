@@ -2,7 +2,7 @@
 <openerp>
   <data>
 
-    <record id="account.view_category_property_form" model="ir.ui.view">
+    <!-- record id="account.view_category_property_form" model="ir.ui.view">
       <field name="name">product.category.property.form.inherit</field>
       <field name="model">product.category</field>
       <field name="type">form</field>
@@ -28,7 +28,7 @@
           </group>
         </form>
       </field>
-    </record>
+    </record -->
 
     <!--
        Account Authorisation
@@ -547,7 +547,7 @@
 
     <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/>
 
-    <!-- Retention number cache -->
+    <!-- Retention number cache
 
     <record id="view_account_retention_cache_tree" model="ir.ui.view">
       <field name="name">account.retention.cache.tree</field>
@@ -581,7 +581,7 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree</field>
     </record>
-
+    -->
 
     <record id="view_account_ats_doc_tree" model="ir.ui.view">
       <field name="name">account.ats.doc.tree</field>

@@ -25,16 +25,16 @@
     'name' : 'Accounting for Ecuador',
     'version' : '3',
     "category": 'Generic Modules/Accounting',
-    'depends' : ['l10n_ec_authorisation', 'report_webkit'
+    'depends' : ['l10n_ec_authorisation', 'report_webkit',
                 'l10n_ec_partner'],
     'author' : 'Gnuthink Software Cia. Ltda.',
     'description': '''
     Accounting for Ecuador, retention docuements
     ''',
     'website': 'http://www.gnuthink.com',
-    'update_xml': ['retention_workflow.xml',
-                   'retention_view.xml',
-                   'retention_report.xml',
+    'update_xml': ['invoice_workflow.xml',
+                   'withdrawing_view.xml',
+                   'withdrawing_report.xml',
                    'retention_wizard.xml',
                    ],
     'installable': True,
