@@ -21,6 +21,7 @@
 #
 ##############################################################################
 
+import product
 import account
 import retention
 import wizard

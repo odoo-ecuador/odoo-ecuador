@@ -32,20 +32,8 @@ import decimal_precision as dp
 import netsvc
 
 
-class ProductCategory(osv.Model):
-    _inherit = 'product.category'
+class AccountWithdrawing(osv.osv):
 
-    _columns = dict(
-        taxes_id = fields.many2many('account.tax', 'categ_taxes_rel',
-                                    'prod_id', 'tax_id', 'Customer Taxes',
-                                    domain=[('parent_id','=',False),('type_tax_use','in',['sale','all'])]),
-        supplier_taxes_id = fields.many2many('account.tax',
-                                             'categ_supplier_taxes_rel', 'prod_id', 'tax_id',
-                                             'Supplier Taxes', domain=[('parent_id', '=', False),('type_tax_use','in',['purchase','all'])]),        
-        )
-
-    
-class account_retention(osv.osv):
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -255,7 +243,7 @@ class account_retention(osv.osv):
         return True        
 
 
-class account_invoice_tax(osv.osv):
+class AccountInvoiceTax(osv.osv):
 
     _name = 'account.invoice.tax'
     _inherit = 'account.invoice.tax'
