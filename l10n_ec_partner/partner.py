@@ -84,7 +84,6 @@ class Partner(osv.osv):
         'ced_ruc': fields.char('Cedula/ RUC', size=13, required=True, help='Idenficacion o Registro Unico de Contribuyentes'),
         'type_ced_ruc': fields.selection([('cedula','Cedula'),('ruc','RUC'),('pasaporte','Pasaporte')], 'Tipo ID', required=True),
         'tipo_persona': fields.selection([('6','Persona Natural'),('9','Persona Juridica')], 'Persona', required=True),
-        'authorisation_ids': fields.one2many('account.authorisation', 'partner_id', 'Autorizaciones'),
         }
 
     _defaults = {
