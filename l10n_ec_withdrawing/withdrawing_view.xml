@@ -85,7 +85,7 @@
       <field name="arch" type="xml">
 	<field name="active" position="after">
 	  <field name="tax_group"/>
-          <field name="porcentaje"/>
+          <field name="porcentaje" required="1"/>
 	</field>
       </field>
     </record>
