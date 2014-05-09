@@ -22,10 +22,41 @@
 #                
 #################################################################################
 
+import logging
+
 from osv import osv, fields
 
 
-class ProjectType(osv.Model):
+class AnalyticAccount(osv.osv):
+    _inherit = 'account.analytic.account'
+
+    def name_get(self, cr, uid, ids, context=None):
+        res = []
+        if not ids:
+            return res
+        if isinstance(ids, (int, long)):
+            ids = [ids]
+        for id in ids:
+            elmt = self.browse(cr, uid, id, context=context)
+            res.append((id, '%s - %s' % (elmt.code, elmt.name)))
+        return res    
+
+    _columns = {
+        'type': fields.selection([('view','Analytic View'),
+                                  ('normal','Analytic Account'),
+                                  ('contract','Contract or Project'),
+                                  ('budget', 'Presupuesto'),
+                                  ('template','Template of Contract')],
+                                  'Type of Account',
+                                  required=True,
+                                 help="If you select the View Type, it means you won\'t allow to create journal entries using that account.\n"\
+                                  "The type 'Analytic account' stands for usual accounts that you only want to use in accounting.\n"\
+                                  "If you select Contract or Project, it offers you the possibility to manage the validity and the invoicing options for this account.\n"\
+                                  "The special type 'Template of Contract' allows you to define a template with default data that you can reuse easily."),        
+        }
+
+
+class ProjectType(osv.osv):
     """
     Tipos de proyectos que definen propiedades por defecto
     """
@@ -38,8 +69,36 @@ class ProjectType(osv.Model):
         name = fields.char('Tipo de Proyecto', size=64, required=True, select=True),
         properties_ids = fields.one2many('project.property', 'type_id',
                                          string="Propiedades por Tipo de Proyecto"),
-#        kpi_ids = fields.one2many('project.kpi', 'project_type_id', string='Indicadores'),
+        kpi_ids = fields.one2many('project.project.kpi', 'project_type_id', string='Indicadores'),
         )
+
+
+class ProjectKpi(osv.osv):
+    _name = 'project.kpi'
+
+    def _get_complete_formula(self, cr, uid, ids, fields, args, context):
+        """
+        Metodo que genera el campo que contiene la formula completa
+        """
+        res = {}
+        for obj in self.browse(cr, uid, ids, context):
+            res[obj.id] = ' '.join([obj.numerador, '/', obj.denominador])
+        return res    
+
+    _columns = dict(
+        name = fields.char('Descripción', size=128, required=True),
+        formula = fields.function(_get_complete_formula, method=True, string='Fórmula', type='char'),
+        numerador = fields.char('Numerador', size=128, required=True),
+        denominador = fields.char('Denominador', size=128, required=True),
+        uom_id = fields.many2one('product.uom', 'Unidad de Medida', required=True),
+        project_type_id = fields.many2one('project.type', 'Tipo de Proyecto'),
+        project_id = fields.many2one('project.project', 'Proyecto', required=True),
+        )
+
+    _defaults = dict(
+        numerador = '**',
+        denominador = '**'
+        )    
 
 
 class ProjectEstrategy(osv.osv):
@@ -97,6 +156,9 @@ class ProjectProject(osv.osv):
     STATES = {'open':[('readonly',False)]}
 
     _columns = {
+        'department_id': fields.many2one('hr.department',
+                                         string='Departamento',
+                                         required=True),
         'axis_id': fields.many2one('project.axis',
                                    string='Eje',
                                    required=True,
@@ -108,7 +170,7 @@ class ProjectProject(osv.osv):
         'program_id': fields.many2one('project.program',
                                       string='Programa',
                                       required=True,
-                                      readonly=True, states=STATES)
+                                      readonly=True, states=STATES),
         'background': fields.text('Antecendentes',
                                  required=True,
                                  readonly=True,
@@ -127,5 +189,33 @@ class ProjectProject(osv.osv):
         'type_id': fields.many2one('project.type', 'Tipo de Proyecto',
                                     required=True,
                                     readonly=True,
-                                    states=STATES)                                          
+                                    states=STATES),
+        'kpi_ids': fields.one2many('project.kpi', 'project_id',
+                                   string='Indicadores'),
+        }
+
+    _defaults = {
+        'state': 'draft'
+        }
+
+
+class ProjectTask(osv.osv):
+    _inherit = 'project.task'
+
+    _columns = {
+        'budget_ids': fields.one2many('project.budget.plan',
+                                      'task_id', 'Presupuesto')
+        }
+
+
+class ProjectBudgetPlan(osv.osv):
+    _name = 'project.budget.plan'
+
+    _columns = {
+        'account_id': fields.many2one('account.analytic.account', string='Partida',
+                                      required=True),
+        'name': fields.char('Descripción', size=64, required=True),
+        'amount': fields.float('Monto', digits=(8,2)),
+        'task_id': fields.many2one('project.task', 'Actividad',
+                                   required=True),
         }

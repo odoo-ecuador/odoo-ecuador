@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+    <record id="view_project_kpi_form" model="ir.ui.view">
+      <field name="name">view.project.kpi.form</field>
+      <field name="model">project.kpi</field>
+      <field name="arch" type="xml">
+	<form string="Indicador" version="7.0">
+	  <group>
+	    <group>
+	      <field name="name"/>
+	    </group>
+	    <group>
+	      <field name="uom_id"/>
+	    </group>
+	    <group>
+	      <field name="numerador"/>
+	      <field name="denominador"/>
+	    </group>
+	  </group>
+	</form>
+      </field>
+    </record>
+
+        <record id="project.edit_project" model="ir.ui.view">
+            <field name="name">project.project.form</field>
+            <field name="model">project.project</field>
+            <field name="arch" type="xml">
+                <form string="Project" version="7.0">
+                <header>
+                    <button name="set_open" string="Re-open project" type="object" states="draft,pending" class="oe_highlight" groups="base.group_user"/>
+                    <button name="set_done" string="Close Project" type="object" states="open,pending" groups="base.group_user"/>
+                    <button name="set_open" string="Re-open project" type="object" states="cancelled,close" groups="base.group_user"/>
+                    <button name="set_pending" string="Pending" type="object" states="open" groups="base.group_user"/>
+                    <button string="New Project Based on Template" name="duplicate_template"  type="object" states="template" context="{'parent_id':parent_id}" class="oe_highlight" groups="base.group_user"/>
+                    <button name="reset_project" string="Reset as Project" type="object" states="template" class="oe_highlight" groups="base.group_user"/>
+                    <button name="set_cancel" string="Cancel Project" type="object" states="open,pending" groups="base.group_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,close" statusbar_colors='{"pending":"blue"}' readonly="1"/>
+                </header>
+                <sheet string="Project">
+                    <field name="analytic_account_id" invisible="1" required="0"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Project Name"/>
+                        <h1>
+                            <field name="name" string="Project Name"/>
+                        </h1>
+			<field name="code" required="1"/>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
+                        <button name="%(project.act_project_project_2_project_task_all)d" string="Actividades"
+                            type="action"/>
+                        <button name="attachment_tree_view" string="Documents" type="object"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date_start" required="1"/>
+			    <field name="department_id"/>
+                            <field name="user_id" string="Project Manager" required="1" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+                        </group>
+			<group>
+			  <field name="date" required="1"/>
+			</group>
+                    </group>
+                    <notebook>
+		      <page string="Actividades">
+			<field name="tasks" colspan="4">
+			  <tree string="Planificación de Actividades">
+			    <field name="sequence" widget="handle"/>
+			    <field name="name" string="Actividad"/>
+			    <field name="date_start"/>
+			    <field name="date_deadline"/>
+			    <field name="progress"/>
+			  </tree>
+			</field>
+		      </page>
+		      <page string="Indicadores">
+			<field name="kpi_ids" colspan="4">
+			  <tree string="Indicadores">
+			    <field name="name"/>
+			    <field name="formula"/>
+			    <field name="uom_id"/>
+			  </tree>
+			</field>
+		      </page>
+		      <page string="Información Extra">
+		      </page>
+                      <page string="Project Stages" name="project_stages">
+                        <field name="type_ids"/>
+                      </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" help="Follow this project to automatically track the events associated to tasks and issues of this project." groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="project.view_task_form2" model="ir.ui.view">
+            <field name="name">project.task.form</field>
+            <field name="model">project.task</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Project" version="7.0">
+                    <!-- header>
+                        <button name="project_task_reevaluate" string="Reactivate" type="object"
+                                states="cancelled,done" context="{'button_reactivate':True}" groups="base.group_user"/>
+                        <button name="action_close" string="Done" type="object"
+                                states="draft,open,pending" groups="base.group_user"/>
+                        <button name="do_cancel" string="Cancel Task" type="object"
+                                states="draft,open,pending" groups="base.group_user"/>
+                        <field name="stage_id" widget="statusbar" clickable="True"/>
+                    </header -->
+                    <sheet string="Task">
+                    <h1>
+                        <field name="name" placeholder="Actividad..."/>
+			<field name="state" invisible="1"/>
+			<field name="project_id" invisible="1"/>
+                    </h1>
+                    <group>
+                      <group>
+			<field name="date_start" required="1" attrs="{'readonly':[('state','in',['done', 'cancelled'])]}"/>
+                        <field name="categ_ids" widget="many2many_tags"/>
+                        <field name="progress" widget="progressbar"
+                               groups="project.group_time_work_estimation_tasks" attrs="{'invisible':[('state','=','cancelled')]}"/>
+                      </group>
+		      <group>
+                        <field name="date_deadline" required="1" attrs="{'readonly':[('state','in',['done', 'cancelled'])]}"/>
+		      </group>
+                    </group>
+                    <notebook>
+                        <page string="Planificación Presupuestaria">
+			  <field name="budget_ids">
+			    <tree string="Presupuesto" editable="bottom">
+			      <field name="account_id" domain="[('type','=','budget')]" options="{'quick_create': False, 'no_open': True}" quick_create="False"/>
+			      <field name="name"/>
+			      <field name="amount" sum="TOTAL"/>
+			    </tree>
+			  </field>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="project.view_project" model="ir.ui.view">
+            <field name="name">project.project.tree</field>
+            <field name="model">project.project</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree fonts="bold:message_unread==True" colors="red:date and (date&lt;current_date) and (state == 'open');blue:state in ('draft','pending');grey: state in ('close','cancelled')" string="Projects">
+                    <field name="sequence" widget="handle"/>
+                    <field name="message_unread" invisible="1"/>
+                    <field name="name" string="Project Name"/>
+		    <field name="date_start" />
+                    <field name="date"/>
+                    <field name="user_id" string="Project Manager"/>
+                    <field name="parent_id" string="Parent" invisible="1"/>
+                    <field name="progress_rate" widget="progressbar"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+  </data>
+</openerp>

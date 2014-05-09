@@ -30,8 +30,9 @@
     """,
     'author': 'Cristian Salamea',
     'website': 'https://github.com/openerp-ecuador/openerp-ecuador',
-    'depends': ['project'],
+    'depends': ['hr', 'project'],
     'data': [
+        'view/project_view.xml',
     ],
     'test': [
     ],
