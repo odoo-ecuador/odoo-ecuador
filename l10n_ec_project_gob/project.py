@@ -56,6 +56,20 @@ class AnalyticAccount(osv.osv):
         }
 
 
+class ProjectProperty(osv.osv):
+    """
+    Propiedades de proyectos
+    """
+    _name = 'project.property'
+    _description = 'Propiedades de Proyecto'
+
+    _columns = dict(
+        name = fields.char('Descripción', size=128),
+        project_id = fields.many2one('project.project', string='Proyecto'),
+        type_id = fields.many2one('project.type', string='Tipo'),
+        )
+
+
 class ProjectType(osv.osv):
     """
     Tipos de proyectos que definen propiedades por defecto
@@ -153,7 +167,7 @@ class ProjectProgram(osv.osv):
 class ProjectProject(osv.osv):
     _inherit = 'project.project'
     __logger = logging.getLogger(_inherit)    
-    STATES = {'open':[('readonly',False)]}
+    STATES = {'draft':[('readonly',False)]}
 
     _columns = {
         'department_id': fields.many2one('hr.department',
@@ -197,6 +211,17 @@ class ProjectProject(osv.osv):
     _defaults = {
         'state': 'draft'
         }
+
+    def onchange_pnd(self, cr, uid, ids, type_id):
+        """
+        TODO: ambiguo ?
+        """
+        res = {'value': {'estrategy_id': False,
+                              'program_id': False}}
+        if type_id == 'estrat':
+            res['value'].pop('estrategy_id')
+        return res
+            
 
 
 class ProjectTask(osv.osv):

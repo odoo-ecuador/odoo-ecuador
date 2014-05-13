@@ -32,6 +32,7 @@
     'website': 'https://github.com/openerp-ecuador/openerp-ecuador',
     'depends': ['hr', 'project'],
     'data': [
+        'view/menu.xml',
         'view/project_view.xml',
     ],
     'test': [

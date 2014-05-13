@@ -2,6 +2,214 @@
 <openerp>
   <data>
 
+    <record id="view_project_type_form" model="ir.ui.view">
+      <field name="name">view.project.type.form</field>
+      <field name="model">project.type</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Tipo de Proyectos" version="7.0">
+	  <sheet string="Tipo de Proyecto">
+            <group string="Información de Tipo de Proyectos, este definirá las propiedades por defecto" colspan="4">
+	      <field name="code"/>
+              <field name="name"/>
+            </group>
+            <notebook>
+              <page string="Propiedades">
+		<field name="properties_ids" widget="one2many_list" colspan="4" nolabel="1">
+                  <tree editable="bottom">
+                    <field name="name"/>
+                  </tree>
+		</field>
+              </page>
+            </notebook>
+	  </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_project_type_tree" model="ir.ui.view">
+      <field name="name">view.project.type.tree</field>
+      <field name="model">project.type</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Tipos de Proyectos">
+	  <field name="code"/>
+          <field name="name"/>
+          <field name="properties_ids"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="action_project_type" model="ir.actions.act_window">
+      <field name="name">Tipos de Proyectos</field>
+      <field name="res_model">project.type</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem action="action_project_type" id="menu_project_type" parent="base.menu_definitions" sequence="6"/> <!--  groups="gt_project_project.group_project_all_config"/ -->
+
+    <record id="view_project_axis_form" model="ir.ui.view">
+    <field name="name">view.project.axis.form</field>
+    <field name="model">project.axis</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+      <form string="Eje Estratégico" version="7.0">
+	<sheet string="Eje Estratégico">
+          <separator string="Información Básica" colspan="4"/>
+          <field name="name"/>
+          <group string="Objetivo" colspan="4">
+            <field name="legal_base" nolabel="1"/>
+          </group>
+	</sheet>
+      </form>
+    </field>
+    </record>
+    <record id="view_project_axis_tree" model="ir.ui.view">
+    <field name="name">view.project.axis.tree</field>
+    <field name="model">project.axis</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+	  <tree string="Ejes Estratégicos">
+        <field name="name"/>
+        <field name="legal_base"/>
+      </tree>
+    </field>
+    </record>
+
+    <record id="action_project_axis" model="ir.actions.act_window">
+      <field name="name">Definición de Ejes Estratégicos</field>
+      <field name="res_model">project.axis</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_project_axis_filter" model="ir.ui.view">
+      <field name="name">project.project.select</field>
+      <field name="model">project.axis</field>
+      <field name="type">search</field>
+      <field name="arch" type="xml">
+        <search string="Buscar Ejes Estratégicos">
+          <group>
+            <field name="name" string="Eje Estratégico"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <menuitem action="action_project_axis" id="menu_project_project_axis" parent="menu_development_plan_base" sequence="5"/>
+
+
+    <record id="view_project_estrategy_form" model="ir.ui.view">
+    <field name="name">view.project.estrategy.form</field>
+    <field name="model">project.estrategy</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+      <form string="Definición de Estrategia" version="7.0">
+	<sheet string="Definición de Estrategia">
+	  <group>
+            <field name="sequence"/>
+            <field name="name"/>
+	  </group>
+	  <group>
+            <field name="axis_id"/>
+	  </group>
+	</sheet>
+      </form>
+    </field>
+    </record>
+    <record id="view_project_estrategy_tree" model="ir.ui.view">
+    <field name="name">view.project.estrategy.tree</field>
+    <field name="model">project.estrategy</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+      <tree string="Estrategias de Proyectos">
+        <field name="sequence"/>
+        <field name="name" select="1"/>
+        <field name="axis_id" select="1"/>
+      </tree>
+    </field>
+    </record>
+
+    <record id="action_project_estrategy" model="ir.actions.act_window">
+      <field name="name">Definición de Estrategias</field>
+      <field name="res_model">project.estrategy</field>
+      <field name="view_type">form</field>
+      <field name="domain">[]</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem action="action_project_estrategy" id="menu_project_estrategy_id" parent="menu_development_plan_base" sequence="10"/>
+
+    <record id="view_project_program_form" model="ir.ui.view">
+    <field name="name">view.project.program.form</field>
+    <field name="model">project.program</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+      <form string="Definición de Programas" version="7.0">
+	<sheet string="Definición de Programas">
+	  <group>
+            <separator string="Información" colspan="4"/>
+            <field name="sequence"/>
+            <field name="name"/>
+            <separator string="Información de Unidad" colspan="4"/>
+	  </group>
+	  <group>
+            <field name="estrategy_id" on_change="onchange_estrategy(estrategy_id)"/>
+            <field name="axis_id" widget="selection"/>
+            <group string="Descripción" colspan="4">
+              <field name="description" nolabel="1"/>
+            </group>
+	  </group>
+	</sheet>
+      </form>
+    </field>
+    </record>
+
+    <record id="view_project_program_tree" model="ir.ui.view">
+    <field name="name">view.project.program.tree</field>
+    <field name="model">project.program</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+	  <tree string="Lista Programas">
+        <field name="sequence"/>
+        <field name="name"/>
+        <field name="axis_id"/>
+        <field name="estrategy_id"/>
+      </tree>
+    </field>
+    </record>
+
+    <record id="view_project_program_filter" model="ir.ui.view">
+      <field name="name">project.program.select</field>
+      <field name="model">project.program</field>
+      <field name="type">search</field>
+      <field name="arch" type="xml">
+        <search string="Buscar Programas">
+          <group>
+            <field name="name" string="Programa"/>
+            <field name="axis_id" string="Eje Estratégico"/>
+            <field name="estrategy_id" string="Estrategia"/>
+          </group>
+          <newline/>
+          <group expand="1" string="Agrupar por...">
+            <filter string="Eje Estratégico" icon="terp-gtk-jump-to-rtl" domain="[]" context="{'group_by':'axis_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_project_program" model="ir.actions.act_window">
+      <field name="name">Definición de Programas</field>
+      <field name="res_model">project.program</field>
+      <field name="view_type">form</field>
+      <field name="domain">[]</field>
+      <field name="search_view_id" ref="view_project_program_filter"/>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem action="action_project_program" id="menu_project_program" parent="menu_development_plan_base" sequence="20"/>
+
     <record id="view_project_kpi_form" model="ir.ui.view">
       <field name="name">view.project.kpi.form</field>
       <field name="model">project.kpi</field>
@@ -12,7 +220,7 @@
 	      <field name="name"/>
 	    </group>
 	    <group>
-	      <field name="uom_id"/>
+	      <field name="uom_id" widget="selection"/>
 	    </group>
 	    <group>
 	      <field name="numerador"/>
@@ -45,7 +253,7 @@
                         <h1>
                             <field name="name" string="Project Name"/>
                         </h1>
-			<field name="code" required="1"/>
+			<field name="code" required="1" placeholder="Código de Proyecto"/>
                     </div>
                     <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
                         <button name="%(project.act_project_project_2_project_task_all)d" string="Actividades"
@@ -63,6 +271,26 @@
 			</group>
                     </group>
                     <notebook>
+		      <page string="Información">
+			<group>
+			  <group>
+			    <field name="axis_id" options="{'no_open': True}" widget="selection" on_change="onchange_pnd('axis')"/>
+			    <field name="estrategy_id" domain="[('axis_id','=',axis_id)]" options="{'no_open': True}" on_change="onchange_pnd('estrat')"/>
+			    <field name="program_id" domain="[('estrategy_id','=', estrategy_id)]" options="{'no_open': True}"/>
+			  </group>
+			  <group>
+			    <field name="type_id" options="{'no_open': True}"/>
+			  </group>
+			</group>
+			<label string="Antecedentes"/>
+			<field name="background"/>
+			<label string="Justificación"/>
+			<field name="justification"/>
+			<label string="Objetivo General"/>
+			<field name="general_objective"/>
+			<label string="Objetivos Específicos"/>
+			<field name="specific_objectives"/>
+		      </page>
 		      <page string="Actividades">
 			<field name="tasks" colspan="4">
 			  <tree string="Planificación de Actividades">
