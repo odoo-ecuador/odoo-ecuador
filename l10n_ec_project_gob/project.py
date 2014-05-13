@@ -206,6 +206,13 @@ class ProjectProject(osv.osv):
                                     states=STATES),
         'kpi_ids': fields.one2many('project.kpi', 'project_id',
                                    string='Indicadores'),
+        'state': fields.selection([('template', 'Template'),
+                                   ('draft','Planificando'),
+                                   ('ok','Aprobado'),                                   
+                                   ('open','En Ejecución'),
+                                   ('cancelled', 'Cancelled'),
+                                   ('pending','Pending'),
+                                   ('close','Terminado')], 'Status', required=True,),                                   
         }
 
     _defaults = {

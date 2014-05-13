@@ -237,14 +237,15 @@
             <field name="arch" type="xml">
                 <form string="Project" version="7.0">
                 <header>
-                    <button name="set_open" string="Iniciar" type="object" states="draft,pending" class="oe_highlight" groups="base.group_user"/>
-                    <button name="set_done" string="Close Project" type="object" states="open,pending" groups="base.group_user"/>
-                    <button name="set_open" string="Re-open project" type="object" states="cancelled,close" groups="base.group_user"/>
-                    <button name="set_pending" string="Pending" type="object" states="open" groups="base.group_user"/>
-                    <button string="New Project Based on Template" name="duplicate_template"  type="object" states="template" context="{'parent_id':parent_id}" class="oe_highlight" groups="base.group_user"/>
-                    <button name="reset_project" string="Reset as Project" type="object" states="template" class="oe_highlight" groups="base.group_user"/>
-                    <button name="set_cancel" string="Cancel Project" type="object" states="open,pending" groups="base.group_user"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,open,close" statusbar_colors='{"pending":"blue"}' readonly="1"/>
+		  <button name="set_ok" string="Aprobado" confirm="Esta seguro de aprobar ?" type="object" states="draft" class="oe_highlight" groups="l10n_ec_project_gob.group_project_planning"/>
+                  <button name="set_open" string="Iniciar" type="object" states="ok,pending" class="oe_highlight" groups="base.group_user"/>
+                  <button name="set_done" string="Close Project" type="object" states="open,pending" groups="base.group_user"/>
+                  <button name="set_open" string="Re-open project" type="object" states="cancelled,close" groups="base.group_user"/>
+                  <button name="set_pending" string="Pending" type="object" states="open" groups="base.group_user"/>
+                  <button string="New Project Based on Template" name="duplicate_template"  type="object" states="template" context="{'parent_id':parent_id}" class="oe_highlight" groups="base.group_user"/>
+                  <button name="reset_project" string="Reset as Project" type="object" states="template" class="oe_highlight" groups="base.group_user"/>
+                  <button name="set_cancel" string="Cancel Project" type="object" states="open,pending" groups="base.group_user"/>
+                  <field name="state" widget="statusbar" statusbar_visible="draft,ok,open,close" statusbar_colors='{"pending":"blue"}' readonly="1"/>
                 </header>
                 <sheet string="Project">
                     <field name="analytic_account_id" invisible="1" required="0"/>
@@ -264,7 +265,7 @@
                         <group>
                             <field name="date_start" required="1"/>
 			    <field name="department_id"/>
-                            <field name="user_id" string="Project Manager" required="1" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+                            <field name="user_id" string="Project Manager" required="1" options="{'no_open': True}" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
                         </group>
 			<group>
 			  <field name="date" required="1"/>
