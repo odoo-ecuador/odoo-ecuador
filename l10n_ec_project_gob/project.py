@@ -64,7 +64,7 @@ class ProjectProperty(osv.osv):
     _description = 'Propiedades de Proyecto'
 
     _columns = dict(
-        name = fields.char('Descripción', size=128),
+        name = fields.char('Descripción', size=128, required=True),
         project_id = fields.many2one('project.project', string='Proyecto'),
         type_id = fields.many2one('project.type', string='Tipo'),
         )
@@ -212,7 +212,8 @@ class ProjectProject(osv.osv):
                                    ('open','En Ejecución'),
                                    ('cancelled', 'Cancelled'),
                                    ('pending','Pending'),
-                                   ('close','Terminado')], 'Status', required=True,),                                   
+                                   ('close','Terminado')], 'Status', required=True,),
+        'properties_ids': fields.one2many('project.property', 'project_id', 'Propiedades'),
         }
 
     _defaults = {

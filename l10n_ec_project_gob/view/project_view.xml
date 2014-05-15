@@ -313,6 +313,13 @@
 			</field>
 		      </page>
 		      <page string="Información Extra">
+			<group string="Propiedades" colspan="4">
+			  <field name="properties_ids">
+			    <tree string="Propiedades de Proyecto" editable="bottom">
+			      <field name="name"/>
+			    </tree>
+			  </field>
+			</group>
 		      </page>
                       <page string="Project Stages" name="project_stages">
                         <field name="type_ids"/>
