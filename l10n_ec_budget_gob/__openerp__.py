@@ -34,7 +34,8 @@
         'data/budget.post.csv'        
     ],
     'depends' : [
-        'hr'
+        'hr',
+        'project'
     ],
     'js': [
     ],
