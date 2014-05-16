@@ -12,7 +12,7 @@ class BudgetBudget(osv.osv):
     _columns = {
         'code': fields.char('Código', size=64, required=True),
         'name': fields.char('Partida', size=128, required=True),
-        'department_id': fields.many2one('hr.deparment',
+        'department_id': fields.many2one('hr.department',
                                          string='Departamento',
                                          required=True),
         'date_start': fields.date('Fecha Inicio', required=True),
@@ -79,9 +79,9 @@ class BudgetItem(osv.osv):
                                           required=True),
         'budget_id': fields.many2one('budget.budget',
                                      string='Presupuesto',
-                                     required=True,
                                      ondelete='cascade',
-                                     select=True)
+                                     select=True),
+        'planned_amount': fields.float('Monto Planificado', digits=(16,2)),
         }
 
     _defaults = {

@@ -22,7 +22,7 @@
 #                
 #################################################################################
 {
-    'name': 'l10n_ec_project_gob',
+    'name': 'Project for Government',
     'version': '0.1',
     'category': 'Government',
     'description': """
@@ -36,6 +36,9 @@
         'security/security.xml',
         'view/menu.xml',
         'view/project_view.xml',
+#        'data/project.axis.csv',
+#        'data/project.estrategy.csv',
+#        'data/project.program.csv'
     ],
     'test': [
     ],

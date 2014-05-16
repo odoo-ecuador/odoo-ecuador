@@ -30,7 +30,7 @@
         'security/budget_security.xml',
 #        'security/ir.model.access.csv',
         'view/l10n_ec_budget_gob_view.xml',
-        'report/budget_gob_report.xml',
+        'budget_gob_report.xml',
         'data/budget.post.csv'        
     ],
     'depends' : [
