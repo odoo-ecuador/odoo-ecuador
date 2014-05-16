@@ -30,8 +30,9 @@
     """,
     'author': 'Cristian Salamea',
     'website': 'https://github.com/openerp-ecuador/openerp-ecuador',
-    'depends': ['project',
-                'l10n_ec_budget_gob'],
+    'depends': [
+                'l10n_ec_budget_gob'
+    ],
     'data': [
         'security/security.xml',
         'view/menu.xml',
