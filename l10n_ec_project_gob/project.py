@@ -229,26 +229,4 @@ class ProjectProject(osv.osv):
         if type_id == 'estrat':
             res['value'].pop('estrategy_id')
         return res
-            
 
-
-class ProjectTask(osv.osv):
-    _inherit = 'project.task'
-
-    _columns = {
-        'budget_ids': fields.one2many('project.budget.plan',
-                                      'task_id', 'Presupuesto')
-        }
-
-
-class ProjectBudgetPlan(osv.osv):
-    _name = 'project.budget.plan'
-
-    _columns = {
-        'account_id': fields.many2one('account.analytic.account', string='Partida',
-                                      required=True),
-        'name': fields.char('Descripción', size=64, required=True),
-        'amount': fields.float('Monto', digits=(8,2)),
-        'task_id': fields.many2one('project.task', 'Actividad',
-                                   required=True),
-        }

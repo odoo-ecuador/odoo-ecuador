@@ -370,9 +370,9 @@
                         <page string="Planificación Presupuestaria">
 			  <field name="budget_ids">
 			    <tree string="Presupuesto" editable="bottom">
-			      <field name="account_id" domain="[('type','=','budget')]" options="{'quick_create': False, 'no_open': True}" quick_create="False"/>
+			      <field name="general_budget_id" domain="[('type','=','normal')]" options="{'quick_create': False, 'no_open': True}" quick_create="False"/>
 			      <field name="name"/>
-			      <field name="amount" sum="TOTAL"/>
+			      <field name="planned_amount" sum="TOTAL"/>
 			    </tree>
 			  </field>
                         </page>

@@ -30,11 +30,14 @@
     """,
     'author': 'Cristian Salamea',
     'website': 'https://github.com/openerp-ecuador/openerp-ecuador',
-    'depends': ['hr', 'project'],
+    'depends': ['hr',
+                'project',
+                'account_budget'],
     'data': [
         'security/security.xml',
         'view/menu.xml',
         'view/project_view.xml',
+        'data/account.budget.post.csv'
     ],
     'test': [
     ],
