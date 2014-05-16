@@ -252,9 +252,9 @@
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" string="Project Name"/>
                         <h1>
-                            <field name="name" string="Project Name"/>
+                            <field name="name" string="Project Name" attrs="{'readonly': [('state','!=','draft')]}"/>
                         </h1>
-			<field name="code" required="1" placeholder="Código de Proyecto"/>
+			<field name="code" required="1" placeholder="Código de Proyecto" attrs="{'readonly': [('state','!=','draft')]}"/>
                     </div>
                     <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
                         <button name="%(project.act_project_project_2_project_task_all)d" string="Actividades"
@@ -263,48 +263,51 @@
                     </div>
                     <group>
                         <group>
-                            <field name="date_start" required="1"/>
-			    <field name="department_id"/>
-                            <field name="user_id" string="Project Manager" required="1" options="{'no_open': True}" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+                            <field name="date_start" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+			    <field name="department_id" options="{'no_open': True}" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="user_id" string="Project Manager" required="1" options="{'no_open': True}"/>
                         </group>
 			<group>
-			  <field name="date" required="1"/>
+			  <field name="date" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
 			</group>
                     </group>
                     <notebook>
 		      <page string="Información">
 			<group>
 			  <group>
-			    <field name="axis_id" options="{'no_open': True}" widget="selection" on_change="onchange_pnd('axis')"/>
-			    <field name="estrategy_id" domain="[('axis_id','=',axis_id)]" options="{'no_open': True}" on_change="onchange_pnd('estrat')"/>
-			    <field name="program_id" domain="[('estrategy_id','=', estrategy_id)]" options="{'no_open': True}"/>
+			    <field name="axis_id" options="{'no_open': True}" widget="selection" on_change="onchange_pnd('axis')" attrs="{'readonly': [('state','!=','draft')]}"/>
+			    <field name="estrategy_id" domain="[('axis_id','=',axis_id)]" options="{'no_open': True}" 
+				   on_change="onchange_pnd('estrat')" attrs="{'readonly': [('state','!=','draft')]}"/>
+			    <field name="program_id" domain="[('estrategy_id','=', estrategy_id)]" 
+				   options="{'no_open': True}" attrs="{'readonly': [('state','!=','draft')]}"/>
 			  </group>
 			  <group>
 			    <field name="type_id" options="{'no_open': True}"/>
 			  </group>
 			</group>
-			<label string="Antecedentes"/>
-			<field name="background"/>
+			<label string="Antecedentes" />
+			<field name="background" attrs="{'readonly': [('state','!=','draft')]}"/>
 			<label string="Justificación"/>
-			<field name="justification"/>
+			<field name="justification" attrs="{'readonly': [('state','!=','draft')]}"/>
 			<label string="Objetivo General"/>
-			<field name="general_objective"/>
+			<field name="general_objective" attrs="{'readonly': [('state','!=','draft')]}"/>
 			<label string="Objetivos Específicos"/>
-			<field name="specific_objectives"/>
+			<field name="specific_objectives" attrs="{'readonly': [('state','!=','draft')]}"/>
 		      </page>
 		      <page string="Actividades">
-			<field name="tasks" colspan="4">
+			<field name="tasks" colspan="4" attrs="{'readonly': [('state','!=','draft')]}">
 			  <tree string="Planificación de Actividades">
 			    <field name="sequence" widget="handle"/>
 			    <field name="name" string="Actividad"/>
 			    <field name="date_start"/>
 			    <field name="date_deadline"/>
 			    <field name="progress"/>
+			    <field name="amount_budget"/>
 			  </tree>
 			</field>
 		      </page>
 		      <page string="Indicadores">
-			<field name="kpi_ids" colspan="4">
+			<field name="kpi_ids" colspan="4" attrs="{'readonly': [('state','!=','draft')]}">
 			  <tree string="Indicadores">
 			    <field name="name"/>
 			    <field name="formula"/>
@@ -314,14 +317,22 @@
 		      </page>
 		      <page string="Información Extra">
 			<group string="Propiedades" colspan="4">
-			  <field name="properties_ids">
+			  <field name="properties_ids" nolabel="1" attrs="{'readonly': [('state','!=','draft')]}">
 			    <tree string="Propiedades de Proyecto" editable="bottom">
 			      <field name="name"/>
+			      <field name="value"/>
 			    </tree>
 			  </field>
 			</group>
+			<group string="Condiciones de Cierre" colspan="4">
+			  <field name="condition_ids" nolabel="1" attrs="{'readonly': [('state','!=','draft')]}">
+			    <tree editable="bottom">
+			      <field name="name"/>
+			    </tree>
+			  </field>			  
+			</group>
 		      </page>
-                      <page string="Project Stages" name="project_stages">
+                      <page string="Project Stages" name="project_stages" attrs="{'readonly': [('state','!=','draft')]}">
                         <field name="type_ids"/>
                       </page>
                     </notebook>

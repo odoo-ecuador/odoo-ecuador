@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from osv import osv, fields
+import openerp.addons.decimal_precision as dp
+
+_logger = logging.getLogger(__name__)
 
 
 class BudgetItem(osv.osv):
@@ -19,7 +24,9 @@ class ProjectTask(osv.osv):
     _columns = {
         'budget_ids': fields.one2many('budget.item',
                                       'task_id',
-                                      string='Presupuesto')
+                                      string='Presupuesto'),
+        'amount_budget': fields.float('Total Presupuesto',
+                                      digits_compute=dp.get_precision('Budget'))
         }
 
         

@@ -65,9 +65,20 @@ class ProjectProperty(osv.osv):
 
     _columns = dict(
         name = fields.char('Descripción', size=128, required=True),
+        value = fields.char('Valor', size=128, required=True),
         project_id = fields.many2one('project.project', string='Proyecto'),
         type_id = fields.many2one('project.type', string='Tipo'),
         )
+
+
+class ProjectCondition(osv.osv):
+    _name = 'project.condition'
+
+    _columns = {
+        'name': fields.char('Condición', size=64, required=True),
+        'done': fields.char('Realizado ?'),
+        'project_id': fields.many2one('project.project', 'Proyecto')
+        }
 
 
 class ProjectType(osv.osv):
@@ -214,6 +225,7 @@ class ProjectProject(osv.osv):
                                    ('pending','Pending'),
                                    ('close','Terminado')], 'Status', required=True,),
         'properties_ids': fields.one2many('project.property', 'project_id', 'Propiedades'),
+        'condition_ids': fields.one2many('project.condition', 'project_id', 'Condiciones de Cierre')
         }
 
     _defaults = {
@@ -229,4 +241,24 @@ class ProjectProject(osv.osv):
         if type_id == 'estrat':
             res['value'].pop('estrategy_id')
         return res
+
+    def check_data(self, cr, uid, ids, context=None):
+        """
+        Validacion de informacion para aprobacion:
+        * Ingreso de actividades
+        * Ingreso de partidas, si lo necesita
+        * Ingreso de indicadores
+        * Ingreso de condiciones de cierre
+        *       
+        """
+        return True
+
+    def set_ok(self, cr, uid, ids, context=None):
+        """
+        Proyecto aprobado
+        TODO: revision de informacion ingresada ? 
+        """
+        self.check_data(cr, uid, ids, context)
+        self.write(cr, uid, ids, {'state': 'ok'})
+            
 
