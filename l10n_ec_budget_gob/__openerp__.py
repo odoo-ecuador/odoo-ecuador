@@ -28,10 +28,12 @@
     'website': 'www.ayni.io',
     'data': [
         'security/budget_security.xml',
+        'process/budget_workflow.xml',
 #        'security/ir.model.access.csv',
         'view/l10n_ec_budget_gob_view.xml',
         'budget_gob_report.xml',
-        'data/budget.post.csv'        
+        'data/budget_sequence.xml',
+        'data/budget.post.csv'
     ],
     'depends' : [
         'hr',

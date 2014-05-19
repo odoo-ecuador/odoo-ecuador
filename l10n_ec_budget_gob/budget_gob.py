@@ -135,33 +135,30 @@ class BudgetCertificate(osv.Model):
             number = '/'
             if r.state in ['request','certified']:
                 number = r.name
-            elif r.state == 'compromised':
+            elif r.state == 'commited':
                 number = r.number
-            texto = ' '.join([number,' ', r.notes])
-            texto = texto[:64]
-            res.append((r.id, texto))
+            res.append((r.id, number))
         return res
 
     def unlink(self, cr, uid, ids, context):
         for obj in self.browse(cr, uid, ids, context):
             if obj.state not in ['draft']:
                 raise osv.except_osv('Error', 'No se permite eliminar registros.')
-        return super(CrossoveredBudgetCertificate, self).unlink(cr, uid, ids, context)
+        return super(BudgetCertificate, self).unlink(cr, uid, ids, context)
 
-    def set_sequence(self, cr, uid, vals, context=None):
+    def set_sequence(self, cr, uid, ids, sequence='request'):
         """
-        Redefinición de metodo create de objeto para
-        asignar una secuencia al documento
+        Asigna el numero de secuencia para el documento.
         """
-        if context is None:
-            context = {}
         seq_obj = self.pool.get('ir.sequence')
-        seq_num = seq_obj.get(cr, uid, 'budget.certificate')
-        if not seq_num:
+        number = seq_obj.get(cr, uid, 'budget.certificate.%s'%sequence)
+        field = 'name'
+        if not number:
             raise osv.except_osv('Error', 'No ha configurado la secuencia para este documento.')
-        vals['name'] = seq_num
-        res_id = super(CrossoveredBudgetCertificate, self).create(cr, uid, vals, context)
-        return res_id
+        if sequence == 'commited':
+            field = 'number'
+        self.write(cr, uid, ids, {field: number})
+        return True
 
     def _get_user(self, cr, uid, context=None):
         return uid
@@ -184,12 +181,6 @@ class BudgetCertificate(osv.Model):
                 res[obj.id]['amount_commited'] += line.amount_commited
         return res
 
-    def _get_invoices(self, cr, uid, ids, context):
-        result = {}
-        for obj in self.pool.get('account.invoice').browse(cr, uid, ids, context):
-            result[obj.certificate_id.id] = True
-        return result.keys()
-
     def _compute_budget(self, cr, uid, ids, fields, args, context):
         """
         Metodo de calculo de total devengado para el compromiso
@@ -204,10 +195,10 @@ class BudgetCertificate(osv.Model):
         return res
 
     STORE_VAR = {'budget.certificate': (lambda self, cr, uid, ids, c={}: ids, ['line_ids'], 10),
-                 'budget.certificate.line': (_get_certificate_lines,
-                                                         ['amount','amount_certified','amount_commited','budget_line_id','state'], 10)}
-    STORE_INV = {'account.invoice': (_get_invoices, ['state'], 10),
-                 'budget.certificate': (lambda self, cr, uid, ids, c=None: ids, ['invoice_ids'], 10)}
+                 'budget.certificate.line': (
+                     _get_certificate_lines,
+                    ['amount','amount_certified','amount_commited','budget_id','state'],
+                     10)}
 
     _columns = dict(
         name = fields.char('Nro. de Solicitud',
@@ -223,7 +214,7 @@ class BudgetCertificate(osv.Model):
         state = fields.selection([('draft', 'Borrador'),
                                   ('request', 'Solicitado'),
                                   ('certified', 'Certificado'),
-                                  ('compromised', 'Compromiso'),
+                                  ('commited', 'Compromiso'),
                                   ('anulado', 'Anulado'),                                  
                                   ('cancel', 'Rechazado')],
                                  string='Estado',
@@ -290,9 +281,9 @@ class BudgetCertificate(osv.Model):
         for obj in self.browse(cr, uid, ids):
             if obj.project_id.type_budget == 'ingreso':
                 return True
-            if obj.state == 'compromised' and not obj.employee_id and not obj.partner_id:
+            if obj.state == 'commited' and not obj.employee_id and not obj.partner_id:
                 raise osv.except_osv('Error', 'No ha ingresado un proveedor en el documento.')
-            if obj.state=='compromised' and not obj.date_compromised:
+            if obj.state=='commited' and not obj.date_commited:
                 raise osv.except_osv('Error', 'No ha ingresado la fecha de compromiso.')
         return True
 
@@ -308,9 +299,26 @@ class BudgetCertificate(osv.Model):
         user_id = lambda self, cr, uid, context: uid,
         state = 'draft',
         date = time.strftime('%Y-%m-%d %H:%M:%S'),
-        )    
+        )
 
-    def action_confirm(self, cr, uid, ids, context=None):
+    def action_request(self, cr, uid, ids, context=None):
+        """
+        TODO:
+        """
+        if context is None:
+            context = {}
+        line_obj = self.pool.get('budget.certificate.line')
+        for obj in self.browse(cr, uid, ids, context):
+            lines = [line.id for line in obj.line_ids]
+            if not lines:
+                raise osv.except_osv('Alerta', 'No ha ingresado el detalle del documento.')
+            line_obj.write(cr, uid, lines, {'state': 'request'})
+        self.set_sequence(cr, uid, ids, sequence='request')
+        self.write(cr, uid, ids, {'state': 'request', 'date': time.strftime('%Y-%m-%d %H:%M:%S')})
+        self.__logger.info("Prespuesto referencial emitido")
+        return True    
+
+    def action_certified(self, cr, uid, ids, context=None):
         """
         Accion de confirmación de la solicitud de presupuesto
         referencial
@@ -322,7 +330,7 @@ class BudgetCertificate(osv.Model):
                 'date_confirmed': time.strftime('%Y-%m-%d')}
         for obj in self.browse(cr, uid, ids, context):
             line_ids = [line.id for line in obj.line_ids]
-            line_obj.action_confirm(cr, uid, line_ids)
+            line_obj.write(cr, uid, line_ids, {'state': 'certified'})
         self.write(cr, uid, ids, data)
         return True
 
@@ -354,8 +362,8 @@ class BudgetCertificate(osv.Model):
         line_obj = self.pool.get('budget.certificate.line')
         for obj in self.browse(cr, uid, ids, context):
             line_ids = [line.id for line in obj.line_ids]
-            line_obj.write(cr, uid, line_ids, {'state': 'compromised'})
-            self.write(cr, uid, obj.id, {'state': 'compromised', 'date_compromised': time.strftime('%Y-%m-%d')})
+            line_obj.write(cr, uid, line_ids, {'state': 'commited'})
+            self.write(cr, uid, obj.id, {'state': 'commited', 'date_commited': time.strftime('%Y-%m-%d')})
         return True        
 
     def action_certified(self, cr, uid, ids ,context=None):
@@ -367,26 +375,15 @@ class BudgetCertificate(osv.Model):
         """
         return True
 
-    def action_request(self, cr, uid, ids, context=None):
-        if context is None:
-            context = {}
-        line_obj = self.pool.get('budget.certificate.line')
-        for obj in self.browse(cr, uid, ids, context):
-            lines = [line.id for line in obj.line_ids]
-            line_obj.change_state(cr, uid, lines, 'request')
-        self.write(cr, uid, ids, {'state': 'request', 'date': time.strftime('%Y-%m-%d %H:%M:%S')})
-        self.__logger.info("Prespuesto referencial emitido")
-        return True
-
     def action_cancel(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
         line_obj = self.pool.get('budget.certificate.line')
         for obj in self.browse(cr, uid, ids, context):
             lines = [line.id for line in obj.line_ids]
-            line_obj.change_state(cr, uid, lines, 'cancel')
+            line_obj.write(cr, uid, lines, {'state':'cancel'})
         self.write(cr, uid, ids, {'state': 'cancel'})
-        self.__logger.info("Presupuesto referencial rechazado")
+        self.__logger.info("Presupuesto referencial anulado")
         return True
 
     def action_anular(self, cr, uid, ids, context=None):
@@ -430,6 +427,20 @@ class BudgetCertificateLine(osv.osv):
         'amount_certified': fields.float('Monto Certificado',
                                          digits_compute=DP),
         'amount_commited': fields.float('Monto Comprometido',
-                                        digits_compute=DP)
+                                        digits_compute=DP),
+        'state':  fields.selection(
+            [('draft', 'Borrador'),
+            ('request', 'Solicitado'),
+            ('certified', 'Certificado'),
+            ('commited', 'Compromiso'),
+            ('anulado', 'Anulado'),                                  
+            ('cancel', 'Rechazado')],
+            string='Estado',
+            required=True
+        ),
+        }
+
+    _defaults = {
+        'state': 'draft'
         }
 

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+    <record id="wkf" model="workflow">
+      <field name="name">Documento Presupuestario</field>
+      <field name="osv">budget.certificate</field>
+      <field name="on_create">True</field>
+    </record>
+
+    <record id="act_draft" model="workflow.activity">
+      <field name="wkf_id" ref="wkf"/>
+      <field name="flow_start">True</field>
+      <field name="name">draft</field>
+    </record>
+
+    <record id="act_request" model="workflow.activity">
+      <field name="wkf_id" ref="wkf"/>
+      <field name="name">request</field>
+      <field name="action">action_request()</field>
+      <field name="kind">function</field>
+    </record>
+
+    <record id="act_certified" model="workflow.activity">
+      <field name="wkf_id" ref="wkf"/>
+      <field name="name">certified</field>
+      <field name="action">action_certified()</field>
+      <field name="kind">function</field>
+    </record>
+
+    <record id="act_commited" model="workflow.activity">
+      <field name="wkf_id" ref="wkf"/>
+      <field name="name">commited</field>
+      <field name="action">action_commited()</field>
+      <field name="kind">function</field>
+    </record>
+
+    <record id="act_cancel" model="workflow.activity">
+      <field name="wkf_id" ref="wkf"/>
+      <field name="name">cancel</field>
+      <field name="action">action_cancel()</field>
+      <field name="kind">function</field>
+    </record>
+
+    <!-- Transiciones -->
+
+    <record id="t_request" model="workflow.transition">
+      <field name="act_from" ref="act_draft"/>
+      <field name="act_to" ref="act_request"/>
+      <field name="signal">signal_request</field>
+    </record>
+
+    <record id="t_certified" model="workflow.transition">
+      <field name="act_from" ref="act_request"/>
+      <field name="act_to" ref="act_certified"/>
+      <field name="signal">signal_certified</field>
+    </record>
+
+    <record id="t_commited" model="workflow.transition">
+      <field name="act_from" ref="act_certified"/>
+      <field name="act_to" ref="act_commited"/>
+      <field name="signal">signal_commited</field>
+    </record>
+
+    <record id="t_cancel0" model="workflow.transition">
+      <field name="act_from" ref="act_draft"/>
+      <field name="act_to" ref="act_cancel"/>
+      <field name="signal">signal_cancel</field>
+    </record>
+
+    <record id="t_cancel1" model="workflow.transition">
+      <field name="act_from" ref="act_request"/>
+      <field name="act_to" ref="act_cancel"/>
+      <field name="signal">signal_cancel</field>
+    </record>
+
+    <record id="t_cancel2" model="workflow.transition">
+      <field name="act_from" ref="act_certified"/>
+      <field name="act_to" ref="act_cancel"/>
+      <field name="signal">signal_cancel</field>
+    </record>
+
+  </data>
+</openerp>
