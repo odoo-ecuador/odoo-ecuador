@@ -12,15 +12,29 @@ class BudgetBudget(osv.osv):
     Implementacion de clase de Presupuesto
     """
     _name = 'budget.budget'
+    _order = 'code'
 
     _columns = {
         'code': fields.char('Código', size=64, required=True),
-        'name': fields.char('Partida', size=128, required=True),
+        'name': fields.char('Presupuesto', size=128, required=True),
         'department_id': fields.many2one('hr.department',
                                          string='Departamento',
                                          required=True),
         'date_start': fields.date('Fecha Inicio', required=True),
         'date_end': fields.date('Fecha Fin', required=True),
+        'state': fields.selection(
+            [('draft','Borrador'),
+            ('open','Ejecución'),
+            ('close','Cerrado')],
+            string='Estado',
+            required=True,
+            readonly=True
+        ),
+        'budget_lines': fields.one2many('budget.item', 'budget_id', 'Detalle de Presupuesto')
+        }
+
+    _defaults = {
+        'state': 'draft'
         }
 
 
@@ -65,6 +79,7 @@ class BudgetItem(osv.osv):
     Instancia de una Partida
     """
     _name = 'budget.item'
+    DP = dp.get_precision('Budget')
 
     _columns = {
         'code': fields.char('Código', size=16),
@@ -85,7 +100,7 @@ class BudgetItem(osv.osv):
                                      string='Presupuesto',
                                      ondelete='cascade',
                                      select=True),
-        'planned_amount': fields.float('Monto Planificado', digits=(16,2)),
+        'planned_amount': fields.float('Asignación Inicial', digits_compute=DP),
         }
 
     _defaults = {

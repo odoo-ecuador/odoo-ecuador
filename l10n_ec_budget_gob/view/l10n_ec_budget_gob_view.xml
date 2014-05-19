@@ -3,7 +3,83 @@
   <data>
 
     <menuitem id="menu_main_budget_gob" name="Gestión de Presupuestos" groups="group_budget_manager,group_budget_user"/>
+    <menuitem id="menu_budget_budget_parent" name="Presupuestos" groups="group_budget_manager" parent="menu_main_budget_gob" sequence="10"/>
+    <menuitem id="menu_budget_document" name="Documentos Presupuestarios" groups="group_budget_manager" parent="menu_main_budget_gob" sequence="30"/>
+    <menuitem id="menu_budget_configuration" name="Configuración" groups="group_budget_manager" parent="menu_main_budget_gob" sequence="50"/>
 
+    <record id="view_budget_budget_form" model="ir.ui.view">
+      <field name="name">view.budget.budget.form</field>
+      <field name="model">budget.budget</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Presupuesto Institucional" version="7.0">
+	  <header>
+	    <button name="action_ok" string="Aprobado" confirm="Esta seguro de aprobar ?" type="object" states="draft" class="oe_highlight" groups="l10n_ec_budget_gob.group_budget_manager"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,open,close" statusbar_colors='{"open":"blue"}'/>
+	  </header>
+	  <sheet string="Presupuesto">
+            <div class="oe_title">
+              <label for="name" class="oe_edit_only" string="Presupuesto"/>
+              <h1>
+                <field name="name" string="Presupuesto" attrs="{'readonly': [('state','!=','draft')]}"/>
+              </h1>
+	      <field name="code" required="1" placeholder="Código de Presupuesto" attrs="{'readonly': [('state','!=','draft')]}"/>
+            </div>
+	    <group>
+	      <group>
+		<field name="date_start"/>
+		<field name="department_id" options="{'no_open': True}"/>
+	      </group>
+	      <group>
+		<field name="date_end"/>
+	      </group>
+	    </group>
+	    <group string="Detalle de Presupuesto" colspan="4">
+	      <field name="budget_lines" nolabel="1">
+		<field name="code"/>
+		<field name="budget_post_id"/>
+		<field name="planned_amount" sum="TOTAL ASIGNADO"/>
+	      </field>
+	    </group>
+	  </sheet>
+	</form>
+      </field>
+    </record>
+
+    <record id="view_budget_budget_tree" model="ir.ui.view">
+      <field name="name">view.budget.budget.tree</field>
+      <field name="model">budget.budget</field>
+      <field name="arch" type="xml">
+	<tree string="Presupuesto Institucional">
+	  <field name="code"/>
+	  <field name="name"/>
+	  <field name="department_id"/>
+	  <field name="date_start"/>
+	  <field name="date_end"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_budget_budget_search" model="ir.ui.view">
+      <field name="name">view.budget.budget.search</field>
+      <field name="model">budget.budget</field>
+      <field name="arch" type="xml">
+	<search string="Buscar Presupuestos">
+	  <field name="code"/>
+	  <field name="name"/>
+	  <field name="department_id"/>
+	</search>
+      </field>
+    </record>
+
+    <record id="action_budget_budget" model="ir.actions.act_window">
+      <field name="name">Gestión de Presupuestos</field>
+      <field name="res_model">budget.budget</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_budget_budget" action="action_budget_budget" parent="menu_budget_budget_parent"/>
 
   </data>
 </openerp>
