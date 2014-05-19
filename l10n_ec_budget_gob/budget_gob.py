@@ -214,7 +214,7 @@ class BudgetCertificate(osv.Model):
         state = fields.selection([('draft', 'Borrador'),
                                   ('request', 'Solicitado'),
                                   ('certified', 'Certificado'),
-                                  ('commited', 'Compromiso'),
+                                  ('commited', 'Comprometido'),
                                   ('anulado', 'Anulado'),                                  
                                   ('cancel', 'Rechazado')],
                                  string='Estado',
@@ -366,15 +366,6 @@ class BudgetCertificate(osv.Model):
             self.write(cr, uid, obj.id, {'state': 'commited', 'date_commited': time.strftime('%Y-%m-%d')})
         return True        
 
-    def action_certified(self, cr, uid, ids ,context=None):
-        """
-        Metodo que implementa el certificar los valores solicitados
-        en las partidas presupuestarias de las actividades seleccionadas
-        del proyecto.
-        Cambia de estado a certified a self y a line_ids
-        """
-        return True
-
     def action_cancel(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -432,7 +423,7 @@ class BudgetCertificateLine(osv.osv):
             [('draft', 'Borrador'),
             ('request', 'Solicitado'),
             ('certified', 'Certificado'),
-            ('commited', 'Compromiso'),
+            ('commited', 'Comprometido'),
             ('anulado', 'Anulado'),                                  
             ('cancel', 'Rechazado')],
             string='Estado',
