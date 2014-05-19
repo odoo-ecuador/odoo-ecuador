@@ -6,6 +6,8 @@ import time
 from osv import osv, fields
 import openerp.addons.decimal_precision as dp
 
+DP = dp.get_precision('Budget')
+
 
 class BudgetBudget(osv.osv):
     """
@@ -79,15 +81,13 @@ class BudgetItem(osv.osv):
     Instancia de una Partida
     """
     _name = 'budget.item'
-    DP = dp.get_precision('Budget')
 
     _columns = {
         'code': fields.char('Código', size=16),
         'name': fields.char('Detalle', size=256, required=True),
         'state': fields.selection([('draft','Draft'),
                                    ('cancel', 'Cancelled'),
-                                   ('confirm','Confirmed'),
-                                   ('validate','Validated'),
+                                   ('confirmed','Confirmed'),
                                    ('done','Done')], 'Estado',
                                    select=True,
                                    required=True,
@@ -100,6 +100,9 @@ class BudgetItem(osv.osv):
                                      string='Presupuesto',
                                      ondelete='cascade',
                                      select=True),
+        'task_id': fields.many2one('project.task',
+                                   string='Actividad',
+                                   required=True),                                     
         'planned_amount': fields.float('Asignación Inicial', digits_compute=DP),
         }
 
@@ -114,11 +117,13 @@ class BudgetCertificate(osv.Model):
     This class implement certificate budget to make sure
     the process in al budget levels.
     """
-    
     _name = 'budget.certificate'
+    _inherit = ['mail.thread']    
     _description = 'Certificados Presupuestarios'
+    
     __logger = logging.getLogger(_name)    
     _order = 'date DESC'
+    
     DP = dp.get_precision('Budget')
     STATES_VALUE = {'draft': [('readonly', False)]}
 
@@ -143,7 +148,7 @@ class BudgetCertificate(osv.Model):
                 raise osv.except_osv('Error', 'No se permite eliminar registros.')
         return super(CrossoveredBudgetCertificate, self).unlink(cr, uid, ids, context)
 
-    def create(self, cr, uid, vals, context=None):
+    def set_sequence(self, cr, uid, vals, context=None):
         """
         Redefinición de metodo create de objeto para
         asignar una secuencia al documento
@@ -176,7 +181,7 @@ class BudgetCertificate(osv.Model):
             for line in obj.line_ids:
                 res[obj.id]['amount_total'] += line.amount
                 res[obj.id]['amount_certified'] += line.amount_certified
-                res[obj.id]['amount_commited'] += line.amount_compromised
+                res[obj.id]['amount_commited'] += line.amount_commited
         return res
 
     def _get_invoices(self, cr, uid, ids, context):
@@ -200,26 +205,21 @@ class BudgetCertificate(osv.Model):
 
     STORE_VAR = {'budget.certificate': (lambda self, cr, uid, ids, c={}: ids, ['line_ids'], 10),
                  'budget.certificate.line': (_get_certificate_lines,
-                                                         ['amount','amount_certified','amount_compromised','budget_line_id','state'], 10)}
+                                                         ['amount','amount_certified','amount_commited','budget_line_id','state'], 10)}
     STORE_INV = {'account.invoice': (_get_invoices, ['state'], 10),
                  'budget.certificate': (lambda self, cr, uid, ids, c=None: ids, ['invoice_ids'], 10)}
 
     _columns = dict(
-        name = fields.char('Codigo', size=32, required=True,
+        name = fields.char('Nro. de Solicitud',
+                           size=32, required=True,
                            readonly=True),
         number = fields.char('Número de Compromiso', readonly=True, size=16),
-        notes = fields.char('Descripción', size=128, required=True,
+        notes = fields.text('Notas',
                             readonly=True, states=STATES_VALUE),
-        certificate_number = fields.char(string='Número',
-                                         size=32,
-                                         readonly=True),
         user_id = fields.many2one('res.users', string='Solicitante',
                                   required=True, readonly=True),
         department_id = fields.many2one('hr.department', 'Dirección / Coordinación',
-                                        required=True, readonly=True),
-        description = fields.text('Detalle',
-                                  readonly=True, states=STATES_VALUE),
-        justification = fields.text('Justificación', readonly=True), 
+                                        required=True, readonly=False),
         state = fields.selection([('draft', 'Borrador'),
                                   ('request', 'Solicitado'),
                                   ('certified', 'Certificado'),
@@ -241,10 +241,8 @@ class BudgetCertificate(osv.Model):
                                readonly=True),
         date_confirmed = fields.date('Fecha de Certificación',
                                      readonly=True),
-        date_compromised = fields.date('Fecha de Compromiso',
-                                       readonly=True, states={'certified': [('readonly',False)]}),
-        amount_accured = fields.function(_compute_budget, method=True, string='Devengado',
-                                         digits_compute=DP, multi='budget', store=STORE_INV),
+        date_commited = fields.date('Fecha de Compromiso',
+                                    readonly=True, states={'certified': [('readonly',False)]}),
         project_id = fields.many2one('project.project',
                                      string='Proyecto',
                                      required=True,
@@ -298,12 +296,12 @@ class BudgetCertificate(osv.Model):
                 raise osv.except_osv('Error', 'No ha ingresado la fecha de compromiso.')
         return True
 
-    _constraints = [(_check_requests,
-                     'Los valores solicitados superan los disponibles de las partidas.',
-                     ['Detalle de Presupuesto Referencial']),
-                    (_check_partner,
-                     'Debe asignar un proveedor para poder comprometer el presupuesto.',
-                     ['Proveedor'])]
+    ## _constraints = [(_check_requests,
+    ##                  'Los valores solicitados superan los disponibles de las partidas.',
+    ##                  ['Detalle de Presupuesto Referencial']),
+    ##                 (_check_partner,
+    ##                  'Debe asignar un proveedor para poder comprometer el presupuesto.',
+    ##                  ['Proveedor'])]
 
     _defaults = dict(
         name = '/',
@@ -399,5 +397,39 @@ class BudgetCertificate(osv.Model):
             lines = [line.id for line in obj.line_ids]
             line_obj.change_state(cr, uid, lines, 'anulado')
         self.write(cr, uid, ids, {'state': 'anulado'})            
-        return True    
+        return True
+
+
+class BudgetCertificateLine(osv.osv):
+
+    _name = 'budget.certificate.line'
+
+    _columns = {
+        'certificate_id': fields.many2one(
+            'budget.certificate',
+            string='Certificado',
+            ondelete='cascade'
+        ),
+        'project_id': fields.many2one(
+            'project.project',
+            string='Proyecto',
+            required=True
+        ),
+        'task_id': fields.many2one(
+            'project.task',
+            string='Actividad',
+            required=True
+        ),
+        'budget_id': fields.many2one(
+            'budget.item',
+            string='Partida',
+            required=True
+        ),
+        'amount': fields.float('Monto Solicitado',
+                               digits_compute=DP),
+        'amount_certified': fields.float('Monto Certificado',
+                                         digits_compute=DP),
+        'amount_commited': fields.float('Monto Comprometido',
+                                        digits_compute=DP)
+        }
 

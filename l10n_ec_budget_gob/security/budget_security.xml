@@ -17,6 +17,11 @@
         <field name="name">Usuarios de Presupuestos</field>
         <field name="category_id" ref="module_category_budget_management"/>        
     </record>
+
+    <record id="group_budget_multidoc" model="res.groups">
+        <field name="name">Usuarios Multidoc Presupuestos</field>
+        <field name="category_id" ref="module_category_budget_management"/>        
+    </record>
     
     <!-- record id="group_budget_incomes" model="res.groups">
         <field name="name">Presupuestos Referenciales de Ingresos</field>

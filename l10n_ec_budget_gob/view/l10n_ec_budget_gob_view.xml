@@ -81,5 +81,102 @@
 
     <menuitem id="menu_budget_budget" action="action_budget_budget" parent="menu_budget_budget_parent"/>
 
+    <record id="view_budget_certificate_form" model="ir.ui.view">
+      <field name="name">view.budget.certificate.form</field>
+      <field name="model">budget.certificate</field>
+      <field name="arch" type="xml">
+	<form string="Documentos Presupuestarios" version="7.0">
+	  <header>
+	    <field name="state" widget="statusbar" statusbar_visible="draft,request,certified"/>
+	  </header>
+	  <sheet string="Documento de Presupuesto">
+	    <div class="oe_title">
+	      <h1>
+		<label string="Solicitud de Presupuesto" attrs="{'invisible': [('state','not in', ['draft','request'])]}"/>
+		<field name="name" class="oe_inline" attrs="{'invisible': [('state','not in', ['draft','request'])]}"/>
+		<label string="Certificado Presupuestario" attrs="{'invisible': [('state','not in', ['certified'])]}"/>		
+		<label string="Compromiso Presupuestario" attrs="{'invisible': [('state','not in', ['compromised'])]}"/>
+                <field name="number" class="oe_inline"  attrs="{'invisible': [('state','not in',['certified','compromised'])]}"/>
+	      </h1>
+	    </div>
+	    <group>
+	      <group>
+		<field name="user_id" options="{'no_open': True}"/>
+		<field name="department_id" options="{'no_open': True}"/>
+	      </group>
+	      <group>
+		<field name="date"/>
+		<field name="date_confirmed"/>
+		<field name="date_commited"/>
+	      </group>
+	    </group>
+	    <group>
+	      <field name="project_id" options="{'no_open': True}"/>
+	    </group>
+	    <group colspan="4">
+	      <field name="line_ids" context="{'default_project_id': project_id}" nolabel="1">
+		<tree string="Detalle de Documento">
+		  <field name="project_id"/>
+		  <field name="task_id"/>
+		  <field name="amount" sum="TOTAL SOLICITADO"/>
+		  <field name="amount_certified" sum="TOTAL CERTIFICADO"/>
+		  <field name="amount_commited" sum="TOTAL COMPROMETIDO"/>
+		</tree>
+		<form string="Detalle de Documento">
+		  <field name="project_id" groups="l10n_ec_budget_gob.group_budget_multidoc"/>
+		  <field name="task_id" domain="[('project_id','=',project_id)]" options="{'no_open': True}"/>
+		  <field name="budget_id" domain="[('task_id','=',task_id),('state','in',['draft','confirmed'])]" options="{'no_open': True}"/>
+		  <field name="amount"/>
+		</form>
+	      </field>
+	    </group>
+	    <group string="Notas" colspan="4">
+	      <field name="notes" nolabel="1"/>
+	    </group>
+	  </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" help="Follow this project to automatically track the events associated to tasks and issues of this project." groups="base.group_user"/>
+            <field name="message_ids" widget="mail_thread"/>
+          </div>
+	</form>
+      </field>
+    </record>
+
+    <record id="view_budget_certificate_tree" model="ir.ui.view">
+      <field name="name">view.budget.certificate.tree</field>
+      <field name="model">budget.certificate</field>
+      <field name="arch" type="xml">
+	<tree string="Documentos">
+	  <field name="name"/>
+	  <field name="project_id"/>
+	  <field name="date"/>
+	  <field name="state"/>
+	</tree>
+      </field>
+    </record>
+
+    <record id="view_budget_certificate_search" model="ir.ui.view">
+      <field name="name">view.budget.certificate.search</field>
+      <field name="model">budget.certificate</field>
+      <field name="arch" type="xml">
+	<search>
+	  <field name="name"/>
+	  <field name="number"/>
+	  <field name="project_id"/>
+	  <field name="date"/>
+	  <field name="state"/>	  
+	</search>
+      </field>
+    </record>
+
+    <record id="action_budget_certificate" model="ir.actions.act_window">
+      <field name="name">Documentos</field>
+      <field name="res_model">budget.certificate</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_budget_certificate" action="action_budget_certificate" parent="menu_budget_document"/>
+
   </data>
 </openerp>
