@@ -287,13 +287,6 @@ class BudgetCertificate(osv.Model):
                 raise osv.except_osv('Error', 'No ha ingresado la fecha de compromiso.')
         return True
 
-    ## _constraints = [(_check_requests,
-    ##                  'Los valores solicitados superan los disponibles de las partidas.',
-    ##                  ['Detalle de Presupuesto Referencial']),
-    ##                 (_check_partner,
-    ##                  'Debe asignar un proveedor para poder comprometer el presupuesto.',
-    ##                  ['Proveedor'])]
-
     _defaults = dict(
         name = '/',
         user_id = lambda self, cr, uid, context: uid,

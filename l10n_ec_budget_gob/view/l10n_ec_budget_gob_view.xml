@@ -131,7 +131,7 @@
 		<form string="Detalle de Documento">
 		  <field name="project_id" groups="l10n_ec_budget_gob.group_budget_multidoc"/>
 		  <field name="task_id" domain="[('project_id','=',project_id)]" options="{'no_open': True}"/>
-		  <field name="budget_id" domain="[('task_id','=',task_id),('state','in',['draft','confirmed'])]" options="{'no_open': True}"/>
+		  <field name="budget_id" domain="[('task_id','=',task_id),('state','in',['confirmed'])]" options="{'no_open': True}"/>
 		  <field name="amount"/>
 		</form>
 	      </field>
