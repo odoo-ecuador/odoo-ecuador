@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
+
+    <menuitem id="menu_main_budget_gob" name="Gestión de Presupuestos" groups="group_budget_manager,group_budget_user"/>
+
+
   </data>
 </openerp>

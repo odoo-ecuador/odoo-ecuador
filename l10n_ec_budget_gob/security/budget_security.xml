@@ -7,6 +7,16 @@
       <field name="description">Budget Management</field>
       <field name="sequence">2</field>
     </record>    
+
+    <record id="group_budget_manager" model="res.groups">
+        <field name="name">Budget Manager</field>
+        <field name="category_id" ref="module_category_budget_management"/>        
+    </record>
+
+    <record id="group_budget_user" model="res.groups">
+        <field name="name">Usuarios de Presupuestos</field>
+        <field name="category_id" ref="module_category_budget_management"/>        
+    </record>
     
     <!-- record id="group_budget_incomes" model="res.groups">
         <field name="name">Presupuestos Referenciales de Ingresos</field>
@@ -15,11 +25,6 @@
 
     <record id="group_budget_multidoc" model="res.groups">
         <field name="name">Presupuestos Referenciales Multi-Proyecto</field>
-        <field name="category_id" ref="module_category_budget_management"/>        
-    </record>
-
-    <record id="group_budget_request" model="res.groups">
-        <field name="name">Presupuestos Referenciales</field>
         <field name="category_id" ref="module_category_budget_management"/>        
     </record>
 
@@ -32,11 +37,7 @@
         <field name="name">Compromisos Presupuestarios</field>
         <field name="category_id" ref="module_category_budget_management"/>        
     </record>
-    
-    <record id="group_budget_manager" model="res.groups">
-        <field name="name">Budget Manager</field>
-        <field name="category_id" ref="module_category_budget_management"/>        
-    </record>
+   
 
     <record model="ir.rule" id="crossovered_certificate_department_rule">
       <field name="name">Presupuestos referenciales por usuario</field>
