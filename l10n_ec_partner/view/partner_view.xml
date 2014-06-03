@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+<!--
+   Partner
+  -->
+
+<record id="view_partner2_select" model="ir.ui.view">
+  <field name="name">view.partner.select2</field>
+  <field name="model">res.partner</field>
+  <field name="inherit_id" ref="base.view_res_partner_filter"/>
+  <field name="arch" type="xml">
+  <field name="name" position="before">
+    <field name="ced_ruc"/>
+    <field name="ref"/>
+  </field>
+  </field>
+</record>
+
+<record id="view_partner2_tree" model="ir.ui.view">
+  <field name="name">view.partner.tree2</field>
+  <field name="model">res.partner</field>
+  <field name="arch" type="xml">
+    <xpath expr="/tree/field[@name='name']" position="before">
+    <field name="ced_ruc"/>
+  </xpath>
+  </field>
+</record>
+
+<record id="view_partner_cedruc_form" model="ir.ui.view">
+  <field name="name">account.partner.cedruc.form</field>
+  <field name="model">res.partner</field>
+  <field name="inherit_id" ref="base.view_partner_form"/>
+  <field name="arch" type="xml">
+    <xpath expr="//field[@name='parent_id']" position="after">
+      <field name="ced_ruc" placeholder="Cédula / RUC"/>
+      <field name="type_ced_ruc" placeholder="Tipo de Identificador"/>
+      <field name="tipo_persona" placeholder="Tipo de Persona"/>
+    <newline/>
+    </xpath>
+    <!-- xpath expr="//field[@name='property_account_position']" position="attributes">
+      <attribute name="required">1</attribute>
+    </xpath -->
+  </field>
+</record>
+
+
+<!-- Compania -->
+
+<record id="view_res_company_ec_form" model="ir.ui.view">
+  <field name="name">account.res.company.ec.form</field>
+  <field name="model">res.company</field>
+  <field name="inherit_id" ref="base.view_company_form"/>
+  <field name="arch" type="xml">
+    <field name="partner_id" position="after">
+      <field name="ruc_contador"/>
+      <field name="cedula_rl"/>
+    </field>
+  </field>
+</record>
+
+  </data>
+</openerp>

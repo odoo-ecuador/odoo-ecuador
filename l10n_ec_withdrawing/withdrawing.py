@@ -32,20 +32,8 @@ import decimal_precision as dp
 import netsvc
 
 
-class ProductCategory(osv.Model):
-    _inherit = 'product.category'
+class AccountWithdrawing(osv.osv):
 
-    _columns = dict(
-        taxes_id = fields.many2many('account.tax', 'categ_taxes_rel',
-                                    'prod_id', 'tax_id', 'Customer Taxes',
-                                    domain=[('parent_id','=',False),('type_tax_use','in',['sale','all'])]),
-        supplier_taxes_id = fields.many2many('account.tax',
-                                             'categ_supplier_taxes_rel', 'prod_id', 'tax_id',
-                                             'Supplier Taxes', domain=[('parent_id', '=', False),('type_tax_use','in',['purchase','all'])]),        
-        )
-
-    
-class account_retention(osv.osv):
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
@@ -255,7 +243,7 @@ class account_retention(osv.osv):
         return True        
 
 
-class account_invoice_tax(osv.osv):
+class AccountInvoiceTax(osv.osv):
 
     _name = 'account.invoice.tax'
     _inherit = 'account.invoice.tax'
@@ -551,6 +539,7 @@ class Invoice(osv.osv):
                 'amount_noret_ir': 0.0,
                 'amount_total': 0.0,
                 'amount_pay': 0.0,
+                'amount_ice': 0.0
             }
             
             #Total General
@@ -629,15 +618,6 @@ class Invoice(osv.osv):
                     res[inv.id]['retention_ir'] = True
                 elif tax.tax_group == 'no_ret_ir':
                     res[inv.id]['no_retention_ir'] = True
-        return res
-
-    def _get_num_retentions(self, cr, uid, context=None):
-        if context is None:
-            context = {}
-        numbers = self.pool.get('account.retention.cache')
-        num_ids = numbers.search(cr, uid, [('active','=',True)])
-        res = numbers.read(cr, uid, num_ids, ['name', 'id'])
-        res = [(r['id'], r['name']) for r in res]
         return res
 
     def _get_num_to_use(self, cr, uid, ids, field_name, args, context):
@@ -781,11 +761,6 @@ class Invoice(osv.osv):
             ('in_refund','Supplier Refund'),
             ('liq_purchase','Liquidacion de Compra')
             ],'Type', readonly=True, select=True, change_default=True),
-        'retention_numbers': fields.selection(_get_num_retentions,
-                                              readonly=True,
-                                              string='Num. de Retención',
-                                              help='Lista de Números de Retención reservados',
-                                              states = {'draft': [('readonly', False)]}),
         'manual_ret_num': fields.integer('Num. Retención', readonly=True,
                                          states = {'draft': [('readonly', False)]}),
         'num_to_use': fields.function( _get_num_to_use,

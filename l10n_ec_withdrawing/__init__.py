@@ -21,22 +21,9 @@
 #
 ##############################################################################
 
-{
-    'name' : 'Accounting for Ecuador',
-    'version' : '3',
-    "category": 'Generic Modules/Accounting',    
-    'depends' : ['account_accountant', 'report_webkit'],
-    'author' : 'Gnuthink Software Cia. Ltda.',
-    'description': '''
-    Accounting for Ecuador, retention docuements
-    ''',
-    'website': 'http://www.gnuthink.com',
-    'update_xml': ['retention_workflow.xml',
-                   'retention_view.xml',
-                   'retention_report.xml',
-                   'retention_wizard.xml',
-#                   'security/ir.model.access.csv'
-                   ],
-    'installable': True,
-    'active': False,
-}
+import product
+import account
+import withdrawing
+import wizard
+import report
+
