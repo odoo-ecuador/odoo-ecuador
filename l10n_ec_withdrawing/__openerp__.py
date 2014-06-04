@@ -26,7 +26,7 @@
     'version' : '3',
     "category": 'Generic Modules/Accounting',
     'depends' : ['l10n_ec_authorisation', 'report_webkit',
-                'l10n_ec_partner'],
+        ],
     'author' : 'Gnuthink Software Cia. Ltda.',
     'description': '''
     Accounting for Ecuador, retention docuements
