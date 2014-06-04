@@ -90,6 +90,21 @@
       </field>
     </record>
 
+    <record id="view_account_tax_search2" model="ir.ui.view">
+      <field name="name">account.tax.tree2</field>
+      <field name="model">account.tax</field>
+      <field name="inherit_id" ref="account.view_account_tax_search"/>
+      <field name="arch" type="xml">
+	<field name="name" position="after">
+	  <field name="tax_group"/>
+	  <field name="porcentaje"/>
+          <field name="base_code_id" select="1" string="Cod. Base Imponible"/>
+          <field name="tax_code_id" select="1" string="Cod. Imp. Generado"/>
+          <field name="type_tax_use"/>
+	</field>
+      </field>
+    </record>
+
     <record id="view_retention_authinv_form" model="ir.ui.view">
       <field name="name">account.invoice.authinv.form</field>
       <field name="model">account.invoice</field>
@@ -111,7 +126,8 @@
 	  <field name="retention_vat" invisible="1"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
-	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'/>
+	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}' 
+		 context="{'default_partner_id': partner_id}"/>
 	</xpath>
 	<xpath expr="//field[@name='amount_total']" position="replace">
 	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -122,7 +138,7 @@
 	  <button name="print_move" string="Comprobante" type="object" states="open,paid" icon="gtk-print"/>
 	</xpath>
 	<!-- xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
-	      <button name="print_retention" string="Imprimir Retencion" type="object" icon="gtk-print" states="open"/>
+	      
 	    </group>
 	  </group>
 	</xpath>

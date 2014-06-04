@@ -2,10 +2,6 @@
 <openerp>
   <data>
 
-    <report auto="False" id="account.account_account_balance" 
-	    menu="False" model="account.account" 
-	    name="account.account.balance1" rml="retention/report/account_balance.rml" string="Trial Balance"/>
-
     <report auto="False"
 	    id="report_account_move" 
 	    model="account.move"
@@ -17,7 +13,7 @@
             usage="default" string="Conciliación" header="False" report_type="webkit"/>
 
     <report auto="False" id="account.retention" model="account.retention"
-            name="account.retention" rml="retention/report/account_retention.mako"
+            name="account.retention" rml="l10n_ec_withdrawing/report/account_retention.mako"
             usage="default" string="Retención" header="False" report_type="webkit"/>
     
     <report auto="False" id="account.account_invoices" model="account.invoice"
