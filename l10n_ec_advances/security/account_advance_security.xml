@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="group_account_cash_user" model="res.groups">
+        <field name="name">Accounting / Cash User</field>
+	<field eval="[(6, 0, [ref('menu_action_supplier_advance'),
+		     ref('menu_action_customer_advance'),
+		     ref('account.menu_finance'),
+		     ref('account.menu_finance_payables'),
+		     ref('account.menu_finance_receivables'),])]" name="menu_access"/>
+    </record>
+
+
+  </data>
+</openerp>
