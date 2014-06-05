@@ -210,7 +210,6 @@
 		<field name="invoice_id" on_change="onchange_invoice(invoice_id)"
                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
 		<field name="manual" invisible="1"/>
-		<field name="number" select="1" invisible="1"/>
 		<field name="to_cancel"/>
 	      </group>
 	      <group>

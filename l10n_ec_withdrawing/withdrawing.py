@@ -42,23 +42,9 @@ class AccountWithdrawing(osv.osv):
         res = []
         reads = self.browse(cr, uid, ids, context=context)
         for record in reads:
-            name = record.number
+            name = record.name
             res.append((record.id, name))
-        return res        
-
-    def _get_type(self, cr, uid, context):
-        if context.has_key('type') and \
-        context['type'] in ['in_invoice', 'out_invoice']:
-            return 'in_invoice'
-        else:
-            return 'liq_purchase'
-
-    def _get_in_type(self, cr, uid, context):
-        if context.has_key('type') and \
-        context['type'] in ['in_invoice', 'liq_purchase']:
-            return 'ret_in_invoice'
-        else:
-            return 'ret_in_invoice'
+        return res
 
     def _amount_total(self, cr, uid, ids, field_name, args, context):
         res = {}
@@ -81,14 +67,12 @@ class AccountWithdrawing(osv.osv):
 
     _name = 'account.retention'
     _description = 'Withdrawing Documents'
-    _order = 'date desc, number desc'
+    _order = 'date desc, name desc'
 
     _columns = {
         'name': fields.char('Número', size=64, readonly=True,
                             required=True,
                             states=STATES_VALUE),
-        'number': fields.char('Número', size=64, readonly=True,
-                              required=True),
         'manual': fields.boolean('Numeración Manual', readonly=True,
                                  states=STATES_VALUE),
         'num_document': fields.char('Num. Comprobante', size=50,
@@ -145,25 +129,38 @@ class AccountWithdrawing(osv.osv):
         res = self.pool.get('account.period').find(cr, uid, context=context)
         return res and res[0] or False
 
+    def _get_type(self, cr, uid, context):
+        if context.has_key('type') and \
+        context['type'] in ['in_invoice', 'out_invoice']:
+            return 'in_invoice'
+        else:
+            return 'liq_purchase'
+
+    def _get_in_type(self, cr, uid, context):
+        if context.has_key('type') and \
+        context['type'] in ['in_invoice', 'liq_purchase']:
+            return 'ret_in_invoice'
+        else:
+            return 'ret_in_invoice'        
+
     _defaults = {
         'state': 'draft',
         'in_type': _get_in_type,
         'type': _get_type,
         'name': '/',
-        'number': '/',
         'manual': True,
         'date': time.strftime('%Y-%m-%d'),
         'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'account.invoice', context=c),
         'period_id': _get_period
         }
 
-    _sql_constraints = [('unique_number', 'unique(number)', 'El número de retención es único.')]
+    _sql_constraints = [('unique_number_name', 'unique(name)', u'El número de retención es único.')]
 
     def unlink(self, cr, uid, ids, context=None):
         for obj in self.browse(cr, uid, ids, context):
             if obj.state in ['done']:
                 raise osv.except_osv('Aviso','No se permite borrar retenciones validadas.')
-        res = super(account_retention, self).unlink(cr, uid, ids, context)
+        res = super(AccountWithdrawing, self).unlink(cr, uid, ids, context)
         return res
 
     def onchange_invoice(self, cr, uid, ids, invoice_id):
@@ -173,7 +170,7 @@ class AccountWithdrawing(osv.osv):
         invoice = self.pool.get('account.invoice').browse(cr, uid, invoice_id)
         if not invoice.auth_inv_id:
             return res
-        num_document = '%s%s%s'% (invoice.auth_inv_id.serie_entidad, invoice.auth_inv_id.serie_emision, invoice.reference.zfill(9))
+        num_document = invoice.supplier_number
         res['value']['num_document'] = num_document
         res['value']['type'] = invoice.type
         return res
@@ -219,7 +216,7 @@ class AccountWithdrawing(osv.osv):
                 ret_number = str(number).zfill(padding)
             self._amount_total(cr, uid, [ret.id], [], {}, {})                
             number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret_number
-            self.write(cr, uid, ret.id, {'state': 'done', 'name': ret_num, 'number': number, 'name':number})
+            self.write(cr, uid, ret.id, {'state': 'done', 'name':number})
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
 
