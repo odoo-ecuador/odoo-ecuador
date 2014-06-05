@@ -177,16 +177,16 @@
       <field name="model">account.retention</field>
       <field name="type">tree</field>
       <field name="arch" type="xml">
-	    <tree string="Retenciones de Impuestos">
-          <field name="number"/>
+	<tree string="Retenciones de Impuestos" colors="blue:state == 'draft';black:state in ('done');gray:state == 'cancel'">
+          <field name="name"/>
           <field name="partner_id"/>
           <field name="auth_id" select="1"/>
           <field name="type" select="1"/>
-	      <field name="in_type"/>
-	      <field name="amount_total"/>
+	  <field name="in_type"/>
+	  <field name="amount_total"/>
           <field name="date" select="1"/>
-	      <field name="state" select="1"/>
-	    </tree>
+	  <field name="state" select="1"/>
+	</tree>
       </field>
     </record>
 
@@ -195,42 +195,53 @@
       <field name="model">account.retention</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-	<form string="Retención de Impuestos">
-          <field name="manual" invisible="1"/>
-          <field name="name"  attrs="{'invisible':[('state','=','done')]}"/>
-          <field name="to_cancel"/>
-	  <field name="number" select="1" attrs="{'invisible':[('state','=','draft')]}"/>
-          <field name="auth_id" select="1"/>
-          <field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-	  <field name="invoice_id" on_change="onchange_invoice(invoice_id)"
-                 attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-          <field name="type" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-          <field name="date" select="1"/>
-          <field name="in_type" required="1"/>
-	  <field name="num_document" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-	  <field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>
-	  <notebook colspan="4">
-	    <page string="Impuestos">
-	      <field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
-		<tree string="Impuestos Aplicados">
-		  <field name="invoice_id" invisible="1"/>
-		  <field name="fiscal_year"/>
-		  <field name="base"/>
-		  <field name="percent"/>
-                  <field name="base_code_id"/>
-		  <field name="tax_code_id"/>
-                  <field name="tax_group"/>
-		  <field name="amount"/>
-		</tree>
-	      </field>
-	    </page>
-	  </notebook>
-	  <group colspan="4" col="6">
-	    <field name="state"/>
-	    <field name="amount_total"/>
-            <button name="action_cancel" string="Anular" type="object" icon="gtk-cancel" states="draft,done"/>
-	    <button name="button_validate" string="Validar" type="object" icon="gtk-execute" states="draft"/>
-	  </group>
+	<form string="Retención de Impuestos" version="7.0">
+	  <header>
+            <button name="action_cancel" string="Anular" type="object" states="draft,done"/>
+	    <button name="button_validate" string="Validar" type="object" states="draft"/>
+	    <button name="action_draft" string="Volver a Borrador" type="object" states="cancel"/>
+	    <field name="state" widget="statusbar"/>
+	  </header>
+	  <sheet>
+	    <group>
+	      <group>
+		<field name="name"  attrs="{'invisible':[('state','=','done')]}"/>
+		<field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<field name="invoice_id" on_change="onchange_invoice(invoice_id)"
+                       attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<field name="manual" invisible="1"/>
+		<field name="number" select="1" invisible="1"/>
+		<field name="to_cancel"/>
+	      </group>
+	      <group>
+		<field name="auth_id" select="1" domain="[('in_type','=','interno')]"/>
+		<field name="type" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<field name="date" select="1"/>
+		<field name="in_type" required="1"/>
+		<field name="num_document" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>
+	      </group>
+	    </group>
+	    <notebook colspan="4">
+	      <page string="Impuestos">
+		<field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
+		  <tree string="Impuestos Aplicados">
+		    <field name="invoice_id" invisible="1"/>
+		    <field name="fiscal_year"/>
+		    <field name="base"/>
+		    <field name="percent"/>
+                    <field name="base_code_id"/>
+		    <field name="tax_code_id"/>
+                    <field name="tax_group"/>
+		    <field name="amount"/>
+		  </tree>
+		</field>
+		<group>
+		  <field name="amount_total" widget="monetary"/>
+		</group>
+	      </page>
+	    </notebook>
+	  </sheet>
 	</form>
       </field>
     </record>

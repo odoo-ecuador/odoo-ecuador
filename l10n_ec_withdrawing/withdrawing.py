@@ -133,7 +133,17 @@ class AccountWithdrawing(osv.osv):
                                          method=True, store=True,
                                          digits_compute=dp.get_precision('Account')),
         'to_cancel': fields.boolean('Para anulación',readonly=True, states=STATES_VALUE),
+        'company_id': fields.many2one('res.company',
+                                      'Company',
+                                      required=True,
+                                      change_default=True,
+                                      readonly=True,
+                                      states={'draft':[('readonly',False)]}),        
         }
+
+    def _get_period(self, cr, uid, context=None):
+        res = self.pool.get('account.period').find(cr, uid, context=context)
+        return res and res[0] or False
 
     _defaults = {
         'state': 'draft',
@@ -143,6 +153,8 @@ class AccountWithdrawing(osv.osv):
         'number': '/',
         'manual': True,
         'date': time.strftime('%Y-%m-%d'),
+        'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'account.invoice', context=c),
+        'period_id': _get_period
         }
 
     _sql_constraints = [('unique_number', 'unique(number)', 'El número de retención es único.')]
@@ -194,8 +206,9 @@ class AccountWithdrawing(osv.osv):
         accion es numerar el documento segun el parametro number
         '''
         seq_obj = self.pool.get('ir.sequence')
-        retentions = self.browse(cr, uid, ids)
-        for ret in retentions:
+        for ret in self.browse(cr, uid, ids):
+            if ret.to_cancel:
+                raise osv.except_osv('Alerta', 'El documento fue marcado para anular.')
             seq_id = ret.invoice_id.journal_id.auth_ret_id.sequence_id.id
             seq = seq_obj.browse(cr, uid, seq_id)
             ret_num = number
@@ -210,7 +223,7 @@ class AccountWithdrawing(osv.osv):
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
 
-    def action_cancel(self, cr, uid, ids, *args):
+    def action_cancel(self, cr, uid, ids, context=None):
         '''
         cr: cursor de la base de datos
         uid: ID de usuario
@@ -219,15 +232,22 @@ class AccountWithdrawing(osv.osv):
         Metodo para cambiar de estado a cancelado
         el documento
         '''
+        auth_obj = self.pool.get('account.authorisation')
         for ret in self.browse(cr, uid, ids):
             data = {'state': 'cancel'}
             if ret.to_cancel:
-                if len(ret.name) == 9:
+                if len(ret.name) == 9 and auth_obj.is_valid_number(cr, uid, ret.auth_id.id, int(ret.name)):
                     number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name
-                    data.update({'number': number, 'name': number})
+                    data.update({'name': number})
                 else:
-                    raise osv.except_osv('Error', 'El número debe ser de 9 dígitos.')
+                    raise osv.except_osv('Error', u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.')
             self.write(cr, uid, ret.id, data)
+        return True
+
+    def action_draft(self, cr, uid, ids, context=None):
+        for obj in self.browse(cr, uid, ids, context):
+            name = obj.name[6:]
+            self.write(cr, uid, ids, {'state': 'draft', 'name': name}, context)
         return True
 
     def action_early(self, cr, uid, ids, *args):
