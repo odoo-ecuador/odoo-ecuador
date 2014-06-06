@@ -23,8 +23,8 @@
 
 {
     'name' : 'Advances Payment for Customers/Suppliers',
-    'author': 'Gnuthink Software Cia. Ltda.',
-    'website': 'http://www.gnuthink.com',
+    'author': 'Cristian Salamea',
+    'website': 'http://www.ayni.io',
     "category" : "Generic Modules/Accounting",    
     'version' : '1',
     'depends' : ['account_voucher'],

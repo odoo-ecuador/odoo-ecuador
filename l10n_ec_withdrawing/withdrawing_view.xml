@@ -322,6 +322,8 @@
                               domain="[('supplier', '=', True)]"/>
                             <field name="fiscal_position" widget="selection"/>
                             <field name="origin"/>
+			    <field name="manual_ret_num"/>
+			    <field name="sustento_id" required="1"/>
                         </group>
                         <group>
                             <field name="date_invoice"/>

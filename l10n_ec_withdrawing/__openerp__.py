@@ -27,11 +27,11 @@
     "category": 'Generic Modules/Accounting',
     'depends' : ['l10n_ec_authorisation', 'report_webkit',
         ],
-    'author' : 'Gnuthink Software Cia. Ltda.',
+    'author' : 'Cristian Salamea.',
     'description': '''
     Accounting for Ecuador, retention docuements
     ''',
-    'website': 'http://www.gnuthink.com',
+    'website': 'http://www.ayni.io',
     'update_xml': ['invoice_workflow.xml',
                    'withdrawing_view.xml',
                    'withdrawing_report.xml',

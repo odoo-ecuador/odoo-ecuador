@@ -2,8 +2,8 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2012 Gnuthink Software Co. Ltd. All Rights Reserved
-#    info@gnuthink.com
+#    Copyright (C) 2014 Cristian Salamea. All Rights Reserved
+#    cristian@ayni.io
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -71,8 +71,4 @@ class AccountVoucher(osv.osv):
     _defaults = dict(
         extra_type = _get_ext
         )
-
-
-
-
 
