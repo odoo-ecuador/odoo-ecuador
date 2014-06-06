@@ -183,11 +183,11 @@
                         <group>
                             <field name="type" invisible="True"/>
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
-                            <field name="partner_id" domain="[('customer','=',True)]" on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date, context)" string="Customer" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
+                            <field name="partner_id" domain="[('customer','=',True)]" required="1" on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date, context)" string="Customer" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                             <field name="account_id" domain="[('user_type.code','in', ['asset'])]"/>
                             <field name="pay_now" on_change="onchange_payment(pay_now, journal_id, partner_id)" required="1" invisible="1"/>
                             <field name="date_due" attrs="{'invisible':[('pay_now','=','pay_now')]}"/>
-                            <field name="reference" attrs="{'invisible':[('pay_now','!=','pay_now')]}"/>
+                            <field name="reference" attrs="{'invisible':[('pay_now','!=','pay_now')]}" required="1"/>
                         </group>
 
                         <group>
