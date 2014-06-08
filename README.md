@@ -13,4 +13,15 @@ Objetivos principales
 - Reportes tributarios, sitio de ref: http://www.sri.gob.ec
 - Traducción a español (es_EC)
 
+Uso de Módulos
+--------------
 
+Para la instalación y uso::
+     
+     $ git clone https://github.com/odoo-ecuador/odoo-ecuador.git
+
+Ahora ejecutar odoo agregando al path de módulos::
+
+     $ ./openerp-server --addons-path=addons,../odoo-ecuador 
+
+El comando anterior asume que odoo y odoo-ecuador estan al mismo nivel.
