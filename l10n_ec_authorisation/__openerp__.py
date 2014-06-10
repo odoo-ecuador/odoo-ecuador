@@ -29,8 +29,8 @@
     'data': [
 #        'security/ir.model.access.csv',
         'view/authorisation_view.xml',
-#        'report/l10n_ec_authorisation_report.xml',
-#        'data/l10n_ec_authorisation_data.xml',
+        'data/account.ats.doc.csv',
+        'data/account.ats.sustento.csv'
     ],
     'depends' : [
         'l10n_ec_partner',
