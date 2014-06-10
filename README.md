@@ -25,3 +25,5 @@ Ahora ejecutar odoo agregando al path de módulos::
      $ ./openerp-server --addons-path=addons,../odoo-ecuador 
 
 El comando anterior asume que odoo y odoo-ecuador estan al mismo nivel.
+
+Para escribir pruebas unitarias revisar la [wiki](https://github.com/odoo-ecuador/odoo-ecuador/wiki/Pruebas-Unitarias)
