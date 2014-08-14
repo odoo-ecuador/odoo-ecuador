@@ -21,7 +21,7 @@
 #
 ##############################################################################
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 from tools.translate import _
 
 

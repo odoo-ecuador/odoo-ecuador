@@ -2,7 +2,7 @@
 
 import logging
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 import openerp.addons.decimal_precision as dp
 
 _logger = logging.getLogger(__name__)
