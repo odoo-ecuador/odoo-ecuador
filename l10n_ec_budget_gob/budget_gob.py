@@ -3,7 +3,7 @@
 import logging
 import time
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 import openerp.addons.decimal_precision as dp
 
 DP = dp.get_precision('Budget')

@@ -23,7 +23,7 @@
 
 from time import strftime
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 import decimal_precision as dp
 from tools.translate import _
 import netsvc
