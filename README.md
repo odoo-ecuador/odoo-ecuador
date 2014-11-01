@@ -1,6 +1,9 @@
 Localizacion de OpenERP para Ecuador
 ====================================
 
+[![Build Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=master)](https://travis-ci.org/odoo-ecuador/odoo-ecuador)
+[![Coverage Status](https://coveralls.io/repos/odoo-ecuador/odoo-ecuador/badge.png)](https://coveralls.io/r/odoo-ecuador/odoo-ecuador)
+
 Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
 empresa ecuatoriana.
