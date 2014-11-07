@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<guiaRemision id="comprobante" version="1.1.0">
+    <infoTributaria>
+        <ambiente>1</ambiente>
+        <tipoEmision>1</tipoEmision>
+        <razonSocial>XYZ</razonSocial>
+        <nombreComercial>XYZ</nombreComercial>
+        <ruc>0000000000001</ruc>
+        <claveAcceso>2103201306000000000000110015010000000091234567818</claveAcceso>
+        <codDoc>06</codDoc>
+        <estab>001</estab>
+        <ptoEmi>501</ptoEmi>
+        <secuencial>000000009</secuencial>
+        <dirMatriz>AMAZONAS</dirMatriz>
+    </infoTributaria>
+    <infoGuiaRemision>
+        <dirEstablecimiento>AMAZONAS</dirEstablecimiento>
+        <dirPartida>abcd</dirPartida>
+        <razonSocialTransportista>TRANSPORTISTA PN</razonSocialTransportista>
+        <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+        <rucTransportista>1705843251</rucTransportista>
+        <obligadoContabilidad>SI</obligadoContabilidad>
+        <contribuyenteEspecial>12345</contribuyenteEspecial>
+        <fechaIniTransporte>21/03/2013</fechaIniTransporte>
+        <fechaFinTransporte>21/03/2013</fechaFinTransporte>
+        <placa>PQH0450</placa>
+    </infoGuiaRemision>
+    <destinatarios>
+        <destinatario>
+            <identificacionDestinatario>1703251180</identificacionDestinatario>
+            <razonSocialDestinatario>DESTINATARIO PN</razonSocialDestinatario>
+            <dirDestinatario>abcd</dirDestinatario>
+            <motivoTraslado>abcd</motivoTraslado>
+            <docAduaneroUnico>12345</docAduaneroUnico>
+            <codEstabDestino>001</codEstabDestino>
+            <ruta>abcd</ruta>
+            <codDocSustento>01</codDocSustento>
+            <numDocSustento>001-001-000000001</numDocSustento>
+            <numAutDocSustento>0000000000000000000000000000000000000</numAutDocSustento>
+            <fechaEmisionDocSustento>21/03/2013</fechaEmisionDocSustento>
+            <detalles>
+                <detalle>
+                    <codigoInterno>011</codigoInterno>
+                    <descripcion>PRUEBA</descripcion>
+                    <cantidad>0.000000</cantidad>
+                </detalle>
+            </detalles>
+        </destinatario>
+    </destinatarios>
+</guiaRemision>

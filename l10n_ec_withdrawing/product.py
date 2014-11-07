@@ -3,7 +3,7 @@
 import time
 import logging
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 
 
 class ProductCategory(osv.osv):

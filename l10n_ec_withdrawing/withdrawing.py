@@ -24,7 +24,7 @@
 import time
 import logging
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 from tools import config
 from tools.translate import _
 from tools import ustr
