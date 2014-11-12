@@ -21,6 +21,7 @@
 ##############################################################################
 
 import trml2pdf
-import controllers
+#Temporal hasta que sea compatible con odoo8.0
+#import controllers
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

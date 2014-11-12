@@ -21,8 +21,9 @@
 <record id="view_partner2_tree" model="ir.ui.view">
   <field name="name">view.partner.tree2</field>
   <field name="model">res.partner</field>
+  <field name="inherit_id" ref="base.view_partner_tree"/>  
   <field name="arch" type="xml">
-    <xpath expr="/tree/field[@name='name']" position="before">
+    <xpath expr="/tree/field[@name='display_name']" position="before">
     <field name="ced_ruc"/>
   </xpath>
   </field>
