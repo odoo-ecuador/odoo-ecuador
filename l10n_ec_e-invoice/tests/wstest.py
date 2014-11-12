@@ -13,7 +13,7 @@
   
 """Ecuador S.R.I. Electronic Invoice (Emisión de Documentos Electrónicos)"""
  
-# Modified by: 1000ton.lab@unl.edu.ec
+# Modified by: @miltonlab
 
 from __future__ import unicode_literals
   
