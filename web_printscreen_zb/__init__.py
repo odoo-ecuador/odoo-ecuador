@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Copyright (c) 2013 ZestyBeanz Technologies Pvt. Ltd.
@@ -20,7 +20,7 @@
 #
 ##############################################################################
 
-import trml2pdf
-import controllers
+# import trml2pdf
+# import controllers
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
