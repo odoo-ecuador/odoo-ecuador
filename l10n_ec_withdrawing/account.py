@@ -21,7 +21,7 @@
 #
 ##############################################################################
 
-__author__ = 'Cristian Salamea (cristian.salamea@gnuthink.com)'
+__author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
 
 import time
 from datetime import datetime

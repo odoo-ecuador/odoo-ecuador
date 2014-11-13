@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Cristian Salamea (cristian.salamea@gnuthink.com)'
+__author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
 
 import time
 from datetime import datetime
 
-from openerp.osv import osv, fields
+from openerp.osv import osv, orm, fields
 
 
 class Partner(osv.osv):
@@ -81,9 +81,23 @@ class Partner(osv.osv):
                 return self._check_cedula(partner.ced_ruc)
 
     _columns = {
-        'ced_ruc': fields.char('Cedula/ RUC', size=13, required=True, help='Idenficacion o Registro Unico de Contribuyentes'),
-        'type_ced_ruc': fields.selection([('cedula','Cedula'),('ruc','RUC'),('pasaporte','Pasaporte')], 'Tipo ID', required=True),
-        'tipo_persona': fields.selection([('6','Persona Natural'),('9','Persona Juridica')], 'Persona', required=True),
+        'ced_ruc': fields.char('Cedula/ RUC',
+                               size=13,
+                               required=True,
+                               help='Idenficacion o Registro Unico de Contribuyentes'),
+        'type_ced_ruc': fields.selection([
+            ('cedula','Cedula'),
+            ('ruc','RUC'),
+            ('pasaporte','Pasaporte')
+            ],
+            'Tipo ID',
+            required=True),
+        'tipo_persona': fields.selection(
+            [('6','Persona Natural'),
+            ('9','Persona Juridica')],
+            string='Persona',
+            required=True
+            ),
         }
 
     _defaults = {
@@ -96,7 +110,7 @@ class Partner(osv.osv):
 
     _sql_constraints = [
         ('partner_unique',
-         'unique(ced_ruc,type_ced_ruc,tipo_persona, company_id)',
+         'unique(ced_ruc,type_ced_ruc,tipo_persona,company_id)',
          u'El identificador es único.'),
         ]
 

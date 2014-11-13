@@ -32,11 +32,13 @@
     Accounting for Ecuador, retention docuements
     ''',
     'website': 'http://www.ayni.io',
-    'update_xml': ['invoice_workflow.xml',
-                   'withdrawing_view.xml',
-                   'withdrawing_report.xml',
-                   'retention_wizard.xml',
-                   ],
+    'update_xml': [
+        'invoice_workflow.xml',
+        'withdrawing_view.xml',
+        'withdrawing_report.xml',
+        'retention_wizard.xml',
+        'data/account.fiscal.position.csv'
+    ],
     'installable': True,
     'active': False,
 }
