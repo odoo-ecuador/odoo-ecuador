@@ -26,9 +26,13 @@ __author__ = 'Cristian Salamea (cristian.salamea@gnuthink.com)'
 import time
 from datetime import datetime
 
+<<<<<<< HEAD
 from osv import osv, fields
 from tools import ustr
 
+=======
+from openerp.osv import osv, fields
+>>>>>>> ce57a62... limpieza de codifo compatible tanto para la version 8.0 como 7.0
 
 class account_tax(osv.osv):
     
