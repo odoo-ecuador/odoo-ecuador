@@ -29,7 +29,7 @@
         ],
     'author' : 'Cristian Salamea.',
     'description': '''
-    Accounting for Ecuador, retention docuements
+    Accounting for Ecuador, retention documents
     ''',
     'website': 'http://www.ayni.io',
     'update_xml': ['invoice_workflow.xml',
