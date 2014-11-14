@@ -22,5 +22,5 @@
 ##############################################################################
 
 import account_advances
-import report
+from openerp import report
 

@@ -501,7 +501,9 @@
       </field>
     </record>
 
-    <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/>
+    <!-- Invalid in v8.0 migration -->
+    <!-- <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/> -->
+	
 
     <!-- Retention number cache
 
