@@ -20,7 +20,7 @@
 {
     'name': 'Ecuador - Accounting Chart',
     'version': '1.1',
-    'category': 'Localisation/Account Charts',
+    'category': 'Localization/Account Charts',
     'description': """
     This is the base module to manage the accounting chart for Ecuador in OpenERP.
     """,
@@ -30,15 +30,13 @@
                 'base_vat',
                 'base_iban',
                 'account_chart',
-                'account_coda',
                 ],
     'init_xml': [],
-    'update_xml': [
-                'account_tax_code.xml',
-                'account_chart.xml',
-                'account_tax.xml',
-                'l10n_chart_ec_wizard.xml',
-                   ],
+    'data': ['account_tax_code.xml',
+             'account_chart.xml',
+             'account_tax.xml',
+             'l10n_chart_ec_wizard.xml',
+             ],
     'demo_xml': [],
     'installable': True,
 }
