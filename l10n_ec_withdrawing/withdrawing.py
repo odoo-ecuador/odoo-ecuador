@@ -881,12 +881,15 @@ class Invoice(osv.osv):
         return res
 
     def onchange_partner_id(self, cr, uid, ids, type, partner_id,\
-            date_invoice=False, payment_term=False, partner_bank_id=False, company_id=False):    
+            date_invoice=False, payment_term=False, partner_bank_id=False, company_id=False, context=None):
+	# ML: fixed migration to 8.0 following the old api style
         auth_obj = self.pool.get('account.authorisation')
-        res1 = super(Invoice, self).onchange_partner_id(cr, uid, ids, type,
+        res1 = super(Invoice, self).onchange_partner_id(cr, uid, ids, 
+							type,
                                                         partner_id, date_invoice,
                                                         payment_term, partner_bank_id,
-                                                        company_id)
+                                                        company_id,
+							context=context)
         if res1['value'].has_key('reference_type'):
             res1['value'].pop('reference_type')
         res = auth_obj.search(cr, uid, [('partner_id','=',partner_id),('in_type','=','externo')], limit=1)
