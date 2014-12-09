@@ -25,9 +25,10 @@ import time
 import logging
 
 from openerp.osv import osv, fields
-from openerp import _
+from openerp import  _
 import openerp.addons.decimal_precision as dp
 from openerp import netsvc
+from openerp import api
 
 class AccountWithdrawing(osv.osv):
 
@@ -279,17 +280,31 @@ class AccountInvoiceTax(osv.osv):
         'retention_id': fields.many2one('account.retention', 'Retención', select=True),
         }
 
-    def compute(self, cr, uid, invoice_id, context=None):
+    @api.v8
+    ###def compute(self, cr, uid, invoice_id, context=None):
+    def compute(self, invoice_id):
         tax_grouped = {}
         tax_obj = self.pool.get('account.tax')
         cur_obj = self.pool.get('res.currency')
-        inv = self.pool.get('account.invoice').browse(cr, uid, invoice_id, context=context)
+        #inv = self.pool.get('account.invoice').browse(cr, uid, invoice_id, context=context)
+        # invoice_id in odoov7 is int 
+        inv = self.env['account.invoice'].browse(invoice_id.id)
         cur = inv.currency_id
-        company_currency = self.pool['res.company'].browse(cr, uid, inv.company_id.id).currency_id.id
+        #company_currency = self.pool['res.company'].browse(cr, uid, inv.company_id.id).currency_id.id
+        company_currency = self.env['res.company'].browse(inv.company_id.id).currency_id.id
         for line in inv.invoice_line:
-            for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
+            #for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
+            taxes = tax_obj.compute_all(
+                line.invoice_line_tax_id, 
+                (line.price_unit* (1-(line.discount or 0.0)/100.0)), 
+                line.quantity, 
+                line.product_id, 
+                inv.partner_id
+            )['taxes']
+            for tax in taxes:
                 val={}
-                tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
+                ###tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
+                tax_group = self.pool.get('account.tax').read(tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
@@ -297,7 +312,9 @@ class AccountInvoiceTax(osv.osv):
                 val['percent'] = tax_group['porcentaje']                
                 val['manual'] = False
                 val['sequence'] = tax['sequence']
-                val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
+                ###val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
+                val['base'] = cur_obj.round(tax['price_unit'] * line['quantity'])
+
                 if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
                     ret = float(str(tax_group['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
@@ -308,15 +325,19 @@ class AccountInvoiceTax(osv.osv):
                 if inv.type in ('out_invoice','in_invoice','liq_purchase'):
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    ###val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    ###val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['tax_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     val['account_id'] = tax['account_collected_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_collected_id']
                 else:
                     val['base_code_id'] = tax['ref_base_code_id']
                     val['tax_code_id'] = tax['ref_tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    ###val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    ###val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['tax_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     val['account_id'] = tax['account_paid_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_paid_id']
 
@@ -330,10 +351,14 @@ class AccountInvoiceTax(osv.osv):
                     tax_grouped[key]['tax_amount'] += val['tax_amount']
 
         for t in tax_grouped.values():
-            t['base'] = cur_obj.round(cr, uid, cur, t['base'])
-            t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
-            t['base_amount'] = cur_obj.round(cr, uid, cur, t['base_amount'])
-            t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
+            ###t['base'] = cur_obj.round(cr, uid, cur, t['base'])
+            t['base'] = cur_obj.round(cur, t['base'])
+            ###t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
+            t['amount'] = cur_obj.round(cur, t['amount'])
+            ###t['base_amount'] = cur_obj.round(cr, uid, cur, t['base_amount'])
+            t['base_amount'] = cur_obj.round(cur, t['base_amount'])
+            ###t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
+            t['tax_amount'] = cur_obj.round(cur, t['tax_amount'])
         return tax_grouped
 
     _defaults = dict(
@@ -1037,12 +1062,18 @@ class AccountInvoiceLine(osv.osv):
                 res[-1]['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, tax_amount, context={'date': inv.date_invoice})
         return res
 
-    def product_id_change(self, cr, uid, ids, product, uom_id, qty=0, name='', type='out_invoice', partner_id=False, fposition_id=False, price_unit=False, currency_id=False, context=None, company_id=None):
-        if context is None:
-            context = {}
-        company_id = company_id if company_id != None else context.get('company_id',False)
-        context = dict(context)
-        context.update({'company_id': company_id, 'force_company': company_id})
+    ###@api.onchange('product_id')
+    ###def product_id_change(self, cr, uid, ids, product, uom_id, qty=0, name='', type='out_invoice', partner_id=False, fposition_id=False, price_unit=False, currency_id=False, context=None, company_id=None):
+    @api.multi
+    def product_id_change(self, product, uom_id, qty=0, name='', type='out_invoice', partner_id=False, fposition_id=False, price_unit=False, currency_id=False, company_id=None):
+
+        context = self._context
+	print "test context: ", context
+	print "test company_id: ", company_id
+        company_id = company_id if company_id is not None else context.get('company_id',False)
+        ###context = dict(context)
+        ###context.update({'company_id': company_id, 'force_company': company_id})
+        self = self.with_context(company_id=company_id, force_company=company_id)
         if not partner_id:
             raise osv.except_osv(_('No Partner Defined!'),_("You must first select a partner!") )
         if not product:
@@ -1050,62 +1081,92 @@ class AccountInvoiceLine(osv.osv):
                 return {'value': {}, 'domain':{'product_uom':[]}}
             else:
                 return {'value': {'price_unit': 0.0}, 'domain':{'product_uom':[]}}
-        part = self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
-        fpos_obj = self.pool.get('account.fiscal.position')
-        fpos = fposition_id and fpos_obj.browse(cr, uid, fposition_id, context=context) or False
-
+        ###part = self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
+        part = self.env['res.partner'].browse(partner_id)
+        ###fpos_obj = self.pool.get('account.fiscal.position')
+        ###fpos = fposition_id and fpos_obj.browse(cr, uid, fposition_id, context=context) or False
+        fpos = self.env['account.fiscal.position'].browse(fposition_id)
         if part.lang:
-            context.update({'lang': part.lang})
-        result = {}
-        res = self.pool.get('product.product').browse(cr, uid, product, context=context)
+            ###context.update({'lang': part.lang})
+            self = self.with_context(lang=part.lang)
+        values = {} ###?
+        ###res = self.pool.get('product.product').browse(cr, uid, product, context=context)
+        product = self.env['product.product'].browse(product)
 
         if type in ('out_invoice','out_refund'):
-            a = res.property_account_income.id
-            if not a:
-                a = res.categ_id.property_account_income_categ.id
+            ###a = res.property_account_income.id
+            account = product.property_account_income or product.categ_id.property_account_income_categ
+            ###if not a:
+            ###    a = res.categ_id.property_account_income_categ.id
         else:
-            a = res.property_account_expense.id
-            if not a:
-                a = res.categ_id.property_account_expense_categ.id
-        a = fpos_obj.map_account(cr, uid, fpos, a)
-        if a:
-            result['account_id'] = a
+            ###a = res.property_account_expense.id
+            account = product.property_account_expense or product.categ_id.property_account_expense_categ
+            ###if not a:
+            ###    a = res.categ_id.property_account_expense_categ.id
+        ###a = fpos_obj.map_account(cr, uid, fpos, a)
+        account = fpos.map_account(account)
+        ###if a:
+        if account:
+            ###values['account_id'] = a
+            values['account_id'] = account.id
 
         if type in ('out_invoice', 'out_refund'):
-            taxes = res.taxes_id and res.taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
+            ###taxes = res.taxes_id and res.taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
+            taxes = product.taxes_id or account.tax_ids
         else:
-            taxes = res.supplier_taxes_id and res.supplier_taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
-        tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes)
-
+            ###taxes = res.supplier_taxes_id and res.supplier_taxes_id or (a and self.pool.get('account.account').browse(cr, uid, a, context=context).tax_ids or False)
+            taxes = product.supplier_taxes_id or account.tax_ids
+        ###tax_id = fpos_obj.map_tax(cr, uid, fpos, taxes)
+        taxes = fpos.map_tax(taxes)
+        values['invoice_line_tax_id'] = taxes.ids ###?
         if type in ('in_invoice', 'in_refund'):
-            result.update( {'price_unit': price_unit or res.standard_price,'invoice_line_tax_id': tax_id} )
+            ###values.update( {'price_unit': price_unit or res.standard_price,'invoice_line_tax_id': tax_id} )
+            values['price_unit'] = price_unit or product.standard_price 
         else:
-            result.update({'price_unit': res.list_price, 'invoice_line_tax_id': tax_id})
-        result['name'] = res.partner_ref
+            ###values.update({'price_unit': res.list_price, 'invoice_line_tax_id': tax_id})
+            values['price_unit'] = product.list_price
 
-        result['uos_id'] = uom_id or res.uom_id.id
-        if res.description:
-            result['name'] += '\n'+res.description
+        ###values['name'] = res.partner_ref
+        values['name'] = product.partner_ref
 
-        domain = {'uos_id':[('category_id','=',res.uom_id.category_id.id)]}
+        ###values['uos_id'] = uom_id or res.uom_id.id
+        values['uos_id'] = uom_id or product.uom_id.id
 
-        res_final = {'value':result, 'domain':domain}
+        ###if res.description: ###?
+        if product.description:
+            ###values['name'] += '\n'+res.description
+            values['name'] += '\n'+product.description
+
+        ###domain = {'uos_id':[('category_id','=',res.uom_id.category_id.id)]}
+        domain = {'uos_id':[('category_id','=',product.uom_id.category_id.id)]}
+
+        res_final = {'value':values, 'domain':domain}
 
         if not company_id or not currency_id:
             return res_final
 
-        company = self.pool.get('res.company').browse(cr, uid, company_id, context=context)
-        currency = self.pool.get('res.currency').browse(cr, uid, currency_id, context=context)
+        ###company = self.pool.get('res.company').browse(cr, uid, company_id, context=context)
+        ###currency = self.pool.get('res.currency').browse(cr, uid, currency_id, context=context
+        company = self.env['res.company'].browse(company_id)
+        currency = self.env['res.currency'].browse(currency_id)
 
-        if company.currency_id.id != currency.id:
+        ###if company.currency_id.id != currency.id:
+        if company.currency_id != currency:
             if type in ('in_invoice', 'in_refund'):
-                res_final['value']['price_unit'] = res.standard_price
+                ###res_final['value']['price_unit'] = res.standard_price
+                res_final['value']['price_unit'] = product.standard_price
             new_price = res_final['value']['price_unit'] * currency.rate
             res_final['value']['price_unit'] = new_price
 
-        if result['uos_id'] and result['uos_id'] != res.uom_id.id:
-            selected_uom = self.pool.get('product.uom').browse(cr, uid, result['uos_id'], context=context)
-            new_price = self.pool.get('product.uom')._compute_price(cr, uid, res.uom_id.id, res_final['value']['price_unit'], result['uos_id'])
+        ###if values['uos_id'] and values['uos_id'] != res.uom_id.id:
+        if values['uos_id'] and values['uos_id'] != product.uom_id.id:
+            ###selected_uom = self.pool.get('product.uom').browse(cr, uid, values['uos_id'], context=context)
+            ###new_price = self.pool.get('product.uom')._compute_price(cr, uid, res.uom_id.id, res_final['value']['price_unit'], values['uos_id'])
+            new_price = self.env['product.uom']._compute_price(
+                product.uom_id.id,
+                res_final['value']['price_unit'],
+                values['uos_id']
+            )
             res_final['value']['price_unit'] = new_price
         return res_final    
 
