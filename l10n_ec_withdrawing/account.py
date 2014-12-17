@@ -27,8 +27,6 @@ import time
 from datetime import datetime
 
 from openerp.osv import osv, fields
-from tools import ustr
-
 
 class account_tax(osv.osv):
     

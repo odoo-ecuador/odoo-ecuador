@@ -1,7 +1,6 @@
 import time
-from report import report_sxw
-from osv import osv
-import pooler
+from openerp.report import report_sxw
+from openerp.osv import osv
 
 class BankStatement(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
@@ -14,7 +13,7 @@ class BankStatement(report_sxw.rml_parse):
     def get_user(self, object):
         self.cr.execute("select create_uid from account_bank_statement where id=%s" % object.id)
         data = self.cr.fetchone()
-        user = pooler.get_pool(self.cr.dbname).get('res.users').browse(self.cr, self.uid, data[0])
+        user = self.pool.get('res.users').browse(self.cr, self.uid, data[0])
         return user.name
         
    

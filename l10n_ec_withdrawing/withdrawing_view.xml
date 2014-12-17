@@ -317,7 +317,7 @@
                     <group>
                         <group>
                             <field string="Supplier" name="partner_id"
-                              on_change="onchange_partner_id(type,partner_id,date_invoice,payment_term, partner_bank_id,company_id)"
+                              on_change="onchange_partner_id(type,partner_id,date_invoice,payment_term, partner_bank_id,company_id, context)"
                               context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}"
                               domain="[('supplier', '=', True)]"/>
                             <field name="fiscal_position" widget="selection"/>
@@ -344,9 +344,9 @@
                             <field context="{'partner_id': partner_id, 'price_type': context.get('price_type') or False, 'type': type}" name="invoice_line">
                                 <tree string="Invoice lines" editable="bottom">
                                     <field name="sequence" widget="handle" />
-                                    <field name="product_id"
-                                        on_change="product_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, context, parent.company_id)"/>
-                                    <field name="name"/>
+                                    <field name="product_id" 
+                                        on_change="product_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id,  parent.company_id, context)"/>
+		                                    <field name="name"/>
                                     <field name="company_id" invisible="1"/>
                                     <field name="account_id" groups="account.group_account_user"
                                         domain="[('company_id', '=', parent.company_id), ('journal_id', '=', parent.journal_id), ('type', '=', 'other')]"
@@ -501,7 +501,9 @@
       </field>
     </record>
 
-    <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/>
+    <!-- Invalid in v8.0 migration -->
+    <!-- <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/> -->
+	
 
     <!-- Retention number cache
 

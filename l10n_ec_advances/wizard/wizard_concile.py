@@ -21,7 +21,7 @@
 #
 ##############################################################################
 
-from osv import osv, fields
+from openerp.osv import osv, fields
 
 
 class AccountMove(osv.osv):

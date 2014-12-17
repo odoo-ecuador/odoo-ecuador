@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.0.0">
+    <infoTributaria>
+        <ambiente>1</ambiente>
+        <tipoEmision>1</tipoEmision>
+        <razonSocial>CONSAPLIC</razonSocial>
+        <nombreComercial>LE HACE BIEN AL PAIS</nombreComercial>
+        <ruc>1760013210001</ruc>
+        <claveAcceso>0903201201176001321000110010030009900381234567810</claveAcceso>
+        <codDoc>01</codDoc>
+        <estab>001</estab>
+        <ptoEmi>003</ptoEmi>
+        <secuencial>000990038</secuencial>
+        <dirMatriz>AMAZONAS Y ROCA</dirMatriz>
+    </infoTributaria>
+    <infoFactura>
+        <fechaEmision>09/03/2012</fechaEmision>
+        <dirEstablecimiento>SALINAS Y SANTIAGO</dirEstablecimiento>
+        <contribuyenteEspecial>12345</contribuyenteEspecial>
+        <obligadoContabilidad>SI</obligadoContabilidad>
+        <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
+        <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
+        <identificacionComprador>9999999999999</identificacionComprador>
+        <totalSinImpuestos>100.00</totalSinImpuestos>
+        <totalDescuento>0.00</totalDescuento>
+        <totalConImpuestos>
+            <totalImpuesto>
+                <codigo>2</codigo>
+                <codigoPorcentaje>2</codigoPorcentaje>
+                <baseImponible>110.00</baseImponible>
+                <valor>13.20</valor>
+            </totalImpuesto>
+            <totalImpuesto>
+                <codigo>3</codigo>
+                <codigoPorcentaje>3011</codigoPorcentaje>
+                <baseImponible>100.00</baseImponible>
+                <valor>10.00</valor>
+            </totalImpuesto>
+        </totalConImpuestos>
+        <propina>0.00</propina>
+        <importeTotal>123.20</importeTotal>
+        <moneda>DOLAR</moneda>
+    </infoFactura>
+    <detalles>
+        <detalle>
+            <codigoPrincipal>008</codigoPrincipal>
+            <codigoAuxiliar>008</codigoAuxiliar>
+            <descripcion>PAKA CIGAR IVA 12 ICE MANUAL</descripcion>
+            <cantidad>1.00</cantidad>
+            <precioUnitario>100.00</precioUnitario>
+            <descuento>0.00</descuento>
+            <precioTotalSinImpuesto>100.00</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>2</codigoPorcentaje>
+                    <tarifa>12.00</tarifa>
+                    <baseImponible>110.00</baseImponible>
+                    <valor>13.20</valor>
+                </impuesto>
+                <impuesto>
+                    <codigo>3</codigo>
+                    <codigoPorcentaje>3011</codigoPorcentaje>
+                    <tarifa>0.00</tarifa>
+                    <baseImponible>100.00</baseImponible>
+                    <valor>10.00</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+    </detalles>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature114663">
+<ds:SignedInfo Id="Signature-SignedInfo523368">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+<ds:Reference Id="SignedPropertiesID85861" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature114663-SignedProperties482186">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>4Z9I8D+OaRnVEOg9caavwchrlAQ=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1905108">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>wUEmo0cmiknqlExbCe8CkPTCNrc=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-840175" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>CS8JwGl/1kObpyaxhEls5GNRN10=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue780725">
+ZleJVriSfRXiAhQtFnAn66IabRjkJWn2HVNAIGsIK+BnH9W6mLsjzn27m68n6jE9jLe46GQzN/qf
+6qzzojLynxs1d2fIzObavzKesi9IWDZU2K+5ZdW5Sa5jxUUIHtUrWscuiSJw1vPWfMeV0N54vZcu
+0wbEcuGwbFfBQVyU5NU=
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate1905108">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIDVjCCAj6gAwIBAgIIUeEPVwiy6aMwDQYJKoZIhvcNAQEFBQAwQTEQMA4GA1UEAxMHRGVtb0NB
+MzENMAsGA1UECxMERGVtbzEeMBwGA1UEChMVUHJpbWVLZXkgU29sdXRpb25zIEFCMB4XDTExMDkw
+OTE5MjQ1OFoXDTExMTIwODE5MjQ1OFowWDEaMBgGA1UEAxMRR2FicmllbCBFZ3VpZ3VyZW4xDTAL
+BgNVBAsTBERlbW8xHjAcBgNVBAoTFVByaW1lS2V5IFNvbHV0aW9ucyBBQjELMAkGA1UEBhMCU0Uw
+gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMJ9nXGWT3okBd3qpS/4cHvB7RNTg1ZOygEyHiZj
++RYeH6QEIGVJMzX44Eh19ysKN1Nvfq1VtgHthunjQneaWMAJrGyPTw3+p79lkDbp3tcRmS1jBbrz
+aW/lRRzfr6p0k5gqfpaLp8XqBKjlEt3kQSUR/2dDYQTHrn3ddggslK8xAgMBAAGjgb4wgbswHQYD
+VR0OBBYEFNdeJoWVJkFUmtI+Ald3mxebF81iMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUqGdD
+lUM1qDHYWrXP0wlChwdYzeMwDgYDVR0PAQH/BAQDAgTwMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggr
+BgEFBQcDAgYIKwYBBQUHAwQGCCsGAQUFBwMFBggrBgEFBQcDBzAeBgNVHREEFzAVgRNnYWJvLmVn
+dWlAZ21haWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQCNtmQx3uZS6E42ltj8XQ7DY2LBAbVhaaGx
+Px9GlDb+VUQ0Psg7pdtEXNbDMsMJJglSc5YE69y1wwGLzwElr0JRG2e++Tr7ZTsX4MjRKAwu4Ppe
+LtatAEXy56Xh4S4sUzngZLh5dBDStxNV0eEa8uRP9RCc9UzcMTPvJeQI2jSkTzs+iUZT+Ev5RmNP
+HjOJlweuMEBpd+SDz6gn/U+O77Z74aRMsBRAk6YQK0nsJ2SvGheoVoUljQYP6B2VcNbNNoAkY1WL
+FNFZn4bkqM6iITv9JBMlPT0i3Gx2zOcDDqS+l6HhiqU/zOFIyaYVHmw+7v8ONZaA7YyZd+AGJiVJ
+Qc3b
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+wn2dcZZPeiQF3eqlL/hwe8HtE1ODVk7KATIeJmP5Fh4fpAQgZUkzNfjgSHX3Kwo3U29+rVW2Ae2G
+6eNCd5pYwAmsbI9PDf6nv2WQNune1xGZLWMFuvNpb+VFHN+vqnSTmCp+lounxeoEqOUS3eRBJRH/
+Z0NhBMeufd12CCyUrzE=
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature114663-Object812795"><etsi:QualifyingProperties Target="#Signature114663"><etsi:SignedProperties Id="Signature114663-SignedProperties482186"><etsi:SignedSignatureProperties><etsi:SigningTime>2012-03-10T16:04:19-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>orDjo/LhNUdxhIa9JfJrhtbr8a8=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>O=PrimeKey Solutions AB,OU=Demo,CN=DemoCA3</ds:X509IssuerName><ds:X509SerialNumber>5900013853314574755</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-840175"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>

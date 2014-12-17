@@ -20,9 +20,8 @@
 ##############################################################################
 
 import time
-from report import report_sxw
-from osv import osv
-import pooler
+from openerp.report import report_sxw
+from openerp.osv import osv
 
 class move(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
@@ -50,7 +49,7 @@ class move(report_sxw.rml_parse):
 
     def get_user(self, move):
         user_name = '*'
-        user_pool = pooler.get_pool(self.cr.dbname).get('res.users')
+        user_pool = self.pool.get('res.users')
         if move.line_id and move.line_id[0] and move.line_id[0].invoice:
             user_name = move.line_id[0].invoice.user_id.name
         else:

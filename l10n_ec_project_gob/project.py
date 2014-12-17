@@ -94,7 +94,7 @@ class ProjectType(osv.osv):
         name = fields.char('Tipo de Proyecto', size=64, required=True, select=True),
         properties_ids = fields.one2many('project.property', 'type_id',
                                          string="Propiedades por Tipo de Proyecto"),
-        kpi_ids = fields.one2many('project.project.kpi', 'project_type_id', string='Indicadores'),
+        kpi_ids = fields.one2many('project.kpi', 'project_type_id', string='Indicadores'),
         )
 
 
