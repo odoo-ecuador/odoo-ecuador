@@ -13,15 +13,15 @@
   <field name="arch" type="xml">
   <notebook position="inside">
     <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-      <field name="authorisation_ids" nolabel="1" widget="one2many_list" context="{'in_type':'externo', 'default_partner_id': active_id}">
-          <tree string="Autorizaciones">
-        <field name="name" required="1"/>
-        <field name="serie_emision" required="1"/>
-        <field name="serie_entidad" required="1"/>
-        <field name="num_start" required="1"/>
-        <field name="num_end" required="1"/>
-        <field name="expiration_date" required="1"/>
-        <field name="type_id"/>
+      <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
+        <tree string="Autorizaciones" editable="top">
+          <field name="name" required="1"/>
+          <field name="serie_emision" required="1"/>
+          <field name="serie_entidad" required="1"/>
+          <field name="num_start" required="1"/>
+          <field name="num_end" required="1"/>
+          <field name="expiration_date" required="1"/>
+          <field name="type_id"/>
         </tree>
       </field>
     </page>

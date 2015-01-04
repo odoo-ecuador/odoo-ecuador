@@ -137,20 +137,6 @@
 	  <button name="print_retention" string="Retención" type="object" states="open" icon="gtk-print"/>
 	  <button name="print_move" string="Comprobante" type="object" states="open,paid" icon="gtk-print"/>
 	</xpath>
-	<!-- xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
-	      
-	    </group>
-	  </group>
-	</xpath>
-	<xpath expr="/form/group/group[@col='1']" position="replace">
-	  <field name="auth_inv_id"
-		 domain="[('partner_id','=',partner_id),('in_type','=','externo')]"
-		 attrs="{'required': [('type','=','in_invoice')]}"
-		 context="{'default_partner_id': partner_id}"/>
-	</xpath>
-	<xpath expr="//field[@name='fiscal_position']" position="attributes">
-	  <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
-	</xpath -->
       </field>
     </record>
     <!--

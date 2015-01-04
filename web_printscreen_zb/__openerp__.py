@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Copyright (c) 2013 ZestyBeanz Technologies Pvt. Ltd.
@@ -32,7 +32,7 @@
     'depends': ['web'],
     'js': ['static/src/js/web_printscreen_export.js'],
     'qweb': ['static/src/xml/web_printscreen_export.xml'],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'web_preload': False,
 }
