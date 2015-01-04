@@ -85,6 +85,8 @@ class account_tax(osv.osv):
                 amount = amount2
                 child_tax = self._unit_compute(cr, uid, tax.child_ids, amount, product, partner, quantity)
                 res.extend(child_tax)
+                for child in child_tax:
+                    amount2 += child.get('amount', 0.0)
                 if tax.child_depend:
                     for r in res:
                         for name in ('base','ref_base'):
@@ -179,17 +181,21 @@ class account_tax(osv.osv):
         return res
 
     _columns = {
-        'porcentaje': fields.char('Porcentaje', size=128), #dirty hack FIXME plz
-        'tax_group' : fields.selection([('vat','IVA Diferente de 0%'),
-                                        ('vat0','IVA 0%'),
-                                        ('novat','No objeto de IVA'),
-                                        ('ret_vat_b', 'Retención de IVA (Bienes)'),
-                                        ('ret_vat_srv', 'Retención de IVA (Servicios)'),
-                                        ('ret_ir', 'Ret. Imp. Renta'),
-                                        ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
-                                        ('imp_ad', 'Imps. Aduanas'),
-                                        ('ice', 'ICE'),
-                                        ('other','Other')], 'Grupo', required=True),
+        # dirty hack FIXME plz
+        'porcentaje': fields.char('Porcentaje', size=128),
+        'tax_group' : fields.selection([
+            ('vat','IVA Diferente de 0%'),
+            ('vat0','IVA 0%'),
+            ('novat','No objeto de IVA'),
+            ('ret_vat_b', 'Retención de IVA (Bienes)'),
+            ('ret_vat_srv', 'Retención de IVA (Servicios)'),
+            ('ret_ir', 'Ret. Imp. Renta'),
+            ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
+            ('imp_ad', 'Imps. Aduanas'),
+            ('ice', 'ICE'),
+            ('other','Other')],
+            string='Grupo',
+            required=True),
         }
 
     _defaults = {
