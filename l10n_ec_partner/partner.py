@@ -102,6 +102,7 @@ class Partner(osv.osv):
 
     _defaults = {
         'tipo_persona': '9',
+        'is_company': True
         }
 
     _constraints = [
