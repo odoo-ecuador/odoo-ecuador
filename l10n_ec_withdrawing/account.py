@@ -59,6 +59,7 @@ class account_tax(osv.osv):
                     'tax_code_id': tax.tax_code_id.id,
                     'ref_tax_code_id': tax.ref_tax_code_id.id,
                     'tax_group': tax.tax_group,
+                    'porcentaje': tax.porcentaje
             }
             res.append(data)
             if tax.type=='percent':

@@ -326,9 +326,8 @@ class AccountInvoiceTax(osv.osv):
         for line in inv.invoice_line:
             for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
                 val={}
-                tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
-                val['tax_group'] = tax_group['tax_group']
-                val['percent'] = tax_group['porcentaje']
+                val['tax_group'] = tax['tax_group']
+                val['percent'] = tax['porcentaje']
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
@@ -336,8 +335,8 @@ class AccountInvoiceTax(osv.osv):
                 val['sequence'] = tax['sequence']
                 val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
                 # Hack to EC
-                if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
-                    ret = float(str(tax_group['porcentaje'])) / 100
+                if tax['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
+                    ret = float(str(tax['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
                     imp = (abs(tax['amount']) / (ret * bi)) * 100
                     val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100
@@ -916,14 +915,16 @@ class Invoice(osv.osv):
             ]
 
     _sql_constraints = [
-        ('unique_inv_supplier', 'unique(reference,type,partner_id)', u'El numero de factura es unico.'),
+        ('unique_inv_supplier', 'unique(supplier_invoice_number,type,partner_id)', u'El numero de factura es unico.'),
     ]    
 
     def copy_data(self, cr, uid, id, default=None, context=None):
         res = super(Invoice, self).copy_data(cr, uid, id, default, context=context)
-        res.update({'reference': '0',
+        res.update({'reference': False,
                     'auth_inv_id': False,
                     'retention_id': False,
+                    'supplier_invoice_number': False,
+                    'manual_ret_num': False,
                     'retention_numbers': False})
         return res
 
