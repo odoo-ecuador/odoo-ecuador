@@ -32,7 +32,7 @@ class account_invoice(osv.osv):
     def _number(self, cr, uid, ids, name, args, context=None):
         result = {}
         for invoice in self.browse(cr, uid, ids, args):
-            result[invoice.id] = invoice.invoice_number
+            result[invoice.id] = invoice.supplier_invoice_number
         return result    
 
     _columns = {
