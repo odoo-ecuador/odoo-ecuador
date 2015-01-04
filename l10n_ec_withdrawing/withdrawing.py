@@ -327,14 +327,15 @@ class AccountInvoiceTax(osv.osv):
             for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
                 val={}
                 tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
+                val['tax_group'] = tax_group['tax_group']
+                val['percent'] = tax_group['porcentaje']
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
-                val['tax_group'] = tax_group['tax_group']
-                val['percent'] = tax_group['porcentaje']                
                 val['manual'] = False
                 val['sequence'] = tax['sequence']
                 val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
+                # Hack to EC
                 if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
                     ret = float(str(tax_group['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
@@ -342,22 +343,31 @@ class AccountInvoiceTax(osv.osv):
                     val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100
                 else:
                     val['base'] = tax['price_unit'] * line['quantity']
-                if inv.type in ('out_invoice','in_invoice','liq_purchase'):
+
+                if inv.type in ('out_invoice','in_invoice'):
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
+                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
                     val['account_id'] = tax['account_collected_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_collected_id']
                 else:
                     val['base_code_id'] = tax['ref_base_code_id']
                     val['tax_code_id'] = tax['ref_tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
+                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
                     val['account_id'] = tax['account_paid_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_paid_id']
 
-                key = (val['tax_code_id'], val['base_code_id'], val['account_id'], val['account_analytic_id'])
+                # If the taxes generate moves on the same financial account as the invoice line
+                # and no default analytic account is defined at the tax level, propagate the
+                # analytic account from the invoice line to the tax line. This is necessary
+                # in situations were (part of) the taxes cannot be reclaimed,
+                # to ensure the tax move is allocated to the proper analytic account.
+                if not val.get('account_analytic_id') and line.account_analytic_id and val['account_id'] == line.account_id.id:
+                    val['account_analytic_id'] = line.account_analytic_id.id
+
+                key = (val['tax_code_id'], val['base_code_id'], val['account_id'])
                 if not key in tax_grouped:
                     tax_grouped[key] = val
                 else:
@@ -373,9 +383,9 @@ class AccountInvoiceTax(osv.osv):
             t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
         return tax_grouped
 
-    _defaults = dict(
-        fiscal_year = time.strftime('%Y'),
-    )    
+    _defaults = {
+        'fiscal_year': time.strftime('%Y'),
+    }
 
 
 class Invoice(osv.osv):
