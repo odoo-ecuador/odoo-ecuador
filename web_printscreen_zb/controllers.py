@@ -24,7 +24,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
-import openerp.http as openerpweb
+import web.http as openerpweb
 from web.controllers.main import ExcelExport
 from web.controllers.main import Export
 import re
