@@ -25,7 +25,7 @@
     'name' : 'Accounting for Ecuador',
     "category": 'Generic Modules/Accounting',    
     'version' : '3',
-    'depends' : ['retention', 'account_asset'],
+    'depends' : ['l10n_ec_withdrawing'],
     'author' : 'GnuThink Software Cia. Ltda.',
     'description': '''
     Sequence Module for Ecuador
