@@ -27,7 +27,7 @@
     'complexity': 'normal',
     'website': 'http://www.ayni.io',
     'data': [
-        'view/einvoice_view.xml',
+        'einvoice_view.xml',
     ],
     'depends' : [
         'l10n_ec_withdrawing',
