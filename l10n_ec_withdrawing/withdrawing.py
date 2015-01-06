@@ -285,18 +285,20 @@ class AccountInvoiceTax(osv.osv):
     def compute(self, invoice_id):
         tax_grouped = {}
         tax_obj = self.pool.get('account.tax')
-        cur_obj = self.pool.get('res.currency')
+        ###cur_obj = self.pool.get('res.currency')
+        cur_obj = self.env['res.currency']
         #inv = self.pool.get('account.invoice').browse(cr, uid, invoice_id, context=context)
         # invoice_id in odoov7 is int 
         inv = self.env['account.invoice'].browse(invoice_id.id)
-        cur = inv.currency_id
+        cur = inv.currency_id.with_context(date=inv.date_invoice or fields.Date.context_today(self))
         #company_currency = self.pool['res.company'].browse(cr, uid, inv.company_id.id).currency_id.id
-        company_currency = self.env['res.company'].browse(inv.company_id.id).currency_id.id
+        company_currency = self.env['res.company'].browse(inv.company_id.id).currency_id
         for line in inv.invoice_line:
             #for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
-            taxes = tax_obj.compute_all(
-                line.invoice_line_tax_id, 
-                (line.price_unit* (1-(line.discount or 0.0)/100.0)), 
+            ###???taxes = tax_obj.compute_all(
+            taxes = line.invoice_line_tax_id.compute_all(
+                ###???line.invoice_line_tax_id, 
+                (line.price_unit* (1 - (line.discount or 0.0) / 100.0)), 
                 line.quantity, 
                 line.product_id, 
                 inv.partner_id
@@ -304,7 +306,15 @@ class AccountInvoiceTax(osv.osv):
             for tax in taxes:
                 val={}
                 ###tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
-                tax_group = self.pool.get('account.tax').read(tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
+                ### tax_group = self.env['account.tax'].search_read([tax['id']],['tax_group', 'amount', 'description', 'porcentaje'])
+                tax_group = self.env['account.tax'].read([tax['id']],['tax_group', 'amount', 'description', 'porcentaje'])
+                # Exactly v8.0
+                tax_group = self.env['account.tax'].browse([tax['id']]) 
+
+                print '**************tax_group: ', tax_group
+                print '**************tax_group: ', tax_group.type, tax_group.name, tax_group.id, tax_group.tax_group 
+
+
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
@@ -313,7 +323,7 @@ class AccountInvoiceTax(osv.osv):
                 val['manual'] = False
                 val['sequence'] = tax['sequence']
                 ###val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
-                val['base'] = cur_obj.round(tax['price_unit'] * line['quantity'])
+                val['base'] = cur.round(tax['price_unit'] * line['quantity'])
 
                 if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
                     ret = float(str(tax_group['porcentaje'])) / 100
@@ -326,18 +336,18 @@ class AccountInvoiceTax(osv.osv):
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
                     ###val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['base_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur.compute(val['base'] * tax['base_sign'], company_currency, round=False)
                     ###val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['tax_amount'] = cur.compute(val['amount'] * tax['tax_sign'], company_currency, round=False)
                     val['account_id'] = tax['account_collected_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_collected_id']
                 else:
                     val['base_code_id'] = tax['ref_base_code_id']
                     val['tax_code_id'] = tax['ref_tax_code_id']
                     ###val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['base_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur.compute(inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     ###val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['tax_amount'] = cur.compute(val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     val['account_id'] = tax['account_paid_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_paid_id']
 
@@ -352,13 +362,13 @@ class AccountInvoiceTax(osv.osv):
 
         for t in tax_grouped.values():
             ###t['base'] = cur_obj.round(cr, uid, cur, t['base'])
-            t['base'] = cur_obj.round(cur, t['base'])
+            t['base'] = cur.round( t['base'])
             ###t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
-            t['amount'] = cur_obj.round(cur, t['amount'])
+            t['amount'] = cur_obj.round(t['amount'])
             ###t['base_amount'] = cur_obj.round(cr, uid, cur, t['base_amount'])
-            t['base_amount'] = cur_obj.round(cur, t['base_amount'])
+            t['base_amount'] = cur_obj.round(t['base_amount'])
             ###t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
-            t['tax_amount'] = cur_obj.round(cur, t['tax_amount'])
+            t['tax_amount'] = cur_obj.round(t['tax_amount'])
         return tax_grouped
 
     _defaults = dict(
@@ -558,8 +568,8 @@ class Invoice(osv.osv):
         """
         res = {}
         cur_obj = self.pool.get('res.currency')
-
         invoices = self.browse(cr, uid, ids, context=context)
+
         for invoice in invoices:
             cur = invoice.currency_id
             res[invoice.id] = {
@@ -607,7 +617,7 @@ class Invoice(osv.osv):
                         res[invoice.id]['taxed_ret_ir'] += line.amount
                 elif line.tax_group == 'ice':
                     res[invoice.id]['amount_ice'] += line.amount
-
+            
             # base vat not defined, amount_vat_cero by default
             if res[invoice.id]['amount_vat'] == 0 and res[invoice.id]['amount_vat_cero'] == 0:
                 res[invoice.id]['amount_vat_cero'] = res[invoice.id]['amount_untaxed']
@@ -615,6 +625,8 @@ class Invoice(osv.osv):
             res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed'] \
                                             + res[invoice.id]['amount_tax_retention']
             res[invoice.id]['amount_pay']  = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
+
+            print '************** res hasta el final ', res
 
         return res
 
