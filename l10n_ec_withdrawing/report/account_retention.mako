@@ -67,7 +67,7 @@
       <td width="10%" style="text-align:left">${line.fiscal_year or ''}</td>
       <td width="25%" style="text-align:center">${formatLang(line.base, digits=2) or ''}</td>
       <td width="25%" style="text-align:left">${line.tax_group in ['ret_vat_b','ret_vat_srv'] and 'RET. IVA' or 'RET. RENTA'}</td>
-      <td width="15%" style="text-align:left">${line.tax_group in ['ret_vat_b','ret_var_srv'] and line.tax_code_id.code or line.tax_base_id.code }</td>
+      <td width="15%" style="text-align:left">${line.tax_group in ['ret_vat_b','ret_var_srv'] and line.tax_code_id.code or line.tax_code_id.code }</td>
       <td width="15%" style="text-align:left">${line.percent or '0.00'}%</td>
       <td width="10%" style="text-align:right">${formatLang(abs(line.amount), digits=2) or ''}</td>
     </tr>
