@@ -470,6 +470,9 @@
 	<field name="number" position="replace">
 	  <field name="supplier_invoice_number" class="oe_inline" attrs="{'readonly': [('state','!=','draft')], 'required': [('state','=','draft')]}"/>
 	</field>
+	<field name="fiscal_position" position="after">
+	  <field name="auth_inv_id" required="1"/>
+	</field>
       </field>
     </record>
 

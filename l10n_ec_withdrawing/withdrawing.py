@@ -780,15 +780,15 @@ class Invoice(osv.osv):
         'retention_id': fields.many2one('account.retention', store=True,
                                         string='Retención de Impuestos',
                                         readonly=True),
-        'retention_ir': fields.function( _check_retention, store=False,
+        'retention_ir': fields.function(_check_retention, store=True,
                                          string="Tiene Retención en IR",
                                          method=True, type='boolean',
                                          multi='ret'),
-        'retention_vat': fields.function( _check_retention, store=True,
+        'retention_vat': fields.function(_check_retention, store=True,
                                           string='Tiene Retencion en IVA',
                                           method=True, type='boolean',
                                           multi='ret'),
-        'no_retention_ir': fields.function( _check_retention, store=True,
+        'no_retention_ir': fields.function(_check_retention, store=True,
                                           string='No objeto de Retención',
                                           method=True, type='boolean',
                                           multi='ret'),        
@@ -809,28 +809,30 @@ class Invoice(osv.osv):
         'create_retention_type': 'manual',
         }
 
-    def check_retention_number(self, cr, uid, ids):
+    def onchange_journal_id(self, cr, uid, ids, journal_id=False, context=None):
         """
-        Metodo que verifica el numero de retencion
-        asignada a la factura cuando es manual la numeracion.
+        Metodo redefinido para cargar la autorizacion de facturas de venta
         """
-        res = False
-        auth_obj = self.pool.get('account.authorisation')
-        for obj in self.browse(cr, uid, ids):
-            if obj.type == 'out_refund':
-                res = True
-            elif obj.type == 'in_invoice' and (obj.retention_ir or obj.retention_vat):
-                if not obj.journal_id.auth_ret_id:
-                    raise osv.except_osv('Error', u'No se configuró retenciones.')
-                if obj.create_retention_type == 'manual' \
-                  and obj.manual_ret_num>0 and \
-                  auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, obj.manual_ret_num):
-                    res = True
-                else:
-                    raise osv.except_osv('Error', u'Error en el número de retención.')
-            else:
-                res = True
-        return res
+        result = {}
+        if journal_id:
+            journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+            currency_id = journal.currency and journal.currency.id or journal.company_id.currency_id.id
+            company_id = journal.company_id.id
+
+            if context.get('type') == 'out_invoice' and not journal.auth_id:
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'No se ha configurado una autorización en este diario.'
+                        }
+                    }
+            result = {'value': {
+                    'currency_id': currency_id,
+                    'company_id': company_id,
+                    'auth_inv_id': journal.auth_id.id
+                    }
+                }
+        return result        
 
     def _check_invoice_number(self, cr, uid, ids):
         """
@@ -851,11 +853,6 @@ class Invoice(osv.osv):
 
             auth = obj.auth_inv_id
             
-            if obj.type in ['out_invoice', 'liq_purchase']:
-                if not obj.journal_id.auth_id:
-                    raise osv.except_osv('Error', u'Sin configuración de autorización.')
-                auth = obj.journal_id.auth_id and obj.journal_id.auth_id or False
-
             if not auth:
                 raise osv.except_osv('Error', u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.')
 
