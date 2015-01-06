@@ -137,6 +137,9 @@
 	  <button name="print_retention" string="Retención" type="object" states="open" icon="gtk-print"/>
 	  <button name="print_move" string="Comprobante" type="object" states="open,paid" icon="gtk-print"/>
 	</xpath>
+	<xpath expr="//field[@name='date_invoice']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
       </field>
     </record>
     <!--
@@ -473,6 +476,9 @@
 	<field name="fiscal_position" position="after">
 	  <field name="auth_inv_id" required="1"/>
 	</field>
+	<xpath expr="//field[@name='date_invoice']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
       </field>
     </record>
 
