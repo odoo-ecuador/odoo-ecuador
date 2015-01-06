@@ -25,26 +25,11 @@ from openerp.osv import osv, fields
 from tools.translate import _
 
 
-class account_invoice(osv.osv):
+class AccountInvoice(osv.osv):
 
     _inherit = 'account.invoice'
 
-    def _number(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        for invoice in self.browse(cr, uid, ids, args):
-            result[invoice.id] = invoice.supplier_invoice_number
-        return result    
-
-    _columns = {
-        'invoice_number': fields.char('Numero de Factura', size=32, help="El numero de factura es unico"),
-        'number': fields.function( _number, 'Numero', type='char', size=32, store=True, method=True),
-        }
-
     def action_number(self, cr, uid, ids, context=None):
-        """
-        Copiado el metodo del ERP
-        CHECK: modificar para numeracion automatica en venta?
-        """
         if context is None:
             context = {}
         #TODO: not correct fix but required a frech values before reading it.
@@ -63,7 +48,7 @@ class account_invoice(osv.osv):
                     ref = self._convert_ref(cr, uid, number)
                 else:
                     ref = reference
-            else:                
+            else:
                 ref = self._convert_ref(cr, uid, number)
 
             cr.execute('UPDATE account_move SET ref=%s ' \
@@ -78,5 +63,6 @@ class account_invoice(osv.osv):
                         'AND account_analytic_line.move_id = account_move_line.id',
                         (ref, move_id))
         return True
+
 
     
