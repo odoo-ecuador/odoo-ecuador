@@ -671,19 +671,6 @@ class Invoice(osv.osv):
                     res[inv.id]['no_retention_ir'] = True
         return res
 
-    def _get_num_to_use(self, cr, uid, ids, field_name, args, context):
-        res = {}
-        invoices = self.browse(cr, uid, ids, context)
-        for inv in invoices:
-            if inv.type in ['out_invoice', 'liq_purchase']:
-                if inv.journal_id.auth_id and inv.journal_id.auth_id.sequence_id:
-                    res[inv.id] = str(inv.journal_id.auth_id.sequence_id.number_next)
-                elif inv.state in ['cancel', 'open', 'paid']:
-                    return res
-                else:
-                    raise osv.except_osv('Error', 'No se ha configurado una autorización en el diario.')
-        return res
-
     def _get_supplier_number(self, cr, uid, ids, fields, args, context):
         res = {}
         for inv in self.browse(cr, uid, ids, context):
@@ -793,15 +780,15 @@ class Invoice(osv.osv):
         'retention_id': fields.many2one('account.retention', store=True,
                                         string='Retención de Impuestos',
                                         readonly=True),
-        'retention_ir': fields.function( _check_retention, store=False,
+        'retention_ir': fields.function(_check_retention, store=True,
                                          string="Tiene Retención en IR",
                                          method=True, type='boolean',
                                          multi='ret'),
-        'retention_vat': fields.function( _check_retention, store=True,
+        'retention_vat': fields.function(_check_retention, store=True,
                                           string='Tiene Retencion en IVA',
                                           method=True, type='boolean',
                                           multi='ret'),
-        'no_retention_ir': fields.function( _check_retention, store=True,
+        'no_retention_ir': fields.function(_check_retention, store=True,
                                           string='No objeto de Retención',
                                           method=True, type='boolean',
                                           multi='ret'),        
@@ -814,11 +801,6 @@ class Invoice(osv.osv):
             ],'Type', readonly=True, select=True, change_default=True),
         'manual_ret_num': fields.integer('Num. Retención', readonly=True,
                                          states = {'draft': [('readonly', False)]}),
-        'num_to_use': fields.function( _get_num_to_use,
-                                       string='Núm a Usar',
-                                       method=True,
-                                       type='char',
-                                       help='Num. de documento a usar'),
         'sustento_id': fields.many2one('account.ats.sustento',
                                        'Sustento del Comprobante'),        
         }
@@ -827,86 +809,72 @@ class Invoice(osv.osv):
         'create_retention_type': 'manual',
         }
 
-    # constraint stuff
-    def check_in_reference(self, cr, uid, ids):
-        '''
-        cr: cursor de la base de datos
-        uid: ID de usuario
-        ids: lista ID del objeto instanciado
-
-        Metodo que revisa la referencia a
-        tener en cuenta en documentos que se recibe
-        '''                                
-        res = False
-        for inv in self.browse(cr, uid, ids):
-            if inv.partner_id.type_ced_ruc == 'pasaporte':
-                return True
-            elif inv.reference == '0' and inv.state == 'draft':
-                return True
-            elif inv.state == 'cancel':
-                return True
-            elif inv.create_retention_type == 'early' or inv.type in ['liq_purchase']:
-                return True
-            elif not inv.auth_inv_id:
-                return True
-            elif inv.auth_inv_id.is_electronic:
-                return True
-            elif inv.type in ['out_refund', 'in_refund']:
-                return True
-            elif inv.type == 'in_invoice' or (inv.type == 'out_invoice' and (inv.retention_vat or inv.retention_ir)):
-                if inv.auth_inv_id.num_start <= int(inv.supplier_invoice_number) <= inv.auth_inv_id.num_end:
-                    res = True
-            elif inv.type == 'out_invoice':
-                res = True
-            return res
-
-    def check_retention_number(self, cr, uid, ids):
+    def onchange_journal_id(self, cr, uid, ids, journal_id=False, context=None):
         """
-        Metodo que verifica el numero de retencion
-        asignada a la factura cuando es manual la numeracion.
+        Metodo redefinido para cargar la autorizacion de facturas de venta
         """
-        res = False
-        auth_obj = self.pool.get('account.authorisation')
-        for obj in self.browse(cr, uid, ids):
-            if obj.type == 'out_refund':
-                res = True
-            elif obj.type == 'in_invoice' and (obj.retention_ir or obj.retention_vat):
-                if not obj.journal_id.auth_ret_id:
-                    raise osv.except_osv('Error', u'No se configuró retenciones.')
-                if obj.create_retention_type == 'manual' \
-                  and obj.manual_ret_num>0 and \
-                  auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, obj.manual_ret_num):
-                    res = True
-                else:
-                    raise osv.except_osv('Error', u'Error en el número de retención.')
-            else:
-                res = True
-        return res
+        result = {}
+        if journal_id:
+            journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+            currency_id = journal.currency and journal.currency.id or journal.company_id.currency_id.id
+            company_id = journal.company_id.id
 
-    def check_invoice_number(self, cr, uid, ids):
+            if context.get('type') == 'out_invoice' and not journal.auth_id:
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'No se ha configurado una autorización en este diario.'
+                        }
+                    }
+            result = {'value': {
+                    'currency_id': currency_id,
+                    'company_id': company_id,
+                    'auth_inv_id': journal.auth_id.id
+                    }
+                }
+        return result        
+
+    def _check_invoice_number(self, cr, uid, ids):
+        """
+        Metodo de validacion de numero de factura y numero de
+        retencion
+        
+        numero de factura: suppplier_invoice_number
+        numero de retencion: manual_ret_num
+        """
         auth_obj = self.pool.get('account.authorisation')
+        INVOICE_LENGTH_LIMIT = 9  # CHECK: mover a compañia ?
+
         for obj in self.browse(cr, uid, ids):
-            if not obj.type == 'out_invoice':
-                return True
             if obj.state in ['open', 'paid', 'cancel']:
                 return True
-            if not obj.journal_id.auth_id:
-                raise osv.except_osv('Error', u'Sin configuración de autorización.')
-            auth = obj.journal_id.auth_id
-            if not len(obj.supplier_invoice_number) == 9:
-                raise osv.except_osv('Error', u'Son 9 dígitos en el núm. de Factura.')
+            if not len(obj.supplier_invoice_number) == INVOICE_LENGTH_LIMIT:
+                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
+
+            auth = obj.auth_inv_id
+            
+            if not auth:
+                raise osv.except_osv('Error', u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.')
+
             if not auth_obj.is_valid_number(cr, uid, auth.id, int(obj.supplier_invoice_number)):
                 raise osv.except_osv('Error', u'Número de factura fuera de rango.')
+
+            # validacion de numero de retencion para facturas de proveedor
+            if obj.type == 'in_invoice':
+                if not obj.journal_id.auth_ret_id:
+                    raise except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
+
+                if not auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, int(obj.manual_ret_num)):
+                    raise osv.except_osv('Error', u'El número de retención no es válido.')
         return True
 
-    _constraints = [(check_in_reference,
-                    u'El número no pertenece a la autorización.',['Factura Proveedor']),
-                    (check_invoice_number,
-                    u'Número fuera de rango de autorización activa.', ['Número Factura']),
-            ]
+    _constraints = [
+        (_check_invoice_number,
+        u'Número fuera de rango de autorización activa.', ['Número Factura']),
+    ]
 
     _sql_constraints = [
-        ('unique_inv_supplier', 'unique(reference,type,partner_id)', u'El numero de factura es unico.'),
+        ('unique_inv_supplier', 'unique(supplier_invoice_number,type,partner_id)', u'El número de factura es único.'),
     ]    
 
     def copy_data(self, cr, uid, id, default=None, context=None):
