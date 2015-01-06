@@ -1,0 +1,115 @@
+id,code,name,parent_id
+account_tax_code1,103,DECLARACION DE RETENCIONES EN LA FUENTE DEL IMP. RENTA (103),
+account_tax_code2,104,DECLARACION DEL IMPUESTO AL VALOR AGREGADO (104),
+account_tax_code3,,RESUMEN DE ADQUISICIONES Y PAGOS DEL PERÍODO QUE DECLARA,account_tax_code2
+account_tax_code4,,RESUMEN DE VENTAS Y OTRAS ADQUISICIONES,account_tax_code2
+account_tax_code5,,AGENTE DE RETENCIÓN DEL IMPUESTO AL VALOR AGREGADO,account_tax_code2
+account_tax_code6,,POR PAGOS EFECTUADOS EN EL PAIS,account_tax_code1
+account_tax_code7,,POR PAGOS AL EXTERIOR,account_tax_code1
+account_tax_code9,349,BASE IMPONIBLE,account_tax_code6
+account_tax_code10,399,VALOR RETENIDO,account_tax_code6
+account_tax_code11,429,BASE IMPONIBLE,account_tax_code7
+account_tax_code12,409,VALOR BRUTO,account_tax_code4
+account_tax_code13,302,EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGRAVADA,account_tax_code9
+account_tax_code14,303,HONORARIOS PROFESIONALES,account_tax_code9
+account_tax_code15,304,PREDOMINA EL INTELECTO,account_tax_code9
+account_tax_code16,307,PREDOMINA MANO DE OBRA,account_tax_code9
+account_tax_code17,308,ENTRE SOCIEDADES,account_tax_code9
+account_tax_code18,309,PUBLICIDAD Y COMUNICACIÓN,account_tax_code9
+account_tax_code19,310,TRANSPORTE PRIVADO DE PASAJEROS O SERVICIO PÚBLICO O PRIVADO,account_tax_code9
+account_tax_code20,312,TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL,account_tax_code9
+account_tax_code21,319,ARRENDAMIENTO MERCANTIL,account_tax_code9
+account_tax_code22,320,ARRENDAMIENTO BIENES INMUEBLES,account_tax_code9
+account_tax_code23,322,SEGUROS Y REASEGUROS (PRIMAS Y CESIONES),account_tax_code9
+account_tax_code24,323,RENDIMIENTOS FINANCIEROS,account_tax_code9
+account_tax_code25,325,LOTERÍAS,account_tax_code9
+account_tax_code26,327,VENTA DE COMBUSTIBLES A COMERCIALIZADORAS,account_tax_code9
+account_tax_code27,328,VENTA DE COMBUSTIBLES A DISTRIBUIDORES,account_tax_code9
+account_tax_code28,332,PAGOS DE BIENES O SERVICIOS NO SUJETOS A RETENCIÓN,account_tax_code9
+account_tax_code34,352,EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGRAVADA,account_tax_code10
+account_tax_code35,353,HONORARIOS PROFESIONALES,account_tax_code10
+account_tax_code36,354,PREDOMINA EL INTELECTO,account_tax_code10
+account_tax_code37,357,PREDOMINA MANO DE OBRA,account_tax_code10
+account_tax_code38,358,ENTRE SOCIEDADES,account_tax_code10
+account_tax_code39,359,PUBLICIDAD Y COMUNICACIÓN,account_tax_code10
+account_tax_code40,360,TRANSPORTE PRIVADO DE PASAJEROS O SERVICIO PÚBLICO O PRIVADO,account_tax_code10
+account_tax_code41,362,TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL,account_tax_code10
+account_tax_code42,369,ARRENDAMIENTO MERCANTIL,account_tax_code10
+account_tax_code43,370,ARRENDAMIENTO BIENES INMUEBLES,account_tax_code10
+account_tax_code44,372,SEGUROS Y REASEGUROS (PRIMAS Y CESIONES),account_tax_code10
+account_tax_code45,373,RENDIMIENTOS FINANCIEROS,account_tax_code10
+account_tax_code46,375,LOTERÍAS,account_tax_code10
+account_tax_code47,377,VENTA DE COMBUSTIBLES A COMERCIALIZADORAS,account_tax_code10
+account_tax_code48,378,VENTA DE COMBUSTIBLES A DISTRIBUIDORES,account_tax_code10
+account_tax_code50,391,APLICABLES EL 2%,account_tax_code10
+account_tax_code51,393,APLICABLES EL 25%,account_tax_code10
+account_tax_code53,394,APLICABLES A OTROS PORCENTAJES,account_tax_code10
+account_tax_code54,401,CON CONVENIO DE DOBLE TRIBUTACIÓN,account_tax_code9
+account_tax_code55,401,VENTAS LOCALES (EXC ACT FIJOS) GRAV TARIFA 12%,account_tax_code12
+account_tax_code56,402,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 12%,account_tax_code12
+account_tax_code57,403,VENTAS LOCALES (EXC ACT FIJ) GRAV TARIFA 0% SIN CT,account_tax_code12
+account_tax_code58,403,SIN CONV. INTERESES POR FINANCIAMIENTO DE PROVEEDORES EXTERNOS,account_tax_code9
+account_tax_code59,404,VENTAS DE ACTI FIJ GRAV TARIFA 0% SIN CT,account_tax_code12
+account_tax_code60,405,SIN CONV. INTERESES DE CRÉDITOS EXTERNOS,account_tax_code9
+account_tax_code61,405,VENTAS LOCALES (EXCLUYE ACTIVOS FIJOS) GRAVADAS TARIFA 0% CON CT,account_tax_code12
+account_tax_code62,406,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% QUE DAN CT,account_tax_code12
+account_tax_code63,407,EXPORTACION DE BIENES,account_tax_code12
+account_tax_code64,408,EXPORTACION DE SERVICIOS,account_tax_code12
+account_tax_code65,419,VALOR NETO (VALOR BRUTO – N/C),account_tax_code4
+account_tax_code67,412,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 12%,account_tax_code65
+account_tax_code68,413,VENTAS LOCALES (EXC ACT FIJ) GRAV TARIFA 0% SIN CT,account_tax_code65
+account_tax_code69,414,VENTAS DE ACTI FIJ GRAV TARIFA 0% SIN CT,account_tax_code65
+account_tax_code70,415,VENTAS LOCALES (EXCLUYE ACTIVOS FIJOS) GRAVADAS TARIFA 0% CON CT,account_tax_code65
+account_tax_code71,416,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% QUE DAN CT,account_tax_code65
+account_tax_code30,341,APLICABLES EL 2%,account_tax_code9
+account_tax_code33,344,APLICABLES A OTROS PORCENTAJES,account_tax_code9
+account_tax_code49,390,APLICABLES EL 1%,account_tax_code10
+account_tax_code29,340,APLICABLES EL 1%,account_tax_code9
+account_tax_code32,343,APLICABLES EL 25%,account_tax_code9
+account_tax_code66,411,VENTAS LOCALES (EXC ACT FIJOS) GRAV TARIFA 12%,account_tax_code12
+account_tax_code72,417,EXPORTACION DE BIENES,account_tax_code65
+account_tax_code73,418,EXPORTACION DE SERVICIOS,account_tax_code65
+account_tax_code74,429,IMPUESTO GENERADO,account_tax_code4
+account_tax_code75,421,VENTAS LOCALES (EXC ACT FIJOS) GRAV TARIFA 12%,account_tax_code74
+account_tax_code76,421,SIN CONVENIOS OTROS CONCEPTOS,account_tax_code9
+account_tax_code77,422,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 12%,account_tax_code74
+account_tax_code78,427,PAGOS AL EXTERIOR  NO SUJETOS A RETENCIÓN,account_tax_code9
+account_tax_code79,498,VALOR RETENIDO,account_tax_code7
+account_tax_code80,451,CON CONVENIO DE DOBLE TRIBUTACIÓN,account_tax_code10
+account_tax_code81,453,SIN CONV. INTERESES POR FINANCIAMIENTO DE PROVEEDORES EXTERNOS,account_tax_code10
+account_tax_code82,455,SIN CONV. INTERESES DE CRÉDITOS EXTERNOS,account_tax_code10
+account_tax_code83,471,SIN CONVENIO OTROS CONCEPTOS,account_tax_code10
+account_tax_code84,509,VALOR BRUTO,account_tax_code3
+account_tax_code85,501,ADQUIS Y PAGOS (EX ACT FIJ) TARIFA 12 CON CT,account_tax_code12
+account_tax_code86,502,ADQUISICIONES LOCALES DE ACTIVOS FIJOS GRAV TARIFA 12% (CON CT),account_tax_code12
+account_tax_code87,503,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 12% (SIN CT),account_tax_code12
+account_tax_code88,504,IMPORTACIONES DE BIENES (EXC ACTIVOS FIJOS) GRAV TARIFA 12%,account_tax_code12
+account_tax_code89,505,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 12%,account_tax_code12
+account_tax_code90,506,IMPORTACIONES DE BIENES (INCLUYE ACTIVOS FIJOS) GRAV TARIFA 0%,account_tax_code12
+account_tax_code91,507,ADQUISICIONES Y PAGOS (INCLUYE ACTIVOS FIJOS) GRAVADOS TARIFA 0%,account_tax_code12
+account_tax_code92,519,VALOR NETO (VALOR BRUTO - N/C),account_tax_code3
+account_tax_code93,511,ADQUIS Y PAGOS (EX ACT FIJ) TARIFA 12 CON CT,account_tax_code92
+account_tax_code94,512,ADQUISICIONES LOCALES DE ACTIVOS FIJOS GRAV TARIFA 12% (CON CT),account_tax_code92
+account_tax_code95,513,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 12% (SIN CT),account_tax_code92
+account_tax_code96,514,IMPORTACIONES DE BIENES (EXC ACTIVOS FIJOS) GRAV TARIFA 12%,account_tax_code92
+account_tax_code97,515,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 12%,account_tax_code92
+account_tax_code98,516,IMPORTACIONES DE BIENES (INCLUYE ACTIVOS FIJOS) GRAV TARIFA 0%,account_tax_code92
+account_tax_code100,529,IMPUESTO GENERADO,account_tax_code3
+account_tax_code101,521,ADQUIS Y PAGOS (EX ACT FIJ) TARIFA 12 CON CT,account_tax_code74
+account_tax_code102,522,ADQUISICIONES LOCALES DE ACTIVOS FIJOS GRAV TARIFA 12% (CON CT),account_tax_code74
+account_tax_code103,523,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 12% (SIN CT),account_tax_code74
+account_tax_code104,523,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 12% (SIN CT),account_tax_code74
+account_tax_code105,524,IMPORTACIONES DE BIENES (EXC ACTIVOS FIJOS) GRAV TARIFA 12%,account_tax_code74
+account_tax_code106,525,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 12%,account_tax_code74
+account_tax_code107,525,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 12%,account_tax_code74
+account_tax_code108,799,TOTAL IMPUESTO A PAGAR POR RETENCIÓN,account_tax_code5
+account_tax_code109,721,RETENCIÓN DEL 30%,account_tax_code108
+account_tax_code110,723,RETENCIÓN DEL 70%,account_tax_code108
+account_tax_code111,725,RETENCIÓN DEL 100%,account_tax_code108
+account_tax_code113,392,PREDOMINA MANO DE OBRA,account_tax_code10
+account_tax_code114,999,FORM 101,account_tax_code
+account_tax_code115,999999999,RETENCIONES A FAVOR,account_tax_code114
+account_tax_code116,609,RETENCIONES DEL IVA EFECTUADAS EN EL PERIODO,account_tax_code2
+account_tax_code99,517,ADQUISICIONES Y PAGOS (INCLUYE ACTIVOS FIJOS) GRAVADOS TARIFA 0%,account_tax_code12
+account_tax_code117,334,POR COMPRAS CON TARJETA DE CREDITO,account_tax_code9
+account_tax_code31,342,APLICABLES EL 8%,account_tax_code9
