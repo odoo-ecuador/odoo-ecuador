@@ -1,0 +1,38 @@
+id,name,description,type_tax_use,tax_group,base_code_id/id,tax_code_id/id,amount
+account_tax1,VENTAS LOCALES (EXCLUYE ACTIVOS FIJOS) GRAV TAR 12%,421,sale,vat,account_tax_code66,account_tax_code75,0.1200
+account_tax10,ADQ. Y PAGOS (EXCLUYE ACTIVOS FIJOS) GRAV TARIFA 12% (CON CT),521,purchase,vat,account_tax_code85,account_tax_code101,0.1200
+account_tax12,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 12% (SIN CT),523,purchase,vat,account_tax_code95,account_tax_code103,0.1200
+account_tax15,IMPORTACIONES DE BIENES (INCLUYE ACTIVOS FIJOS) GRAVADOS TARIFA ,506,purchase,vat0,account_tax_code90,,0.0000
+account_tax16,ADQUISICIONES Y PAGOS (INCLUYE ACTIVOS FIJOS) GRAVADOS TARIFA 0%,517,purchase,vat0,account_tax_code99,,0.0000
+account_tax18,RETENCIÓN DEL 30%,721,all,ret_vat_b,,account_tax_code109,-0.0360
+account_tax19,RETENCIÓN DEL 70%,723,all,ret_vat_srv,,account_tax_code110,-0.0840
+account_tax2,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 12%,422,sale,vat,account_tax_code67,account_tax_code77,0.1200
+account_tax20,RETENCIÓN DEL 100%,725,all,ret_vat_srv,,account_tax_code111,-0.1200
+account_tax21,RET. EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGR,302,all,ret_ir,account_tax_code13,account_tax_code34,0.0000
+account_tax22,RET. HONORARIOS PROFESIONALES ,303,all,ret_ir,account_tax_code14,account_tax_code35,-0.1000
+account_tax23,RET. PREDOMINA EL INTELECTO,304,all,ret_ir,account_tax_code15,account_tax_code36,-0.080000
+account_tax24,RET. PREDOMINA MANO DE OBRA,307,all,ret_ir,account_tax_code16,account_tax_code37,-0.0200
+account_tax25,RET. ENTRE SOCIEDADES,308,all,ret_ir,account_tax_code17,account_tax_code38,-0.0200
+account_tax26,RET. PUBLICIDAD Y COMUNICACIÓN,309,all,ret_ir,account_tax_code18,account_tax_code39,-0.0100
+account_tax27,RET. TRANS. PRIVADO DE PASAJEROS O SERV. PÚBLICO O PRIVADO DE CA,310,all,ret_ir,account_tax_code19,account_tax_code40,-0.0100
+account_tax28,RET. TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL,312,all,ret_ir,account_tax_code20,account_tax_code41,-0.0100
+account_tax29,RET. ARRENDAMIENTO MERCANTIL,,all,ret_ir,,,-0.0100
+account_tax3,VENTAS LOCALES (EXCLUYE ACTIVOS FIJOS) GRAV TARIFA 0% NO CT,403,sale,vat0,account_tax_code57,,0.0000
+account_tax30,RET. ARRENDAMIENTO BIENES INMUEBLES,320,all,ret_ir,account_tax_code22,account_tax_code43,-0.0800
+account_tax31,RET. SEGUROS Y REASEGUROS (PRIMAS Y CESIONES),322,all,ret_ir,account_tax_code23,account_tax_code44,-0.0100
+account_tax32,RET. RENDIMIENTOS FINANCIEROS,,all,ret_ir,,,-0.0200
+account_tax36,RET. PAGOS DE BIENES O SERVICIOS NO SUJETOS A RETENCIÓN,332,all,no_ret_ir,account_tax_code28,,0.0000
+account_tax37,RET. APLICABLES EL 1%,340,all,ret_ir,account_tax_code29,account_tax_code49,-0.0100
+account_tax38,RET. APLICABLES EL 2%,341,all,ret_ir,account_tax_code30,account_tax_code50,-0.0200
+account_tax39,RET. APLICABLES EL 8%,342,all,ret_ir,account_tax_code31,account_tax_code113,-0.0800
+account_tax4,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% NO CT,404,sale,vat0,account_tax_code59,,0.0000
+account_tax40,RET. APLICABLES EL 25%,,all,ret_ir,,,-0.2500
+account_tax43,IMPUESTO A LA RENTA,,all,vat,,,0.0000
+account_tax44,IMPUESTO A LA RENTA SERVICIOS,,all,vat,,,0.0000
+account_tax46,Adquisiciones locales de activos fijos gracados 12% con CT,,purchase,vat,account_tax_code86,account_tax_code102,0.120000
+account_tax47,RETENCIONES A FAVOR DEL IMPUESTO A LA RENTA,,sale,ret_ir,,,-0.010000
+account_tax49,RET. A FAVOR DEL IVA 30%,,all,ret_vat_b,,account_tax_code116,-0.036000
+account_tax5,VENTAS LOCALES (EXCLUYE ACTIVOS FIJOS) GRAVADAS TARIFA 0% CON CT,405,sale,vat0,account_tax_code61,,0.0000
+account_tax50,POR COMPRAS CON TARJETAS DE CREDITO,334,all,no_ret_ir,account_tax_code117,,0.000000
+account_tax51,RETENCIONES A FAVOR SERVICIOS,,sale,ret_ir,,,-0.020000
+account_tax6,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% CON CT,406,sale,vat0,account_tax_code62,,0.0000
