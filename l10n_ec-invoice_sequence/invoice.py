@@ -29,17 +29,6 @@ class account_invoice(osv.osv):
 
     _inherit = 'account.invoice'
 
-    def _number(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        for invoice in self.browse(cr, uid, ids, args):
-            result[invoice.id] = invoice.invoice_number
-        return result    
-
-    _columns = {
-        'invoice_number': fields.char('Numero de Factura', size=32, help="El numero de factura es unico"),
-        'number': fields.function( _number, 'Numero', type='char', size=32, store=True, method=True),
-        }
-
     def action_number(self, cr, uid, ids, context=None):
         """
         Copiado el metodo del ERP
@@ -53,10 +42,20 @@ class account_invoice(osv.osv):
         for obj_inv in self.browse(cr, uid, ids, context=context):
             invtype = obj_inv.type
             number = obj_inv.number
+            data_number = {'internal_number': number}
+
+            if invtype in ['out_invoice', 'liq_purchase']:
+                auth = obj.journal_id.auth_id
+                number = obj.internal_number
+                if not number:
+                    tmp_number = self.pool.get('ir.sequence').get_id(cr, uid, auth.sequence_id.id)
+                    number = '{0}-{1}-{0}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
+                data_number.update({'supplier_invoice_number': number})
+
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
 
-            self.write(cr, uid, ids, {'internal_number': number})
+            self.write(cr, uid, ids, data_number)
 
             if invtype in ('in_invoice', 'in_refund'):
                 if not reference:

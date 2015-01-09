@@ -303,11 +303,6 @@ class AccountInvoice(osv.osv):
         
         """
         for obj in self.browse(cr, uid, ids):
-            # FIX ME: mover numeracion de factura a metodo action_number
-            auth = obj.journal_id.auth_id
-            number = self.pool.get('ir.sequence').get_id(cr, uid, obj.journal_id.auth_id.sequence_id.id)
-            invoice_number = '{0}-{1}-{0}'.format(auth.serie_entidad, auth.serie_emision, number)
-
             # Codigo de acceso
             access_key = self.get_access_key(cr, uid, obj)
             self.write(cr, uid, obj.id, {'clave_acceso': access_key})
