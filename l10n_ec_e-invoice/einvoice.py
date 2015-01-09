@@ -210,6 +210,38 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoFactura, 'importeTotal').text = '%.2f' % (invoice.amount_pay)
         return infoFactura
 
+    def _generate_detail_element(self, cr, uid, invoice):
+        """
+        """
+        detalles = etree.Element('detalles')
+        for line in invoice.invoice_line:
+            if line.product_id.default_code == 'DESC':
+                continue
+            detalle = etree.Element('detalle')
+            etree.SubElement(detalle, 'codigoPrincipal').text = line.product_id.default_code
+            if line.product_id.manufacturer_pref:
+                etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref
+            etree.SubElement(detalle, 'descripcion').text = line.product_id.name
+            etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
+            etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
+            etree.SubElement(detalle, 'descuento').text = '0.0000'
+            etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
+            impuestos = etree.Element('impuestos')
+            for tax_line in line.invoice_line_tax_id:
+                if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
+                    base_amount = cur_obj.compute(cr, uid, invoice.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    tax_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    impuesto = etree.Element('impuesto')
+                    etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
+                    etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
+                    etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_amount * 100)
+                    etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (base_amount)
+                    etree.SubElement(impuesto, 'valor').text = '%.2f' % (base_amount * tax_amount)
+                    impuestos.append(impuesto)
+            detalle.append(impuestos)
+            detalles.append(detalle)
+        return detalles    
+
     def _generate_xml_invoice(self, cr, uid, invoice, access_key):
         """
         """
@@ -217,44 +249,35 @@ class AccountInvoice(osv.osv):
         factura.set("id", "comprobante")
         factura.set("version", "1.1.0")
 
-        #infoTributaria
+        # generar infoTributaria
         infoTributaria = self._get_tax_element(cr, uid, invoice, access_key)
         factura.append(infoTributaria)
 
-        #infoFactura
+        # generar infoFactura
         infoFactura = self.get_invoice_element(cr, uid, invoice)
         factura.append(infoFactura)
 
-        #detalles
-        detalles = etree.Element('detalles')
-        for line in obj.invoice_line:
-            if line.product_id.default_code != 'DESC':
-                #detalle
-                detalle = etree.Element('detalle')
-                etree.SubElement(detalle, 'codigoPrincipal').text = line.product_id.default_code
-                if line.product_id.manufacturer_pref:
-                    etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref
-                etree.SubElement(detalle, 'descripcion').text = line.product_id.name
-                etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
-                etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
-                etree.SubElement(detalle, 'descuento').text = '0.0000'
-                etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
-                impuestos = etree.Element('impuestos')
-                for tax_line in line.invoice_line_tax_id:
-                    if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
-                        base_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                        tax_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                        impuesto = etree.Element('impuesto')
-                        etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
-                        etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
-                        etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_amount * 100)
-                        etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (base_amount)
-                        etree.SubElement(impuesto, 'valor').text = '%.2f' % (base_amount * tax_amount)
-                        impuestos.append(impuesto)
-                detalle.append(impuestos)
-                detalles.append(detalle)
+        # generar detalles
+        detalles = self.get_detail_element(cr, uid, invoice)
+
         factura.append(detalles)        
         return factura
+
+    def validate_xml(cr, uid, factura):
+        """
+        """
+        INVOICE_XSD_PATH = 'docs/factura.xsd'
+        file_path = os.path.join(os.path.dirname(__file__), INVOICE_XSD_PATH)
+        schema_file = open(file_path)
+        file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
+        xmlschema_doc = etree.parse(schema_file)
+        xmlschema = etree.XMLSchema(xmlschema_doc)
+        try:
+            xmlschema.assertValid(factura)
+        except DocumentInvalid as e:
+            raise osv.except_osv('Error de Datos', """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
+            \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))        
+        
     
     def action_generate_einvoice(self, cr, uid, ids, context=None):
         """
@@ -276,16 +299,6 @@ class AccountInvoice(osv.osv):
             #validación del xml
             self.validate_xml(cr, uid, factura)
 
-            file_path = os.path.join(os.path.dirname(__file__), 'docs/factura.xsd')
-            schema_file = open(file_path)
-            file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
-            xmlschema_doc = etree.parse(schema_file)
-            xmlschema = etree.XMLSchema(xmlschema_doc)
-            try:
-                xmlschema.assertValid(factura)
-            except DocumentInvalid as e:
-                raise osv.except_osv('Error de Datos', """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
-                \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))
             #grabación del xml en el disco
             tree = etree.ElementTree(factura)
             name = '%s%s.xml' %('/opt/facturas/', claveAcceso)
