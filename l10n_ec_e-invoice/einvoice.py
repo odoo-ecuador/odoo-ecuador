@@ -157,92 +157,125 @@ class AccountInvoice(osv.osv):
                            serie, numero, codigo_numero, tipo_emision])
         access_key = ''.join([ak_temp, str(self.get_mod(ak_temp, self.MODULO_11))])
         return access_key
+
+    def _get_tax_element(self, cr, uid, invoice, access_key):
+        """
+        """
+        company = invoice.company_id
+        auth = invoice.journal_id.auth_id
+        infoTributaria = etree.Element('infoTributaria')
+        etree.SubElement(infoTributaria, 'ambiente').text = self.AMBIENTE_PRUEBA
+        etree.SubElement(infoTributaria, 'tipoEmision').text = self.get_standard_emission(cr, uid, obj)
+        etree.SubElement(infoTributaria, 'razonSocial').text = company.name
+        etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
+        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
+        etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
+        etree.SubElement(infoTributaria, 'codDoc').text = auth.type_id.code
+        etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
+        etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
+        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number
+        etree.SubElement(infoTributaria, 'dirMatriz').text = company.street
+        return infoFactura
+
+    def _get_invoice_element(self, cr, uid, invoice):
+        company = invoice.company_id
+        partner = invoice.partner_id
+        infoFactura = etree.Element('infoFactura')
+        etree.SubElement(infoFactura, 'fechaEmision').text = time.strftime('%d/%m/%Y', obj.date_invoice)
+        etree.SubElement(infoFactura, 'dirEstablecimiento').text = company.street2
+        etree.SubElement(infoFactura, 'contribuyenteEspecial').text = company.company_registry
+        etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
+        etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
+        etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
+        etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
+        etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
+        descuento = '0.00'
+        for line in invoice.invoice_line:
+            if line.product_id.default_code == 'DESC':
+                descuento = '%.2f' % (line.price_unit*-1)
+        etree.SubElement(infoFactura, 'totalDescuento').text = descuento
+        #totalConImpuestos
+        totalConImpuestos = etree.Element('totalConImpuestos')
+        for tax in invoice.tax_line:
+            #totalImpuesto
+            if tax.tax_group in ['vat', 'vat0', 'ice', 'other']:
+                totalImpuesto = etree.Element('totalImpuesto')
+                etree.SubElement(totalImpuesto, 'codigo').text = codigoImpuesto[tax.tax_group]
+                etree.SubElement(totalImpuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax.tax_group]
+                etree.SubElement(totalImpuesto, 'baseImponible').text = '%.2f' % (tax.base_amount)
+                etree.SubElement(totalImpuesto, 'valor').text = '%.2f' % (tax.tax_amount)
+                totalConImpuestos.append(totalImpuesto)
+        infoFactura.append(totalConImpuestos)
+        etree.SubElement(infoFactura, 'propina').text = '0.0000'
+        etree.SubElement(infoFactura, 'importeTotal').text = '%.2f' % (invoice.amount_pay)
+        return infoFactura
+
+    def _generate_xml_invoice(self, cr, uid, invoice, access_key):
+        """
+        """
+        factura = etree.Element('factura')
+        factura.set("id", "comprobante")
+        factura.set("version", "1.1.0")
+
+        #infoTributaria
+        infoTributaria = self._get_tax_element(cr, uid, invoice, access_key)
+        factura.append(infoTributaria)
+
+        #infoFactura
+        infoFactura = self.get_invoice_element(cr, uid, invoice)
+        factura.append(infoFactura)
+
+        #detalles
+        detalles = etree.Element('detalles')
+        for line in obj.invoice_line:
+            if line.product_id.default_code != 'DESC':
+                #detalle
+                detalle = etree.Element('detalle')
+                etree.SubElement(detalle, 'codigoPrincipal').text = line.product_id.default_code
+                if line.product_id.manufacturer_pref:
+                    etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref
+                etree.SubElement(detalle, 'descripcion').text = line.product_id.name
+                etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
+                etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
+                etree.SubElement(detalle, 'descuento').text = '0.0000'
+                etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
+                impuestos = etree.Element('impuestos')
+                for tax_line in line.invoice_line_tax_id:
+                    if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
+                        base_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                        tax_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                        impuesto = etree.Element('impuesto')
+                        etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
+                        etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
+                        etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_amount * 100)
+                        etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (base_amount)
+                        etree.SubElement(impuesto, 'valor').text = '%.2f' % (base_amount * tax_amount)
+                        impuestos.append(impuesto)
+                detalle.append(impuestos)
+                detalles.append(detalle)
+        factura.append(detalles)        
+        return factura
     
-    def action_generate_xml_einvoice(self, cr, uid, ids, context=None):
+    def action_generate_einvoice(self, cr, uid, ids, context=None):
+        """
+        
+        """
         for obj in self.browse(cr, uid, ids):
+            # FIX ME: mover numeracion de factura a metodo action_number
             auth = obj.journal_id.auth_id
             number = self.pool.get('ir.sequence').get_id(cr, uid, obj.journal_id.auth_id.sequence_id.id)
             invoice_number = '{0}-{1}-{0}'.format(auth.serie_entidad, auth.serie_emision, number)
+
+            # Codigo de acceso
             access_key = self.get_access_key(cr, uid, obj)
             self.write(cr, uid, obj.id, {'clave_acceso': access_key})
-            #xml del comprobante electrónico: factura
-            factura = etree.Element('factura')
-            factura.set("id", "comprobante")
-            factura.set("version", "1.1.0")
-            #infoTributaria
-            infoTributaria = etree.Element('infoTributaria')
-            etree.SubElement(infoTributaria, 'ambiente').text = self.AMBIENTE_PRUEBA
-            etree.SubElement(infoTributaria, 'tipoEmision').text = self.get_standard_emission(cr, uid, obj)
-            etree.SubElement(infoTributaria, 'razonSocial').text = obj.company_id.name
-            etree.SubElement(infoTributaria, 'nombreComercial').text = obj.company_id.name
-            etree.SubElement(infoTributaria, 'ruc').text = obj.company_id.partner_id.ced_ruc
-            etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
-            etree.SubElement(infoTributaria, 'codDoc').text = auth.type_id.code
-            etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
-            etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
-            etree.SubElement(infoTributaria, 'secuencial').text = number
-            etree.SubElement(infoTributaria, 'dirMatriz').text = obj.company_id.street
-            factura.append(infoTributaria)
-            #infoFactura
-            infoFactura = etree.Element('infoFactura')
-            etree.SubElement(infoFactura, 'fechaEmision').text = time.strftime('%d/%m/%Y', obj.date_invoice)
-            etree.SubElement(infoFactura, 'dirEstablecimiento').text = obj.company_id.street2
-            etree.SubElement(infoFactura, 'contribuyenteEspecial').text = obj.company_id.company_registry
-            etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
-            etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[obj.partner_id.type_ced_ruc]
-            etree.SubElement(infoFactura, 'razonSocialComprador').text = obj.partner_id.name
-            etree.SubElement(infoFactura, 'identificacionComprador').text = obj.partner_id.ced_ruc
-            etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (obj.amount_untaxed)
-            descuento = '0.00'
-            for line in obj.invoice_line:
-                if line.product_id.default_code == 'DESC':
-                    descuento = '%.2f' % (line.price_unit*-1)
-            etree.SubElement(infoFactura, 'totalDescuento').text = descuento
-            #totalConImpuestos
-            totalConImpuestos = etree.Element('totalConImpuestos')
-            for tax in obj.tax_line:
-                #totalImpuesto
-                if tax.tax_group in ['vat', 'vat0', 'ice', 'other']:
-                    totalImpuesto = etree.Element('totalImpuesto')
-                    etree.SubElement(totalImpuesto, 'codigo').text = codigoImpuesto[tax.tax_group]
-                    etree.SubElement(totalImpuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax.tax_group]
-                    etree.SubElement(totalImpuesto, 'baseImponible').text = '%.2f' % (tax.base_amount)
-                    etree.SubElement(totalImpuesto, 'valor').text = '%.2f' % (tax.tax_amount)
-                    totalConImpuestos.append(totalImpuesto)
-            infoFactura.append(totalConImpuestos)
-            etree.SubElement(infoFactura, 'propina').text = '0.0000'
-            etree.SubElement(infoFactura, 'importeTotal').text = '%.2f' % (obj.amount_pay)
-            factura.append(infoFactura)
-            #detalles
-            detalles = etree.Element('detalles')
-            for line in obj.invoice_line:
-                if line.product_id.default_code != 'DESC':
-                    #detalle
-                    detalle = etree.Element('detalle')
-                    etree.SubElement(detalle, 'codigoPrincipal').text = line.product_id.default_code
-                    if line.product_id.manufacturer_pref:
-                        etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref
-                    etree.SubElement(detalle, 'descripcion').text = line.product_id.name
-                    etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
-                    etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
-                    etree.SubElement(detalle, 'descuento').text = '0.0000'
-                    etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
-                    impuestos = etree.Element('impuestos')
-                    for tax_line in line.invoice_line_tax_id:
-                        if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
-                            base_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                            tax_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': obj.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                            impuesto = etree.Element('impuesto')
-                            etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
-                            etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
-                            etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_amount * 100)
-                            etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (base_amount)
-                            etree.SubElement(impuesto, 'valor').text = '%.2f' % (base_amount * tax_amount)
-                            impuestos.append(impuesto)
-                    detalle.append(impuestos)
-                    detalles.append(detalle)
-            factura.append(detalles)
+
+            # XML del comprobante electrónico: factura
+            factura = self.generate_xml_invoice(cr, uid, obj, access_key)
+
             #validación del xml
+            self.validate_xml(cr, uid, factura)
+
             file_path = os.path.join(os.path.dirname(__file__), 'docs/factura.xsd')
             schema_file = open(file_path)
             file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
