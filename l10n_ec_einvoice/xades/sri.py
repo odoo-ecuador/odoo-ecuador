@@ -97,7 +97,7 @@ class Service(object):
         INDISPONIBILIDAD = '2'
         
         try:
-            client = Client(TEST_RECEIV_DOCS)
+            client = Client(self.get_ws_test()[0])
         except TransportError, e:
             logger.warning("Servicio no disponible")
             return INDISPONIBILIDAD
