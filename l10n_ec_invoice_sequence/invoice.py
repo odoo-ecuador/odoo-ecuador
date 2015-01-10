@@ -30,6 +30,10 @@ class AccountInvoice(osv.osv):
     _inherit = 'account.invoice'
 
     def action_number(self, cr, uid, ids, context=None):
+        """
+        Copiado el metodo del ERP
+        CHECK: modificar para numeracion automatica en venta?
+        """
         if context is None:
             context = {}
         #TODO: not correct fix but required a frech values before reading it.
@@ -38,10 +42,20 @@ class AccountInvoice(osv.osv):
         for obj_inv in self.browse(cr, uid, ids, context=context):
             invtype = obj_inv.type
             number = obj_inv.number
+            data_number = {'internal_number': number}
+
+            if invtype in ['out_invoice', 'liq_purchase']:
+                auth = obj.journal_id.auth_id
+                number = obj.internal_number
+                if not number:
+                    tmp_number = self.pool.get('ir.sequence').get_id(cr, uid, auth.sequence_id.id)
+                    number = '{0}-{1}-{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
+                data_number.update({'supplier_invoice_number': number})
+
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
 
-            self.write(cr, uid, ids, {'internal_number': number})
+            self.write(cr, uid, ids, data_number)
 
             if invtype in ('in_invoice', 'in_refund'):
                 if not reference:
@@ -63,6 +77,5 @@ class AccountInvoice(osv.osv):
                         'AND account_analytic_line.move_id = account_move_line.id',
                         (ref, move_id))
         return True
-
 
     
