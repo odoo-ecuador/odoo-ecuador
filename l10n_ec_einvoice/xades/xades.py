@@ -44,6 +44,25 @@ except ImportError:
     raise ImportError('Instalar Libreria suds')
 
 
+class InvoiceXML(invoice):
+
+    self.INVOICE_XSD_PATH = 'schemas/factura.xsd' 
+    
+    def validate_xml(self, factura):
+        """
+        """
+        file_path = os.path.join(os.path.dirname(__file__), self.INVOICE_XSD_PATH)
+        schema_file = open(file_path)
+        file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
+        xmlschema_doc = etree.parse(schema_file)
+        xmlschema = etree.XMLSchema(xmlschema_doc)
+        try:
+            xmlschema.assertValid(factura)
+        except DocumentInvalid as e:
+            raise osv.except_osv('Error de Datos', """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
+            \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))    
+
+
 class SRIService(object):
 
     def __init__(self):
@@ -136,21 +155,6 @@ class CheckDigit(object):
 
 
 class Xades(object):
-
-    def validate_xml(self, factura):
-        """
-        """
-        INVOICE_XSD_PATH = 'docs/factura.xsd'
-        file_path = os.path.join(os.path.dirname(__file__), INVOICE_XSD_PATH)
-        schema_file = open(file_path)
-        file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
-        xmlschema_doc = etree.parse(schema_file)
-        xmlschema = etree.XMLSchema(xmlschema_doc)
-        try:
-            xmlschema.assertValid(factura)
-        except DocumentInvalid as e:
-            raise osv.except_osv('Error de Datos', """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
-            \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))
 
     def apply_digital_signature(self, factura):
         """
