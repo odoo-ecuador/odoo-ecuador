@@ -116,7 +116,14 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'dirMatriz').text = company.street
         return infoFactura
 
-    def _get_invoice_element(self, invoice):
+    def _get_discount(self, cr, uid, invoice):
+        descuento = '0.00'
+        ## for line in invoice.invoice_line:
+        ##     if line.product_id.default_code == 'DESC':
+        ##         descuento = '%.2f' % (line.price_unit*-1)
+        return descuento
+
+    def _get_invoice_element(self, cr, uid, invoice):
         company = invoice.company_id
         partner = invoice.partner_id
         infoFactura = etree.Element('infoFactura')
@@ -128,25 +135,30 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
         etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
         etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
-        descuento = '0.00'
-        for line in invoice.invoice_line:
-            if line.product_id.default_code == 'DESC':
-                descuento = '%.2f' % (line.price_unit*-1)
-        etree.SubElement(infoFactura, 'totalDescuento').text = descuento
-        #totalConImpuestos
+        etree.SubElement(infoFactura, 'totalDescuento').text = self.get_discount(cr, uid, invoice)
+
+        # totalConImpuestos
         totalConImpuestos = etree.Element('totalConImpuestos')
         for tax in invoice.tax_line:
-            #totalImpuesto
+
             if tax.tax_group in ['vat', 'vat0', 'ice', 'other']:
                 totalImpuesto = etree.Element('totalImpuesto')
                 etree.SubElement(totalImpuesto, 'codigo').text = codigoImpuesto[tax.tax_group]
                 etree.SubElement(totalImpuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax.tax_group]
-                etree.SubElement(totalImpuesto, 'baseImponible').text = '%.2f' % (tax.base_amount)
-                etree.SubElement(totalImpuesto, 'valor').text = '%.2f' % (tax.tax_amount)
+                etree.SubElement(totalImpuesto, 'baseImponible').text = '{:.2f}'.format(tax.base_amount)
+                etree.SubElement(totalImpuesto, 'valor').text = '{:.2f}'.format(tax.tax_amount)
                 totalConImpuestos.append(totalImpuesto)
+
         infoFactura.append(totalConImpuestos)
-        etree.SubElement(infoFactura, 'propina').text = '0.0000'
-        etree.SubElement(infoFactura, 'importeTotal').text = '%.2f' % (invoice.amount_pay)
+
+        etree.SubElement(infoFactura, 'propina').text = '0.00'
+        etree.SubElement(infoFactura, 'importeTotal').text = '{:.2f}'.format(invoice.amount_pay)
+        etree.SubElement(infoFactura, 'moneda').text = 'DOLAR'
+
+        if invoice.state == 'paid':
+            pagos = self.get_payment_element(cr, uid, invoice)
+            infoFactura.append(pagos)        
+
         return infoFactura
 
     def _generate_detail_element(self, invoice):
