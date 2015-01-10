@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    E-Invoice Module - Ecuador
-#    Copyright (C) 2014 VIRTUALSAMI CIA. LTDA. All Rights Reserved
-#    alcides@virtualsami.com.ec
+#    XADES 
+#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
+#    cristian.salamea@gmail.com
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -33,9 +33,6 @@ except ImportError:
     raise ImportError('Instalar la libreria para soporte OpenSSL: pip install PyOpenSSL')
 
 from pytz import timezone
-from lxml import etree
-from lxml.etree import DocumentInvalid
-from xml.dom.minidom import parse, parseString
 
 try:
     from suds.client import Client
@@ -44,75 +41,6 @@ except ImportError:
     raise ImportError('Instalar Libreria suds')
 
 
-class InvoiceXML(invoice):
-
-    self.INVOICE_XSD_PATH = 'schemas/factura.xsd' 
-    
-    def validate_xml(self, factura):
-        """
-        """
-        file_path = os.path.join(os.path.dirname(__file__), self.INVOICE_XSD_PATH)
-        schema_file = open(file_path)
-        file_factura = etree.tostring(factura, pretty_print=True, encoding='utf-8')
-        xmlschema_doc = etree.parse(schema_file)
-        xmlschema = etree.XMLSchema(xmlschema_doc)
-        try:
-            xmlschema.assertValid(factura)
-        except DocumentInvalid as e:
-            raise osv.except_osv('Error de Datos', """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
-            \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))    
-
-
-class SRIService(object):
-
-    def __init__(self):
-        self.__AMBIENTE_PRUEBA = '1'
-        self.__AMBIENTE_PROD = '2'
-        self.__WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-        self.__WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos- ws/AutorizacionComprobantes?wsdl'
-        self.__WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-        self.__WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
-
-    def get_env_test(self):
-        return self.__AMBIENTE_PRUEBA
-
-    def get_env_prod(self):
-        return self.__AMBIENTE_PROD
-
-    def get_ws_test(self):
-        return self.__WS_TEST_RECEIV, self.__WS_TEST_AUTH
-
-    def get_ws_prod(self):
-        return self.__WS_RECEIV, self.__WS_AUTH
-
-    def create_access_key(self, values):
-        """
-        values: tuple ([], [])
-        """
-        check_digit = CheckDigit()
-        tipo_emision = self.get_type_emission()
-        dato = values[0] + [tipo_emision] + values[1]
-        modulo = check_digit.compute_mod11(dato)
-        access_key = ''.join([dato, modulo])
-        return access_key    
-
-    def get_type_emission(self):
-        """
-        Metodo de tipo de emision
-        FIX FIX FIX TODO: mejorar documentacion
-        """
-        logger = logging.getLogger('suds.client').setLevel(logging.INFO)
-        NORMAL = '1'
-        INDISPONIBILIDAD = '2'
-        
-        try:
-            client = Client(TEST_RECEIV_DOCS)
-        except TransportError, e:
-            return INDISPONIBILIDAD
-        else:
-            print client
-            return NORMAL    
-        
 
 class CheckDigit(object):
 
