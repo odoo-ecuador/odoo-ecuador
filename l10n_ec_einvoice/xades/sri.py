@@ -99,6 +99,7 @@ class Service(object):
         try:
             client = Client(TEST_RECEIV_DOCS)
         except TransportError, e:
+            logger.warning("Servicio no disponible")
             return INDISPONIBILIDAD
         else:
             print client

@@ -24,6 +24,8 @@
 import time
 import logging
 
+from lxml import etree
+
 from osv import osv, fields
 from tools import config
 from tools.translate import _
@@ -31,7 +33,7 @@ from tools import ustr
 import decimal_precision as dp
 import netsvc
 
-from .xades import SRIService
+from .sri import Service as SRIService, InvoiceXML
 
 tipoIdentificacion = {
     'ruc' : '04',
@@ -69,6 +71,14 @@ class AccountInvoice(osv.osv):
         'autorizado_sri': fields.boolean('¿Autorizado SRI?', readonly=True),
         'security_code': fields.char('Código de Seguridad', size=8)
         }
+
+    def get_code(self, cr, uid, invoice):
+        """
+        TODO: revisar la generacion
+        del codigo de 8 digitos
+        """
+        arreglo = invoice.origin.split('/')
+        return (arreglo[1] + arreglo[2])[2:10]        
 
     def get_access_key(self, cr, uid, invoice):
         auth = invoice.journal_id.auth_id
@@ -191,14 +201,6 @@ class AccountInvoice(osv.osv):
 
         factura.append(detalles)        
         return factura
-    
-    def get_code(self, cr, uid, invoice):
-        """
-        TODO: revisar la generacion
-        del codigo de 8 digitos
-        """
-        arreglo = invoice.origin.split('/')
-        return (arreglo[1] + arreglo[2])[2:10]
 
     def action_generate_einvoice(self, cr, uid, ids, context=None):
         """
@@ -208,19 +210,25 @@ class AccountInvoice(osv.osv):
             # Codigo de acceso
             ak_temp = self.get_access_key(cr, uid, obj)            
             access_key = SRIService.create_access_key(ak_temp)
+            self.write(cr, uid, [obj.id], {'clave_acceso': access_key})
 
             # XML del comprobante electrónico: factura
             factura = self.generate_xml_invoice(cr, uid, obj, access_key)
 
             #validación del xml
-            self.validate_xml(cr, uid, factura)
+            inv_xml = InvoiceXML(factura)
+            InvoiceXML.validate_xml()
+            inv_str = InvoiceXML.to_string()
 
             # firma de XML, now what ??
-            ds_invoice = self.apply_digital_signature(cr, uid, factura)
+            # TODO: zip, checksum, save, send
+            xades = Xades(inv_str)
+            xades.sign_document()
+            ds_invoice = xades.get_xml()
             
         return True
 
-    def action_einvoice_send_receipt(self, cr, uid, ids, context=None):
+"""    def action_einvoice_send_receipt(self, cr, uid, ids, context=None):
         obj = self.browse(cr, uid, ids)[0]
         name = '%s%s.xml' %('/opt/facturas/', obj.clave_acceso)
         cadena = open(name, mode='rb').read()
@@ -313,3 +321,4 @@ class AccountInvoice(osv.osv):
         email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
         
         return True
+"""
