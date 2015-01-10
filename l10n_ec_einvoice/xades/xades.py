@@ -27,26 +27,62 @@ import StringIO
 import hashlib
 import datetime
 import subprocess
-from OpenSSL import crypto
+try:
+    from OpenSSL import crypto
+except ImportError:
+    raise ImportError('Instalar la libreria para soporte OpenSSL: pip install PyOpenSSL')
 
 from pytz import timezone
 from lxml import etree
 from lxml.etree import DocumentInvalid
 from xml.dom.minidom import parse, parseString
-from suds.client import Client
-from suds.transport import TransportError
 
-MOD_OPT_11 = 0
-MOD_OPT_10 = 1
-OPTION_1 = 10
+try:
+    from suds.client import Client
+    from suds.transport import TransportError
+except ImportError:
+    raise ImportError('Instalar Libreria suds')
 
-AMBIENTE_PRUEBA = '1'
-AMBIENTE_PROD = '2'
 
-#Move as field in company ?
-TEST_RECEIV_DOCS = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-TEST_AUTH_DOCS = 'https://celcer.sri.gob.ec/comprobantes-electronicos- ws/AutorizacionComprobantes?wsdl'
+class SRIService(object):
 
+    def __init__(self):
+        self.__AMBIENTE_PRUEBA = '1'
+        self.__AMBIENTE_PROD = '2'
+        self.__WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
+        self.__WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos- ws/AutorizacionComprobantes?wsdl'
+        self.__WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
+        self.__WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
+
+    def get_env_test(self):
+        return self.__AMBIENTE_PRUEBA
+
+    def get_env_prod(self):
+        return self.__AMBIENTE_PROD
+
+    def get_ws_test(self):
+        return self.__WS_TEST_RECEIV, self.__WS_TEST_AUTH
+
+    def get_ws_prod(self):
+        return self.__WS_RECEIV, self.__WS_AUTH
+
+    def get_standard_emission(self):
+        """
+        Metodo de tipo de emision
+        FIX FIX FIX TODO: mejorar documentacion
+        """
+        logger = logging.getLogger('suds.client').setLevel(logging.INFO)
+        NORMAL = '1'
+        INDISPONIBILIDAD = '2'
+        
+        try:
+            client = Client(TEST_RECEIV_DOCS)
+        except TransportError, e:
+            return INDISPONIBILIDAD
+        else:
+            print client
+            return NORMAL    
+        
 
 class CheckDigit(object):
 
@@ -89,25 +125,11 @@ class CheckDigit(object):
 
 
 class Xades(object):
-
-    def get_standard_emission(self, invoice):
-        """
-        Metodo de tipo de emision
-        TODO: mejorar documentacion
-        """
-        logger = logging.getLogger('suds.client').setLevel(logging.INFO)
-        NORMAL = '1'
-        INDISPONIBILIDAD = '2'
-        
-        try:
-            client = Client(TEST_RECEIV_DOCS)
-        except TransportError, e:
-            return INDISPONIBILIDAD
-        else:
-            print client
-            return NORMAL
             
     def get_access_key(self, invoice):
+        """
+        REFACTOR
+        """
         auth = invoice.journal_id.auth_id
         ld = invoice.date_invoice.split('-')
         ld.reverse()
