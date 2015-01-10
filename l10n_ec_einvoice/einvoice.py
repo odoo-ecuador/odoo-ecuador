@@ -31,7 +31,7 @@ from tools import config
 from tools.translate import _
 from tools import ustr
 import decimal_precision as dp
-import netsvc
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 from .sri import Service as SRIService, InvoiceXML
 
@@ -103,8 +103,8 @@ class AccountInvoice(osv.osv):
         company = invoice.company_id
         auth = invoice.journal_id.auth_id
         infoTributaria = etree.Element('infoTributaria')
-        etree.SubElement(infoTributaria, 'ambiente').text = self.AMBIENTE_PRUEBA
-        etree.SubElement(infoTributaria, 'tipoEmision').text = self.get_standard_emission(cr, uid, obj)
+        etree.SubElement(infoTributaria, 'ambiente').text = SRIService.get_env_test()
+        etree.SubElement(infoTributaria, 'tipoEmision').text = SRIService.get_emission()
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
         etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
