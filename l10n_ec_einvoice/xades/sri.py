@@ -29,8 +29,8 @@ from lxml.etree import DocumentInvalid
 
 class InvoiceXML(object):
 
-    self.INVOICE_XSD_PATH = 'schemas/factura.xsd'
-    self.INVOICE_SCHEMA_INVALID = """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
+    INVOICE_XSD_PATH = 'schemas/factura.xsd'
+    INVOICE_SCHEMA_INVALID = """El sistema generó el XML pero la factura no pasa la validación XSD del SRI.
             \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s"""
 
     def __init__(self, element):

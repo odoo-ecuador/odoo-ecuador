@@ -33,7 +33,7 @@ from tools import ustr
 import decimal_precision as dp
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
-from .sri import Service as SRIService, InvoiceXML
+from .xades.sri import Service as SRIService, InvoiceXML
 
 tipoIdentificacion = {
     'ruc' : '04',
