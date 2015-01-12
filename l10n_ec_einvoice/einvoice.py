@@ -78,33 +78,16 @@ class AccountInvoice(osv.osv):
         del codigo de 8 digitos
         """
         arreglo = invoice.origin.split('/')
-        return (arreglo[1] + arreglo[2])[2:10]        
+        return (arreglo[1] + arreglo[2])[2:10]
 
-    def get_access_key(self, cr, uid, invoice):
-        auth = invoice.journal_id.auth_id
-        ld = invoice.date_invoice.split('-')
-        ld.reverse()
-        fecha = ''.join(ld)
-        #
-        tcomp = auth.type_id.code
-        ruc = invoice.company_id.partner_id.ced_ruc
-        serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
-        numero = invoice.supplier_invoice_number # FIX w/ number
-        codigo_numero = self.get_code(cr, uid, invoice)
-        access_key = (
-            [fecha, tcomp, ruc],
-            [serie, numero, codigo_numero, tipo_emision]
-            )
-        return access_key
-
-    def _get_tax_element(self, invoice, access_key):
+    def _get_tax_element(self, invoice, access_key, emission_code):
         """
         """
         company = invoice.company_id
         auth = invoice.journal_id.auth_id
         infoTributaria = etree.Element('infoTributaria')
         etree.SubElement(infoTributaria, 'ambiente').text = SRIService.get_env_test()
-        etree.SubElement(infoTributaria, 'tipoEmision').text = SRIService.get_emission()
+        etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
         etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
@@ -112,7 +95,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'codDoc').text = auth.type_id.code
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
         etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
-        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number
+        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number[6:15]
         etree.SubElement(infoTributaria, 'dirMatriz').text = company.street
         return infoFactura
 
@@ -193,7 +176,7 @@ class AccountInvoice(osv.osv):
             detalles.append(detalle)
         return detalles    
 
-    def _generate_xml_invoice(self, invoice, access_key):
+    def _generate_xml_invoice(self, invoice, access_key, emission_code):
         """
         """
         factura = etree.Element('factura')
@@ -201,7 +184,7 @@ class AccountInvoice(osv.osv):
         factura.set("version", "1.1.0")
 
         # generar infoTributaria
-        infoTributaria = self._get_tax_element(invoice, access_key)
+        infoTributaria = self._get_tax_element(invoice, access_key, emission_code)
         factura.append(infoTributaria)
 
         # generar infoFactura
@@ -214,6 +197,23 @@ class AccountInvoice(osv.osv):
         factura.append(detalles)        
         return factura
 
+    def get_access_key(self, cr, uid, invoice):
+        auth = invoice.journal_id.auth_id
+        ld = invoice.date_invoice.split('-')
+        ld.reverse()
+        fecha = ''.join(ld)
+        #
+        tcomp = auth.type_id.code
+        ruc = invoice.company_id.partner_id.ced_ruc
+        serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
+        numero = invoice.supplier_invoice_number[6:15] # FIX w/ number
+        codigo_numero = self.get_code(cr, uid, invoice)
+        access_key = (
+            [fecha, tcomp, ruc],
+            [serie, numero, codigo_numero]
+            )
+        return access_key    
+
     def action_generate_einvoice(self, cr, uid, ids, context=None):
         """
         
@@ -221,11 +221,11 @@ class AccountInvoice(osv.osv):
         for obj in self.browse(cr, uid, ids):
             # Codigo de acceso
             ak_temp = self.get_access_key(cr, uid, obj)            
-            access_key = SRIService.create_access_key(ak_temp)
+            access_key, emission_code = SRIService.create_access_key(ak_temp)
             self.write(cr, uid, [obj.id], {'clave_acceso': access_key})
 
             # XML del comprobante electrónico: factura
-            factura = self.generate_xml_invoice(cr, uid, obj, access_key)
+            factura = self.generate_xml_invoice(cr, uid, obj, access_key, emission_code)
 
             #validación del xml
             inv_xml = InvoiceXML(factura)

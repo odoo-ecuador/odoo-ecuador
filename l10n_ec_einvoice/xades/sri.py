@@ -85,7 +85,7 @@ class Service(object):
         dato = values[0] + [tipo_emision] + values[1]
         modulo = check_digit.compute_mod11(dato)
         access_key = ''.join([dato, modulo])
-        return access_key    
+        return access_key, tipo_emision
 
     def get_emission(self):
         """
