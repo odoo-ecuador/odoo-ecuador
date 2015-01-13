@@ -49,7 +49,7 @@ class AccountInvoice(osv.osv):
                 number = obj.internal_number
                 if not number:
                     tmp_number = self.pool.get('ir.sequence').get_id(cr, uid, auth.sequence_id.id)
-                    number = '{0}-{1}-{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
+                    number = '{0}{1}{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
                 data_number.update({'supplier_invoice_number': number})
 
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
