@@ -852,20 +852,30 @@ class Invoice(osv.osv):
         numero de retencion: manual_ret_num
         """
         auth_obj = self.pool.get('account.authorisation')
-        INVOICE_LENGTH_LIMIT = 9  # CHECK: mover a compañia ?
+        INV_MIN_LIMIT = 9  # CHECK: mover a compañia ?
+        INV_MAX_LIMIT = 15
+        LIMITS = [
+            INV_MIN_LIMIT,
+            INV_MAX_LIMIT
+            ]
 
         for obj in self.browse(cr, uid, ids):
             if obj.state in ['open', 'paid', 'cancel']:
                 return True
-            if not len(obj.supplier_invoice_number) == INVOICE_LENGTH_LIMIT:
+            if not len(obj.supplier_invoice_number) in LIMITS:
                 raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
 
             auth = obj.auth_inv_id
+
+            inv_number = obj.supplier_invoice_number
+
+            if len(obj.supplier_invoice_number) == INV_MAX_LIMIT:
+                inv_number = obj.supplier_invoice_number[6:15]
             
             if not auth:
                 raise osv.except_osv('Error', u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.')
 
-            if not auth_obj.is_valid_number(cr, uid, auth.id, int(obj.supplier_invoice_number)):
+            if not auth_obj.is_valid_number(cr, uid, auth.id, int(inv_number)):
                 raise osv.except_osv('Error', u'Número de factura fuera de rango.')
 
             # validacion de numero de retencion para facturas de proveedor
