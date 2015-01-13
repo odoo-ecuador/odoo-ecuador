@@ -6,7 +6,6 @@
             <field name="act_from" ref="account.act_draft"/>
             <field name="act_to" ref="account.act_open"/>
             <field name="signal">invoice_open</field>
-            <field name="condition">check_retention_number()</field>
         </record>
 
         <record id="account.act_open" model="workflow.activity">
