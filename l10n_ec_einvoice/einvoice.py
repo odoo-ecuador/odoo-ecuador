@@ -95,9 +95,9 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'codDoc').text = auth.type_id.code
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
         etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
-        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number[6:15]
+        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number.replace('-','')[6:15]
         etree.SubElement(infoTributaria, 'dirMatriz').text = company.street
-        return infoFactura
+        return infoTributaria
 
     def _get_discount(self, cr, uid, invoice):
         descuento = '0.00'
@@ -144,7 +144,7 @@ class AccountInvoice(osv.osv):
 
         return infoFactura
 
-    def _generate_detail_element(self, invoice):
+    def _get_detail_element(self, invoice):
         """
         """
         detalles = etree.Element('detalles')
@@ -164,7 +164,7 @@ class AccountInvoice(osv.osv):
             for tax_line in line.invoice_line_tax_id:
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
                     base_amount = cur_obj.compute(cr, uid, invoice.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    tax_amount = cur_obj.compute(cr, uid, obj.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    tax_amount = cur_obj.compute(cr, uid, invoice.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     impuesto = etree.Element('impuesto')
                     etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
                     etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
@@ -188,11 +188,11 @@ class AccountInvoice(osv.osv):
         factura.append(infoTributaria)
 
         # generar infoFactura
-        infoFactura = self.get_invoice_element(invoice)
+        infoFactura = self._get_invoice_element(invoice)
         factura.append(infoFactura)
 
         # generar detalles
-        detalles = self.get_detail_element(invoice)
+        detalles = self._get_detail_element(invoice)
 
         factura.append(detalles)        
         return factura
@@ -225,7 +225,7 @@ class AccountInvoice(osv.osv):
             self.write(cr, uid, [obj.id], {'clave_acceso': access_key})
 
             # XML del comprobante electrónico: factura
-            factura = self.generate_xml_invoice(cr, uid, obj, access_key, emission_code)
+            factura = self._generate_xml_invoice(cr, uid, obj, access_key, emission_code)
 
             #validación del xml
             inv_xml = InvoiceXML(factura)

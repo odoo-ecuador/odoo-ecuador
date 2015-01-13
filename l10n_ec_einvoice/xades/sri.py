@@ -64,18 +64,23 @@ class Service(object):
         self.__WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
         self.__WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 
+    @classmethod
     def get_env_test(self):
         return self.__AMBIENTE_PRUEBA
 
+    @classmethod
     def get_env_prod(self):
         return self.__AMBIENTE_PROD
 
+    @classmethod    
     def get_ws_test(self):
         return self.__WS_TEST_RECEIV, self.__WS_TEST_AUTH
 
+    @classmethod    
     def get_ws_prod(self):
         return self.__WS_RECEIV, self.__WS_AUTH
 
+    @classmethod    
     def create_access_key(self, values):
         """
         values: tuple ([], [])
@@ -87,6 +92,7 @@ class Service(object):
         access_key = ''.join([dato, modulo])
         return access_key, tipo_emision
 
+    @classmethod    
     def get_emission(self):
         """
         Metodo de tipo de emision
