@@ -34,49 +34,43 @@ except ImportError:
 
 from pytz import timezone
 
-try:
-    from suds.client import Client
-    from suds.transport import TransportError
-except ImportError:
-    raise ImportError('Instalar Libreria suds')
-
-
 
 class CheckDigit(object):
 
-    def __init__(self):
-        # Definicion modulo 11
-        self.MODULO_11 = {
-            'BASE': 11,
-            'FACTOR': 2,
-            'RETORNO11': 0,
-            'RETORNO10': 1,
-            'PESO': 2,
-            'MAX_WEIGHT': 7
-            }
+    # Definicion modulo 11
+    _MODULO_11 = {
+        'BASE': 11,
+        'FACTOR': 2,
+        'RETORNO11': 0,
+        'RETORNO10': 1,
+        'PESO': 2,
+        'MAX_WEIGHT': 7
+    }
 
+    @classmethod
     def _eval_mod11(self, modulo):
-        if modulo == self.MODULO_11['BASE']:
-            return self.MODULO_11['RETORNO11']
-        elif modulo == self.MODULO_11['BASE'] - 1:
-            return self.MODULO_11['RETORNO10']
+        if modulo == self._MODULO_11['BASE']:
+            return self._MODULO_11['RETORNO11']
+        elif modulo == self._MODULO_11['BASE'] - 1:
+            return self._MODULO_11['RETORNO10']
         else:
             return modulo
 
+    @classmethod
     def compute_mod11(self, dato):
         """
         Calculo mod 11
         return int
         """
         total = 0
-        weight = self.MODULO_11['PESO']
+        weight = self._MODULO_11['PESO']
         
         for item in reversed(dato):
             total += int(item) * weight
             weight += 1
-            if weight > self.MODULO_11['MAX_WEIGHT']:
-                weight = self.MODULO_11['PESO']
-        mod = 11 - total % self.MODULO_11['BASE']
+            if weight > self._MODULO_11['MAX_WEIGHT']:
+                weight = self._MODULO_11['PESO']
+        mod = 11 - total % self._MODULO_11['BASE']
 
         mod = self._eval_mod11(mod)
         return mod

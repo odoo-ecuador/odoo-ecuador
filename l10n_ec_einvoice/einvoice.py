@@ -77,8 +77,7 @@ class AccountInvoice(osv.osv):
         TODO: revisar la generacion
         del codigo de 8 digitos
         """
-        arreglo = invoice.origin.split('/')
-        return (arreglo[1] + arreglo[2])[2:10]
+        return '00000001'
 
     def _get_tax_element(self, invoice, access_key, emission_code):
         """
@@ -176,7 +175,7 @@ class AccountInvoice(osv.osv):
             detalles.append(detalle)
         return detalles    
 
-    def _generate_xml_invoice(self, invoice, access_key, emission_code):
+    def _generate_xml_invoice(self, cr, uid, invoice, access_key, emission_code):
         """
         """
         factura = etree.Element('factura')
@@ -220,6 +219,7 @@ class AccountInvoice(osv.osv):
         """
         for obj in self.browse(cr, uid, ids):
             # Codigo de acceso
+            
             ak_temp = self.get_access_key(cr, uid, obj)            
             access_key, emission_code = SRIService.create_access_key(ak_temp)
             self.write(cr, uid, [obj.id], {'clave_acceso': access_key})

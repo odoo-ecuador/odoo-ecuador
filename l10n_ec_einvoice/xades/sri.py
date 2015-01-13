@@ -26,6 +26,14 @@ import logging
 from lxml import etree
 from lxml.etree import DocumentInvalid
 
+try:
+    from suds.client import Client
+    from suds.transport import TransportError
+except ImportError:
+    raise ImportError('Instalar Libreria suds')
+
+from .xades import CheckDigit
+
 
 class InvoiceXML(object):
 
@@ -56,13 +64,12 @@ class InvoiceXML(object):
 
 class Service(object):
 
-    def __init__(self):
-        self.__AMBIENTE_PRUEBA = '1'
-        self.__AMBIENTE_PROD = '2'
-        self.__WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-        self.__WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos- ws/AutorizacionComprobantes?wsdl'
-        self.__WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-        self.__WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
+    __AMBIENTE_PRUEBA = '1'
+    __AMBIENTE_PROD = '2'
+    __WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
+    __WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos- ws/AutorizacionComprobantes?wsdl'
+    __WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
+    __WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 
     @classmethod
     def get_env_test(self):
@@ -85,11 +92,11 @@ class Service(object):
         """
         values: tuple ([], [])
         """
-        check_digit = CheckDigit()
+        env = self.get_env_test()
         tipo_emision = self.get_emission()
-        dato = values[0] + [tipo_emision] + values[1]
-        modulo = check_digit.compute_mod11(dato)
-        access_key = ''.join([dato, modulo])
+        dato = ''.join(values[0] + [env] + values[1] + [tipo_emision])
+        modulo = CheckDigit.compute_mod11(dato)
+        access_key = ''.join([dato, str(modulo)])
         return access_key, tipo_emision
 
     @classmethod    
@@ -98,11 +105,13 @@ class Service(object):
         Metodo de tipo de emision
         FIX FIX FIX TODO: mejorar documentacion
         """
-        logger = logging.getLogger('suds.client').setLevel(logging.INFO)
+        logger = logging.getLogger('suds.client')
+        logger.setLevel(logging.DEBUG)
         NORMAL = '1'
         INDISPONIBILIDAD = '2'
         
         try:
+            logger.info("Llamando servicio: %s" % self.get_ws_test()[0])
             client = Client(self.get_ws_test()[0])
         except TransportError, e:
             logger.warning("Servicio no disponible")
