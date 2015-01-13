@@ -109,7 +109,7 @@ class AccountInvoice(osv.osv):
         company = invoice.company_id
         partner = invoice.partner_id
         infoFactura = etree.Element('infoFactura')
-        etree.SubElement(infoFactura, 'fechaEmision').text = time.strftime('%d/%m/%Y', obj.date_invoice)
+        etree.SubElement(infoFactura, 'fechaEmision').text = invoice.date_invoice # FIXME
         etree.SubElement(infoFactura, 'dirEstablecimiento').text = company.street2
         etree.SubElement(infoFactura, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
@@ -117,7 +117,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
         etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
         etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
-        etree.SubElement(infoFactura, 'totalDescuento').text = self.get_discount(cr, uid, invoice)
+        etree.SubElement(infoFactura, 'totalDescuento').text = self._get_discount(cr, uid, invoice)
 
         # totalConImpuestos
         totalConImpuestos = etree.Element('totalConImpuestos')
@@ -143,10 +143,12 @@ class AccountInvoice(osv.osv):
 
         return infoFactura
 
-    def _get_detail_element(self, invoice):
+    def _get_detail_element(self, cr, uid, invoice):
         """
         """
+        cur_obj = self.pool.get('res.currency')        
         detalles = etree.Element('detalles')
+        company_currency = self.pool['res.company'].browse(cr, uid, invoice.company_id.id).currency_id        
         for line in invoice.invoice_line:
             if line.product_id.default_code == 'DESC':
                 continue
@@ -187,11 +189,11 @@ class AccountInvoice(osv.osv):
         factura.append(infoTributaria)
 
         # generar infoFactura
-        infoFactura = self._get_invoice_element(invoice)
+        infoFactura = self._get_invoice_element(cr, uid, invoice)
         factura.append(infoFactura)
 
         # generar detalles
-        detalles = self._get_detail_element(invoice)
+        detalles = self._get_detail_element(cr, uid, invoice)
 
         factura.append(detalles)        
         return factura
