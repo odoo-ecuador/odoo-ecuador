@@ -854,7 +854,10 @@ class Invoice(osv.osv):
         auth_obj = self.pool.get('account.authorisation')
         INV_MIN_LIMIT = 9  # CHECK: mover a compañia ?
         INV_MAX_LIMIT = 15
-        LIMITS = [INV_MIN_LIMIT, INV_MAX_LIMIT]
+        LIMITS = [
+            INV_MIN_LIMIT,
+            INV_MAX_LIMIT
+            ]
 
         for obj in self.browse(cr, uid, ids):
             if obj.state in ['open', 'paid', 'cancel']:
