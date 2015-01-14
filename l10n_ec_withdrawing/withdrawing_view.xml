@@ -137,20 +137,9 @@
 	  <button name="print_retention" string="Retención" type="object" states="open" icon="gtk-print"/>
 	  <button name="print_move" string="Comprobante" type="object" states="open,paid" icon="gtk-print"/>
 	</xpath>
-	<!-- xpath expr="/form/notebook/page[@string='Invoice']/field[@name='date_due']" position="replace">
-	      
-	    </group>
-	  </group>
+	<xpath expr="//field[@name='date_invoice']" position="attributes">
+	  <attribute name="required">1</attribute>
 	</xpath>
-	<xpath expr="/form/group/group[@col='1']" position="replace">
-	  <field name="auth_inv_id"
-		 domain="[('partner_id','=',partner_id),('in_type','=','externo')]"
-		 attrs="{'required': [('type','=','in_invoice')]}"
-		 context="{'default_partner_id': partner_id}"/>
-	</xpath>
-	<xpath expr="//field[@name='fiscal_position']" position="attributes">
-	  <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
-	</xpath -->
       </field>
     </record>
     <!--
@@ -278,7 +267,7 @@
 	      <field name="amount_vat" sum="Total Base 12"/>
 	    </xpath>
 	    <xpath expr="/tree/field[@name='origin']" position="replace">
-          <field name="supplier_number" invisible="context.get('type')!='in_invoice'"/>
+          <field name="supplier_invoice_number"/>
         </xpath>
 	    <xpath expr="/tree/field[@name='currency_id']" position="replace"/>
       </field>
@@ -303,14 +292,14 @@
                         <button name='%(account.action_account_state_open)d' type='action' string='Re-Open' groups="account.group_account_invoice" attrs="{'invisible':['|', ('state','&lt;&gt;','paid'), ('reconciled', '=', True)]}" help="This button only appears when the state of the invoice is 'paid' (showing that it has been fully reconciled) and auto-computed boolean 'reconciled' is False (depicting that it's not the case anymore). In other words, the invoice has been dereconciled and it does not fit anymore the 'paid' state. You should press this button to re-open it and let it continue its normal process after having resolved the eventual exceptions it may have created."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,open,paid" statusbar_colors='{"proforma":"blue","proforma2":"blue"}'/>
                 </header>
-                <sheet string="Supplier Invoice">
+                <sheet string="Liquidación de Compra">
                     <div class="oe_title">
                         <h1>
                             <label string="Draft Invoice" attrs="{'invisible': ['|',('state','&lt;&gt;','draft'), ('type','&lt;&gt;','in_invoice')]}"/>
                             <label string="Draft Refund" attrs="{'invisible': ['|',('state','&lt;&gt;','draft'), ('type','&lt;&gt;','in_refund')]}"/>
                             <label string="Invoice" attrs="{'invisible': ['|',('state', '=', 'draft'), ('type','&lt;&gt;','in_invoice')]}"/>
                             <label string="Refund" attrs="{'invisible': ['|',('state', '=', 'draft'), ('type','&lt;&gt;','in_refund')]}"/>
-                            <field name="number" class="oe_inline"  attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            <field name="supplier_invoice_number" class="oe_inline"  attrs="{'invisible': [('state', '=', 'draft')]}"/>
                         </h1>
                     </div>
                     <field name="type" invisible="1"/>
@@ -471,7 +460,7 @@
       <field name="inherit_id" ref="account.view_account_invoice_filter"/>
       <field name="arch" type="xml">
 	<xpath expr="//field[@name='period_id']" position="after">
-          <field name="supplier_number" invisible="context.get('type')!='in_invoice'"/>
+          <field name="supplier_invoice_number"/>
 	</xpath>
       </field>
     </record>
@@ -484,6 +473,12 @@
 	<field name="number" position="replace">
 	  <field name="supplier_invoice_number" class="oe_inline" attrs="{'readonly': [('state','!=','draft')], 'required': [('state','=','draft')]}"/>
 	</field>
+	<field name="fiscal_position" position="after">
+	  <field name="auth_inv_id" required="1"/>
+	</field>
+	<xpath expr="//field[@name='date_invoice']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
       </field>
     </record>
 
@@ -504,42 +499,6 @@
     <!-- Invalid in v8.0 migration -->
     <!-- <wizard string="Discount" model="account.invoice" name="invoice.discount" id="invoice_discount" menu="False"/> -->
 	
-
-    <!-- Retention number cache
-
-    <record id="view_account_retention_cache_tree" model="ir.ui.view">
-      <field name="name">account.retention.cache.tree</field>
-      <field name="model">account.retention.cache</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-	<tree string="Numeros de Retenciones Reservadas">
-          <field name="name" select="1"/>
-	  <field name="active"/>
-	</tree>
-      </field>
-    </record>
-
-    <record id="view_account_retention_cache_form" model="ir.ui.view">
-      <field name="name">account.retention.cache.form</field>
-      <field name="model">account.retention.cache</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-	<form string="Número de Retenciones Reservadas">
-          <group col="4" colspan="4">
-            <field name="name" required="1"/>
-	    <field name="active"/>
-          </group>
-	</form>
-      </field>
-    </record>
-
-    <record id="action_account_retention_cache" model="ir.actions.act_window">
-      <field name="name">Números de Retención Reservados</field>
-      <field name="res_model">account.retention.cache</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree</field>
-    </record>
-    -->
 
   </data>
 </openerp>

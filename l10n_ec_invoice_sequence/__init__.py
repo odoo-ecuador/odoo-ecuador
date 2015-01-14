@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    This module uses OpenERP, Open Source Management Solution Framework.
-#    Copyright (C) 2012-Today Serpent Consulting Services (<http://www.serpentcs.com>)
+#    Account Module - Ecuador
+#    Copyright (C) 2009 GnuThink Software All Rights Reserved
+#    info@gnuthink.com
+#    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,12 +17,9 @@
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
-import mass_editing
-import wizard
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+import invoice
 

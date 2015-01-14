@@ -24,11 +24,33 @@
 import time
 import logging
 
+<<<<<<< HEAD
 from openerp.osv import osv, fields
 from openerp import  _
 import openerp.addons.decimal_precision as dp
 from openerp import netsvc
 from openerp import api
+=======
+<<<<<<< HEAD
+from osv import osv, fields
+from tools import config
+from tools.translate import _
+from tools import ustr
+import decimal_precision as dp
+=======
+from openerp.osv import osv, fields
+from tools.translate import _ 
+#v8.0:
+# from openerp import _
+import decimal_precision as dp 
+#v8.0:
+#import openerp.addons.decimal_precision as dp
+>>>>>>> ce57a62... limpieza de codifo compatible tanto para la version 8.0 como 7.0
+import netsvc
+#v8.0
+# from openerp import netsvc
+
+>>>>>>> 7.0
 
 class AccountWithdrawing(osv.osv):
 

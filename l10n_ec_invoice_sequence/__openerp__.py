@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    This module uses OpenERP, Open Source Management Solution Framework.
-#    Copyright (C) 2012-Today Serpent Consulting Services (<http://www.serpentcs.com>)
+#    Account Module - Ecuador
+#    Copyright (C) 2009 GnuThink Software All Rights Reserved
+#    info@gnuthink.com
+#    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,10 +17,23 @@
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
 
-import mass_editing_wizard
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+{
+    'name' : 'Accounting for Ecuador',
+    "category": 'Generic Modules/Accounting',    
+    'version' : '3',
+    'depends' : ['l10n_ec_withdrawing'],
+    'author' : 'GnuThink Software Cia. Ltda.',
+    'description': '''
+    Sequence Module for Ecuador
+    ''',
+    'author': 'GnuThink Software',
+    'website': 'http://www.gnuthink.com',
+    'init_xml': [],
+    'update_xml': [],
+    'installable': True,
+    'active': False,
+}
