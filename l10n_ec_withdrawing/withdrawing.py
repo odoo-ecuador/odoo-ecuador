@@ -599,12 +599,14 @@ class Invoice(osv.osv):
                 'amount_noret_ir': 0.0,
                 'amount_total': 0.0,
                 'amount_pay': 0.0,
-                'amount_ice': 0.0
+                'amount_ice': 0.0,
+                'discount_total': 0.00
             }
             
             #Total General
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
+                res[invoice.id]['discount_total'] += line.discount_value
             for line in invoice.tax_line:
                 if line.tax_group == 'vat':
                     res[invoice.id]['amount_vat'] += line.base
@@ -703,8 +705,20 @@ class Invoice(osv.osv):
     PRECISION_DP = dp.get_precision('Account')    
 
     _columns = {
-        'supplier_number': fields.function(_get_supplier_number, method=True, type='char', size=32,
-                                           string='Factura de Proveedor', store=True),
+        'supplier_number': fields.function(
+            _get_supplier_number,
+            type='char',
+            size=32,
+            string='Factura de Proveedor',
+            store=True
+            ),
+        'discount_total': fields.function(
+            _amount_all,
+            digits_compute=PRECISION_DP,
+            string='Total Desc.',
+            store=VAR_STORE,
+            multi='all'
+            ),
         'amount_ice': fields.function(_amount_all, method=True, digits_compute=PRECISION_DP, string='ICE',
                                       store=VAR_STORE, multi='all'),
         'amount_vat': fields.function(_amount_all, method=True,
@@ -860,7 +874,7 @@ class Invoice(osv.osv):
             ]
 
         for obj in self.browse(cr, uid, ids):
-            if obj.state in ['open', 'paid', 'cancel']:
+            if obj.state in ['open', 'paid', 'cancel'] or not obj.supplier_invoice_number:
                 return True
             if not len(obj.supplier_invoice_number) in LIMITS:
                 raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
@@ -1130,7 +1144,51 @@ class AccountInvoiceLine(osv.osv):
             selected_uom = self.pool.get('product.uom').browse(cr, uid, result['uos_id'], context=context)
             new_price = self.pool.get('product.uom')._compute_price(cr, uid, res.uom_id.id, res_final['value']['price_unit'], result['uos_id'])
             res_final['value']['price_unit'] = new_price
-        return res_final    
+        return res_final
+
+    def _amount_line(self, cr, uid, ids, prop, unknow_none, unknow_dict):
+        res = {}
+        tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
+        for line in self.browse(cr, uid, ids):
+            res[line.id] = {'amount_tax': 0, 'price_subtotal': 0}
+            price = line.price_unit * (1-(line.discount or 0.0)/100.0)
+            taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, partner=line.invoice_id.partner_id)
+            res[line.id]['price_subtotal'] = taxes['total']
+            res[line.id]['amount_tax'] = taxes.get('taxes') and sum([t['amount']for t in taxes['taxes'] if t['tax_group']=='vat']) or 0
+            res[line.id]['discount_value'] = (line.price_unit * line.quantity * line.discount) / 100
+
+            if line.invoice_id:
+                cur = line.invoice_id.currency_id
+                res[line.id]['price_subtotal'] = cur_obj.round(cr, uid, cur, res[line.id]['price_subtotal'])
+                res[line.id]['amount_tax'] = cur_obj.round(cr, uid, cur, res[line.id]['amount_tax'])
+                res[line.id]['discount_value'] = cur_obj.round(cr, uid, cur, res[line.id]['discount_value'])
+        return res    
+
+    _columns = {
+        'discount_value': fields.function(
+            _amount_line,
+            string='Descuento',
+            digits_compute= dp.get_precision('Account'),
+            store=True,
+            multi='line'            
+            ),
+        'price_subtotal': fields.function(
+            _amount_line,
+            string='Amount',
+            type="float",
+            digits_compute= dp.get_precision('Account'),
+            store=True,
+            multi='line'
+            ),
+        'amount_tax': fields.function(
+            _amount_line,
+            string='Monto IVA',
+            digits_compute=dp.get_precision('Account'),
+            store=True,
+            multi='line'            
+            )
+        }
 
 
 class AccountInvoiceRefund(osv.TransientModel):
