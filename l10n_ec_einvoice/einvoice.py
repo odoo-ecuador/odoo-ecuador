@@ -164,14 +164,12 @@ class AccountInvoice(osv.osv):
             impuestos = etree.Element('impuestos')
             for tax_line in line.invoice_line_tax_id:
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
-                    base_amount = cur_obj.compute(cr, uid, invoice.currency_id.id, company_currency, line.price_subtotal * tax_line.base_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    tax_amount = cur_obj.compute(cr, uid, invoice.currency_id.id, company_currency, tax_line.amount * tax_line.tax_sign, context={'date': invoice.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
                     impuesto = etree.Element('impuesto')
                     etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
-                    etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
-                    etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_amount * 100)
-                    etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (base_amount)
-                    etree.SubElement(impuesto, 'valor').text = '%.2f' % (base_amount * tax_amount)
+                    etree.SubElement(impuesto, 'codigoPorcentaje').text = codigoImpuesto[tax_line.tax_group]
+                    etree.SubElement(impuesto, 'tarifa').text = tarifaImpuesto[tax_line.tax_group]
+                    etree.SubElement(impuesto, 'baseImponible').text = '{:.2f}'.format(tax_line.price_subtotal)
+                    etree.SubElement(impuesto, 'valor').text = '{:.2f}'.format(tax_line.amount_tax)
                     impuestos.append(impuesto)
             detalle.append(impuestos)
             detalles.append(detalle)
