@@ -599,12 +599,14 @@ class Invoice(osv.osv):
                 'amount_noret_ir': 0.0,
                 'amount_total': 0.0,
                 'amount_pay': 0.0,
-                'amount_ice': 0.0
+                'amount_ice': 0.0,
+                'discount_total': 0.00
             }
             
             #Total General
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
+                res[invoice.id]['discount_total'] += line.discount_value
             for line in invoice.tax_line:
                 if line.tax_group == 'vat':
                     res[invoice.id]['amount_vat'] += line.base
@@ -703,8 +705,20 @@ class Invoice(osv.osv):
     PRECISION_DP = dp.get_precision('Account')    
 
     _columns = {
-        'supplier_number': fields.function(_get_supplier_number, method=True, type='char', size=32,
-                                           string='Factura de Proveedor', store=True),
+        'supplier_number': fields.function(
+            _get_supplier_number,
+            type='char',
+            size=32,
+            string='Factura de Proveedor',
+            store=True
+            ),
+        'discount_total': fields.function(
+            _amount_all,
+            digits_compute=PRECISION_DP,
+            string='Total Desc.',
+            store=VAR_STORE,
+            multi='all'
+            ),
         'amount_ice': fields.function(_amount_all, method=True, digits_compute=PRECISION_DP, string='ICE',
                                       store=VAR_STORE, multi='all'),
         'amount_vat': fields.function(_amount_all, method=True,
@@ -1142,13 +1156,23 @@ class AccountInvoiceLine(osv.osv):
             taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, partner=line.invoice_id.partner_id)
             res[line.id]['price_subtotal'] = taxes['total']
             res[line.id]['amount_tax'] = taxes.get('taxes') and sum([t['amount']for t in taxes['taxes'] if t['tax_group']=='vat']) or 0
+            res[line.id]['discount_value'] = (line.price_unit * line.quantity * line.discount) / 100
+
             if line.invoice_id:
                 cur = line.invoice_id.currency_id
                 res[line.id]['price_subtotal'] = cur_obj.round(cr, uid, cur, res[line.id]['price_subtotal'])
-                res[line.id]['amount_tax'] = cur_obj.round(cr, uid, cur, res[line.id]['amount_tax'])                
+                res[line.id]['amount_tax'] = cur_obj.round(cr, uid, cur, res[line.id]['amount_tax'])
+                res[line.id]['discount_value'] = cur_obj.round(cr, uid, cur, res[line.id]['discount_value'])
         return res    
 
     _columns = {
+        'discount_value': fields.function(
+            _amount_line,
+            string='Descuento',
+            digits_compute= dp.get_precision('Account'),
+            store=True,
+            multi='line'            
+            ),
         'price_subtotal': fields.function(
             _amount_line,
             string='Amount',
