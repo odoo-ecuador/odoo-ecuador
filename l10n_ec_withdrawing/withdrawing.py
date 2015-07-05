@@ -862,6 +862,8 @@ class Invoice(osv.osv):
         for obj in self.browse(cr, uid, ids):
             if obj.state in ['open', 'paid', 'cancel']:
                 return True
+            if obj.type == 'out_invoice':
+                return True
             if not len(obj.supplier_invoice_number) in LIMITS:
                 raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
 

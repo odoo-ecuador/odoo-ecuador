@@ -470,9 +470,6 @@
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_form"/>
       <field name="arch" type="xml">
-	<field name="number" position="replace">
-	  <field name="supplier_invoice_number" class="oe_inline" attrs="{'readonly': [('state','!=','draft')], 'required': [('state','=','draft')]}"/>
-	</field>
 	<field name="fiscal_position" position="after">
 	  <field name="auth_inv_id" required="1"/>
 	</field>

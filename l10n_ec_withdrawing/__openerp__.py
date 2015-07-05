@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2009 GnuThink Software All Rights Reserved
+#    Copyright (C) 2015 Cristian Salamea All Rights Reserved
 #    info@gnuthink.com
 #    $Id$
 #
@@ -31,7 +31,7 @@
     'description': '''
     Accounting for Ecuador, retention docuements
     ''',
-    'website': 'http://www.ayni.io',
+    'website': 'http://www.invbox.com.ec',
     'update_xml': [
         'invoice_workflow.xml',
         'withdrawing_view.xml',
