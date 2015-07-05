@@ -26,12 +26,11 @@
     "category": 'Generic Modules/Accounting',    
     'version' : '3',
     'depends' : ['l10n_ec_withdrawing'],
-    'author' : 'GnuThink Software Cia. Ltda.',
+    'author' : 'Cristian Salamea',
     'description': '''
     Sequence Module for Ecuador
     ''',
-    'author': 'GnuThink Software',
-    'website': 'http://www.gnuthink.com',
+    'website': 'www.invbox.com.ec',
     'init_xml': [],
     'update_xml': [],
     'installable': True,

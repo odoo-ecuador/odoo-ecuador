@@ -45,12 +45,12 @@ class AccountInvoice(osv.osv):
             data_number = {'internal_number': number}
 
             if invtype in ['out_invoice', 'liq_purchase']:
-                auth = obj.journal_id.auth_id
-                number = obj.internal_number
+                auth = obj_inv.journal_id.auth_id
+                number = obj_inv.internal_number
                 if not number:
-                    tmp_number = self.pool.get('ir.sequence').get_id(cr, uid, auth.sequence_id.id)
+                    tmp_number = self.pool.get('ir.sequence').get(cr, uid, auth.sequence_id.code)
                     number = '{0}{1}{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
-                data_number.update({'supplier_invoice_number': number})
+                data_number.update({'number': number})
 
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
             reference = obj_inv.reference or ''
