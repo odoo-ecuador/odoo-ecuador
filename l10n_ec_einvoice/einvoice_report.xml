@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    <report auto="False" id="account.eretention" model="account.retention"
+            name="account.eretention" rml="l10n_ec_e-invoice/report/account_print_retention.rml"
+            usage="default" string="Retenciones" header="False" report_type="pdf"/>
+  </data>
+</openerp>

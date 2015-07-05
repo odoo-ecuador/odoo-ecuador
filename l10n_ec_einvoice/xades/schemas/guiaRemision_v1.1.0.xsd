@@ -1,0 +1,540 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by ALEJANDRO SUBIA (SERVICIO DE RENTAS INTERNAS) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns1="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	<xsd:import namespace="http://www.w3.org/2000/09/xmldsig#"
+		schemaLocation="xmldsig-core-schema.xsd"/>
+	<xsd:simpleType name="numeroRuc">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero de RUC del Contribuyente</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{10}001"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="idCliente">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero de RUC Cedula o Pasaporte del Comprador</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="13"/>
+			<xsd:pattern value="[0-9a-zA-Z]{0,13}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="numeroRucCedula">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero de RUC o cedula del Comprador</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="10"/>
+			<xsd:maxLength value="13"/>
+			<xsd:pattern value="[0-9]{10}"/>
+			<xsd:pattern value="[0-9]{10}001"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fecha">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla la fecha de uso del documento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fechaAutorizacion">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla la fecha de la autorizacion</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fechaCaducidad">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla la fecha de caducidad del documento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="establecimiento">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero del establecimiento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="puntoEmision">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero del punto de emision</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="secuencial">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el secuencial del documento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codTipoDoc">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el codigo del tipo de documento autorizado</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:integer">
+			<xsd:maxInclusive value="6"/>
+			<xsd:minInclusive value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="documento">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero del documento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}-[0-9]{3}-[0-9]{1,9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="autorizacion">
+		<xsd:annotation>
+			<xsd:documentation>Numero de autorizacion</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="claveAcceso">
+		<xsd:annotation>
+			<xsd:documentation>Corresponde al numero de autorizacion emitido por el sistema de Autorizacion de Comprobantes de Venta y Retencion
+                    </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{49}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codEstbDestino">
+		<xsd:annotation>
+			<xsd:documentation>Corresponde al codigo de establecimiento</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="docAduanero">
+		<xsd:annotation>
+			<xsd:documentation>Se detalla el numero de documento aduanero unico</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{13}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ambiente">
+		<xsd:annotation>
+			<xsd:documentation>Desarrollo o produccion depende de en cual ambiente se genere el comprobante.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[1-2]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="tipoEmision">
+		<xsd:annotation>
+			<xsd:documentation>Tipo de emision en el cual se genero el comprobante</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[12]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="placa">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dirDestinatario">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codDocSustento">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="numAutDocSustento">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{10,37}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fechaEmisionDocSustento">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern
+				value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="numDocSustento">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}-[0-9]{3}-[0-9]{9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="docAduaneroUnico">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ruta">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="razonSocialDestinatario">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fechaFinTransporte">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern
+				value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dirPartida">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="fechaIniTRansporte">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern
+				value="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="infoTributaria">
+		<xsd:annotation>
+			<xsd:documentation>Contiene la informacion tributaria generica</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ambiente" type="ambiente"/>
+			<xsd:element name="tipoEmision" type="tipoEmision"/>
+			<xsd:element name="razonSocial" type="razonSocial"/>
+			<xsd:element name="nombreComercial" minOccurs="0" type="nombreComercial"/>
+			<xsd:element name="ruc" type="numeroRuc"/>
+			<xsd:element name="claveAcceso" type="claveAcceso"/>
+			<xsd:element name="codDoc" type="codDoc"/>
+			<xsd:element name="estab" type="establecimiento"/>
+			<xsd:element name="ptoEmi" type="puntoEmision"/>
+			<xsd:element name="secuencial" type="secuencial"/>
+			<!--            <xsd:element name="docAduaneroUnico" type="numeroRucType" minOccurs="0"/>  -->
+			<xsd:element name="dirMatriz" type="dirMatriz"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="razonSocial">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dirMatriz">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dirEstablecimiento">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="totalSinImpuestos">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="contribuyenteEspecial">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="3"/>
+			<xsd:maxLength value="13"/>
+			<xsd:pattern value="([A-Za-z0-9])*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="obligadoContabilidad">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SI"/>
+			<xsd:enumeration value="NO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="nombreComercial">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="tipoIdentificacionComprador">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0][4-7]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="razonSocialTransportista">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="baseImponible">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="identificacionDestinatario">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="moneda">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codigo">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codigoPorcentaje">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]"/>
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="motivoTraslado">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="rucTranportista">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[^\n]*"/>
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="13"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="rise">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codigoInterno">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="25"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codigoAdicional">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="25"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="descripcion">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="cantidad">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="18"/>
+			<xsd:fractionDigits value="6"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="valor">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="codDoc">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="destinatario">
+		<xsd:annotation>
+			<xsd:documentation>Impuesto de una guia de remision.  Contiene los elementos de cada fila de la guia.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="identificacionDestinatario" type="identificacionDestinatario" minOccurs="1"/>
+			<xsd:element name="razonSocialDestinatario" type="razonSocialDestinatario"/>
+			<xsd:element name="dirDestinatario" type="dirDestinatario"/>
+			<xsd:element name="motivoTraslado" type="motivoTraslado"/>
+			<xsd:element name="docAduaneroUnico" minOccurs="0" type="docAduaneroUnico"/>
+			<xsd:element name="codEstabDestino" minOccurs="0" type="codEstbDestino"/>
+			<xsd:element name="ruta" minOccurs="0" type="ruta"/>
+			<xsd:element name="codDocSustento" minOccurs="0" type="codDocSustento"/>
+			<xsd:element name="numDocSustento" minOccurs="0" type="numDocSustento"/>
+			<xsd:element name="numAutDocSustento" minOccurs="0"  type="numAutDocSustento"/>
+			<xsd:element name="fechaEmisionDocSustento" type="fechaEmisionDocSustento" minOccurs="0"/>
+			<xsd:element name="detalles">
+				<xsd:complexType>
+					<xsd:sequence maxOccurs="unbounded">
+						<xsd:element name="detalle" type="detalle"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="guiaRemision">
+		<xsd:annotation>
+			<xsd:documentation>Elemento que describe una guia de remision</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="infoTributaria" type="infoTributaria"/>
+				<xsd:element name="infoGuiaRemision">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="dirEstablecimiento" minOccurs="0" type="dirEstablecimiento"/>
+							<xsd:element name="dirPartida" type="dirPartida"/>
+							<xsd:element name="razonSocialTransportista" type="razonSocialTransportista"/>
+							<xsd:element name="tipoIdentificacionTransportista"	type="tipoIdentificacionTransportista"/>
+							<xsd:element name="rucTransportista" type="rucTranportista"/>
+							<xsd:element name="rise" minOccurs="0" type="rise"/>
+							<xsd:element name="obligadoContabilidad" minOccurs="0" type="obligadoContabilidad"/>
+							<xsd:element name="contribuyenteEspecial" minOccurs="0"	type="contribuyenteEspecial"/>
+							<xsd:element name="fechaIniTransporte" type="fechaIniTRansporte"/>
+							<xsd:element name="fechaFinTransporte" type="fechaFinTransporte"/>
+							<xsd:element name="placa" type="placa"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="destinatarios">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="unbounded">
+							<xsd:element name="destinatario" type="destinatario"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="infoAdicional" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence maxOccurs="1">
+							<xsd:element maxOccurs="15" name="campoAdicional">
+								<xsd:complexType>
+									<xsd:simpleContent>
+										<xsd:extension base="campoAdicional">
+											<xsd:attribute name="nombre" type="nombre"/>
+										</xsd:extension>
+									</xsd:simpleContent>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element ref="ns1:Signature" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en"> Set of data associated with the invoice which guarantee the authorship and integrity of the message. It is defined as optional to ease the validation and transmission of the file. However, this block of electronic signature must be completed in order for an electronic invoice to be considered legally valid before third parties.</xsd:documentation>
+						<xsd:documentation xml:lang="es"> Conjunto de datos asociados a la factura que garantizarán la autoría y la integridad del mensaje. Se define como opcional para facilitar la verificación y el tránsito del fichero. No obstante, debe cumplimentarse este bloque de firma electrónica para que se considere una factura electrónica válida legalmente frente a terceros.</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="id" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="comprobante"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="version" type="xsd:NMTOKEN" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="detalle">
+		<xsd:annotation>
+			<xsd:documentation>Detalle de una guia de remision.  Contiene los elementos de cada fila de la guia.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="codigoInterno" minOccurs="0" type="codigoInterno"/>
+			<xsd:element name="codigoAdicional" minOccurs="0" type="codigoAdicional"/>
+			<xsd:element name="descripcion" type="descripcion"/>
+			<xsd:element name="cantidad" type="cantidad"/>
+			<xsd:element name="detallesAdicionales" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="detAdicional" minOccurs="0" maxOccurs="3">
+							<xsd:complexType>
+								<xsd:attribute name="nombre">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:minLength value="1"/>
+											<xsd:maxLength value="300"/>
+											<xsd:pattern
+												value="[^\n]*"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:attribute>
+								<xsd:attribute name="valor">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:pattern
+												value="[^\n]*"/>
+											<xsd:minLength value="1"/>
+											<xsd:maxLength value="300"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:attribute>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="nombre">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="campoAdicional">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="tipoIdentificacionTransportista">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0][4-7]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
