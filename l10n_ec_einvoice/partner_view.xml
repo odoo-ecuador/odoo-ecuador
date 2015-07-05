@@ -20,7 +20,6 @@
                   <tree string="Claves de Contingencia" editable="top">
                     <field name="key"/>
                     <field name="used"/>
-                    <field name="company_id" invisible="1"/>
                   </tree>
                 </field>
               </group>

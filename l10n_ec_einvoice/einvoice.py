@@ -110,7 +110,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'codDoc').text = tipoDocumento[auth.type_id.code]
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
         etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
-        etree.SubElement(infoTributaria, 'secuencial').text = invoice.supplier_invoice_number.replace('-','')[6:15]
+        etree.SubElement(infoTributaria, 'secuencial').text = invoice.number[6:15]
         etree.SubElement(infoTributaria, 'dirMatriz').text = company.street
         return infoTributaria
 
@@ -129,7 +129,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
         etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
         etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
-        etree.SubElement(infoFactura, 'totalDescuento').text = '%.2f' % (invoice.discount_total)
+        etree.SubElement(infoFactura, 'totalDescuento').text = '0.00'#'%.2f' % (invoice.discount_total)
         
         #totalConImpuestos
         totalConImpuestos = etree.Element('totalConImpuestos')
@@ -194,19 +194,25 @@ class AccountInvoice(osv.osv):
     def _get_detail_element(self, invoice):
         """
         """
+        def fix_chars(code):
+            if code:
+                code.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
+                return code
+            return ''
+            
         detalles = etree.Element('detalles')
         for line in invoice.invoice_line:
             detalle = etree.Element('detalle')
-            etree.SubElement(detalle, 'codigoPrincipal').text = line.product_id.default_code.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
-            if line.product_id.manufacturer_pref:
-                etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
-            etree.SubElement(detalle, 'descripcion').text = (line.product_id.name).replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
+            etree.SubElement(detalle, 'codigoPrincipal').text = fix_chars(line.product_id.default_code)
+#            if line.product_id.manufacturer_pref:
+#                etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
+            etree.SubElement(detalle, 'descripcion').text = fix_chars(line.product_id.name)
             etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
             etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
-            etree.SubElement(detalle, 'descuento').text = '%.2f' % (line.discount_value)
+            etree.SubElement(detalle, 'descuento').text = '0.00'#'%.2f' % (line.discount_value)
             etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
             impuestos = etree.Element('impuestos')
-            for tax_line in line.invoice_line_tax_id:
+            for tax_line in line.invoice_line_tax_id: #iterar en invoice_tax
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
                     impuesto = etree.Element('impuesto')
                     etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
@@ -299,34 +305,40 @@ class AccountInvoice(osv.osv):
         tcomp = tipoDocumento[auth.type_id.code]
         ruc = invoice.company_id.partner_id.ced_ruc
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
-        numero = invoice.supplier_invoice_number.replace('-','')[6:15] # FIX w/ number
-        codigo_numero = invoice.security_code
+        numero = invoice.number[6:15]
+        codigo_numero = '12345678'#invoice.security_code
         tipo_emision = invoice.company_id.emission_code
         access_key = (
             [fecha, tcomp, ruc],
             [serie, numero, codigo_numero, tipo_emision]
             )
         return access_key
+
+    def check_before_sent(self, cr, uid, obj):
+        """
+        """
+        sql = "select autorizado_sri, number from account_invoice where state='open' and number < '%s' order by number desc limit 1" % obj.number
+        cr.execute(sql)
+        res = cr.fetchone()
+        return res[0] and True or False
         
     def action_generate_einvoice(self, cr, uid, ids, context=None):
         """
         """
+        LIMIT_TO_SEND = 5
+        TITLE_NOT_SENT = u'No se puede enviar el comprobante electrónico al SRI'
+        MESSAGE_SEQUENCIAL = u'Los comprobantes electrónicos deberán ser enviados al SRI para su autorización en orden cronológico y secuencial. Por favor enviar primero el comprobante inmediatamente anterior'
+        MESSAGE_TIME_LIMIT = u'Los comprobantes electrónicos deberán enviarse a las bases de datos del SRI para su autorización en un plazo máximo de 24 horas'
         for obj in self.browse(cr, uid, ids):
             # Codigo de acceso
             if obj.type in [ 'out_invoice', 'out_refund']:
                 # Validar que el envío del comprobante electrónico se realice dentro de las 24 horas posteriores a su emisión
-                if (datetime.now() - datetime.strptime(obj.date_invoice, '%Y-%m-%d')).days > 5:
-                    raise osv.except_osv(u'No se puede enviar el comprobante electrónico al SRI', u'Los comprobantes electrónicos deberán enviarse a las bases de datos del SRI para su autorización en un plazo máximo de 24 horas')
+                if (datetime.now() - datetime.strptime(obj.date_invoice, '%Y-%m-%d')).days > LIMIT_TO_SEND:
+                    raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_TIME_LIMIT)
                 else:
                     # Validar que el envío de los comprobantes electrónicos sea secuencial
-                    auth = obj.journal_id.auth_id
-                    numero = obj.supplier_invoice_number.replace('-','')[6:15]
-                    numero_anterior = int(numero) - 1
-                    numero_comprobante_anterior = '{0}-{1}-{2}'.format(auth.serie_entidad, auth.serie_emision,str(numero_anterior).zfill(9))
-                    anterior_ids = self.pool.get('account.invoice').search(cr, uid, [('supplier_invoice_number','=',numero_comprobante_anterior)])
-                    comprobante_anterior = self.browse(cr, uid, anterior_ids, context = context)
-                    if not comprobante_anterior[0].autorizado_sri:
-                        raise osv.except_osv(u'No se puede enviar el comprobante electrónico al SRI', u'Los comprobantes electrónicos deberán ser enviados al SRI para su autorización en orden cronológico y secuencial. Por favor enviar primero el comprobante inmediatamente anterior')
+                    if not self.check_before_sent(cr, uid, obj):
+                        raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_SEQUENCIAL)
                     else:
                         ak_temp = self.get_access_key(cr, uid, obj)
                         access_key = SRIService.create_access_key(ak_temp)

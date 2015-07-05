@@ -79,6 +79,10 @@ class Service(object):
     __WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 
     @classmethod
+    def get_active_env(self):
+        return self.get_env_test()
+
+    @classmethod
     def get_env_test(self):
         return self.__AMBIENTE_PRUEBA
 
@@ -99,7 +103,9 @@ class Service(object):
         """
         values: tuple ([], [])
         """
-        env = self.get_env_prod()
+        import pdb
+        pdb.set_trace()
+        env = self.get_active_env()
         dato = ''.join(values[0] + [env] + values[1])
         modulo = CheckDigit.compute_mod11(dato)
         access_key = ''.join([dato, str(modulo)])
