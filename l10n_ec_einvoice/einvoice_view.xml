@@ -44,11 +44,11 @@
       <field name="model">account.invoice</field>
       <field name="inherit_id" ref="account.invoice_tree"/>
       <field name="arch" type="xml">
-        <xpath expr="//tree[@string='Invoice']" position="attributes">
-          <attribute name="colors">blue:state == 'draft';green:autorizado_sri == False;black:state in ('proforma','proforma2','open');gray:state == 'cancel'</attribute>
-        </xpath>
         <xpath expr="//tree//field[@name='partner_id']" position="after">
           <field name="autorizado_sri" invisible="1"/>
+        </xpath>
+        <xpath expr="//tree[@string='Invoice']" position="attributes">
+          <attribute name="colors">blue:state == 'draft';green:autorizado_sri == False;black:state in ('proforma','proforma2','open');gray:state == 'cancel'</attribute>
         </xpath>
       </field>
     </record>

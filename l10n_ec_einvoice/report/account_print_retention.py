@@ -29,7 +29,7 @@ class account_retention(report_sxw.rml_parse):
             'time': time,
         })
 report_sxw.report_sxw(
-    'report.account.retention',
+    'report.account.eretention',
     'account.retention',
     'addons/l10n_ec_withdrawing/report/account_print_retention.rml',
     parser=account_retention
