@@ -103,8 +103,6 @@ class Service(object):
         """
         values: tuple ([], [])
         """
-        import pdb
-        pdb.set_trace()
         env = self.get_active_env()
         dato = ''.join(values[0] + [env] + values[1])
         modulo = CheckDigit.compute_mod11(dato)

@@ -40,6 +40,7 @@ from tools import ustr
 import decimal_precision as dp
 import netsvc
 
+import utils
 from .xades.sri import Service as SRIService, InvoiceXML
 from .xades.xades import Xades
 
@@ -212,7 +213,7 @@ class AccountInvoice(osv.osv):
             etree.SubElement(detalle, 'descuento').text = '0.00'#'%.2f' % (line.discount_value)
             etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
             impuestos = etree.Element('impuestos')
-            for tax_line in line.invoice_line_tax_id: #iterar en invoice_tax
+            for tax_line in line.invoice_tax: #iterar en invoice_tax
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
                     impuesto = etree.Element('impuesto')
                     etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
