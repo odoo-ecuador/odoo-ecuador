@@ -27,11 +27,13 @@ import StringIO
 import hashlib
 import datetime
 import subprocess
+
 try:
     from OpenSSL import crypto
 except ImportError:
     raise ImportError('Instalar la libreria para soporte OpenSSL: pip install PyOpenSSL')
 
+from lxml import etree
 from pytz import timezone
 
 
@@ -85,8 +87,7 @@ class Xades(object):
         JAR_PATH = 'firma/firmaXadesBes.jar'
         JAVA_CMD = 'java'
         xml_str = etree.tostring(xml_document, encoding='utf8', method='xml')
-        # firma electronica del xml
         firma_path = os.path.join(os.path.dirname(__file__), JAR_PATH)
-        # invocaciÃ³n del jar de la firma electronica
-        p = Popen([JAVA_CMD, '-jar', JAR_PATH, xml_str, file_pk12, password], stdout=PIPE, stderr=STDOUT)
-        return p.communicate()[0]
+        p = subprocess.Popen([JAVA_CMD, '-jar', firma_path, xml_str, file_pk12, password], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        res = p.communicate()
+        return res[0]

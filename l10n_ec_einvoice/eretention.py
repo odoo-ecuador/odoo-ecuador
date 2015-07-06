@@ -45,7 +45,7 @@ try:
 except ImportError:
     raise ImportError('Instalar Libreria suds')
 
-from .xades.sri import Service as SRIService, InvoiceXML
+from .xades.sri import SriService, DocumentXML
 
 tipoIdentificacion = {
     'ruc' : '04',
@@ -107,7 +107,7 @@ class account_retention(osv.osv):
         company = retention.company_id
         auth = retention.invoice_id.journal_id.auth_ret_id
         infoTributaria = etree.Element('infoTributaria')
-        etree.SubElement(infoTributaria, 'ambiente').text = SRIService.get_env_prod()
+        etree.SubElement(infoTributaria, 'ambiente').text = SriService.get_env_prod()
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
@@ -204,7 +204,7 @@ class account_retention(osv.osv):
                     if not obj.access_key:
                         # Codigo de acceso
                         ak_temp = self.get_access_key(cr, uid, obj)
-                        access_key = SRIService.create_access_key(ak_temp)
+                        access_key = SriService.create_access_key(ak_temp)
                         emission_code = obj.company_id.emission_code
                         self.write(cr, uid, [obj.id], {'access_key': access_key, 'emission_code': emission_code})
                     else:

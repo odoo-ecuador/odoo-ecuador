@@ -23,7 +23,8 @@
 
 import logging
 import os
-from osv import osv
+import StringIO
+import base64
 
 from lxml import etree
 from lxml.etree import DocumentInvalid
@@ -34,6 +35,8 @@ try:
 except ImportError:
     raise ImportError('Instalar Libreria suds')
 
+from osv import osv
+from openerp.addons.l10n_ec_einvoice import utils
 from .xades import CheckDigit
 
 SCHEMAS = {
@@ -48,6 +51,7 @@ class DocumentXML(object):
     _schema = False
     document = False
 
+    @classmethod
     def __init__(self, document, type='out_invoice'):
         """
         document: XML representation
@@ -56,6 +60,7 @@ class DocumentXML(object):
         self.document = document
         self.type_document = type
         self._schema = SCHEMAS[self.type_document]
+        self.signed_document = False
 
     @classmethod
     def validate_xml(self):
@@ -69,7 +74,46 @@ class DocumentXML(object):
         try:
             xmlschema.assertValid(self.document)
         except DocumentInvalid as e:
+            print e
             raise osv.except_osv('Error de Datos', MSG_SCHEMA_INVALID)
+
+    @classmethod
+    def send_receipt(self, document):
+        """
+        TODO: documentar
+        """
+        buf = StringIO.StringIO()
+        buf.write(document)
+        buffer_xml = base64.encodestring(buf.getvalue())
+
+        if not utils.check_service('prueba'):
+            raise osv.except_osv('Error SRI', 'Servicio SRI no disponible.')
+
+        client = Client(SriService.get_active_ws()[0])
+        result =  client.service.validarComprobante(buffer_xml)
+        if result.estado == 'RECIBIDA':
+            return True
+        else:
+            return False, result
+
+    def request_authorization(self, access_key):
+        messages = []
+        client = Client(SriService.get_active_ws()[1])
+        result =  client.service.autorizacionComprobante(access_key)
+        autorizacion = result.autorizaciones[0][0]
+        for m in autorizacion.mensajes[0]:
+            messages.append([m.identificador, m.mensaje, m.tipo])
+                
+        if autorizacion.estado == 'AUTORIZADO':
+            autorizacion_xml = etree.Element('autorizacion')
+            etree.SubElement(autorizacion_xml, 'estado').text = autorizacion.estado
+            etree.SubElement(autorizacion_xml, 'numeroAutorizacion').text = autorizacion.numeroAutorizacion
+            etree.SubElement(autorizacion_xml, 'ambiente').text = autorizacion.ambiente
+            etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(autorizacion.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"))
+            etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
+            return autorizacion_xml, messages
+        else:
+            return False, messages
 
 
 class SriService(object):
@@ -119,3 +163,4 @@ class SriService(object):
         modulo = CheckDigit.compute_mod11(dato)
         access_key = ''.join([dato, str(modulo)])
         return access_key
+

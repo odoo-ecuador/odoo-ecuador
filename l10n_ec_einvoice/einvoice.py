@@ -41,7 +41,7 @@ import decimal_precision as dp
 import netsvc
 
 import utils
-from .xades.sri import SRIService, DocumentXML
+from .xades.sri import SriService, DocumentXML
 from .xades.xades import Xades
 
 try:
@@ -102,7 +102,7 @@ class AccountInvoice(osv.osv):
         company = invoice.company_id
         auth = invoice.journal_id.auth_id
         infoTributaria = etree.Element('infoTributaria')
-        etree.SubElement(infoTributaria, 'ambiente').text = SRIService.get_env_prod()
+        etree.SubElement(infoTributaria, 'ambiente').text = SriService.get_active_env()
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
@@ -199,28 +199,26 @@ class AccountInvoice(osv.osv):
             if code:
                 code.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
                 return code
-            return ''
+            return '1'
             
         detalles = etree.Element('detalles')
         for line in invoice.invoice_line:
             detalle = etree.Element('detalle')
             etree.SubElement(detalle, 'codigoPrincipal').text = fix_chars(line.product_id.default_code)
-#            if line.product_id.manufacturer_pref:
-#                etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref.replace(u'%',' ').replace(u'º', ' ').replace(u'Ñ', 'N').replace(u'ñ','n')
             etree.SubElement(detalle, 'descripcion').text = fix_chars(line.product_id.name)
             etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
             etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
             etree.SubElement(detalle, 'descuento').text = '0.00'#'%.2f' % (line.discount_value)
             etree.SubElement(detalle, 'precioTotalSinImpuesto').text = '%.2f' % (line.price_subtotal)
             impuestos = etree.Element('impuestos')
-            for tax_line in line.invoice_tax: #iterar en invoice_tax
+            for tax_line in line.invoice_line_tax_id:
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
                     impuesto = etree.Element('impuesto')
                     etree.SubElement(impuesto, 'codigo').text = codigoImpuesto[tax_line.tax_group]
                     etree.SubElement(impuesto, 'codigoPorcentaje').text = tarifaImpuesto[tax_line.tax_group]
-                    etree.SubElement(impuesto, 'tarifa').text = '%.2f' % (tax_line.amount * 100)
+                    etree.SubElement(impuesto, 'tarifa').text = tax_line.porcentaje
                     etree.SubElement(impuesto, 'baseImponible').text = '%.2f' % (line.price_subtotal)
-                    etree.SubElement(impuesto, 'valor').text = '%.2f' % (line.amount_tax)
+                    etree.SubElement(impuesto, 'valor').text = '%.2f' % (line.price_subtotal * tax_line.amount)
                     impuestos.append(impuesto)
             detalle.append(impuestos)
             detalles.append(detalle)
@@ -327,6 +325,7 @@ class AccountInvoice(osv.osv):
         """
         """
         LIMIT_TO_SEND = 5
+        WAIT_FOR_RECEIPT = 3
         TITLE_NOT_SENT = u'No se puede enviar el comprobante electrónico al SRI'
         MESSAGE_SEQUENCIAL = u'Los comprobantes electrónicos deberán ser enviados al SRI para su autorización en orden cronológico y secuencial. Por favor enviar primero el comprobante inmediatamente anterior'
         MESSAGE_TIME_LIMIT = u'Los comprobantes electrónicos deberán enviarse a las bases de datos del SRI para su autorización en un plazo máximo de 24 horas'
@@ -345,7 +344,7 @@ class AccountInvoice(osv.osv):
                 raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_SEQUENCIAL)
 
             ak_temp = self.get_access_key(cr, uid, obj)
-            access_key = SRIService.create_access_key(ak_temp)
+            access_key = SriService.create_access_key(ak_temp)
             emission_code = obj.company_id.emission_code
             self.write(cr, uid, [obj.id], {'clave_acceso': access_key, 'emission_code': emission_code})
 
@@ -353,22 +352,22 @@ class AccountInvoice(osv.osv):
                 # XML del comprobante electrónico: factura
                 factura = self._generate_xml_invoice(obj, access_key, emission_code)
                 #validación del xml
-                inv_xml = InvoiceXML(factura)
-                inv_xml.validate_xml(obj.type)
-                inv_xml.save(access_key)
-
+                inv_xml = DocumentXML(factura, 'out_invoice')
+                inv_xml.validate_xml()
                 # firma de XML, now what ??
                 # TODO: zip, checksum, save, send_mail
                 xades = Xades()
                 file_pk12 = obj.company_id.electronic_signature
                 password = obj.company_id.password_electronic_signature
-                xades.apply_digital_signature(access_key, file_pk12, password)
-
+                signed_document = xades.apply_digital_signature(factura, file_pk12, password)
+                
                 # recepción del comprobante electrónico
-                self.send_receipt(cr, uid, access_key)
-                time.sleep(3)
+                inv_xml.send_receipt(signed_document)
+                time.sleep(WAIT_FOR_RECEIPT)
+
                 # solicitud de autorización del comprobante electrónico
-                self.request_authorization(cr, uid, obj, access_key)
+                doc_xml, m = inv_xml.request_authorization(access_key)
+                
                 self.send_mail_invoice(cr, uid, obj, access_key, context)
             else: # Revisar codigo que corre aca
                 if not obj.origin:
@@ -379,86 +378,6 @@ class AccountInvoice(osv.osv):
                 factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)
                 # envío del correo electrónico de nota de crédito al cliente
                 self.send_mail_refund(cr, uid, obj, access_key, context)
-
-    def send_receipt(self, cr, uid, access_key):
-        """
-        TODO: mover a sri.py
-        """
-        if not utils.check_service('prueba'):
-            raise osv.except_osv('Error SRI', 'Servicio SRI no disponible.')
-
-        client = Client(SRIService.get_active_ws()[0])
-        result =  client.service.validarComprobante(xml)
-        self.__logger.info("RecepcionComprobantes: %s" % result)
-        mensaje_error = ""
-        if (result[0] == 'DEVUELTA'):
-            comprobante = result[1].comprobante
-            mensaje_error += 'Clave de Acceso: ' + comprobante[0].claveAcceso
-            mensajes = comprobante[0].mensajes
-            i = 0
-            mensaje_error += "\nErrores:\n"
-            while i < len(mensajes):
-                mensaje = mensajes[i]
-                mensaje_error += 'Identificador: ' + mensaje[i].identificador + '\nMensaje: ' + mensaje[i].mensaje + '\nTipo: ' + mensaje[i].tipo + "\n"
-                i += 1
-                raise osv.except_osv('Error SRI', mensaje_error)
-        return True
-
-    def request_authorization(self, cr, uid, obj, access_key):
-        if not obj.numero_autorizacion:
-            try:
-                client_auto = Client(SRIService.get_ws_prod()[1])
-                result_auto =  client_auto.service.autorizacionComprobante(access_key)
-                self.__logger.info("AutorizacionComprobantes: %s" % result_auto)
-                if result_auto[2] == '':
-                    self.write(cr, uid, [obj.id], {'clave_acceso': access_key})
-                    self.__logger.info("Clave de Acceso")
-                else:
-                    autorizaciones = result_auto[2].autorizacion
-                    i = 0
-                    autorizado = False
-                    while i < len(autorizaciones):
-                        autorizacion = autorizaciones[i]
-                        estado = autorizacion.estado
-                        fecha_autorizacion = autorizacion.fechaAutorizacion
-                        mensaje_error = ''
-                        if (estado == 'NO AUTORIZADO'):
-                            #comprobante no autorizado
-                            mensajes = autorizacion.mensajes
-                            j = 0
-                            mensaje_error += "\nErrores:\n"
-                            while j < len(mensajes):
-                                mensaje = mensajes[j]
-                                mensaje_error += 'Identificador: ' + mensaje[j].identificador + '\nMensaje: ' + mensaje[j].mensaje + '\nTipo: ' + mensaje[j].tipo + '\n'
-                                j += 1
-                        else:
-                            autorizado = True
-                            numero_autorizacion = autorizacion.numeroAutorizacion
-                        i += 1    
-                    if autorizado == True:
-                        self.write(cr, uid, obj.id, {'autorizado_sri': True, 'numero_autorizacion': numero_autorizacion, 'fecha_autorizacion': fecha_autorizacion})
-                        autorizacion_xml = etree.Element('autorizacion')
-                        etree.SubElement(autorizacion_xml, 'estado').text = estado
-                        etree.SubElement(autorizacion_xml, 'numeroAutorizacion').text = numero_autorizacion
-                        etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(fecha_autorizacion.strftime("%d/%m/%Y %H:%M:%S"))
-                        etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
-                    
-                        tree = etree.ElementTree(autorizacion_xml)
-                        name = '%s%s.xml' %('/opt/facturas/', access_key)
-                        fichero = tree.write(name,pretty_print=True,xml_declaration=True,encoding='utf-8',method="xml")
-                    else:
-                        raise osv.except_osv('Error SRI', mensaje_error)
-            except TransportError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-            except urllib2.URLError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' +  str(e))
-            except urllib2.HTTPError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-            except httplib.BadStatusLine as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-            except SocketError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + unicode(str(e), "utf-8"))
-        return True
         
     def send_mail_invoice(self, cr, uid, obj, access_key, context=None):
         name = '%s%s.xml' %('/opt/facturas/', access_key)
