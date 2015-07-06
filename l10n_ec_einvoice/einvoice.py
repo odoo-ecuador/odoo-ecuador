@@ -41,7 +41,7 @@ import decimal_precision as dp
 import netsvc
 
 import utils
-from .xades.sri import Service as SRIService, InvoiceXML
+from .xades.sri import SRIService, DocumentXML
 from .xades.xades import Xades
 
 try:
@@ -332,89 +332,76 @@ class AccountInvoice(osv.osv):
         MESSAGE_TIME_LIMIT = u'Los comprobantes electrónicos deberán enviarse a las bases de datos del SRI para su autorización en un plazo máximo de 24 horas'
         for obj in self.browse(cr, uid, ids):
             # Codigo de acceso
-            if obj.type in [ 'out_invoice', 'out_refund']:
-                # Validar que el envío del comprobante electrónico se realice dentro de las 24 horas posteriores a su emisión
-                if (datetime.now() - datetime.strptime(obj.date_invoice, '%Y-%m-%d')).days > LIMIT_TO_SEND:
-                    raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_TIME_LIMIT)
-                else:
-                    # Validar que el envío de los comprobantes electrónicos sea secuencial
-                    if not self.check_before_sent(cr, uid, obj):
-                        raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_SEQUENCIAL)
-                    else:
-                        ak_temp = self.get_access_key(cr, uid, obj)
-                        access_key = SRIService.create_access_key(ak_temp)
-                        emission_code = obj.company_id.emission_code
-                        self.write(cr, uid, [obj.id], {'clave_acceso': access_key, 'emission_code': emission_code})
-        
-                        if obj.type == 'out_invoice':
-                            # XML del comprobante electrónico: factura
-                            factura = self._generate_xml_invoice(obj, access_key, emission_code)
-                        else:
-                            if not obj.origin:
-                                raise osv.except_osv('Error de Datos', u'Falta el motivo de la devolución')
-                            invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('number','=',obj.name)])
-                            factura_origen = self.browse(cr, uid, invoice_ids, context = context)
-                            # XML del comprobante electrónico: factura
-                            factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)
-            
-                        #validación del xml
-                        inv_xml = InvoiceXML(factura)
-                        inv_xml.validate_xml(obj.type)
-                        inv_xml.save(access_key)
+            if not obj.type in [ 'out_invoice', 'out_refund']:
+                print "no disponible para otros documentos"
+                continue
 
-                        # firma de XML, now what ??
-                        # TODO: zip, checksum, save, send_mail
-                        xades = Xades()
-                        file_pk12 = obj.company_id.electronic_signature
-                        password = obj.company_id.password_electronic_signature
-                        xades.apply_digital_signature(access_key, file_pk12, password)
-            
-                        # recepción del comprobante electrónico
-                        if not obj.clave_acceso:
-                            self.send_receipt(cr, uid, access_key)
-                        time.sleep(3)            
-                        # solicitud de autorización del comprobante electrónico
-                        self.request_authorization(cr, uid, obj, access_key)
+            # Validar que el envío del comprobante electrónico se realice dentro de las 24 horas posteriores a su emisión
+            if (datetime.now() - datetime.strptime(obj.date_invoice, '%Y-%m-%d')).days > LIMIT_TO_SEND:
+                raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_TIME_LIMIT)
 
-                        if obj.type == 'out_invoice':
-                            # envío del correo electrónico de factura al cliente
-                            self.send_mail_invoice(cr, uid, obj, access_key, context)
-                        else:
-                            # envío del correo electrónico de nota de crédito al cliente
-                            self.send_mail_refund(cr, uid, obj, access_key, context)
+            # Validar que el envío de los comprobantes electrónicos sea secuencial
+            if not self.check_before_sent(cr, uid, obj):
+                raise osv.except_osv(TITLE_NOT_SENT, MESSAGE_SEQUENCIAL)
+
+            ak_temp = self.get_access_key(cr, uid, obj)
+            access_key = SRIService.create_access_key(ak_temp)
+            emission_code = obj.company_id.emission_code
+            self.write(cr, uid, [obj.id], {'clave_acceso': access_key, 'emission_code': emission_code})
+
+            if obj.type == 'out_invoice':
+                # XML del comprobante electrónico: factura
+                factura = self._generate_xml_invoice(obj, access_key, emission_code)
+                #validación del xml
+                inv_xml = InvoiceXML(factura)
+                inv_xml.validate_xml(obj.type)
+                inv_xml.save(access_key)
+
+                # firma de XML, now what ??
+                # TODO: zip, checksum, save, send_mail
+                xades = Xades()
+                file_pk12 = obj.company_id.electronic_signature
+                password = obj.company_id.password_electronic_signature
+                xades.apply_digital_signature(access_key, file_pk12, password)
+
+                # recepción del comprobante electrónico
+                self.send_receipt(cr, uid, access_key)
+                time.sleep(3)
+                # solicitud de autorización del comprobante electrónico
+                self.request_authorization(cr, uid, obj, access_key)
+                self.send_mail_invoice(cr, uid, obj, access_key, context)
+            else: # Revisar codigo que corre aca
+                if not obj.origin:
+                    raise osv.except_osv('Error de Datos', u'Falta el motivo de la devolución')
+                invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('number','=',obj.name)])
+                factura_origen = self.browse(cr, uid, invoice_ids, context = context)
+                # XML del comprobante electrónico: factura
+                factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)
+                # envío del correo electrónico de nota de crédito al cliente
+                self.send_mail_refund(cr, uid, obj, access_key, context)
 
     def send_receipt(self, cr, uid, access_key):
-        try:
-            name = '%s%s.xml' %('/opt/facturas/', access_key)
-            cadena = open(name, mode='rb').read()
-            document = parseString(cadena.strip())
-            xml = document.toxml('UTF-8').encode('base64')
-    
-            client = Client(SRIService.get_ws_prod()[0])
-            result =  client.service.validarComprobante(xml)
-            self.__logger.info("RecepcionComprobantes: %s" % result)
-            mensaje_error = ""
-            if (result[0] == 'DEVUELTA'):
-                comprobante = result[1].comprobante
-                mensaje_error += 'Clave de Acceso: ' + comprobante[0].claveAcceso
-                mensajes = comprobante[0].mensajes
-                i = 0
-                mensaje_error += "\nErrores:\n"
-                while i < len(mensajes):
-                    mensaje = mensajes[i]
-                    mensaje_error += 'Identificador: ' + mensaje[i].identificador + '\nMensaje: ' + mensaje[i].mensaje + '\nTipo: ' + mensaje[i].tipo + "\n"
-                    i += 1
+        """
+        TODO: mover a sri.py
+        """
+        if not utils.check_service('prueba'):
+            raise osv.except_osv('Error SRI', 'Servicio SRI no disponible.')
+
+        client = Client(SRIService.get_active_ws()[0])
+        result =  client.service.validarComprobante(xml)
+        self.__logger.info("RecepcionComprobantes: %s" % result)
+        mensaje_error = ""
+        if (result[0] == 'DEVUELTA'):
+            comprobante = result[1].comprobante
+            mensaje_error += 'Clave de Acceso: ' + comprobante[0].claveAcceso
+            mensajes = comprobante[0].mensajes
+            i = 0
+            mensaje_error += "\nErrores:\n"
+            while i < len(mensajes):
+                mensaje = mensajes[i]
+                mensaje_error += 'Identificador: ' + mensaje[i].identificador + '\nMensaje: ' + mensaje[i].mensaje + '\nTipo: ' + mensaje[i].tipo + "\n"
+                i += 1
                 raise osv.except_osv('Error SRI', mensaje_error)
-        except TransportError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-        except urllib2.URLError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' +  str(e))
-        except urllib2.HTTPError as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-        except httplib.BadStatusLine as e:
-                raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + str(e))
-        #except SocketError as e:
-        #        raise osv.except_osv('Error SRI', 'Indisponibilidad de Servicios, ' + unicode(str(e), "utf-8"))
         return True
 
     def request_authorization(self, cr, uid, obj, access_key):

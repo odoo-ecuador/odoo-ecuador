@@ -36,40 +36,43 @@ except ImportError:
 
 from .xades import CheckDigit
 
-class InvoiceXML(object):
+SCHEMAS = {
+    'out_invoice': 'schemas/factura.xsd',
+    'out_refund': 'schemas/nota_credito.xsd',
+    'retention': 'schemas/retention.xsd',
+    'delivery': 'schemas/delivery.xsd',
+    'in_refund': 'schemas/nota_debito.xsd'
+}
 
-    INVOICE_XSD_PATH = 'schemas/factura_v1.1.0.xsd'
-    REFUND_XSD_PATH = 'schemas/notaCredito_v1.1.0.xsd'
-    INVOICE_SCHEMA_INVALID = u"""El sistema generó el XML pero el comprobante electrónico no pasa la validación XSD del SRI. \n\n %s"""
+class DocumentXML(object):
+    _schema = False
+    document = False
+
+    def __init__(self, document, type='out_invoice'):
+        """
+        document: XML representation
+        type: determinate schema
+        """
+        self.document = document
+        self.type_document = type
+        self._schema = SCHEMAS[self.type_document]
 
     @classmethod
-    def __init__(self, element):
-        self.invoice_element = element
-
-    @classmethod
-    def save(self, access_key):
-        OPT_PATH = '/opt/facturas/'
-        name = '%s%s.xml' % (OPT_PATH, access_key)
-        tree = etree.ElementTree(self.invoice_element)
-        tree.write(name, pretty_print=True, xml_declaration=True, encoding='utf-8', method='xml')
-    
-    @classmethod
-    def validate_xml(self, tipo_comprobante):
+    def validate_xml(self):
         """
         """
-        if tipo_comprobante == 'out_invoice':
-            file_path = os.path.join(os.path.dirname(__file__), self.INVOICE_XSD_PATH)
-        else:
-            file_path = os.path.join(os.path.dirname(__file__), self.REFUND_XSD_PATH)
+        MSG_SCHEMA_INVALID = u"El sistema generó el XML pero el comprobante electrónico no pasa la validación XSD del SRI."
+        file_path = os.path.join(os.path.dirname(__file__), self._schema)
         schema_file = open(file_path)
         xmlschema_doc = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xmlschema_doc)
         try:
-            xmlschema.assertValid(self.invoice_element)
+            xmlschema.assertValid(self.element)
         except DocumentInvalid as e:
-            raise osv.except_osv('Error de Datos',  self.INVOICE_SCHEMA_INVALID % str(e))
+            raise osv.except_osv('Error de Datos', MSG_SCHEMA_INVALID)
 
-class Service(object):
+
+class SriService(object):
 
     __AMBIENTE_PRUEBA = '1'
     __AMBIENTE_PROD = '2'
@@ -77,6 +80,8 @@ class Service(object):
     __WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
     __WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
     __WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
+
+    __WS_ACTIVE = (__WS_TEST_RECEIV, __WS_TEST_AUTH)
 
     @classmethod
     def get_active_env(self):
@@ -97,6 +102,10 @@ class Service(object):
     @classmethod
     def get_ws_prod(self):
         return self.__WS_RECEIV, self.__WS_AUTH
+
+    @classmethod
+    def get_active_ws(self):
+        return self.__WS_ACTIVE
 
     @classmethod
     def create_access_key(self, values):
