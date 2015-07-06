@@ -78,17 +78,15 @@ class CheckDigit(object):
 
 class Xades(object):
 
-    def apply_digital_signature(self, access_key, file_pk12, password):
+    def apply_digital_signature(self, xml_document, file_pk12, password):
         """
         Metodo que aplica la firma digital al XML
         """
-        OPT_PATH = '/opt/facturas/'
-        JAR_PATH = 'firma/prctXadesBes.jar'
+        JAR_PATH = 'firma/firmaXadesBes.jar'
         JAVA_CMD = 'java'
-        ds_document = False
-        name = '%s%s.xml' % (OPT_PATH, access_key)
-        # firma electrónica del xml
+        xml_str = etree.tostring(xml_document, encoding='utf8', method='xml')
+        # firma electronica del xml
         firma_path = os.path.join(os.path.dirname(__file__), JAR_PATH)
-        # invocación del jar de la firma electrónica
-        subprocess.call([JAVA_CMD, '-jar', firma_path, name, name, file_pk12, password])
-        return ds_document
+        # invocaciÃ³n del jar de la firma electronica
+        p = Popen([JAVA_CMD, '-jar', JAR_PATH, xml_str, file_pk12, password], stdout=PIPE, stderr=STDOUT)
+        return p.communicate()[0]
