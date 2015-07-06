@@ -67,7 +67,7 @@ class DocumentXML(object):
         xmlschema_doc = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xmlschema_doc)
         try:
-            xmlschema.assertValid(self.element)
+            xmlschema.assertValid(self.document)
         except DocumentInvalid as e:
             raise osv.except_osv('Error de Datos', MSG_SCHEMA_INVALID)
 
@@ -81,7 +81,9 @@ class SriService(object):
     __WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
     __WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 
-    __WS_ACTIVE = (__WS_TEST_RECEIV, __WS_TEST_AUTH)
+    __WS_TESTING = (__WS_TEST_RECEIV, __WS_TEST_AUTH)
+    __WS_PROD = (__WS_RECEIV, __WS_AUTH)
+    __WS_ACTIVE = __WS_TESTING
 
     @classmethod
     def get_active_env(self):
