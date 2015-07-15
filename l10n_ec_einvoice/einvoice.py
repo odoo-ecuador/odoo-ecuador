@@ -28,6 +28,7 @@ import logging
 import base64
 import urllib2
 import httplib
+import StringIO
 
 from lxml import etree
 from xml.dom.minidom import parse, parseString
@@ -367,8 +368,9 @@ class AccountInvoice(osv.osv):
 
                 # solicitud de autorización del comprobante electrónico
                 doc_xml, m = inv_xml.request_authorization(access_key)
-                
-                self.send_mail_invoice(cr, uid, obj, access_key, context)
+                if not doc_xml:
+                    raise m
+                self.send_mail_invoice(cr, uid, obj, doc_xml, context)
             else: # Revisar codigo que corre aca
                 if not obj.origin:
                     raise osv.except_osv('Error de Datos', u'Falta el motivo de la devolución')
@@ -379,23 +381,26 @@ class AccountInvoice(osv.osv):
                 # envío del correo electrónico de nota de crédito al cliente
                 self.send_mail_refund(cr, uid, obj, access_key, context)
         
-    def send_mail_invoice(self, cr, uid, obj, access_key, context=None):
-        name = '%s%s.xml' %('/opt/facturas/', access_key)
-        cadena = open(name, mode='rb').read()
+    def send_mail_invoice(self, cr, uid, obj, xml_element, context=None):
+        einvoice_xml = etree.tostring(xml_element, pretty_print=True, encoding='iso-8859-1')
+        buf = StringIO.StringIO()
+        buf.write(einvoice_xml)
+        einvoice = base64.encodestring(buf.getvalue())
+        buf.close()
         attachment_id = self.pool.get('ir.attachment').create(cr, uid, 
             {
-                'name': '%s.xml' % (access_key),
-                'datas': base64.b64encode(cadena),
-                'datas_fname':  '%s.xml' % (access_key),
+                'name': '{0}.xml'.format(obj.clave_acceso),
+                'datas': einvoice,
+                'datas_fname':  '{0}.xml'.format(obj.clave_acceso),
                 'res_model': self._name,
                 'res_id': obj.id,
                 'type': 'binary'
             }, context=context)
                             
-        email_template_obj = self.pool.get('email.template')
-        template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account', 'email_template_edi_invoice')[1]
-        email_template_obj.write(cr, uid, template_id, {'attachment_ids': [(6, 0, [attachment_id])]})  
-        email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
+#        email_template_obj = self.pool.get('email.template')
+#        template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account', 'email_template_edi_invoice')[1]
+#        email_template_obj.write(cr, uid, template_id, {'attachment_ids': [(6, 0, [attachment_id])]})
+#        email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
         
         return True
 
