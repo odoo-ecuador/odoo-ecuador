@@ -435,3 +435,11 @@ class AccountInvoice(osv.osv):
         email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
 
         return True
+
+    def invoice_print(self, cr, uid, ids, context=None):
+        '''
+        Redefinicion para imprimir RIDE
+        '''
+        res = super(AccountInvoice, self).invoice_print(cr, uid, ids, context)
+        res['report_name'] = 'account.einvoice'
+        return res
