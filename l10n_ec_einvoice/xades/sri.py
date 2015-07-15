@@ -111,9 +111,9 @@ class DocumentXML(object):
             etree.SubElement(autorizacion_xml, 'ambiente').text = autorizacion.ambiente
             etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(autorizacion.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"))
             etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
-            return autorizacion_xml, messages
+            return autorizacion_xml, messages, autorizacion
         else:
-            return False, messages
+            return False, messages, False
 
 
 class SriService(object):

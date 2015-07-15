@@ -89,10 +89,12 @@ class AccountInvoice(osv.osv):
     __logger = logging.getLogger(_inherit)
     
     _columns = {
-        'clave_acceso': fields.char('Clave de Acceso', size=49, readonly=True, store=True),
-        'numero_autorizacion': fields.char('Número de Autorización', size=37, readonly=True, store=True),
-        'fecha_autorizacion':  fields.datetime('Fecha y Hora de Autorización', readonly=True, store=True),
-        'autorizado_sri': fields.boolean('¿Autorizado SRI?', readonly=True, store=True),
+        'clave_acceso': fields.char('Clave de Acceso', size=49, readonly=True),
+        'numero_autorizacion': fields.char('Número de Autorización', size=37, readonly=True),
+        'estado_autorizacion': fields.char('Estado de Autorización', size=64, readonly=True),
+        'fecha_autorizacion':  fields.datetime('Fecha Autorización', readonly=True),
+        'ambiente': fields.char('Ambiente', size=64, readonly=True),
+        'autorizado_sri': fields.boolean('¿Autorizado SRI?', readonly=True),
         'security_code': fields.char('Código de Seguridad', size=8),
 	'emission_code': fields.char('Tipo de Emisión', size=1),
         }
@@ -306,7 +308,8 @@ class AccountInvoice(osv.osv):
         ruc = invoice.company_id.partner_id.ced_ruc
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
         numero = invoice.number[6:15]
-        codigo_numero = '12345678'#invoice.security_code
+        #TODO: security code
+        codigo_numero = '12345678'
         tipo_emision = invoice.company_id.emission_code
         access_key = (
             [fecha, tcomp, ruc],
@@ -347,6 +350,7 @@ class AccountInvoice(osv.osv):
             ak_temp = self.get_access_key(cr, uid, obj)
             access_key = SriService.create_access_key(ak_temp)
             emission_code = obj.company_id.emission_code
+            #Move write
             self.write(cr, uid, [obj.id], {'clave_acceso': access_key, 'emission_code': emission_code})
 
             if obj.type == 'out_invoice':
@@ -367,10 +371,11 @@ class AccountInvoice(osv.osv):
                 time.sleep(WAIT_FOR_RECEIPT)
 
                 # solicitud de autorización del comprobante electrónico
-                doc_xml, m = inv_xml.request_authorization(access_key)
-                if not doc_xml:
+                doc_xml, m, auth = inv_xml.request_authorization(access_key)
+                if doc_xml is None:
+                    msg = ' '.join(m)
                     raise m
-                self.send_mail_invoice(cr, uid, obj, doc_xml, context)
+                self.send_mail_invoice(cr, uid, obj, doc_xml, auth, context)
             else: # Revisar codigo que corre aca
                 if not obj.origin:
                     raise osv.except_osv('Error de Datos', u'Falta el motivo de la devolución')
@@ -381,7 +386,14 @@ class AccountInvoice(osv.osv):
                 # envío del correo electrónico de nota de crédito al cliente
                 self.send_mail_refund(cr, uid, obj, access_key, context)
         
-    def send_mail_invoice(self, cr, uid, obj, xml_element, context=None):
+    def send_mail_invoice(self, cr, uid, obj, xml_element, auth, context=None):
+        self.write(cr, uid, [obj.id], {
+            'numero_autorizacion': auth.numeroAutorizacion,
+            'estado_autorizacion': auth.estado,
+            'ambiente': auth.ambiente,
+            'fecha_autorizacion': auth.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"),
+            'autorizado_sri': True
+        })
         einvoice_xml = etree.tostring(xml_element, pretty_print=True, encoding='iso-8859-1')
         buf = StringIO.StringIO()
         buf.write(einvoice_xml)
