@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<openerp>
-    <data>
-
-      <menuitem id="menu_development_plan_base" parent="base.menu_definitions" name="Plan Nacional de Desarrollo" sequence="10"/> <!-- groups="gt_project_project.group_project_all_config"/ -->
-    </data>
-</openerp>
