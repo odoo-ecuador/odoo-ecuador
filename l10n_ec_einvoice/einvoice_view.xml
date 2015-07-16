@@ -87,7 +87,7 @@
       <field name="inherit_id" ref="account.invoice_form"/>
       <field name="arch" type="xml">
         <button name="action_invoice_sent" position="before">
-          <button name="action_generate_einvoice" type="object" string="Enviar SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', 'in', ('draft','cancel'))]}"/>
+          <button name="action_generate_einvoice" type="object" string="Factura Electrónica" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', 'in', ('draft','cancel'))]}"/>
         </button>
         <xpath expr="//field[@name='move_id']" position="after">
           <field name="clave_acceso"/>
