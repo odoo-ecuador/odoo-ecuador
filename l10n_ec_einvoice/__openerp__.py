@@ -32,6 +32,7 @@
         'einvoice_view.xml',
         'partner_view.xml',
         'einvoice_report.xml',
+        'edi/einvoice_data.xml'
     ],
      'depends': [
         'l10n_ec_withdrawing'
