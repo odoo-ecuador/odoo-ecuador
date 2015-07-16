@@ -409,10 +409,10 @@ class AccountInvoice(osv.osv):
                 'type': 'binary'
             }, context=context)
                             
-#        email_template_obj = self.pool.get('email.template')
-#        template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account', 'email_template_edi_invoice')[1]
+        email_template_obj = self.pool.get('email.template')
+        template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'l10n_ec_einvoice', 'email_template_einvoice')[1]
 #        email_template_obj.write(cr, uid, template_id, {'attachment_ids': [(6, 0, [attachment_id])]})
-#        email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
+        email_template_obj.send_mail(cr, uid, template_id, obj.id, True)
         
         return True
 
