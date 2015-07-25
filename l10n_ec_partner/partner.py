@@ -5,8 +5,9 @@ __author__ = 'Cristian Salamea (cristian.salamea@gnuthink.com)'
 import time
 from datetime import datetime
 
-from osv import osv, fields
+from openerp.osv import fields, osv
 
+ADDRESS_FIELDS = ('street', 'street2', 'zip', 'city', 'state_id', 'country_id')
 
 class Partner(osv.osv):
 
@@ -75,19 +76,81 @@ class Partner(osv.osv):
                 return True
             if partner.type_ced_ruc == 'pasaporte':
                 return True
-            if partner.tipo_persona == '9':
-                return self._check_ruc(partner)
-            else:
-                return self._check_cedula(partner.ced_ruc)
+            elif partner.type_ced_ruc == 'ruc':
+                if not len(partner.ced_ruc) == 13:
+                    return False   
+                if partner.tipo_persona == '9':
+                    return self._check_ruc(partner)
+                else:
+                    return self._check_cedula(partner.ced_ruc)
+            elif partner.type_ced_ruc == 'cedula':
+                if not len(partner.ced_ruc) == 10:
+                    return False
+                else:
+                    return self._check_cedula(partner.ced_ruc)
+    
+    def _address_fields(self, cr, uid, context=None):
+        """ Returns the list of address fields that are synced from the parent
+        when the `use_parent_address` flag is set. """
+        return list(ADDRESS_FIELDS)
+
+    def _display_address(self, cr, uid, address, without_company=False, context=None):
+      
+        '''
+        The purpose of this function is to build and return an address formatted accordingly to the
+        standards of the country where it belongs.
+        :param address: browse record of the res.partner to format
+        :returns: the address formatted in a display that fit its country habits (or the default ones
+        if not country is specified)
+        :rtype: string
+        '''
+        
+        # get the information that will be injected into the display format
+        # get the address format
+        address_format = address.country_id and address.country_id.address_format or \
+            "%(street)s\n%(city_name)s %(state_name)s\n%(country_name)s"
+        args = {
+            'city_name': address.city and address.city.name or '',
+            'state_code': address.state_id and address.state_id.code or '',
+            'state_name': address.state_id and address.state_id.name or '',
+            'country_code': address.country_id and address.country_id.code or '',
+            'country_name': address.country_id and address.country_id.name or '',
+            'company_name': address.parent_id and address.parent_id.name or '',
+        }
+        for field in self._address_fields(cr, uid, context=context):
+            args[field] = getattr(address, field) or ''
+        if without_company:
+            args['company_name'] = ''
+        elif address.parent_id:
+	    address_format = '%(company_name)s\n' + address_format
+        return address_format % args
 
     _columns = {
-        'ced_ruc': fields.char('Cedula/ RUC', size=13, required=True, help='Idenficacion o Registro Unico de Contribuyentes'),
-        'type_ced_ruc': fields.selection([('cedula','Cedula'),('ruc','RUC'),('pasaporte','Pasaporte')], 'Tipo ID', required=True),
-        'tipo_persona': fields.selection([('6','Persona Natural'),('9','Persona Juridica')], 'Persona', required=True),
+        'ced_ruc': fields.char('Cedula/ RUC', 
+                               size=13, 
+                               required=True, 
+                               help='Idenficacion o Registro Unico de Contribuyentes'),
+        'type_ced_ruc': fields.selection([
+            ('cedula','Cedula'),
+            ('ruc','RUC'),
+            ('pasaporte','Pasaporte')
+            ], 
+            'Tipo ID', 
+            required=True),
+        'tipo_persona': fields.selection(
+            [('6','Persona Natural'),
+            ('9','Persona Juridica')], 
+            string='Persona', 
+            required=True
+            ),
+        'country_id': fields.many2one('res.country', 'Country'),
+        'state_id': fields.many2one("res.country.state", 'State', domain="[('country_id','=',country_id)]"),
+        'city': fields.many2one('res.country.city', 'City', domain="[('state_id','=',state_id)]"),
         }
 
     _defaults = {
         'tipo_persona': '9',
+        'is_company': True
         }
 
     _constraints = [
@@ -96,7 +159,7 @@ class Partner(osv.osv):
 
     _sql_constraints = [
         ('partner_unique',
-         'unique(ced_ruc,type_ced_ruc,tipo_persona, company_id)',
+         'unique(ced_ruc,type_ced_ruc,tipo_persona,company_id)',
          u'El identificador es único.'),
         ]
 

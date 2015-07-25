@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<openerp>
+  <data>
+    <record model="ir.ui.view" id="view_l10n_ec_partner_res_country_city_search">
+      <field name="name">l10n_ec_partner.res.country.city.search</field>
+      <field name="model">res.country.city</field>
+      <field name="arch" type="xml">
+	<search>
+	  <field name="state_id"/>
+	  <field name="name"/>
+	  <field name="code"/>
+	</search>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="view_l10n_ec_partner_res_country_city_form">
+      <field name="name">l10n_ec_partner.res.country.city.form</field>
+      <field name="model">res.country.city</field>
+      <field name="arch" type="xml">
+	<form string="City">
+	  <group colspan="4" col="2">
+	    <field name="name"/>
+	    <field name="code"/>
+	    <field name="country_id"/>
+	    <field name="state_id"/>
+	  </group>
+	</form>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="view_l10n_ec_partner_res_country_city_tree">
+      <field name="name">l10n_ec_partner.res.country.city.tree</field>
+      <field name="model">res.country.city</field>
+      <field name="arch" type="xml">
+	<tree string="Cities">
+	  <field name="country_id"/>
+	  <field name="state_id"/>
+	  <field name="name"/>
+	  <field name="code"/>
+	</tree>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_l10n_ec_partner_res_country_city">
+      <field name="name">Ciudades</field>
+      <field name="res_model">res.country.city</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="view_l10n_ec_partner_res_country_city_tree"/>
+      <field name="search_view_id" ref="view_l10n_ec_partner_res_country_city_search"/>
+    </record>
+    <menuitem name="Cities" id="menu_l10n_ec_partner_res_country_city"
+                  parent="base.menu_localisation" action="action_l10n_ec_partner_res_country_city"
+                  sequence="3"/>
+  </data>
+</openerp>
