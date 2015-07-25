@@ -28,6 +28,11 @@
     'website': 'http://www.ayni.io',
     'data': [
         'view/partner_view.xml',
+        'view/country_view.xml',
+        'data/res.country.state.csv',
+        'data/res.country.city.csv',
+        'data/res_country.xml',
+        'security/ir.model.access.csv',
     ],
     'depends' : [
       'base'
