@@ -51,21 +51,23 @@
       <field name="type">form</field>
       <field name="arch" type="xml">
 	<form string="Autorizaciones SRI">
-          <group col="4" colspan="4">
-            <field name="name"/>
-            <field name="is_electronic"/>
-            <field name="serie_entidad"/>
-            <field name="serie_emision"/>
-            <field name="num_start"/>
-            <field name="num_end"/>
-            <field name="expiration_date"/>
-            <field name="active"/>
-            <field name="type_id"/>
-	        <field name="in_type"/>
-            <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
-            <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
-          </group>
-	    </form>
+	  <sheet>
+            <group col="4" colspan="4">
+              <field name="name"/>
+              <field name="is_electronic"/>
+              <field name="serie_entidad"/>
+              <field name="serie_emision"/>
+              <field name="num_start"/>
+              <field name="num_end"/>
+              <field name="expiration_date"/>
+              <field name="active"/>
+              <field name="type_id"/>
+	      <field name="in_type"/>
+              <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
+              <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
+            </group>
+	  </sheet>
+	</form>
       </field>
     </record>
 
@@ -94,7 +96,7 @@
       </field>
     </record>
     <record id="action_account_auth_tree" model="ir.actions.act_window">
-      <field name="name">Autorizaciones de Proveedor</field>
+      <field name="name">Autorizaciones SRI</field>
       <field name="res_model">account.authorisation</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
