@@ -4,8 +4,20 @@
 
     <!--
        Account Authorisation
-      -->
+    -->
 
+    <record id="view_journal_auth_form" model="ir.ui.view">
+      <field name="name">account.journal.auth.form</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+	<field name="sequence_id" position="after">
+	  <field name="auth_id"/>
+	  <field name="auth_ret_id"/>	  
+	</field>
+      </field>
+    </record>
+	
 <record id="view_partner_auth_form" model="ir.ui.view">
   <field name="name">account.partner.auth.form</field>
   <field name="model">res.partner</field>
@@ -61,7 +73,7 @@
               <field name="num_end"/>
               <field name="expiration_date"/>
               <field name="active"/>
-              <field name="type_id"/>
+              <field name="type_id" widget="selection"/>
 	      <field name="in_type"/>
               <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
               <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
@@ -108,7 +120,7 @@
     <menuitem action="action_account_auth_tree" id="menu_action_authorisation" parent="account.menu_finance_payables"/>
 
     <record id="action_account_authin_tree" model="ir.actions.act_window">
-      <field name="name">Autorizaciones de la Empresa</field>
+      <field name="name">Autorizaciones SRI</field>
       <field name="res_model">account.authorisation</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
@@ -189,6 +201,8 @@
       <field name="view_mode">tree,form</field>
     </record>
     <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
+
+    
 
   </data>
 </openerp>
