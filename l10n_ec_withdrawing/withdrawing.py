@@ -2,8 +2,7 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2013 GnuThink Software All Rights Reserved
-#    info@gnuthink.com
+#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -22,6 +21,7 @@
 ##############################################################################
 
 import time
+from datetime import datetime
 import logging
 
 from osv import osv, fields
@@ -78,51 +78,86 @@ class AccountWithdrawing(osv.osv):
         'num_document': fields.char('Num. Comprobante', size=50,
                                     readonly=True,
                                     states=STATES_VALUE),
-        'auth_id': fields.many2one('account.authorisation', 'Autorizacion',
-                                   readonly=True,
-                                   states=STATES_VALUE,
-                                   required=True,
-                                   domain=[('in_type','=','interno')]),
-        'type': fields.selection([('in_invoice','Factura'),
-                                  ('liq_purchase','Liquidacion Compra')],
-                                 string='Tipo Comprobante',
-                                 readonly=True, states=STATES_VALUE),
-        'in_type': fields.selection([('ret_in_invoice',
-                                      'Retencion a Proveedor'),
-                                     ('ret_out_invoice',
-                                      'Retencion de Cliente')],
-                                    string='Tipo', states=STATES_VALUE, readonly=True),
+        'auth_id': fields.many2one(
+            'account.authorisation', 
+            'Autorizacion',
+            readonly=True,
+            states=STATES_VALUE,
+            required=True,
+            domain=[('in_type','=','interno')]
+            ),
+        'type': fields.selection(
+            [('in_invoice','Factura'),
+            ('liq_purchase','Liquidacion Compra')],
+            string='Tipo Comprobante',
+            readonly=True, states=STATES_VALUE
+            ),
+        'in_type': fields.selection(
+            [('ret_in_invoice', u'Retención a Proveedor'),
+            ('ret_out_invoice', u'Retención de Cliente')],
+            string='Tipo', 
+            states=STATES_VALUE, 
+            readonly=True),
         'date': fields.date('Fecha Emision', readonly=True,
                             states={'draft': [('readonly', False)]}, required=True),
-        'period_id': fields.many2one('account.period', 'Periodo', required=True),
-        'tax_ids': fields.one2many('account.invoice.tax', 'retention_id',
-                                   'Detalle de Impuestos', readonly=True,
-                                   states=STATES_VALUE),
-        'invoice_id': fields.many2one('account.invoice', string='Documento',
-                                      required=False,
-                                      readonly=True, states=STATES_VALUE,domain=[('state','=','open')]),
-        'partner_id': fields.related('invoice_id', 'partner_id', type='many2one',
-                                     relation='res.partner', string='Empresa',
-                                     readonly=True),
-        'move_id': fields.related('invoice_id', 'move_id', type='many2one',
-                                  relation='account.move',
-                                  string='Asiento Contable',
-                                  readonly=True),
-        'state': fields.selection([('draft','Borrador'),
-                                   ('early','Anticipado'),
-                                   ('done','Validado'),
-                                   ('cancel','Anulado')],
-                                  readonly=True, string='Estado'),
-        'amount_total': fields.function( _amount_total, string='Total',
-                                         method=True, store=True,
-                                         digits_compute=dp.get_precision('Account')),
+        'period_id': fields.many2one(
+            'account.period', 
+            'Periodo', 
+            required=True
+            ),
+        'tax_ids': fields.one2many(
+            'account.invoice.tax', 
+            'retention_id',
+            'Detalle de Impuestos', 
+            readonly=True,
+            states=STATES_VALUE
+            ),
+        'invoice_id': fields.many2one(
+            'account.invoice', 
+            string='Documento',
+            required=False,
+            readonly=True, 
+            states=STATES_VALUE,
+            domain=[('state','=','open')]
+            ),
+        'partner_id': fields.related(
+            'invoice_id', 
+            'partner_id', 
+            type='many2one',
+            relation='res.partner', 
+            string='Empresa',
+            readonly=True
+            ),
+        'move_id': fields.related(
+            'invoice_id', 
+            'move_id', 
+            type='many2one',
+            relation='account.move',
+            string='Asiento Contable',
+            readonly=True
+            ),
+        'state': fields.selection(
+            [('draft','Borrador'),
+            ('early','Anticipado'),
+            ('done','Validado'),
+            ('cancel','Anulado')],
+            readonly=True, 
+            string='Estado'
+            ),
+        'amount_total': fields.function( 
+            _amount_total, string='Total',
+            method=True, store=True,
+            digits_compute=dp.get_precision('Account')
+            ),
         'to_cancel': fields.boolean('Para anulación',readonly=True, states=STATES_VALUE),
-        'company_id': fields.many2one('res.company',
-                                      'Company',
-                                      required=True,
-                                      change_default=True,
-                                      readonly=True,
-                                      states={'draft':[('readonly',False)]}),        
+        'company_id': fields.many2one(
+            'res.company',
+            'Company',
+            required=True,
+            change_default=True,
+            readonly=True,
+            states={'draft':[('readonly',False)]}
+            ),        
         }
 
     def _get_period(self, cr, uid, context=None):
@@ -204,19 +239,21 @@ class AccountWithdrawing(osv.osv):
         '''
         seq_obj = self.pool.get('ir.sequence')
         for ret in self.browse(cr, uid, ids):
+            auth = ret.invoice_id.journal_id.auth_ret_id
             if ret.to_cancel:
-                raise osv.except_osv('Alerta', 'El documento fue marcado para anular.')
+                raise osv.except_osv('Alerta', u'El documento fue marcado para anular.')
             seq_id = ret.invoice_id.journal_id.auth_ret_id.sequence_id.id
             seq = seq_obj.browse(cr, uid, seq_id)
             ret_num = number
             if number is None:
-                ret_number = seq_obj.get(cr, uid, seq.code)
+                ret_number = seq_obj.get_id(cr, uid, seq_id)
             else:
                 padding = seq.padding
                 ret_number = str(number).zfill(padding)
             self._amount_total(cr, uid, [ret.id], [], {}, {})                
-            number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret_number
-            self.write(cr, uid, ret.id, {'state': 'done', 'name':number})
+            number = auth.serie_entidad + auth.serie_emision + ret_number
+            security_code = seq_obj.get_id(cr, uid, 56) # Fix mover a einvoice
+            self.write(cr, uid, ret.id, {'state': 'done', 'name': number, 'security_code': security_code})
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
 
@@ -255,9 +292,10 @@ class AccountWithdrawing(osv.osv):
 
         Metodo para cambiar de estado a cancelado
         el documento
-        '''        
+        '''
+               
         self.write(cr, uid, ids, {'state': 'early'})
-        return True        
+        return True
 
 
 class AccountInvoiceTax(osv.osv):
@@ -292,37 +330,46 @@ class AccountInvoiceTax(osv.osv):
         for line in inv.invoice_line:
             for tax in tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, (line.price_unit* (1-(line.discount or 0.0)/100.0)), line.quantity, line.product_id, inv.partner_id)['taxes']:
                 val={}
-                tax_group = self.pool.get('account.tax').read(cr, uid, tax['id'],['tax_group', 'amount', 'description', 'porcentaje'])
+                val['tax_group'] = tax['tax_group']
+                val['percent'] = tax['porcentaje']
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
                 val['amount'] = tax['amount']
-                val['tax_group'] = tax_group['tax_group']
-                val['percent'] = tax_group['porcentaje']                
                 val['manual'] = False
                 val['sequence'] = tax['sequence']
                 val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['quantity'])
-                if tax_group['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
-                    ret = float(str(tax_group['porcentaje'])) / 100
+                # Hack to EC
+                if tax['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
+                    ret = float(str(tax['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
                     imp = (abs(tax['amount']) / (ret * bi)) * 100
                     val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100
                 else:
                     val['base'] = tax['price_unit'] * line['quantity']
-                if inv.type in ('out_invoice','in_invoice','liq_purchase'):
+
+                if inv.type in ('out_invoice','in_invoice'):
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
+                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
                     val['account_id'] = tax['account_collected_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_collected_id']
                 else:
                     val['base_code_id'] = tax['ref_base_code_id']
                     val['tax_code_id'] = tax['ref_tax_code_id']
-                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
-                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')}, round=False)
+                    val['base_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['base'] * tax['ref_base_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
+                    val['tax_amount'] = cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, val['amount'] * tax['ref_tax_sign'], context={'date': inv.date_invoice or fields.date.context_today(self, cr, uid, context=context)}, round=False)
                     val['account_id'] = tax['account_paid_id'] or line.account_id.id
                     val['account_analytic_id'] = tax['account_analytic_paid_id']
 
+                # If the taxes generate moves on the same financial account as the invoice line
+                # and no default analytic account is defined at the tax level, propagate the
+                # analytic account from the invoice line to the tax line. This is necessary
+                # in situations were (part of) the taxes cannot be reclaimed,
+                # to ensure the tax move is allocated to the proper analytic account.
+                if not val.get('account_analytic_id') and line.account_analytic_id and val['account_id'] == line.account_id.id:
+                    val['account_analytic_id'] = line.account_analytic_id.id
+ 
                 key = (val['tax_code_id'], val['base_code_id'], val['account_id'], val['account_analytic_id'])
                 if not key in tax_grouped:
                     tax_grouped[key] = val
@@ -523,7 +570,7 @@ class Invoice(osv.osv):
                 'nodestroy': True,            
                 }
         else:
-            raise except_osv('Aviso', 'No tiene retención')
+            raise osv.except_osv('Aviso', u'No tiene retención')
 
     def _amount_all(self, cr, uid, ids, fields, args, context=None):
         """
@@ -556,12 +603,14 @@ class Invoice(osv.osv):
                 'amount_noret_ir': 0.0,
                 'amount_total': 0.0,
                 'amount_pay': 0.0,
-                'amount_ice': 0.0
+                'amount_ice': 0.0,
+                'discount_total': 0.0
             }
             
             #Total General
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
+                res[invoice.id]['discount_total'] += line.discount_value
             for line in invoice.tax_line:
                 if line.tax_group == 'vat':
                     res[invoice.id]['amount_vat'] += line.base
@@ -635,19 +684,6 @@ class Invoice(osv.osv):
                     res[inv.id]['retention_ir'] = True
                 elif tax.tax_group == 'no_ret_ir':
                     res[inv.id]['no_retention_ir'] = True
-        return res
-
-    def _get_num_to_use(self, cr, uid, ids, field_name, args, context):
-        res = {}
-        invoices = self.browse(cr, uid, ids, context)
-        for inv in invoices:
-            if inv.type in ['out_invoice', 'liq_purchase']:
-                if inv.journal_id.auth_id and inv.journal_id.auth_id.sequence_id:
-                    res[inv.id] = str(inv.journal_id.auth_id.sequence_id.number_next)
-                elif inv.state in ['cancel', 'open', 'paid']:
-                    return res
-                else:
-                    raise osv.except_osv('Error', 'No se ha configurado una autorización en el diario.')
         return res
 
     def _get_supplier_number(self, cr, uid, ids, fields, args, context):
@@ -780,106 +816,106 @@ class Invoice(osv.osv):
             ],'Type', readonly=True, select=True, change_default=True),
         'manual_ret_num': fields.integer('Num. Retención', readonly=True,
                                          states = {'draft': [('readonly', False)]}),
-        'num_to_use': fields.function( _get_num_to_use,
-                                       string='Núm a Usar',
-                                       method=True,
-                                       type='char',
-                                       help='Num. de documento a usar'),
         'sustento_id': fields.many2one('account.ats.sustento',
-                                       'Sustento del Comprobante'),        
+                                       'Sustento del Comprobante'),
+        'discount_total': fields.function(_amount_all, method=True,
+                                    digits_compute=PRECISION_DP,
+                                    string='Discount',
+                                    store=VAR_STORE,
+                                    multi='all'),
         }
 
     _defaults = {
         'create_retention_type': 'manual',
         }
 
-    # constraint stuff
-    def check_in_reference(self, cr, uid, ids):
-        '''
-        cr: cursor de la base de datos
-        uid: ID de usuario
-        ids: lista ID del objeto instanciado
-
-        Metodo que revisa la referencia a
-        tener en cuenta en documentos que se recibe
-        '''                                
-        res = False
-        for inv in self.browse(cr, uid, ids):
-            if inv.partner_id.type_ced_ruc == 'pasaporte':
-                return True
-            elif inv.reference == '0' and inv.state == 'draft':
-                return True
-            elif inv.state == 'cancel':
-                return True
-            elif inv.create_retention_type == 'early' or inv.type in ['liq_purchase']:
-                return True
-            elif not inv.auth_inv_id:
-                return True
-            elif inv.auth_inv_id.is_electronic:
-                return True
-            elif inv.type in ['out_refund', 'in_refund']:
-                return True
-            elif inv.type == 'in_invoice' or (inv.type == 'out_invoice' and (inv.retention_vat or inv.retention_ir)):
-                if inv.auth_inv_id.num_start <= int(inv.supplier_invoice_number) <= inv.auth_inv_id.num_end:
-                    res = True
-            elif inv.type == 'out_invoice':
-                res = True
-            return res
-
-    def check_retention_number(self, cr, uid, ids):
+    def onchange_journal_id(self, cr, uid, ids, journal_id=False, context=None):
         """
-        Metodo que verifica el numero de retencion
-        asignada a la factura cuando es manual la numeracion.
+        Metodo redefinido para cargar la autorizacion de facturas de venta
         """
-        res = False
-        auth_obj = self.pool.get('account.authorisation')
-        for obj in self.browse(cr, uid, ids):
-            if obj.type == 'out_refund':
-                res = True
-            elif obj.type == 'in_invoice' and (obj.retention_ir or obj.retention_vat):
-                if not obj.journal_id.auth_ret_id:
-                    raise osv.except_osv('Error', u'No se configuró retenciones.')
-                if obj.create_retention_type == 'manual' \
-                  and obj.manual_ret_num>0 and \
-                  auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, obj.manual_ret_num):
-                    res = True
-                else:
-                    raise osv.except_osv('Error', u'Error en el número de retención.')
-            else:
-                res = True
-        return res
+        result = {}
+        if journal_id:
+            journal = self.pool.get('account.journal').browse(cr, uid, journal_id, context=context)
+            currency_id = journal.currency and journal.currency.id or journal.company_id.currency_id.id
+            company_id = journal.company_id.id
 
-    def check_invoice_number(self, cr, uid, ids):
-        auth_obj = self.pool.get('account.authorisation')
-        for obj in self.browse(cr, uid, ids):
-            if not obj.type == 'out_invoice':
-                return True
-            if obj.state in ['open', 'paid', 'cancel']:
-                return True
-            if not obj.journal_id.auth_id:
-                raise osv.except_osv('Error', u'Sin configuración de autorización.')
-            auth = obj.journal_id.auth_id
-            if not len(obj.supplier_invoice_number) == 9:
-                raise osv.except_osv('Error', u'Son 9 dígitos en el núm. de Factura.')
-            if not auth_obj.is_valid_number(cr, uid, auth.id, int(obj.supplier_invoice_number)):
-                raise osv.except_osv('Error', u'Número de factura fuera de rango.')
-        return True
+            if context.get('type') == 'out_invoice' and not journal.auth_id:
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'No se ha configurado una autorización en este diario.'
+                        }
+                    }
+            result = {'value': {
+                    'currency_id': currency_id,
+                    'company_id': company_id,
+                    'auth_inv_id': journal.auth_id.id
+                    }
+                }
+        return result
 
-    _constraints = [(check_in_reference,
-                    u'El número no pertenece a la autorización.',['Factura Proveedor']),
-                    (check_invoice_number,
-                    u'Número fuera de rango de autorización activa.', ['Número Factura']),
+    def _check_invoice_number(self, cr, uid, ids):
+        """
+        Metodo de validacion de numero de factura y numero de
+        retencion
+
+        numero de factura: supplier_invoice_number
+        numero de retencion: manual_ret_num
+        """
+        auth_obj = self.pool.get('account.authorisation')
+        INV_MIN_LIMIT = 9 # CHECK: mover a compañia ?
+        INV_MAX_LIMIT = 15
+        LIMITS = [
+            INV_MIN_LIMIT,
+            INV_MAX_LIMIT
             ]
 
+        for obj in self.browse(cr, uid, ids):
+            if obj.state in ['open', 'paid', 'cancel']:
+                return True
+            if obj.type == 'out_invoice':
+                return True
+            if not len(obj.supplier_invoice_number) in LIMITS:
+                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INV_MIN_LIMIT)
+            
+            auth = obj.auth_inv_id
+
+            inv_number = obj.supplier_invoice_number
+
+            if len(obj.supplier_invoice_number) == INV_MAX_LIMIT:
+                inv_number = obj.supplier_invoice_number[6:15]
+            
+            if not auth:
+                raise osv.except_osv('Error', u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.')
+
+            if not auth_obj.is_valid_number(cr, uid, auth.id, int(inv_number)):
+                raise osv.except_osv('Error', u'Número de factura fuera de rango.')
+
+            # validacion de numero de retencion para facturas de proveedor
+            if obj.type == 'in_invoice':
+                if not obj.journal_id.auth_ret_id:
+                    raise except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
+
+                if not auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, int(obj.manual_ret_num)):
+                    raise osv.except_osv('Error', u'El número de retención no es válido.')
+        return True
+
+    _constraints = [
+        (_check_invoice_number,
+        u'Número fuera de rango de autorización activa.', ['Número Factura']),
+    ]
+
     _sql_constraints = [
-        ('unique_inv_supplier', 'unique(reference,type,partner_id)', u'El numero de factura es unico.'),
+        ('unique_inv_supplier', 'unique(supplier_invoice_number,type,partner_id)', u'El número de factura es único.'),
     ]    
 
     def copy_data(self, cr, uid, id, default=None, context=None):
         res = super(Invoice, self).copy_data(cr, uid, id, default, context=context)
-        res.update({'reference': '0',
+        res.update({'reference': False,
                     'auth_inv_id': False,
                     'retention_id': False,
+                    'supplier_invoice_number': False,
+                    'manual_ret_num': False,
                     'retention_numbers': False})
         return res
 
@@ -903,7 +939,7 @@ class Invoice(osv.osv):
             if inv.retention_id:
                 retention_obj.unlink(cr, uid, [inv.retention_id.id], context)
         super(Invoice, self).action_cancel_draft(cr, uid, ids, context)
-        return True    
+        return True
 
     def action_retention_create(self, cr, uid, ids, *args):
         '''
@@ -957,18 +993,18 @@ class Invoice(osv.osv):
                         ret_obj.action_validate(cr, uid, [ret_id])
                     elif inv.create_retention_type == 'manual':
                         if inv.manual_ret_num == 0:
-                            raise osv.except_osv('Error', 'El número de retención es incorrecto.')
+                            raise osv.except_osv('Error', u'El número de retención es incorrecto.')
                         ret_obj.action_validate(cr, uid, [ret_id], inv.manual_ret_num)
                     elif inv.create_retention_type == 'reserve':
                         if inv.retention_numbers:
                             ret_num = ret_cache_obj.get_number(cr, uid, inv.retention_numbers)
                             ret_obj.action_validate(cr, uid, [ret_id], ret_num)
                         else:
-                            raise osv.except_osv('Error', 'Corrija el método de numeración de la retención')
+                            raise osv.except_osv('Error', u'Corrija el método de numeración de la retención')
                     self.write(cr, uid, [inv.id], {'retention_id': ret_id})
                 else:
                     raise osv.except_osv('Error de Configuracion',
-                                         'No se ha configurado una secuencia para las retenciones en Compra')
+                                         u'No se ha configurado una secuencia para las retenciones en Compra')
         self._log_event(cr, uid, ids)
         return True
 
@@ -996,6 +1032,30 @@ class Invoice(osv.osv):
 
 class AccountInvoiceLine(osv.osv):
     _inherit = 'account.invoice.line'
+
+    def _amount_line(self, cr, uid, ids, prop, unknow_none, unknow_dict):        
+        res = {}
+        tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
+        for line in self.browse(cr, uid, ids):
+            res[line.id] = {'amount_tax': 0, 'price_subtotal': 0}
+            price = line.price_unit * (1-(line.discount or 0.0)/100.0)
+            taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, partner=line.invoice_id.partner_id)
+            res[line.id]['discount_value'] = (line.price_unit * line.quantity * line.discount or 0.0) / 100.0
+            res[line.id]['price_subtotal'] = taxes['total']
+            res[line.id]['amount_tax'] = taxes.get('taxes') and sum([t['amount']for t in taxes['taxes'] if t['tax_group']=='vat']) or 0
+            if line.invoice_id:
+                cur = line.invoice_id.currency_id
+                res[line.id]['discount_value'] = cur_obj.round(cr, uid, cur, res[line.id]['discount_value'])
+                res[line.id]['price_subtotal'] = cur_obj.round(cr, uid, cur, res[line.id]['price_subtotal'])
+                res[line.id]['amount_tax'] = cur_obj.round(cr, uid, cur, res[line.id]['amount_tax'])
+        return res
+        
+    _columns = {
+        'discount_value': fields.function(_amount_line, string='Tax', type="float", digits_compute= dp.get_precision('Account'), store=True, multi='line',),
+        'amount_tax': fields.function(_amount_line, string='Tax', type="float", digits_compute= dp.get_precision('Account'), store=True, multi='line',),
+        'price_subtotal': fields.function(_amount_line, string='Amount', type="float", digits_compute= dp.get_precision('Account'), store=True, multi='line'),
+    }
 
     def move_line_get(self, cr, uid, invoice_id, context=None):
         res = []
@@ -1128,4 +1188,4 @@ class AccountInvoiceRefund(osv.TransientModel):
     _defaults = {
         'description': _get_description,
         }
-            
+
