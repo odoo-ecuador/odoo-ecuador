@@ -88,7 +88,7 @@ class AccountWithdrawing(models.Model):
         required=True,
         domain=[('in_type','=','interno')]
         )
-    type = fields.selection(
+    type = fields.Selection(
         [('in_invoice','Factura'),
         ('liq_purchase','Liquidacion Compra')],
         string='Tipo Comprobante',
@@ -118,7 +118,7 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states=STATES_VALUE
         )
-    invoice_id = fields.many2one(
+    invoice_id = fields.Many2one(
         'account.invoice',
         string='Documento',
         required=False,
@@ -126,13 +126,10 @@ class AccountWithdrawing(models.Model):
         states=STATES_VALUE,
         domain=[('state','=','open')]
         )
-    partner_id = fields.related(
-        'invoice_id',
-        'partner_id',
-        type='many2one',
-        relation='res.partner',
+    partner_id = fields.Many2one(
+        related='invoice_id.partner_id',
         string='Empresa',
-        readonly=True
+        store=True
         )
     move_id = fields.Many2one(
         compute='_get_move'
@@ -167,7 +164,6 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states={'draft':[('readonly',False)]}
         )
-        }
 
     def _get_period(self, cr, uid, context=None):
         res = self.pool.get('account.period').find(cr, uid, context=context)
@@ -304,14 +300,12 @@ class AccountWithdrawing(models.Model):
         return True        
 
 
-class AccountInvoiceTax(osv.osv):
+class AccountInvoiceTax(models.Model):
 
-    _name = 'account.invoice.tax'
     _inherit = 'account.invoice.tax'
    
-    _columns = {
-        'fiscal_year' : fields.char('Ejercicio Fiscal', size = 4),
-        'tax_group' : fields.selection([('vat','IVA Diferente de 0%'),
+    fiscal_year = fields.Char('Ejercicio Fiscal', size = 4)
+    tax_group = fields.Selection([('vat','IVA Diferente de 0%'),
                                         ('vat0','IVA 0%'),
                                         ('novat','No objeto de IVA'),
                                         ('ret_vat_b', 'Retención de IVA (Bienes)'),
@@ -320,11 +314,10 @@ class AccountInvoiceTax(osv.osv):
                                         ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
                                         ('imp_ad', 'Imps. Aduanas'),
                                         ('ice', 'ICE'),
-                                        ('other','Other')], 'Grupo', required=True),        
-        'percent' : fields.char('Porcentaje', size=20),
-        'num_document': fields.char('Num. Comprobante', size=50),
-        'retention_id': fields.many2one('account.retention', 'Retención', select=True),
-        }
+                                        ('other','Other')], 'Grupo', required=True)
+    percent = fields.Char('Porcentaje', size=20)
+    num_document = fields.Char('Num. Comprobante', size=50)
+    retention_id = fields.Many2one('account.retention', 'Retención', select=True)
 
     def compute(self, cr, uid, invoice_id, context=None):
         tax_grouped = {}
@@ -397,7 +390,7 @@ class AccountInvoiceTax(osv.osv):
     }
 
 
-class Invoice(osv.osv):
+class Invoice(models.Model):
     
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
