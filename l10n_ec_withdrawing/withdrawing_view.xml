@@ -124,6 +124,7 @@
           <field name="sustento_id" required="1" widget="selection"/>
 	  <field name="retention_ir" invisible="1"/>
 	  <field name="retention_vat" invisible="1"/>
+          <field name="create_retention_type"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
 	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}' 

@@ -865,14 +865,15 @@ class Invoice(osv.osv):
                 return True
             if obj.type == 'out_invoice':
                 return True
-            if not len(obj.supplier_invoice_number) in LIMITS:
+            inv_number = obj.supplier_invoice_number
+            if not inv_number:
+                return True
+            if not len(inv_number) in LIMITS:
                 raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INV_MIN_LIMIT)
 
             auth = obj.auth_inv_id
 
-            inv_number = obj.supplier_invoice_number
-
-            if len(obj.supplier_invoice_number) == INV_MAX_LIMIT:
+            if len(inv_number) == INV_MAX_LIMIT:
                 inv_number = obj.supplier_invoice_number[6:15]
             
             if not auth:
@@ -884,7 +885,7 @@ class Invoice(osv.osv):
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
-                    raise except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
+                    raise osv.except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
 
                 if not auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, int(obj.manual_ret_num)):
                     raise osv.except_osv('Error', u'El número de retención no es válido.')
