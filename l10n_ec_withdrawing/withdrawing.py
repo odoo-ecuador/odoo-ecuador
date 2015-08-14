@@ -250,8 +250,7 @@ class AccountWithdrawing(osv.osv):
                 ret_number = str(number).zfill(padding)
             self._amount_total(cr, uid, [ret.id], [], {}, {})                
             number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret_number
-            security_code = seq_obj.get_id(cr, uid, 56) # Fix einvoice
-            self.write(cr, uid, ret.id, {'state': 'done', 'name':number})
+            self.write(cr, uid, ret.id, {'state': 'done', 'name': number})
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
 
