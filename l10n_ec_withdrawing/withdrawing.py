@@ -244,12 +244,13 @@ class AccountWithdrawing(osv.osv):
             seq = seq_obj.browse(cr, uid, seq_id)
             ret_num = number
             if number is None:
-                ret_number = seq_obj.get(cr, uid, seq.code)
+                ret_number = seq_obj.get_id(cr, uid, seq_id)
             else:
                 padding = seq.padding
                 ret_number = str(number).zfill(padding)
             self._amount_total(cr, uid, [ret.id], [], {}, {})                
             number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret_number
+            security_code = seq_obj.get_id(cr, uid, 56) # Fix einvoice
             self.write(cr, uid, ret.id, {'state': 'done', 'name':number})
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
@@ -865,7 +866,7 @@ class Invoice(osv.osv):
             if obj.type == 'out_invoice':
                 return True
             if not len(obj.supplier_invoice_number) in LIMITS:
-                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
+                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INV_MIN_LIMIT)
 
             auth = obj.auth_inv_id
 
