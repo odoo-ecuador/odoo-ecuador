@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="base.ec" model="res.country">
+            <field name="currency_id" ref="base.USD"/>
+            <field name="address_format" eval="'%(street)s \n%(city_name)s \n%(state_name)s \n%(country_name)s'"/>
+        </record>
+    </data>
+</openerp>
