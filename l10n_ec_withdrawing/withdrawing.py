@@ -2,8 +2,7 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2014-Today Cristian Salamea All Rights Reserved
-#    Copyright (C) 2015-Today VIRTUALSAMI CIA LTDA <alcides@virtualsami.com.ec>
+#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -346,13 +345,13 @@ class AccountInvoiceTax(models.Model):
             for tax in taxes:
                 val = {
                     'invoice_id': invoice.id,
-                    'name' = tax['name'],
-                    'amount' = tax['amount'],
-                    'manual' = False,
-                    'sequence' = tax['sequence'],
-                    'base' = currency.round(tax['price_unit'] * line['quantity']),
-                    'tax_group' = tax['tax_group'],
-                    'percent' = tax['porcentaje'],
+                    'name': tax['name'],
+                    'amount': tax['amount'],
+                    'manual': False,
+                    'sequence': tax['sequence'],
+                    'base': currency.round(tax['price_unit'] * line['quantity']),
+                    'tax_group': tax['tax_group'],
+                    'percent': tax['porcentaje'],
 				}
                 # Hack to EC
                 if tax['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
@@ -416,18 +415,18 @@ class Invoice(models.Model):
     def onchange_company_id(self, company_id, part_id, type, invoice_line, currency_id):
         # TODO: add the missing context parameter when forward-porting in trunk
         # so we can remove this hack!
-		self = self.with_context(self.env['res.users'].context_get())
+        self = self.with_context(self.env['res.users'].context_get())
 
         values = {}
         domain = {}
 
         if company_id and part_id and type:
             acc_id = False
-			p = self.env['res.partner'].browse(part_id)
+            p = self.env['res.partner'].browse(part_id)
             if p.property_account_payable and p.property_account_receivable and \
                     p.property_account_payable.company_id.id != company_id and \
                     p.property_account_receivable.company_id.id != company_id:
-				prop = self.env['ir.property']
+                prop = self.env['ir.property']
                 rec_dom = [('name', '=', 'property_account_receivable'), ('company_id', '=', company_id)]
                 pay_dom = [('name', '=', 'property_account_payable'), ('company_id', '=', company_id)]
                 res_dom = [('res_id', '=', 'res.partner,%s' % part_id)]
@@ -448,7 +447,7 @@ class Invoice(models.Model):
 				
             if self:
                 if company_id:
-				    for line in self.invoice_line:
+                    for line in self.invoice_line:
                         if not line.account_id:
                             continue
                         if line.account_id.company_id.id == company_id:
@@ -475,10 +474,10 @@ class Invoice(models.Model):
             if journal_ids:
                 values['journal_id'] = journals[0].id
             journal_defaults = self.env['ir.values'].get_defaults_dict('account.invoice', 'type=%s' % type)
-			if 'journal_id' in journal_defaults:
-			    values['journal_id'] = journal_defaults['journal_id']
-			if not values.get('journal_id'):
-			    field_desc = journals.fields_get(['type'])
+            if 'journal_id' in journal_defaults:
+                values['journal_id'] = journal_defaults['journal_id']
+            if not values.get('journal_id'):
+                field_desc = journals.fields_get(['type'])
                 type_label = next(t for t, label in field_desc['type']['selection'] if t == journal_type)
                 journal_type_map = dict(obj_journal._columns['type'].selection)
                 journal_type_label = self.pool['ir.translation']._get_source(cr, uid, None, ('code','selection'),
@@ -486,7 +485,7 @@ class Invoice(models.Model):
                                                                              journal_type_map.get(journal_type))
                 raise osv.except_osv(_('Configuration Error!'),
                                      _('Cannot find any account journal of %s type for this company.\n\nYou can create one in the menu: \nConfiguration\Journals\Journals.') % ('"%s"' % journal_type_label))
-			domain = {'journal_id':  [('id', 'in', journals.ids)]}
+            domain = {'journal_id':  [('id', 'in', journals.ids)]}
 
         return {'value': values, 'domain': domain}
 
@@ -597,7 +596,7 @@ class Invoice(models.Model):
             elif line.tax_group == 'no_ret_ir':
                 self.amount_noret_ir += line.base
             elif line.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:
-                    self.amount_tax_retention'] += line.amount
+                self.amount_tax_retention += line.amount
                 if line.tax_group == 'ret_vat_b':#in ['ret_vat_b', 'ret_vat_srv']:
                     self.amount_tax_ret_vatb += line.base
                     self.taxed_ret_vatb += line.amount
@@ -613,7 +612,7 @@ class Invoice(models.Model):
         if amount_vat == 0 and amount_vat_cero == 0:
             self.amount_vat_cero = self.amount_untaxed
         self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention
-		self.amount_pay = self.amount_tax + self.amount_untaxed
+        self.amount_pay = self.amount_tax + self.amount_untaxed
 
     def name_get(self, cr, uid, ids, context=None):
         if not ids:
@@ -863,7 +862,7 @@ class Invoice(models.Model):
             res1['value']['auth_inv_id'] = res[0]
         return res1
 
-	@api.multi
+    @api.multi
     def action_cancel_draft(self, cr, uid, ids, context):
         retention_obj = self.pool.get('account.retention')
         for inv in self.browse(cr, uid, ids, context):
@@ -972,17 +971,17 @@ class AccountInvoiceLine(models.Model):
 		
         res = []
         for line in inv.invoice_line:
-		    mres = self.move_line_get_item(line)
+            mres = self.move_line_get_item(line)
             mres['invl_id'] = line.id
             res.append(mres)
             tax_code_found= False
-			taxes = line.invoice_line_tax_id.compute_all(
+            taxes = line.invoice_line_tax_id.compute_all(
                 (line.price_unit * (1.0 - (line.discount or 0.0) / 100.0)),
                 line.quantity, line.product_id, inv.partner_id)['taxes']
             for tax in taxes:
                 if inv.type in ('out_invoice', 'in_invoice', 'liq_purchase'):
                     tax_code_id = tax['base_code_id']
-					tax_amount = tax['price_unit'] * line.quantity * tax['base_sign']
+                    tax_amount = tax['price_unit'] * line.quantity * tax['base_sign']
                 else:
                     tax_code_id = tax['ref_base_code_id']
                     tax_amount = tax['price_unit'] * line.quantity * tax['ref_base_sign']
@@ -998,7 +997,7 @@ class AccountInvoiceLine(models.Model):
                 tax_code_found = True
 
                 res[-1]['tax_code_id'] = tax_code_id
-				res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)
+                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)
         return res
 
     @api.multi
