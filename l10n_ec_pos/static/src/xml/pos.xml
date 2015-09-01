@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+  <t t-extend="ClientLine">
+    <t t-jquery=".client-line" t-operation="replace">
+      <tr class='client-line' t-att-data-id='partner.id'>
+	<td><t t-esc='partner.ced_ruc' /></td>
+        <td><t t-esc='partner.name' /></td>
+        <td><t t-esc='partner.address' /></td>
+        <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
+      </tr>      
+    </t>
+  </t>
+  
+  <t t-extend="ClientListScreenWidget">
+    <t t-jquery=".client-list" t-operation="replace">
+      <table class='client-list'>
+        <thead>
+          <tr>
+	    <th>Cedula / Ruc</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody class='client-list-contents'>
+        </tbody>
+      </table>      
+    </t>  
+  </t>
+
+  <t t-extend="ClientDetails">
+    <t t-jquery=".client-details" t-operation="replace">
+        <section class='client-details'>
+            <div class='client-picture'>
+                <img t-att-src='widget.partner_icon_url(partner.id)' />
+            </div>
+            <div class='client-name'><t t-esc='partner.name' /></div>
+            <div class='edit-buttons'>
+                <div class='button edit'><i class='fa fa-pencil-square' /></div>
+            </div>
+            <div class='client-details-box clearfix'>
+              <div class='client-details-left'>
+                    <div class='client-detail'>
+                        <span class='label'>Cedula / Ruc</span>
+                        <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
+                    </div>		
+                    <div class='client-detail'>
+                        <span class='label'>Address</span>
+                        <span class='detail client-address'><t t-esc='partner.address' /></span>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Email</span>
+                        <span class='detail client-email'><t t-esc='partner.email' /></span>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Phone</span>
+                        <t t-if='partner.phone'>
+                            <span class='detail client-phone'><t t-esc='partner.phone' /></span>
+                        </t>
+                        <t t-if='!partner.phone'>
+                            <span class='detail client-phone empty'>N/A</span>
+                        </t>
+                    </div>
+                </div>
+                <div class='client-details-right'>
+                    <div class='client-detail'>
+                        <span class='label'>Barcode</span>
+                        <t t-if='partner.ean13'>
+                            <span class='detail client-id'><t t-esc='partner.ean13'/></span>
+                        </t>
+                        <t t-if='!partner.ean13'>
+                            <span class='detail client-id empty'>N/A</span>
+                        </t>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>Tax ID</span>
+                        <t t-if='partner.vat'>
+                            <span class='detail vat'><t t-esc='partner.vat'/></span>
+                        </t>
+                        <t t-if='!partner.vat'>
+                            <span class='detail vat empty'>N/A</span>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </t>
+  </t>  
+</templates>
