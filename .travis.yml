@@ -1,0 +1,41 @@
+# Config file .travis.yml
+
+language: python
+
+python:
+  - "2.7"
+
+env:
+   - ODOO="https://github.com/savoirfairelinux/odoo/archive/setuptools-addons.tar.gz"  # Temp until https://github.com/odoo/odoo/pull/81 is solved
+#  - ODOO="https://github.com/odoo/odoo/archive/master.zip"
+#  - ODOO="ocb"
+
+# Need coveralls for coverage reports
+# Need flake8 for pep8 testing
+# Manually get PyChart
+# Install tested version of odoo (official or ocb)
+# Get modules from other repos which have dependencies(here not necessary)
+install: 
+    - pip install coveralls flake8
+    - pip install http://download.gna.org/pychart/PyChart-1.39.tar.gz
+    - pip install ${ODOO}
+
+# Create database for tests
+# Pre-install modules and dependencies
+before_script: 
+    - createdb test
+
+# Test with flake, ignore F401 for __init__.py files, use a max length of 120
+# Run tests with coverage
+# Due to oddness of the odoo setup.py process, assure that import openerp gets it from env/openerp and not env/lib/python2.7/site-packages/openerp
+# only test modules in repo (list populated by directories in repo)
+# include current director and dependent repos in addons-path
+script:
+    - flake8 . --max-line-length=120 --filename=__init__.py --ignore=F401
+    - flake8 . --max-line-length=120 --exclude=__init__.py
+    - odoo.py -d test --stop-after-init --init=$(python -c 'import os; print(",".join(x for x in os.listdir(".") if os.path.isdir(x) and not x.startswith(".")))') --addons-path=$(pwd),`python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`/addons
+    - coverage run $(which odoo.py) -d test --test-enable --log-level=test --stop-after-init --init=$(python -c 'import os; print(",".join(x for x in os.listdir(".") if os.path.isdir(x) and not x.startswith(".")))') --addons-path=$(pwd),`python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`/addons
+
+
+after_success:
+  coveralls
