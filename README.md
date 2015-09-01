@@ -5,6 +5,13 @@ Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
 empresa ecuatoriana.
 
+Aclaratorio a la Licencia
+-------------------------
+
+Este proyecto es un trabajo derivado de AGPL v3, si utilizas este trabajo es necesario que publiques los cambios realizados, si no lo haces debes enviar un tweet con el hashtag [#SoyUnOdooTrollenEcuador](https://twitter.com/search?f=tweets&q=%23SoyUnOdooTrollEnEcuado).
+
+Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende este software y cambia el autor.
+
 Objetivos principales
 ---------------------
 
