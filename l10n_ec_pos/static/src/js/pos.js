@@ -1,4 +1,34 @@
 function l10n_ec_pos(instance, module) {
+
+  var PosDB = module.PosDB;
+  module.PosDB = module.PosDB.extend({
+
+    _partner_search_string: function(partner){
+      var str =  partner.name;
+      if(partner.ced_ruc){
+	str += '|' + partner.ced_ruc;
+      }
+      if(partner.ean13){
+        str += '|' + partner.ean13;
+      }
+      if(partner.address){
+        str += '|' + partner.address;
+      }
+      if(partner.phone){
+        str += '|' + partner.phone.split(' ').join('');
+      }
+      if(partner.mobile){
+        str += '|' + partner.mobile.split(' ').join('');
+      }
+      if(partner.email){
+        str += '|' + partner.email;
+      }
+      str = '' + partner.id + ':' + str.replace(':','') + '\n';
+      return str;
+    }
+    
+  });
+  
   var PosModelSuper = module.PosModel;
   module.PosModel = module.PosModel.extend({
 
