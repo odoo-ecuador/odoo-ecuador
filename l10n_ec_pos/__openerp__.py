@@ -19,6 +19,7 @@
     'depends': ['l10n_ec_partner'],
 
     'data': [
+        'views.xml'
     ],
     'qweb': [
         'static/src/xml/pos.xml'
