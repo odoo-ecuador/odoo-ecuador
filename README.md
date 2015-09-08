@@ -23,7 +23,34 @@ Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende
 
 5.- Todo el desarrollo se realizará a través de este repositorio para evitar código obsoleto.
 
-6.- Los módulos que consideramos necesarios para la localización empiezan con l10n_ec_nombredelmodulo y los que son herramientas con ec_nombredelmodulo.
+# Estándares y criterios de desarrollo.
+
+1.- Primero tratamos de usar los módulos de odoo, luego los de odoo-ecuador, luego de la comunidad. Si no existen, los creamos. Al crear respetamos los nombres del módulo original y los nombres propios de odoo como name, code, active, entre otros.
+
+Si no existe y tenemos que desarrollar, entonces:
+
+2.- Los módulos que consideramos necesarios para la localización empiezan con l10n_ec_nombredelmodulo y los que son herramientas con ec_nombredelmodulo.
+
+        l10n_ec_geopolitico
+        ec_id_unico
+
+3.- Las vistas se nombran: modulo_view_tipo_identificativo, ejemplo:
+
+        <record id="res_partner_view_form_info" model="ir.ui.view">
+
+4.- El nombre del archivo xml se forma: modulo_views.xml y dentro de el incluimos todas las vistas del módulo, ejemplo:
+
+        res_partner_views.xml
+
+5.- Los nombres de los módulos deben ser claros y fáciles de entender:
+
+        class Canton(models.Model):
+        _name = 'l10n_ec_geopolitico.canton'
+
+6.- Los "warnings", "help", "placeholders", entre otros deben ser escritos siempre en español.
+
+        help="La ayuda en español"
+        placeholder="Ingrese su número de cédula"
 
 # Instalación
 
