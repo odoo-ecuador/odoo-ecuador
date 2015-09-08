@@ -22,14 +22,14 @@
 ##############################################################################
 
 {
-    'name' : 'Accounting for Ecuador',
+    'name' : 'Contabilidad Ecuatoriana - Retenciones ',
     'version' : '3',
     "category": 'Generic Modules/Accounting',
     'depends' : ['l10n_ec_authorisation', 'report_webkit',
         ],
-    'author' : 'Cristian Salamea.',
+    'author' : 'Cristian Salamea.','Daniel Mendieta',
     'description': '''
-    Accounting for Ecuador, retention docuements
+Módulo de la localización Ecuatoriana de Odoo, contiene el código de las retenciones de impuestos.
     ''',
     'website': 'http://www.invbox.com.ec',
     'update_xml': [
@@ -37,7 +37,6 @@
         'withdrawing_view.xml',
         'withdrawing_report.xml',
         'retention_wizard.xml',
-        'data/account.fiscal.position.csv'
     ],
     'installable': True,
     'active': False,

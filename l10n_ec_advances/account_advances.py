@@ -71,4 +71,3 @@ class AccountVoucher(osv.osv):
     _defaults = dict(
         extra_type = _get_ext
         )
-

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Contribuyentes de Ecuador",
+    'name': "Ecuador Geopolítico",
 
-    'summary': """Información de contribuyentes en Ecuador""",
+    'summary': """Datos de provincias, cantones y parroquias de Ecuador.""",
 
     'description': """
-Introduce las modificaciones en res.partner necesarias para que el modelo se ajuste a los requerimientos de las normativas ecuatorianas.
+Introduce las modificaciones en res.partner y e ingresa la información geopolítica de Ecuador.
 - Se crean los modelos provincia (state), cantón y parroquia.
 - Se ingresan las provincias, cantones y parroquias de Ecuador.
     """,

@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Contribuyentes de Ecuador",
-
-    'summary': """Información de contribuyentes en Ecuador""",
+    'name': "NIIF Pymes - Ecuador",
+    "category": 'Generic Modules/Accounting',
+    'summary': """Plantilla de plan de cuentas para Ecuador""",
 
     'description': """
-Introduce las modificaciones en res.partner necesarias para que el modelo se ajuste a los requerimientos de las normativas ecuatorianas.
-- Se crean los modelos provincia (state), cantón y parroquia.
-- Se ingresan las provincias, cantones y parroquias de Ecuador.
+<p>Crea una plantilla con las cuentas contables del catálogo publicado por la Supercias. <br/>Se eliminan las cuentas que no son comunes (de Instituciones financieras, contructoras, químicas" pues estas se integrarán en módulos apartados a fin de permitir su instalación de forma selectiva.</p>
     """,
 
     'author': "Fábrica de Software Libre",
@@ -23,13 +21,12 @@ Introduce las modificaciones en res.partner necesarias para que el modelo se aju
 
     # always loaded 
     'data': [
-	'views/res_partner_views.xml',
-	'data/res.country.state.csv',
-	'data/l10n_ec_contribuyentes.canton.csv',
-#	'data/l10n_ec_contribuyentes.parroquia.csv',
 
     ],
     # only loaded in demonstration mode
     'demo': [
     ],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
 }
