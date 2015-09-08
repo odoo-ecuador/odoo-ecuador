@@ -2,7 +2,8 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
+#    Copyright (C) 2014-Today Cristian Salamea All Rights Reserved
+#    Copyright (C) 2015-Today Alcides Rivera <alcides@virtualsami.com.ec>
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -142,16 +143,15 @@ class AccountWithdrawing(models.Model):
         domain=[('state','=','open')]
         )
     partner_id = fields.Many2one(
-         related='invoice_id.partner_id',
-         string='Empresa',
-         readonly=True 
+        related='invoice_id.partner_id',
+        string='Empresa',
+        readonly=True 
 	)
     move_id = fields.Many2one(
-        compute='_get_move'
-        'account.move',
+        related='invoice_id.move_id',
         string='Asiento Contable',
         readonly=True
-        ),
+        )
     state = fields.Selection(
         [('draft','Borrador'),
         ('early','Anticipado'),
@@ -218,6 +218,7 @@ class AccountWithdrawing(models.Model):
         res = super(AccountWithdrawing, self).unlink(cr, uid, ids, context)
         return res
 
+    @api.multi
     def onchange_invoice(self, invoice):
         res = {'value': {'num_document': ''}}
         if not invoice:
@@ -316,7 +317,7 @@ class AccountWithdrawing(models.Model):
 
 class AccountInvoiceTax(models.Model):
 
-    _name = 'account.invoice.tax'
+    _inherit = 'account.invoice.tax'
 
     fiscal_year = fields.Char('Ejercicio Fiscal', size = 4)
     tax_group = fields.Selection([('vat','IVA Diferente de 0%'),
@@ -452,7 +453,7 @@ class Invoice(models.Model):
                             continue
                         if line.account_id.company_id.id == company_id:
                             continue
-                        accounts = self.env['account.account'].search([('name', '=', line.account_id.name), ('company_id', '=', company_id)])						
+                        accounts = self.env['account.account'].search([('name', '=', line.account_id.name), ('company_id', '=', company_id)])
                         if not accounts:
                             action = self.env.ref('account.action_account_config')
                             msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')
@@ -471,7 +472,7 @@ class Invoice(models.Model):
         if company_id and type:
             journal_type = TYPE2JOURNAL[type]			
             journals = self.env['account.journal'].search([('type', '=', journal_type), ('company_id', '=', company_id)])
-            if journal_ids:
+            if journals:
                 values['journal_id'] = journals[0].id
             journal_defaults = self.env['ir.values'].get_defaults_dict('account.invoice', 'type=%s' % type)
             if 'journal_id' in journal_defaults:
@@ -609,7 +610,7 @@ class Invoice(models.Model):
             elif line.tax_group == 'ice':
                 self.amount_ice += line.amount
         # base vat not defined, amount_vat_cero by default
-        if amount_vat == 0 and amount_vat_cero == 0:
+        if self.amount_vat == 0 and self.amount_vat_cero == 0:
             self.amount_vat_cero = self.amount_untaxed
         self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention
         self.amount_pay = self.amount_tax + self.amount_untaxed
@@ -689,7 +690,7 @@ class Invoice(models.Model):
                                               store=True)
     taxed_ret_ir = fields.Float(compute='_compute_amount', method=True,
                                          digits_compute=PRECISION_DP, string='Impuesto IR',
-                                         store=True),
+                                         store=True)
     amount_tax_ret_vatb = fields.Float(compute='_compute_amount',
                                                  method=True,
                                                  digits_compute=PRECISION_DP,
@@ -850,14 +851,11 @@ class Invoice(models.Model):
     @api.multi
     def onchange_partner_id(self, type, partner_id, date_invoice=False,
             payment_term=False, partner_bank_id=False, company_id=False):   
-        auth_obj = self.pool.get('account.authorisation')
-        res1 = super(Invoice, self).onchange_partner_id(cr, uid, ids, type,
-                                                        partner_id, date_invoice,
-                                                        payment_term, partner_bank_id,
-                                                        company_id)
+        res1 = super(Invoice, self).onchange_partner_id(type, partner_id, date_invoice,
+                                                        payment_term, partner_bank_id, company_id)
         if res1['value'].has_key('reference_type'):
             res1['value'].pop('reference_type')
-        res = auth_obj.search(cr, uid, [('partner_id','=',partner_id),('in_type','=','externo')], limit=1)
+        res = self.env['account.authorisation'].search([('partner_id','=',partner_id), ('in_type','=','externo')], limit=1)
         if res:
             res1['value']['auth_inv_id'] = res[0]
         return res1

@@ -142,20 +142,6 @@
 	</xpath>
       </field>
     </record>
-    <!--
-       journal views
-       -->
-    <record id="view_journal_auths_form" model="ir.ui.view">
-      <field name="name">account.journal.auths.form</field>
-      <field name="model">account.journal</field>
-      <field name="inherit_id" ref="account.view_account_journal_form"/>
-      <field name="arch" type="xml">
-	<field name="sequence_id" position="after">
-	  <field name="auth_id" domain="[('in_type','=','interno')]" context="{'in_type':'interno'}"/>
-	  <field name="auth_ret_id" domain="[('in_type','=','interno')]" context="{'in_type': 'interno'}"/>
-	</field>
-      </field>
-    </record>
 
     <!--
        Retention object
