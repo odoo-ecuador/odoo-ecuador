@@ -30,6 +30,10 @@ Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende
 Si no existe y tenemos que desarrollar, entonces:
 
 2.- Los módulos que consideramos necesarios para la localización empiezan con l10n_ec_nombredelmodulo y los que son herramientas con ec_nombredelmodulo.
+
+        l10n_ec_geopolitico
+        ec_id_unico
+
 3.- Las vistas se nombran: modulo_view_tipo_identificativo, ejemplo:
 
         <record id="res_partner_view_form_info" model="ir.ui.view">
