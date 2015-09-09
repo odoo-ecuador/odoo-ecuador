@@ -20,3 +20,6 @@ class ConfiguracionesEcuatorianas(models.TransientModel):
     module_ec_id_unico = fields.Boolean(
         'Evitar que el número de identificación sea usado en más de una empresa.',
         help="""Instala el módulo ec_id_unico.""")
+    module_l10n_ec_niif_pymes = fields.Boolean(
+        'Plantilla de cuentas contables básicas para las Pymes según las Supercias .',
+        help="""Instala el módulo l10n_ec_niif_pymes.""")
