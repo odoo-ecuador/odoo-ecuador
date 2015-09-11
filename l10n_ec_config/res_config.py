@@ -21,5 +21,11 @@ class ConfiguracionesEcuatorianas(models.TransientModel):
         'Evitar que el número de identificación sea usado en más de una empresa.',
         help="""Instala el módulo ec_id_unico.""")
     module_l10n_ec_niif_pymes = fields.Boolean(
-        'Plantilla de cuentas contables básicas para las Pymes según las Supercias .',
+        'Plantilla de cuentas contables básicas para las Pymes según las Supercias.',
         help="""Instala el módulo l10n_ec_niif_pymes.""")
+    module_l10n_ec_authorisation = fields.Boolean(
+        'Ingresa los modelos necesarios para las autorizaciones del SRI, necesario para generar el ATS.',
+        help="""Instala el módulo l10n_ec_authorisation.""")
+    module_l10n_ec_advances = fields.Boolean(
+        'Permitir realizar anticipos a proveedores y reconciliarlos con facturas.',
+        help="""Instala el módulo l10n_ec_advances.""")

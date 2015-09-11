@@ -24,10 +24,10 @@
             <group string="Obligaciones con el Estado">
                 <label for="id" string="Impuestos"/>
                 <div name="impuestos">
-<!--                    <div name='module_l10n_ec_sri'>
-                        <field name="module_l10n_ec_sri" class="oe_inline"/>
-                        <label for="module_l10n_ec_sri"/>
-                        </div> --> 
+                    <div name='module_l10n_ec_authorisation'>
+                        <field name="module_l10n_ec_authorisation" class="oe_inline"/>
+                        <label for="module_l10n_ec_authorisation"/>
+                    </div> 
                 </div>
             </group>
 
@@ -37,6 +37,10 @@
                     <div name='module_l10n_ec_partner'>
                         <field name="module_l10n_ec_partner" class="oe_inline"/>
                         <label for="module_l10n_ec_partner"/>
+                    </div>
+                    <div name='module_l10n_ec_advances'>
+                        <field name="module_l10n_ec_advances" class="oe_inline"/>
+                        <label for="module_l10n_ec_advances"/>
                     </div>
                     <div name='module_l10n_ec_geopolitico'>
                         <field name="module_l10n_ec_geopolitico" class="oe_inline"/>
