@@ -46,7 +46,7 @@
       <td></td><td></td><td></td>
     </tr>
     <tr>
-	<td style="font-size:12;">${o.partner_id.ced_ruc or '##########'}</td>	
+	<td style="font-size:12;">${o.partner_id.vat or '##########'}</td>	
 	<td></td>
 	<td style="font-size:12;text-align:center;">${(o.type == 'in_invoice') and 'Factura' or ''} ${(o.type == 'liq_purchase') and 'Liq. de Compra' or ''} </td>	
     </tr>	
