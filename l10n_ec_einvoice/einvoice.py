@@ -109,7 +109,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
-        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
+        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.vat
         etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
         etree.SubElement(infoTributaria, 'codDoc').text = tipoDocumento[auth.type_id.code]
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
@@ -129,9 +129,9 @@ class AccountInvoice(osv.osv):
         if company.company_registry:
             etree.SubElement(infoFactura, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
-        etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
+        etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_vat]
         etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
-        etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
+        etree.SubElement(infoFactura, 'identificacionComprador').text = partner.vat
         etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
         etree.SubElement(infoFactura, 'totalDescuento').text = '0.00'#'%.2f' % (invoice.discount_total)
         
@@ -163,9 +163,9 @@ class AccountInvoice(osv.osv):
         infoNotaCredito = etree.Element('infoNotaCredito')
         etree.SubElement(infoNotaCredito, 'fechaEmision').text = time.strftime('%d/%m/%Y',time.strptime(refund.date_invoice, '%Y-%m-%d'))
         etree.SubElement(infoNotaCredito, 'dirEstablecimiento').text = company.street2
-        etree.SubElement(infoNotaCredito, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
+        etree.SubElement(infoNotaCredito, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_vat]
         etree.SubElement(infoNotaCredito, 'razonSocialComprador').text = partner.name
-        etree.SubElement(infoNotaCredito, 'identificacionComprador').text = partner.ced_ruc
+        etree.SubElement(infoNotaCredito, 'identificacionComprador').text = partner.vat
         etree.SubElement(infoNotaCredito, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoNotaCredito, 'obligadoContabilidad').text = 'SI'
         etree.SubElement(infoNotaCredito, 'codDocModificado').text = '01'
@@ -305,7 +305,7 @@ class AccountInvoice(osv.osv):
         fecha = ''.join(ld)
         #
         tcomp = tipoDocumento[auth.type_id.code]
-        ruc = invoice.company_id.partner_id.ced_ruc
+        ruc = invoice.company_id.partner_id.vat
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
         numero = invoice.number[6:15]
         #TODO: security code

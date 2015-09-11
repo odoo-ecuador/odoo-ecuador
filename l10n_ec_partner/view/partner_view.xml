@@ -12,7 +12,7 @@
   <field name="inherit_id" ref="base.view_res_partner_filter"/>
   <field name="arch" type="xml">
   <field name="name" position="before">
-    <field name="ced_ruc"/>
+    <field name="vat"/>
     <field name="ref"/>
   </field>
   </field>
@@ -24,7 +24,7 @@
   <field name="inherit_id" ref="base.view_partner_tree"/>
   <field name="arch" type="xml">
     <xpath expr="/tree/field[@name='display_name']" position="before">
-      <field name="ced_ruc"/>
+      <field name="vat"/>
     </xpath>
   </field>
 </record>
@@ -35,7 +35,7 @@
   <field name="inherit_id" ref="base.view_partner_form"/>
   <field name="arch" type="xml">
     <xpath expr="//field[@name='parent_id']" position="after">
-      <field name="ced_ruc" placeholder="Cédula / RUC"/>
+      <field name="vat" placeholder="Cédula / RUC"/>
       <field name="type_ced_ruc" placeholder="Tipo de Identificador"/>
       <field name="tipo_persona" placeholder="Tipo de Persona"/>
     <newline/>

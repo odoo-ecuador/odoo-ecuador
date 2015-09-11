@@ -39,7 +39,7 @@
                 </center>
                 <p class="titulo">
 		${o.company_id.name or ''}<br/>
-                RUC: ${o.company_id.partner_id.ced_ruc or ''}<br/>
+                RUC: ${o.company_id.partner_id.vat or ''}<br/>
 		${o.company_id.street2}<br/>
 		</p>
 		<p class="text_justificado">Dando cumplimiento al Reglamento de Facturación Electrónica del Ecuador según resolución No. NAC-DGERCGC13-00236 emitido el 
@@ -54,7 +54,7 @@
                         </tr>
 			<tr>
 				<td class="titulo_campo">Cédula/RUC:</td>
-				<td>${o.partner_id.ced_ruc or  ''}</td>
+				<td>${o.partner_id.vat or  ''}</td>
 			</tr>
 			<tr>
 				<td class="titulo_campo">Razón Social:</td>

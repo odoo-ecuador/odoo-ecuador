@@ -20,7 +20,7 @@ class Partner(osv.osv):
         if not context:
             context={}
         if name:
-            ids = self.search(cr, uid, [('ced_ruc', '=', name)] + args, limit=limit, context=context)
+            ids = self.search(cr, uid, [('vat', '=', name)] + args, limit=limit, context=context)
             if not ids:
                 ids = self.search(cr, uid, [('name', operator, name)] + args, limit=limit, context=context)
         else:
@@ -46,7 +46,7 @@ class Partner(osv.osv):
             return False
 
     def _check_ruc(self, partner):
-        ruc = partner.ced_ruc
+        ruc = partner.vat
         if not len(ruc) == 13:
             return False
         if ruc[2:3] == '9':
@@ -68,20 +68,20 @@ class Partner(osv.osv):
         else:
             return False
 
-    def _check_ced_ruc(self, cr, uid, ids):
+    def _check_vat(self, cr, uid, ids):
         partners = self.browse(cr, uid, ids)
         for partner in partners:
-            if not partner.ced_ruc:
+            if not partner.vat:
                 return True
             if partner.type_ced_ruc == 'pasaporte':
                 return True
             if partner.tipo_persona == '9':
                 return self._check_ruc(partner)
             else:
-                return self._check_cedula(partner.ced_ruc)
+                return self._check_cedula(partner.vat)
 
     _columns = {
-        'ced_ruc': fields.char('Cedula/ RUC',
+        'vat': fields.char('Cedula/ RUC',
                                size=13,
                                required=True,
                                help='Idenficacion o Registro Unico de Contribuyentes'),
@@ -106,12 +106,12 @@ class Partner(osv.osv):
         }
 
     _constraints = [
-        (_check_ced_ruc, 'Error en su Cedula/RUC/Pasaporte', ['cedu_ruc'])
+        (_check_vat, 'Error en su Cedula/RUC/Pasaporte', ['cedu_ruc'])
         ]
 
     _sql_constraints = [
         ('partner_unique',
-         'unique(ced_ruc,type_ced_ruc,tipo_persona,company_id)',
+         'unique(vat,type_ced_ruc,tipo_persona,company_id)',
          u'El identificador es único.'),
         ]
 
