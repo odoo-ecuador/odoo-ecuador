@@ -132,11 +132,14 @@ class AccountWithdrawing(models.Model):
         store=True
         )
     move_id = fields.Many2one(
-        compute='_get_move'
+        '''
+        En la version original existe un compute a _get_move, pero no hay la funcion, por lo que se lo ha suprimido. Verificar si es necesario y reemplazar el codigo segun lo requerido.
+        #       compute='_get_move',
+        '''
         'account.move',
         string='Asiento Contable',
         readonly=True
-        ),
+        )
     state = fields.Selection(
         [('draft','Borrador'),
         ('early','Anticipado'),
@@ -152,7 +155,7 @@ class AccountWithdrawing(models.Model):
         digits_compute=dp.get_precision('Account')
         )
     to_cancel = fields.Boolean(
-        'Para anulación',
+        string='Para anulación',
         readonly=True,
         states=STATES_VALUE
         )
