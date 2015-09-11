@@ -24,8 +24,8 @@
             <group string="Obligaciones con el Estado">
                 <label for="id" string="Impuestos"/>
                 <div name="impuestos">
-                    <div name='module_l10n_ec_sri'>
-<!--                        <field name="module_l10n_ec_sri" class="oe_inline"/>
+<!--                    <div name='module_l10n_ec_sri'>
+                        <field name="module_l10n_ec_sri" class="oe_inline"/>
                         <label for="module_l10n_ec_sri"/>
                         </div> --> 
                 </div>

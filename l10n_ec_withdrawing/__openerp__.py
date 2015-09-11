@@ -27,9 +27,9 @@
     "category": 'Generic Modules/Accounting',
     'depends' : ['l10n_ec_authorisation', 'report_webkit',
         ],
-    'author' : 'Cristian Salamea.','Daniel Mendieta',
+    'author' : 'Cristian Salamea.',
     'description': '''
-Módulo de la localización Ecuatoriana de Odoo, contiene el código de las retenciones de impuestos.
+    Módulo de la localización Ecuatoriana de Odoo, contiene el código de las retenciones de impuestos.
     ''',
     'website': 'http://www.invbox.com.ec',
     'update_xml': [
@@ -39,5 +39,6 @@ Módulo de la localización Ecuatoriana de Odoo, contiene el código de las rete
         'retention_wizard.xml',
     ],
     'installable': True,
+    'auto_install': False,
     'active': False,
 }

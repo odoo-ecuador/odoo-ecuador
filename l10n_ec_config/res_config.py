@@ -12,7 +12,7 @@ class ConfiguracionesEcuatorianas(models.TransientModel):
 
     # Modulos
     module_l10n_ec_geopolitico = fields.Boolean(
-        'Instalar la información geopolítica de Ecuador (provincias, cantones, parroquias',
+        'Instalar la información geopolítica de Ecuador (provincias, cantones, parroquias)',
         help="""Instala el módulo l10n_ec_geopolitico.""")
     module_l10n_ec_partner = fields.Boolean(
         'Modificar res.partner para adaptarse a las necesidades ecuatorianas.',

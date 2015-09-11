@@ -25,8 +25,8 @@ Introduce las modificaciones en res.partner y e ingresa la información geopolí
     'data': [
 	'views/res_partner_views.xml',
 	'data/res.country.state.csv',
-	'data/l10n_ec_contribuyentes.canton.csv',
-#	'data/l10n_ec_contribuyentes.parroquia.csv',
+	'data/l10n_ec_geopolitico.canton.csv',
+#	'data/l10n_ec_geopolitico.parroquia.csv',
 
     ],
     # only loaded in demonstration mode
