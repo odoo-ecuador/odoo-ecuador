@@ -106,14 +106,15 @@ class Partner(osv.osv):
         }
 
     _constraints = [
-        (_check_vat, 'Error en su Cedula/RUC/Pasaporte', ['cedu_ruc'])
+        (_check_vat, 'Error en su Cedula/RUC/Pasaporte', ['vat'])
         ]
 
-    _sql_constraints = [
-        ('partner_unique',
-         'unique(vat,type_ced_ruc,tipo_persona,company_id)',
-         u'El identificador es único.'),
-        ]
+# Se reemplaza por el modulo ec_id_unico para permitir relacion entre subsidiarias.
+#   _sql_constraints = [
+#        ('partner_unique',
+#         'unique(vat,type_ced_ruc,tipo_persona,company_id)',
+#         u'El identificador es único.'),
+#        ]
 
 
 class ResCompany(osv.Model):
