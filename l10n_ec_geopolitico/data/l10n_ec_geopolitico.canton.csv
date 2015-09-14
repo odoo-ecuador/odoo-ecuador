@@ -1,0 +1,230 @@
+id,state_id/id,code,name
+__export__.contribuyentes_canton_11,base.state_ec_1,11,CUENCA
+__export__.contribuyentes_canton_21,base.state_ec_2,21,GUARANDA
+__export__.contribuyentes_canton_31,base.state_ec_3,31,AZOGUES
+__export__.contribuyentes_canton_41,base.state_ec_4,41,TULCÁN
+__export__.contribuyentes_canton_51,base.state_ec_5,51,LATACUNGA
+__export__.contribuyentes_canton_61,base.state_ec_6,61,RIOBAMBA
+__export__.contribuyentes_canton_71,base.state_ec_7,71,MACHALA
+__export__.contribuyentes_canton_81,base.state_ec_8,81,ESMERALDAS
+__export__.contribuyentes_canton_91,base.state_ec_9,91,GUAYAQUIL
+__export__.contribuyentes_canton_101,base.state_ec_10,101,IBARRA
+__export__.contribuyentes_canton_111,base.state_ec_11,111,LOJA 
+__export__.contribuyentes_canton_121,base.state_ec_12,121,BABAHOYO 
+__export__.contribuyentes_canton_131,base.state_ec_13,131,PORTOVIEJO 
+__export__.contribuyentes_canton_141,base.state_ec_14,141,MORONA 
+__export__.contribuyentes_canton_151,base.state_ec_15,151,TENA  
+__export__.contribuyentes_canton_161,base.state_ec_16,161,PASTAZA
+__export__.contribuyentes_canton_171,base.state_ec_17,171,QUITO
+__export__.contribuyentes_canton_181,base.state_ec_18,181,AMBATO
+__export__.contribuyentes_canton_191,base.state_ec_19,191,ZAMORA
+__export__.contribuyentes_canton_201,base.state_ec_20,201,SAN CRISTÓBAL
+__export__.contribuyentes_canton_211,base.state_ec_21,211,LAGO AGRIO
+__export__.contribuyentes_canton_221,base.state_ec_22,221,ORELLANA
+__export__.contribuyentes_canton_231,base.state_ec_23,231,SANTO DOMINGO
+__export__.contribuyentes_canton_241,base.state_ec_24,241,SANTA ELENA
+__export__.contribuyentes_canton_12,base.state_ec_1,12,GIRÓN
+__export__.contribuyentes_canton_22,base.state_ec_2,22,CHILLANES
+__export__.contribuyentes_canton_32,base.state_ec_3,32,BIBLIÁN
+__export__.contribuyentes_canton_42,base.state_ec_4,42,BOLÍVAR
+__export__.contribuyentes_canton_52,base.state_ec_5,52,LA MANÁ
+__export__.contribuyentes_canton_62,base.state_ec_6,62,ALAUSÍ
+__export__.contribuyentes_canton_72,base.state_ec_7,72,ARENILLAS
+__export__.contribuyentes_canton_82,base.state_ec_8,82,ELOY ALFARO
+__export__.contribuyentes_canton_92,base.state_ec_9,92,ALFREDO BAQUERIZO MORENO (JUJÁN)
+__export__.contribuyentes_canton_102,base.state_ec_10,102,ANTONIO ANTE
+__export__.contribuyentes_canton_112,base.state_ec_11,112,CALVAS 
+__export__.contribuyentes_canton_122,base.state_ec_12,122,BABA 
+__export__.contribuyentes_canton_132,base.state_ec_13,132,BOLÍVAR 
+__export__.contribuyentes_canton_142,base.state_ec_14,142,GUALAQUIZA 
+__export__.contribuyentes_canton_152,base.state_ec_15,152,AGUARICO
+__export__.contribuyentes_canton_162,base.state_ec_16,162,MERA
+__export__.contribuyentes_canton_172,base.state_ec_17,172,CAYAMBE
+__export__.contribuyentes_canton_182,base.state_ec_18,182,BAÑOS DE AGUA SANTA
+__export__.contribuyentes_canton_192,base.state_ec_19,192,CHINCHIPE
+__export__.contribuyentes_canton_202,base.state_ec_20,202,ISABELA
+__export__.contribuyentes_canton_212,base.state_ec_21,212,GONZALO PIZARRO
+__export__.contribuyentes_canton_222,base.state_ec_22,222,AGUARICO
+__export__.contribuyentes_canton_242,base.state_ec_24,242,LA LIBERTAD
+__export__.contribuyentes_canton_13,base.state_ec_1,13,GUALACEO
+__export__.contribuyentes_canton_23,base.state_ec_2,23,CHIMBO
+__export__.contribuyentes_canton_33,base.state_ec_3,33,CAÑAR
+__export__.contribuyentes_canton_43,base.state_ec_4,43,ESPEJO
+__export__.contribuyentes_canton_53,base.state_ec_5,53,PANGUA
+__export__.contribuyentes_canton_63,base.state_ec_6,63,COLTA
+__export__.contribuyentes_canton_73,base.state_ec_7,73,ATAHUALPA
+__export__.contribuyentes_canton_83,base.state_ec_8,83,MUISNE
+__export__.contribuyentes_canton_93,base.state_ec_9,93,BALAO
+__export__.contribuyentes_canton_103,base.state_ec_10,103,COTACACHI
+__export__.contribuyentes_canton_113,base.state_ec_11,113,CATAMAYO 
+__export__.contribuyentes_canton_123,base.state_ec_12,123,MONTALVO 
+__export__.contribuyentes_canton_133,base.state_ec_13,133,CHONE 
+__export__.contribuyentes_canton_143,base.state_ec_14,143,LIMÓN INDANZA 
+__export__.contribuyentes_canton_153,base.state_ec_15,153,ARCHIDONA 
+__export__.contribuyentes_canton_163,base.state_ec_16,163,SANTA CLARA
+__export__.contribuyentes_canton_173,base.state_ec_17,173,MEJÍA
+__export__.contribuyentes_canton_183,base.state_ec_18,183,CEVALLOS
+__export__.contribuyentes_canton_193,base.state_ec_19,193,NANGARITZA
+__export__.contribuyentes_canton_203,base.state_ec_20,203,SANTA CRUZ
+__export__.contribuyentes_canton_213,base.state_ec_21,213,PUTUMAYO
+__export__.contribuyentes_canton_223,base.state_ec_22,223,LA JOYA DE LOS SACHAS
+__export__.contribuyentes_canton_243,base.state_ec_24,243,SALINAS
+__export__.contribuyentes_canton_14,base.state_ec_1,14,NABÓN
+__export__.contribuyentes_canton_24,base.state_ec_2,24,ECHEANDÍA
+__export__.contribuyentes_canton_34,base.state_ec_3,34,LA TRONCAL
+__export__.contribuyentes_canton_44,base.state_ec_4,44,MIRA
+__export__.contribuyentes_canton_54,base.state_ec_5,54,PUJILÍ
+__export__.contribuyentes_canton_64,base.state_ec_6,64,CHAMBO
+__export__.contribuyentes_canton_74,base.state_ec_7,74,BALSAS
+__export__.contribuyentes_canton_84,base.state_ec_8,84,QUININDÉ
+__export__.contribuyentes_canton_94,base.state_ec_9,94,BALZAR
+__export__.contribuyentes_canton_104,base.state_ec_10,104,OTAVALO
+__export__.contribuyentes_canton_114,base.state_ec_11,114,CELICA 
+__export__.contribuyentes_canton_124,base.state_ec_12,124,PUEBLOVIEJO
+__export__.contribuyentes_canton_134,base.state_ec_13,134,EL CARMEN 
+__export__.contribuyentes_canton_144,base.state_ec_14,144,PALORA 
+__export__.contribuyentes_canton_154,base.state_ec_15,154,EL CHACO
+__export__.contribuyentes_canton_164,base.state_ec_16,164,ARAJUNO
+__export__.contribuyentes_canton_174,base.state_ec_17,174,PEDRO MONCAYO
+__export__.contribuyentes_canton_184,base.state_ec_18,184,MOCHA
+__export__.contribuyentes_canton_194,base.state_ec_19,194,YACUAMBÍ
+__export__.contribuyentes_canton_214,base.state_ec_21,214,SHUSHUFINDI
+__export__.contribuyentes_canton_224,base.state_ec_22,224,LORETO
+__export__.contribuyentes_canton_15,base.state_ec_1,15,PAUTE
+__export__.contribuyentes_canton_25,base.state_ec_2,25,SAN MIGUEL
+__export__.contribuyentes_canton_35,base.state_ec_3,35,EL TAMBO
+__export__.contribuyentes_canton_45,base.state_ec_4,45,MONTÚFAR
+__export__.contribuyentes_canton_55,base.state_ec_5,55,SALCEDO
+__export__.contribuyentes_canton_65,base.state_ec_6,65,CHUNCHI
+__export__.contribuyentes_canton_75,base.state_ec_7,75,CHILLA
+__export__.contribuyentes_canton_85,base.state_ec_8,85,SAN LORENZO
+__export__.contribuyentes_canton_95,base.state_ec_9,95,COLIMES
+__export__.contribuyentes_canton_105,base.state_ec_10,105,PIMAMPIRO
+__export__.contribuyentes_canton_115,base.state_ec_11,115,CHAGUARPAMBA 
+__export__.contribuyentes_canton_125,base.state_ec_12,125,QUEVEDO 
+__export__.contribuyentes_canton_135,base.state_ec_13,135,FLAVIO ALFARO 
+__export__.contribuyentes_canton_145,base.state_ec_14,145,SANTIAGO 
+__export__.contribuyentes_canton_155,base.state_ec_15,155,LA JOYA DE LOS SACHAS
+__export__.contribuyentes_canton_175,base.state_ec_17,175,RUMIÑAHUI
+__export__.contribuyentes_canton_185,base.state_ec_18,185,PATATE
+__export__.contribuyentes_canton_195,base.state_ec_19,195,YANTZAZA
+__export__.contribuyentes_canton_215,base.state_ec_21,215,SUCUMBÍOS
+__export__.contribuyentes_canton_16,base.state_ec_1,16,PUCARÁ
+__export__.contribuyentes_canton_26,base.state_ec_2,26,CALUMA
+__export__.contribuyentes_canton_36,base.state_ec_3,36,DÉELEG
+__export__.contribuyentes_canton_46,base.state_ec_4,46,SAN PEDRO DE HUACA
+__export__.contribuyentes_canton_56,base.state_ec_5,56,SAQUISILÍ
+__export__.contribuyentes_canton_66,base.state_ec_6,66,GUAMOTE
+__export__.contribuyentes_canton_76,base.state_ec_7,76,EL GUABO
+__export__.contribuyentes_canton_86,base.state_ec_8,86,ATACAMES
+__export__.contribuyentes_canton_96,base.state_ec_9,96,DAULE
+__export__.contribuyentes_canton_106,base.state_ec_10,106,SAN MIGUEL DE URCUQUÍ
+__export__.contribuyentes_canton_116,base.state_ec_11,116,ESPÍNDOLA 
+__export__.contribuyentes_canton_126,base.state_ec_12,126,URDANETA
+__export__.contribuyentes_canton_136,base.state_ec_13,136,JIPIJAPA 
+__export__.contribuyentes_canton_146,base.state_ec_14,146,SUCÚA 
+__export__.contribuyentes_canton_156,base.state_ec_15,156,ORELLANA
+__export__.contribuyentes_canton_176,base.state_ec_17,176,SANTO DOMINGO
+__export__.contribuyentes_canton_186,base.state_ec_18,186,QUERO
+__export__.contribuyentes_canton_196,base.state_ec_19,196,EL PANGUI
+__export__.contribuyentes_canton_216,base.state_ec_21,216,CASCALES
+__export__.contribuyentes_canton_17,base.state_ec_1,17,SAN FERNANDO
+__export__.contribuyentes_canton_27,base.state_ec_2,27,LAS NAVES
+__export__.contribuyentes_canton_37,base.state_ec_3,37,SUSCAL
+__export__.contribuyentes_canton_57,base.state_ec_5,57,SIGCHOS
+__export__.contribuyentes_canton_67,base.state_ec_6,67,GUANO
+__export__.contribuyentes_canton_77,base.state_ec_7,77,HUAQUILLAS
+__export__.contribuyentes_canton_87,base.state_ec_8,87,RIOVERDE
+__export__.contribuyentes_canton_97,base.state_ec_9,97,DURÁN
+__export__.contribuyentes_canton_117,base.state_ec_11,117,GONZANAMÁ 
+__export__.contribuyentes_canton_127,base.state_ec_12,127,VENTANAS
+__export__.contribuyentes_canton_137,base.state_ec_13,137,JUNÍN 
+__export__.contribuyentes_canton_147,base.state_ec_14,147,HUAMBOYA
+__export__.contribuyentes_canton_157,base.state_ec_15,157,QUIJOS
+__export__.contribuyentes_canton_177,base.state_ec_17,177,SAN MIGUEL DE LOS BANCOS
+__export__.contribuyentes_canton_187,base.state_ec_18,187,SAN PEDRO DE PELILEO
+__export__.contribuyentes_canton_197,base.state_ec_19,197,CENTINELA DEL CÓNDOR
+__export__.contribuyentes_canton_217,base.state_ec_21,217,CUYABENO
+__export__.contribuyentes_canton_18,base.state_ec_1,18,SANTA ISABEL
+__export__.contribuyentes_canton_68,base.state_ec_6,68,PALLATANGA
+__export__.contribuyentes_canton_78,base.state_ec_7,78,MARCABELÍ
+__export__.contribuyentes_canton_88,base.state_ec_8,88,LA CONCORDIA
+__export__.contribuyentes_canton_98,base.state_ec_9,98,EL EMPALME
+__export__.contribuyentes_canton_118,base.state_ec_11,118,MACARÁ 
+__export__.contribuyentes_canton_128,base.state_ec_12,128,VINCES
+__export__.contribuyentes_canton_138,base.state_ec_13,138,MANTA 
+__export__.contribuyentes_canton_148,base.state_ec_14,148,SAN JUAN BOSCO
+__export__.contribuyentes_canton_158,base.state_ec_15,158,LORETO
+__export__.contribuyentes_canton_178,base.state_ec_17,178,PEDRO VICENTE MALDONADO
+__export__.contribuyentes_canton_188,base.state_ec_18,188,SANTIAGO DE PÍLLARO
+__export__.contribuyentes_canton_198,base.state_ec_19,198,PALANDA
+__export__.contribuyentes_canton_19,base.state_ec_1,19,SIGSIG
+__export__.contribuyentes_canton_69,base.state_ec_6,69,PENIPE
+__export__.contribuyentes_canton_79,base.state_ec_7,79,PASAJE
+__export__.contribuyentes_canton_99,base.state_ec_9,99,EL TRIUNFO
+__export__.contribuyentes_canton_119,base.state_ec_11,119,PALTAS
+__export__.contribuyentes_canton_129,base.state_ec_12,129,PALENQUE
+__export__.contribuyentes_canton_139,base.state_ec_13,139,MONTECRISTI 
+__export__.contribuyentes_canton_149,base.state_ec_14,149,TAISHA
+__export__.contribuyentes_canton_159,base.state_ec_15,159,CARLOS JULIO AROSEMENA TOLA
+__export__.contribuyentes_canton_179,base.state_ec_17,179,PUERTO QUITO
+__export__.contribuyentes_canton_189,base.state_ec_18,189,TISALEO
+__export__.contribuyentes_canton_199,base.state_ec_19,199,PAQUISHA
+__export__.contribuyentes_canton_110,base.state_ec_1,110,OÑA
+__export__.contribuyentes_canton_610,base.state_ec_6,610,CUMANDÁ
+__export__.contribuyentes_canton_710,base.state_ec_7,710,PIÑAS
+__export__.contribuyentes_canton_910,base.state_ec_9,910,MILAGRO
+__export__.contribuyentes_canton_1110,base.state_ec_11,1110,PUYANGO
+__export__.contribuyentes_canton_1210,base.state_ec_12,1210,BUENA FÉ
+__export__.contribuyentes_canton_1310,base.state_ec_13,1310,PAJÁN 
+__export__.contribuyentes_canton_1410,base.state_ec_14,1410,LOGROÑO
+__export__.contribuyentes_canton_111,base.state_ec_1,111,CHORDELEG
+__export__.contribuyentes_canton_711,base.state_ec_7,711,PORTOVELO
+__export__.contribuyentes_canton_911,base.state_ec_9,911,NARANJAL
+__export__.contribuyentes_canton_1111,base.state_ec_11,1111,SARAGURO
+__export__.contribuyentes_canton_1211,base.state_ec_12,1211,VALENCIA
+__export__.contribuyentes_canton_1311,base.state_ec_13,1311,PICHINCHA 
+__export__.contribuyentes_canton_1411,base.state_ec_14,1411,PABLO SEXTO
+__export__.contribuyentes_canton_112,base.state_ec_1,112,EL PAN
+__export__.contribuyentes_canton_712,base.state_ec_7,712,SANTA ROSA
+__export__.contribuyentes_canton_912,base.state_ec_9,912,NARANJITO
+__export__.contribuyentes_canton_1112,base.state_ec_11,1112,SOZORANGA
+__export__.contribuyentes_canton_1212,base.state_ec_12,1212,MOCACHE
+__export__.contribuyentes_canton_1312,base.state_ec_13,1312,ROCAFUERTE
+__export__.contribuyentes_canton_1412,base.state_ec_14,1412,TIWINTZA
+__export__.contribuyentes_canton_113,base.state_ec_1,113,SEVILLA DE ORO
+__export__.contribuyentes_canton_713,base.state_ec_7,713,ZARUMA
+__export__.contribuyentes_canton_913,base.state_ec_9,913,PALESTINA
+__export__.contribuyentes_canton_1113,base.state_ec_11,1113,ZAPOTILLO
+__export__.contribuyentes_canton_1213,base.state_ec_12,1213,QUINSALOMA
+__export__.contribuyentes_canton_1313,base.state_ec_13,1313,SANTA ANA
+__export__.contribuyentes_canton_114,base.state_ec_1,114,GUACHAPALA
+__export__.contribuyentes_canton_714,base.state_ec_7,714,LAS LAJAS
+__export__.contribuyentes_canton_914,base.state_ec_9,914,PEDRO CARBO
+__export__.contribuyentes_canton_1114,base.state_ec_11,1114,PINDAL
+__export__.contribuyentes_canton_1314,base.state_ec_13,1314,SUCRE
+__export__.contribuyentes_canton_115,base.state_ec_1,115,CAMILO PONCE ENRÍQUEZ
+__export__.contribuyentes_canton_915,base.state_ec_9,915,SALINAS
+__export__.contribuyentes_canton_1115,base.state_ec_11,1115,QUILANGA
+__export__.contribuyentes_canton_1315,base.state_ec_13,1315,TOSAGUA
+__export__.contribuyentes_canton_916,base.state_ec_9,916,SAMBORONDÓN
+__export__.contribuyentes_canton_1116,base.state_ec_11,1116,OLMEDO
+__export__.contribuyentes_canton_1316,base.state_ec_13,1316,24 DE MAYO
+__export__.contribuyentes_canton_917,base.state_ec_9,917,SANTA ELENA
+__export__.contribuyentes_canton_1317,base.state_ec_13,1317,PEDERNALES
+__export__.contribuyentes_canton_918,base.state_ec_9,918,SANTA LUCÍA
+__export__.contribuyentes_canton_1318,base.state_ec_13,1318,OLMEDO
+__export__.contribuyentes_canton_919,base.state_ec_9,919,SALITRE (URBINA JADO)
+__export__.contribuyentes_canton_1319,base.state_ec_13,1319,PUERTO LÓPEZ
+__export__.contribuyentes_canton_920,base.state_ec_9,920,SAN JACINTO DE YAGUACHI
+__export__.contribuyentes_canton_1320,base.state_ec_13,1320,JAMA
+__export__.contribuyentes_canton_921,base.state_ec_9,921,PLAYAS
+__export__.contribuyentes_canton_1321,base.state_ec_13,1321,JARAMIJÓ
+__export__.contribuyentes_canton_922,base.state_ec_9,922,SIMÓN BOLÍVAR
+__export__.contribuyentes_canton_1322,base.state_ec_13,1322,SAN VICENTE
+__export__.contribuyentes_canton_923,base.state_ec_9,923,CORONEL MARCELINO MARIDUEÑA
+__export__.contribuyentes_canton_924,base.state_ec_9,924,LOMAS DE SARGENTILLO
+__export__.contribuyentes_canton_925,base.state_ec_9,925,NOBOL
+__export__.contribuyentes_canton_926,base.state_ec_9,926,LA LIBERTAD
+__export__.contribuyentes_canton_927,base.state_ec_9,927,GENERAL ANTONIO ELIZALDE (BUCAY)
+__export__.contribuyentes_canton_928,base.state_ec_9,928,ISIDRO AYORA

@@ -29,8 +29,8 @@
     'version' : '1',
     'depends' : ['account_voucher'],
     'description': '''
-    This module allows make Advances Payments for Suppliers register
-    allow reconciliation with invoices
+    Este módulo permite hacer anticipos a proveedores y hacer reconciliación
+    con facturas.
     ''',
     'init_xml': [],
     'update_xml': ['account_advances_view.xml',
@@ -38,4 +38,5 @@
                    ],
     'installable': True,
     'active': False,
+    'auto_install': False,
 }

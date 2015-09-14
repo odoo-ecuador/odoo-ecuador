@@ -41,7 +41,7 @@
     </tr>
     <tr>
       <td width="8%"></td>
-	  <td colspan="3">${o.partner_id.ced_ruc or '##########'}</td>	
+	  <td colspan="3">${o.partner_id.vat or '##########'}</td>	
     </tr>
   </table>
   <br><br>

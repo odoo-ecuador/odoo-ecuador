@@ -21,28 +21,21 @@
 #
 ##############################################################################
 
-from osv import osv, fields
+from openerp import models, fields
 
-class Company(osv.osv):
-    
+class Company(models.Model):
     _inherit = 'res.company'
     
-    _columns = {
-        'electronic_signature': fields.char('Firma Electrónica', size=128, required=True),
-        'password_electronic_signature': fields.char('Clave Firma Electrónica', size=128, required=True),
-        'emission_code': fields.selection([('1','Normal'),
-                                           ('2','Indisponibilidad')],
-                                 string='Tipo de Emisión', required=True),
-        'contingency_key_ids': fields.one2many('res.company.contingency.key','company_id', 'Claves de Contingencia', help='Claves de contingencia relacionadas con esta empresa.'),
-        
-        }
-        
-    _defaults = {
-        'emission_code': '1',
-        }
+    electronic_signature = fields.Char('Firma Electrónica', size=128, required=True)
+    password_electronic_signature = fields.Char('Clave Firma Electrónica', size=128, required=True)
+    emission_code = fields.Selection([('1','Normal'),
+                                      ('2','Indisponibilidad')],
+                                      string='Tipo de Emisión',
+                                      required=True,
+                                      default='1')
+    contingency_key_ids = fields.One2many('res.company.contingency.key','company_id', string='Claves de Contingencia', help='Claves de contingencia relacionadas con esta empresa.'),
 
-class CompanyContingencyKey(osv.osv):
-  
+class CompanyContingencyKey(models.Model):
     _name = 'res.company.contingency.key'
     _description = 'Clave de Contingencia'
     
@@ -53,17 +46,12 @@ class CompanyContingencyKey(osv.osv):
             user = self.pool.get('res.users').browse(cr, uid, uid)
             return user.company_id.id
             
-    _columns = {
-        'key': fields.char('Clave', size=37, required=True),
-        'used': fields.boolean('¿Utilizada?', readonly=True),
-        'company_id': fields.many2one('res.company', 'Empresa', required=True),
-        }
+    key = fields.Char(string='Clave', size=37, required=True)
+    used = fields.Boolean(string='¿Utilizada?',
+                          readonly=True,
+                          default=False)
+    company_id = fields.Many2one('res.company', string='Empresa', required=True, default='_get_company')
     
-    _defaults = {
-        'used': False,
-        'company_id': _get_company,
-        }
-        
     _sql_constraints = [
         ('key_unique', 'unique(key)', u'Clave de contingencia asignada debe ser única.'),
         ]

@@ -5,8 +5,8 @@ function l10n_ec_pos(instance, module) {
 
     _partner_search_string: function(partner){
       var str =  partner.name;
-      if(partner.ced_ruc){
-	str += '|' + partner.ced_ruc;
+      if(partner.vat){
+	str += '|' + partner.vat;
       }
       if(partner.ean13){
         str += '|' + partner.ean13;
@@ -73,7 +73,7 @@ function l10n_ec_pos(instance, module) {
             loaded: function(self,users){ self.users = users; },
         },{
             model:  'res.partner',
-          fields: ['ced_ruc', 'name','street','city','state_id','country_id','vat','phone','zip','mobile','email','ean13','write_date'],
+          fields: ['vat', 'name','street','city','state_id','country_id','vat','phone','zip','mobile','email','ean13','write_date'],
             domain: [['customer','=',true]],
             loaded: function(self,partners){
                 self.partners = partners;

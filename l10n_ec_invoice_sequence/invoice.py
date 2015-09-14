@@ -22,8 +22,6 @@
 ##############################################################################
 
 from openerp.osv import osv, fields
-from tools.translate import _
-
 
 class AccountInvoice(osv.osv):
 
@@ -77,5 +75,3 @@ class AccountInvoice(osv.osv):
                         'AND account_analytic_line.move_id = account_move_line.id',
                         (ref, move_id))
         return True
-
-    

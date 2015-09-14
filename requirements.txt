@@ -1,1 +1,0 @@
-suds-jurko==0.7.dev0

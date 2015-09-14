@@ -1,2 +1,7 @@
 Cristian Salamea <cristian.salamea@gmail.com>
 Milton Labanda <1000ton.lab@unl.edu.ec>
+
+# Fábrica de Software Libre
+
+Daniel Mendieta <damendieta@gmail.com>
+Fábrica de Software Libre <desarrollo@libre.ec>

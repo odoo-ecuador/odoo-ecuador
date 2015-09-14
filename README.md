@@ -1,36 +1,69 @@
-Localizacion de OpenERP para Ecuador
-====================================
+# Localizacion de OpenERP para Ecuador (Fábrica de Software Libre)
 
-Este proyecto intenta implementar todas las funcionalidades
-requeridas para que OpenERP pueda implementarse en cualquier
-empresa ecuatoriana.
+Este proyecto es un derivado del proyecto odoo-ecuador, en el mismo se desarrollan y modifican los módulos con los cuales nuestra empresa aporta a la comunidad para que luego sean integrados a la rama oficial.
 
-Aclaratorio a la Licencia
--------------------------
+A diferencial de proyecto base, nosotros solo desarrollamos para la versión 8 y posteriores.
 
-Este proyecto es un trabajo derivado de AGPL v3, si utilizas este trabajo es necesario que publiques los cambios realizados, si no lo haces debes enviar un tweet con el hashtag [#SoyUnOdooTrollenEcuador](https://twitter.com/search?f=tweets&q=%23SoyUnOdooTrollEnEcuado).
+# Aclaratorio a la Licencia
 
-Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende este software y cambia el autor.
+"Este proyecto es un trabajo derivado de AGPL v3, si utilizas este trabajo es necesario que publiques los cambios realizados, si no lo haces debes enviar un tweet con el hashtag [#SoyUnOdooTrollenEcuador](https://twitter.com/search?f=tweets&q=%23SoyUnOdooTrollEnEcuado).
 
-Objetivos principales
----------------------
+Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende este software y cambia el autor." Proyecto odoo-ecuador.
 
-- Plan de cuentas para diferentes tipos de empresas, sitio de ref: http://www.supercias.gob.ec
-- Documentos contables: Retenciones, liquidaciones de compra, etc.
-- Reportes tributarios, sitio de ref: http://www.sri.gob.ec
-- Traducción a español (es_EC)
 
-Uso de Módulos
---------------
+# Criterios de desarrollo.
 
-Para la instalación y uso::
-     
-     $ git clone https://github.com/odoo-ecuador/odoo-ecuador.git
+1.- La instalación de módulos va a realizarse a través de el módulo l10n_ec_config, que siempre será actualizado para permitir a los usuarios nuevos saber lo que existe y poder instalarlo con facilidad.
 
-Ahora ejecutar odoo agregando al path de módulos::
+2.- Vamos a tratar de utilizar el código nativo de Odoo o módulos desarrollados para otras localizaciones antes de crear un módulo propio (no hay para que re-inventar la rueda).
 
-     $ ./openerp-server --addons-path=addons,../odoo-ecuador 
+3.- Vamos a desarrollar en español, dando a los módulos nombres compatibles con el estándar internacional de Odoo y manteniendo la base del proyecto odoo-ecuador, pero tratando de que sean nombres significativos y fáciles de entender en español. Igualmente, los comentarios, strings, help, placeholders y todo lo demás lo vamos a escribir en español. (Si alguien necesita la localización del Ecuador en inglés, tendrá que traducirla).
 
-El comando anterior asume que odoo y odoo-ecuador estan al mismo nivel.
+4.- Trataremos de clonar y/o copiar todos los módulos que utilizamos en el mismo repositorio a fin de evitar problemas de dependencias. 
 
-Para escribir pruebas unitarias revisar la [wiki](https://github.com/odoo-ecuador/odoo-ecuador/wiki/Pruebas-Unitarias)
+5.- Todo el desarrollo se realizará a través de este repositorio para evitar código obsoleto.
+
+# Estándares y criterios de desarrollo.
+
+1.- Primero tratamos de usar los módulos de odoo, luego los de odoo-ecuador, luego de la comunidad. Si no existen, los creamos. Al crear respetamos los nombres del módulo original y los nombres propios de odoo como name, code, active, entre otros.
+
+Si no existe y tenemos que desarrollar, entonces:
+
+2.- Los módulos que consideramos necesarios para la localización empiezan con l10n_ec_nombredelmodulo y los que son herramientas con ec_nombredelmodulo.
+
+        l10n_ec_geopolitico
+        ec_id_unico
+
+3.- Las vistas se nombran: modulo_view_tipo_identificativo, ejemplo:
+
+        <record id="res_partner_view_form_info" model="ir.ui.view">
+
+4.- El nombre del archivo xml se forma: modulo_views.xml y dentro de el incluimos todas las vistas del módulo, ejemplo:
+
+        res_partner_views.xml
+
+5.- Los nombres de los módulos deben ser claros y fáciles de entender:
+
+        class Canton(models.Model):
+        _name = 'l10n_ec_geopolitico.canton'
+
+6.- Los "warnings", "help", "placeholders", entre otros deben ser escritos siempre en español.
+
+        help="La ayuda en español"
+        placeholder="Ingrese su número de cédula"
+
+# Instalación
+
+1.- Instalar Odoo (www.odoo.com).
+
+2.- Clonar el repositorio y actualizar la lista de módulos locales.
+
+3.- Instalar el módulo l10n_ec_config.
+
+4.- Ir a: Configuraciones --> Para Ecuador.
+
+5.- Seleccionar las opciones que se desea instalar en la localización.
+
+6.- Aplicar.
+
+Nota: el módulo de configuraciones está señalado para instalarse automáticamente al crear una base de datos, así que si crea la base con el módulo en el repositorio, puede saltar del paso 2 al 4.

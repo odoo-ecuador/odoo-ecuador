@@ -29,14 +29,14 @@ import base64
 from lxml import etree
 from lxml.etree import DocumentInvalid
 
-try:
-    from suds.client import Client
-    from suds.transport import TransportError
-except ImportError:
-    raise ImportError('Instalar Libreria suds')
+#try:
+#    from suds.client import Client
+#    from suds.transport import TransportError
+#except ImportError:
+#    raise ImportError('Instalar Libreria suds')
 
-from osv import osv
-from openerp.addons.l10n_ec_einvoice import utils
+from openerp.osv import osv
+from openerp.addons.l10n_ec_einvoice.einvoice import utils
 from .xades import CheckDigit
 
 SCHEMAS = {

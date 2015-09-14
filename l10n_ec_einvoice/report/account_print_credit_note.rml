@@ -269,7 +269,7 @@
           <para style="terp_default_8">OBLIGADO A LLEVAR CONTABILIDAD: SI</para>
         </td>
         <td>
-          <para style="terp_default_8">R.U.C.: [[ o.company_id.partner_id.ced_ruc or '' ]] </para>
+          <para style="terp_default_8">R.U.C.: [[ o.company_id.partner_id.vat or '' ]] </para>
           <para style="terp_header">NOTA DE CRÉDITO</para>
           <para style="terp_default_8">No. [[ o.supplier_invoice_number or '' ]]</para>
           <para style="terp_default_8">
@@ -313,7 +313,7 @@
           <para style="P3">Identificación: </para>
         </td>
         <td>
-          <para style="P4">[[ o.partner_id.ced_ruc or '' ]]</para>
+          <para style="P4">[[ o.partner_id.vat or '' ]]</para>
         </td>
       </tr>
     </blockTable>

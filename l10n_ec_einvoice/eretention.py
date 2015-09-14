@@ -90,7 +90,7 @@ class account_retention(osv.osv):
         fecha = ''.join(ld)
         #
         tcomp = auth.type_id.code
-        ruc = retention.company_id.partner_id.ced_ruc
+        ruc = retention.company_id.partner_id.vat
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
         numero = retention.name[6:15] # FIX w/ number
         tipo_emision = retention.company_id.emission_code
@@ -111,7 +111,7 @@ class account_retention(osv.osv):
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
-        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
+        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.vat
         etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
         etree.SubElement(infoTributaria, 'codDoc').text = auth.type_id.code
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
@@ -131,7 +131,7 @@ class account_retention(osv.osv):
         etree.SubElement(infoCompRetencion, 'obligadoContabilidad').text = 'SI'
         etree.SubElement(infoCompRetencion, 'tipoIdentificacionSujetoRetenido').text = tipoIdentificacion[partner.type_ced_ruc]
         etree.SubElement(infoCompRetencion, 'razonSocialSujetoRetenido').text = partner.name
-        etree.SubElement(infoCompRetencion, 'identificacionSujetoRetenido').text = partner.ced_ruc
+        etree.SubElement(infoCompRetencion, 'identificacionSujetoRetenido').text = partner.vat
         etree.SubElement(infoCompRetencion, 'periodoFiscal').text = retention.period_id.name
         return infoCompRetencion
         

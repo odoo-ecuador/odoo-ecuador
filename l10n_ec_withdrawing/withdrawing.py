@@ -132,11 +132,14 @@ class AccountWithdrawing(models.Model):
         store=True
         )
     move_id = fields.Many2one(
-        compute='_get_move'
+        '''
+        En la version original existe un compute a _get_move, pero no hay la funcion, por lo que se lo ha suprimido. Verificar si es necesario y reemplazar el codigo segun lo requerido.
+        #       compute='_get_move',
+        '''
         'account.move',
         string='Asiento Contable',
         readonly=True
-        ),
+        )
     state = fields.Selection(
         [('draft','Borrador'),
         ('early','Anticipado'),
@@ -152,7 +155,7 @@ class AccountWithdrawing(models.Model):
         digits_compute=dp.get_precision('Account')
         )
     to_cancel = fields.Boolean(
-        'Para anulación',
+        string='Para anulación',
         readonly=True,
         states=STATES_VALUE
         )
@@ -703,123 +706,134 @@ class Invoice(models.Model):
                 'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
             }
 
-    PRECISION_DP = dp.get_precision('Account')    
+    PRECISION_DP = dp.get_precision('Account')
 
-    _columns = {
-        'supplier_number': fields.function(_get_supplier_number, method=True, type='char', size=32,
-                                           string='Factura de Proveedor', store=True),
-        'amount_ice': fields.function(_amount_all, method=True, digits_compute=PRECISION_DP, string='ICE',
-                                      store=VAR_STORE, multi='all'),
-        'amount_vat': fields.function(_amount_all, method=True,
-                                      digits_compute=PRECISION_DP, string='Base 12 %', 
+    supplier_number = fields.Char(string='Factura de Proveedor',
+                                      compute='_get_supplier_number',
+                                      size=32,
+                                      store=True)
+    amount_ice = fields.Float(string='ICE', 
+                                  compute='_amount_all',
+                                  digits_compute=PRECISION_DP,
+                                  store=VAR_STORE,
+                                  multi='all')
+    amount_vat = fields.Float(string='Base 12 %',
+                                  compute='_amount_all',
+                                  digits_compute=PRECISION_DP,
+                                  store=VAR_STORE,
+                                  multi='all')
+    amount_untaxed = fields.Float(string='Untaxed',
+                                      compute='_amount_all',
+                                      digits_compute=PRECISION_DP,
                                       store=VAR_STORE,
-                                      multi='all'),
-        'amount_untaxed': fields.function(_amount_all, method=True,
-                                          digits_compute=PRECISION_DP, string='Untaxed',
-                                          store=VAR_STORE,
-                                          multi='all'),
-        'amount_tax': fields.function(_amount_all, method=True,
-                                      digits_compute=PRECISION_DP, string='Tax',
+                                      multi='all')
+    amount_tax = fields.Float(string='Tax',
+                                      compute='_amount_all',
+                                      digits_compute=PRECISION_DP,
                                       store=VAR_STORE,
-                                      multi='all'),
-        'amount_total': fields.function(_amount_all, method=True,
-                                        digits_compute=PRECISION_DP, string='Total a Pagar',
-                                        store=VAR_STORE,
-                                        multi='all'), 
-        'amount_pay': fields.function(_amount_all, method=True,
-                                      digits_compute=PRECISION_DP, string='Total',
-                                      store=VAR_STORE,
-                                      multi='all'),
-        'amount_noret_ir': fields.function(_amount_all, method=True,
-                                           digits_compute=PRECISION_DP, string='Monto no sujeto a IR',
-                                           store=VAR_STORE,
-                                           multi='all'),
-        'amount_tax_retention': fields.function(_amount_all, method=True,
-                                                digits_compute=PRECISION_DP, string='Total Retencion',
-                                                store=VAR_STORE,
-                                                multi='all'),
-        'amount_tax_ret_ir': fields.function( _amount_all, method=True,
-                                              digits_compute=PRECISION_DP, string='Base IR',
-                                              store=VAR_STORE,
-                                              multi='all'),
-        'taxed_ret_ir': fields.function( _amount_all, method=True,
-                                         digits_compute=PRECISION_DP, string='Impuesto IR',
-                                         store=VAR_STORE,
-                                         multi='all'),
-        'amount_tax_ret_vatb' : fields.function( _amount_all,
-                                                 method=True,
-                                                 digits_compute=PRECISION_DP,
-                                                 string='Base Ret. IVA',
-                                                 store=VAR_STORE,
-                                                 multi='all'),
-        'taxed_ret_vatb' : fields.function( _amount_all,
-                                            method=True,
+                                      multi='all')
+    amount_total = fields.Float(string='Total a pagar',
+                                    compute='_amount_all',
+                                    digits_compute=PRECISION_DP,
+                                    store=VAR_STORE,
+                                    multi='all') 
+    amount_pay = fields.Float(compute='_amount_all',
+                                  digits_compute=PRECISION_DP,
+                                  string='Total',
+                                  store=VAR_STORE,
+                                  multi='all')
+    amount_noret_ir = fields.Float(compute='_amount_all',
+                                       digits_compute=PRECISION_DP,
+                                       string='Monto no sujeto a IR',
+                                       store=VAR_STORE,
+                                       multi='all')
+    amount_tax_retention = fields.Float(compute='_amount_all',
                                             digits_compute=PRECISION_DP,
-                                            string='Retencion en IVA',
+                                            string='Total Retencion',
                                             store=VAR_STORE,
-                                            multi='all'),
-        'amount_tax_ret_vatsrv' : fields.function( _amount_all,
-                                                   method=True,
-                                                   digits_compute=PRECISION_DP, string='Base Ret. IVA',
-                                                   store=VAR_STORE,
-                                                   multi='all'),
-        'taxed_ret_vatsrv' : fields.function( _amount_all, method=True,
-                                              digits_compute=PRECISION_DP,
-                                              string='Retencion en IVA',
-                                              store=VAR_STORE,
-                                              multi='all'),        
-        'amount_vat_cero' : fields.function( _amount_all, method=True,
-                                             digits_compute=PRECISION_DP, string='Base IVA 0%',
+                                            multi='all')
+    amount_tax_ret_ir = fields.Float(compute='_amount_all',
+                                         digits_compute=PRECISION_DP,
+                                         string='Base IR',
+                                         store=VAR_STORE,
+                                         multi='all')
+    taxed_ret_ir = fields.Float(compute='_amount_all',
+                                    digits_compute=PRECISION_DP, string='Impuesto IR',
+                                    store=VAR_STORE,
+                                    multi='all')
+    amount_tax_ret_vatb = fields.Float(compute='_amount_all',
+                                           digits_compute=PRECISION_DP,
+                                           string='Base Ret. IVA',
+                                           store=VAR_STORE,
+                                           multi='all')
+    taxed_ret_vatb = fields.Float(compute='_amount_all',
+                                      method=True,
+                                      digits_compute=PRECISION_DP,
+                                      string='Retencion en IVA',
+                                      store=VAR_STORE,
+                                      multi='all')
+    amount_tax_ret_vatsrv = fields.Float(compute='_amount_all',
+                                             method=True,
+                                             digits_compute=PRECISION_DP, string='Base Ret. IVA',
                                              store=VAR_STORE,
-                                             multi='all'),
-        'amount_novat' : fields.function( _amount_all, method=True,
-                                          digits_compute=PRECISION_DP, string='Base No IVA',
-                                          store=VAR_STORE,
-                                          multi='all'),
-        'create_retention_type': fields.selection([('normal','Automatico'),
+                                             multi='all')
+    taxed_ret_vatsrv = fields.Float(compute='_amount_all',
+                                        digits_compute=PRECISION_DP,
+                                        string='Retencion en IVA',
+                                        store=VAR_STORE,
+                                        multi='all')
+    amount_vat_cero = fields.Float(compute='_amount_all',
+                                       digits_compute=PRECISION_DP, string='Base IVA 0%',
+                                       store=VAR_STORE,
+                                       multi='all')
+    amount_novat = fields.Float(compute='_amount_all',
+                                    digits_compute=PRECISION_DP,
+                                    string='Base No IVA',
+                                    store=VAR_STORE,
+                                    multi='all')
+    create_retention_type = fields.Selection([('normal','Automatico'),
                                                    ('manual', 'Manual'),
                                                    ('reserve','Num Reservado'),
                                                    ('no_retention', 'No Generar')],
                                                   string='Numerar Retención',
                                                   readonly=True,
+                                                  default='normal',
                                                   help=HELP_RET_TEXT,
-                                                  states = {'draft': [('readonly', False)]}),        
-        
-        'auth_inv_id' : fields.many2one('account.authorisation', 'Autorización SRI',
-                                        help = 'Autorizacion del SRI para documento recibido',
-                                        readonly=True,
-                                        states={'draft': [('readonly', False)]}),
-        'retention_id': fields.many2one('account.retention', store=True,
-                                        string='Retención de Impuestos',
-                                        readonly=True),
-        'retention_ir': fields.function(_check_retention, store=True,
-                                         string="Tiene Retención en IR",
-                                         method=True, type='boolean',
-                                         multi='ret'),
-        'retention_vat': fields.function(_check_retention, store=True,
-                                          string='Tiene Retencion en IVA',
-                                          method=True, type='boolean',
-                                          multi='ret'),
-        'no_retention_ir': fields.function(_check_retention, store=True,
-                                          string='No objeto de Retención',
-                                          method=True, type='boolean',
-                                          multi='ret'),        
-        'type': fields.selection([
-            ('out_invoice','Customer Invoice'),
-            ('in_invoice','Supplier Invoice'),
-            ('out_refund','Customer Refund'),
-            ('in_refund','Supplier Refund'),
+                                                  states = {'draft': [('readonly', False)]})
+                
+    auth_inv_id = fields.Many2one('account.authorisation',
+                                  string='Autorizacion SRI',
+                                  help = 'Autorizacion del SRI para documento recibido',
+                                  readonly=True,
+                                  states={'draft': [('readonly', False)]})
+    retention_id = fields.Many2one('account.retention',
+                                   store=True,
+                                   string='Retención de Impuestos',
+                                   readonly=True)
+    retention_ir = fields.Boolean(compute='_check_retention',
+                                  store=True,
+                                  string="Tiene Retención en IR",
+                                  multi='ret')
+    retention_vat = fields.Boolean(compute='_check_retention',
+                                   store=True,
+                                   string='Tiene Retencion en IVA',
+                                   multi='ret')
+    no_retention_ir = fields.Boolean(compute='_check_retention',
+                                         store=True,
+                                         string='No objeto de Retención',
+                                         multi='ret')
+    type = fields.Selection([
+            ('out_invoice','Factura de cliente'),
+            ('in_invoice','Factura de proveedor'),
+            ('out_refund','Nota de credito'),
+            ('in_refund','Nota de debito'),
             ('liq_purchase','Liquidacion de Compra')
-            ],'Type', readonly=True, select=True, change_default=True),
-        'manual_ret_num': fields.integer('Num. Retención', readonly=True,
-                                         states = {'draft': [('readonly', False)]}),
-        'sustento_id': fields.many2one('account.ats.sustento',
-                                       'Sustento del Comprobante'),        
-        }
-
-    _defaults = {
-        'create_retention_type': 'manual',
-        }
+            ], string='Tipo', readonly=True, select=True, change_default=True)
+    manual_ret_num = fields.Integer('Num. Retención',
+                                        readonly=True,
+                                        states = {'draft': [('readonly', False)]})
+    sustento_id = fields.Many2one('account.ats.sustento',
+                                  string='Sustento del Comprobante')
 
     def onchange_journal_id(self, cr, uid, ids, journal_id=False, context=None):
         """
@@ -1022,7 +1036,7 @@ class Invoice(models.Model):
         return True
 
 
-class AccountInvoiceLine(osv.osv):
+class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
     def move_line_get(self, cr, uid, invoice_id, context=None):
@@ -1138,7 +1152,7 @@ class AccountInvoiceLine(osv.osv):
         return res_final    
 
 
-class AccountInvoiceRefund(osv.TransientModel):
+class AccountInvoiceRefund(models.TransientModel):
 
     _inherit = 'account.invoice.refund'
 
@@ -1156,4 +1170,3 @@ class AccountInvoiceRefund(osv.TransientModel):
     _defaults = {
         'description': _get_description,
         }
-            

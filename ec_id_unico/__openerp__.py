@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (C) 2010-2012 Cristian Salamea Gnuthink Software Labs Cia. Ltda
+#    Copyright (C) 2015  ADHOC SA  (http://www.adhoc.com.ar)
+#    All Rights Reserved.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,27 +19,29 @@
 #
 ##############################################################################
 {
-    'name': 'Ecuador - Accounting Chart',
-    'version': '1.1',
-    'category': 'Localisation/Account Charts',
+    'name': 'Evitar repetición del R.U.C.',
+    'version': '8.0.1.0.0',
+    'category': 'Utilidades',
     'description': """
-    This is the base module to manage the accounting chart for Ecuador in OpenERP.
-    """,
-    'author': 'OpenERP SA',
+R.U.C único para terceros
+==================
+Se agrega una restricción para evitar duplicaciones del número de identificación en terceros, excepto en empresas con relación padre/hijo. Basado en el código del módulo partner_vat_unique de ADHOC S.A. www.adhoc.com.ar """,
+
+    'author':  'Fábrica de Software Libre',
+    'website': 'www.libre.ec',
+    'images': [
+    ],
     'depends': [
-                'account',
-                'base_vat',
-                'base_iban',
-                'account_chart',
-                'account_coda',
-                ],
-    'init_xml': [],
-    'update_xml': [
-                'account_tax_code.xml',
-                'account_chart.xml',
-                'account_tax.xml',
-                'l10n_chart_ec_wizard.xml',
-                   ],
-    'demo_xml': [],
+        'base'
+    ],
+    'data': [
+    ],
+    'demo': [
+    ],
+    'test': [
+    ],
     'installable': True,
+    'auto_install': False,
+    'application': False,
 }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

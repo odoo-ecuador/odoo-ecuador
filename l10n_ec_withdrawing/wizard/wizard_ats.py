@@ -123,7 +123,7 @@ class wizard_ats(osv.osv_memory):
         journal_obj = self.pool.get('account.journal')
         wiz = self.browse(cr, uid, ids)[0]
         period_id = wiz.period_id.id
-        ruc = wiz.company_id.partner_id.ced_ruc
+        ruc = wiz.company_id.partner_id.vat
         ats = etree.Element('iva')
         etree.SubElement(ats, 'TipoIDInformante').text = 'R'
         etree.SubElement(ats, 'IdInformante').text = str(ruc)
@@ -145,10 +145,10 @@ class wizard_ats(osv.osv_memory):
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detallecompras = etree.Element('detalleCompras')
             etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code
-            if not inv.partner_id.ced_ruc:
+            if not inv.partner_id.vat:
                 raise osv.except_osv('Datos incompletos', 'No ha ingresado toda los datos de %s' % inv.partner_id.name)
-            etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_ced_ruc]
-            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.ced_ruc
+            etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_vat]
+            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.vat
             if inv.auth_inv_id:
                 tcomp = inv.auth_inv_id.type_id.code
             else:
@@ -226,8 +226,8 @@ class wizard_ats(osv.osv_memory):
             self.__logger.info("Ventas registradas: %s" % len(inv_ids))
             for inv in inv_obj.browse(cr, uid, inv_ids):
                 if not pdata.get(inv.partner_id.id, False):
-                    partner_data = {inv.partner_id.id: {'tpIdCliente': inv.partner_id.type_ced_ruc,
-                                                        'idCliente': inv.partner_id.ced_ruc,
+                    partner_data = {inv.partner_id.id: {'tpIdCliente': inv.partner_id.type_vat,
+                                                        'idCliente': inv.partner_id.vat,
                                                         'numeroComprobantes': 0,
                                                         'basenoGraIva': 0,
                                                         'baseImponible': 0,

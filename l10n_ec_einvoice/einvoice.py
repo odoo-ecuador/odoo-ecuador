@@ -22,6 +22,7 @@
 ##############################################################################
 
 
+from openerp import fields, models, api, _
 import time
 from datetime import datetime
 import logging
@@ -34,22 +35,23 @@ from lxml import etree
 from xml.dom.minidom import parse, parseString
 from socket import error as SocketError
 
-from osv import osv, fields
-from tools import config
-from tools.translate import _
-from tools import ustr
-import decimal_precision as dp
-import netsvc
+from openerp.tools import config
+from openerp.tools.translate import _
+from openerp.tools import ustr
+import openerp.netsvc
 
 import utils
 from .xades.sri import SriService, DocumentXML
 from .xades.xades import Xades
 
-try:
-    from suds.client import Client
-    from suds.transport import TransportError
-except ImportError:
-    raise ImportError('Instalar Libreria suds')
+'''
+Error al importar la Libreria suds, no se elimina el código por posible requerimiento posterior.
+'''
+#try:
+#    from suds.client import Client
+#    from suds.transport import TransportError
+#except ImportError:
+#    raise ImportError('Instalar Libreria suds')
 
 tipoDocumento = {
     '01': '01',
@@ -83,21 +85,19 @@ tarifaImpuesto = {
     'other': '7',
 }
 
-class AccountInvoice(osv.osv):
+class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
     
-    _columns = {
-        'clave_acceso': fields.char('Clave de Acceso', size=49, readonly=True),
-        'numero_autorizacion': fields.char('Número de Autorización', size=37, readonly=True),
-        'estado_autorizacion': fields.char('Estado de Autorización', size=64, readonly=True),
-        'fecha_autorizacion':  fields.datetime('Fecha Autorización', readonly=True),
-        'ambiente': fields.char('Ambiente', size=64, readonly=True),
-        'autorizado_sri': fields.boolean('¿Autorizado SRI?', readonly=True),
-        'security_code': fields.char('Código de Seguridad', size=8),
-	'emission_code': fields.char('Tipo de Emisión', size=1),
-        }
+    clave_acceso = fields.Char('Clave de Acceso', size=49, readonly=True)
+    numero_autorizacion = fields.Char('Número de Autorización', size=37, readonly=True)
+    estado_autorizacion = fields.Char('Estado de Autorización', size=64, readonly=True)
+    fecha_autorizacion = fields.dDatetime('Fecha Autorización', readonly=True)
+    ambiente = fields.Char('Ambiente', size=64, readonly=True)
+    autorizado_sri = fields.Boolean(string='¿Autorizado SRI?', readonly=True)
+    security_code = fields.Char(string='Código de Seguridad', size=8)
+    emission_code = fields.Char('Tipo de Emisión', size=1)
 
     def _get_tax_element(self, invoice, access_key, emission_code):
         """
@@ -109,7 +109,7 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
         etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
-        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
+        etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.vat
         etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
         etree.SubElement(infoTributaria, 'codDoc').text = tipoDocumento[auth.type_id.code]
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
@@ -129,9 +129,9 @@ class AccountInvoice(osv.osv):
         if company.company_registry:
             etree.SubElement(infoFactura, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
-        etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
+        etree.SubElement(infoFactura, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_vat]
         etree.SubElement(infoFactura, 'razonSocialComprador').text = partner.name
-        etree.SubElement(infoFactura, 'identificacionComprador').text = partner.ced_ruc
+        etree.SubElement(infoFactura, 'identificacionComprador').text = partner.vat
         etree.SubElement(infoFactura, 'totalSinImpuestos').text = '%.2f' % (invoice.amount_untaxed)
         etree.SubElement(infoFactura, 'totalDescuento').text = '0.00'#'%.2f' % (invoice.discount_total)
         
@@ -163,9 +163,9 @@ class AccountInvoice(osv.osv):
         infoNotaCredito = etree.Element('infoNotaCredito')
         etree.SubElement(infoNotaCredito, 'fechaEmision').text = time.strftime('%d/%m/%Y',time.strptime(refund.date_invoice, '%Y-%m-%d'))
         etree.SubElement(infoNotaCredito, 'dirEstablecimiento').text = company.street2
-        etree.SubElement(infoNotaCredito, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
+        etree.SubElement(infoNotaCredito, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_vat]
         etree.SubElement(infoNotaCredito, 'razonSocialComprador').text = partner.name
-        etree.SubElement(infoNotaCredito, 'identificacionComprador').text = partner.ced_ruc
+        etree.SubElement(infoNotaCredito, 'identificacionComprador').text = partner.vat
         etree.SubElement(infoNotaCredito, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoNotaCredito, 'obligadoContabilidad').text = 'SI'
         etree.SubElement(infoNotaCredito, 'codDocModificado').text = '01'
@@ -305,7 +305,7 @@ class AccountInvoice(osv.osv):
         fecha = ''.join(ld)
         #
         tcomp = tipoDocumento[auth.type_id.code]
-        ruc = invoice.company_id.partner_id.ced_ruc
+        ruc = invoice.company_id.partner_id.vat
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
         numero = invoice.number[6:15]
         #TODO: security code
