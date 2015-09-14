@@ -75,10 +75,18 @@ class Partner(osv.osv):
                 return True
             if partner.type_ced_ruc == 'pasaporte':
                 return True
-            if partner.tipo_persona == '9':
-                return self._check_ruc(partner)
-            else:
-                return self._check_cedula(partner.ced_ruc)
+            elif partner.type_ced_ruc == 'ruc':
+                if not len(partner.ced_ruc) == 13:
+                    return False
+                if partner.tipo_persona == '9':
+                    return self._check_ruc(partner)
+                else:
+                    return self._check_cedula(partner.ced_ruc)
+            elif partner.type_ced_ruc == 'cedula':
+                if not len(partner.ced_ruc) == 10:
+                    return False
+                else:
+                    return self._check_cedula(partner.ced_ruc)
 
     _columns = {
         'ced_ruc': fields.char('Cedula/ RUC',
@@ -98,6 +106,7 @@ class Partner(osv.osv):
             string='Persona',
             required=True
             ),
+        'tradename': fields.char('Nombre Comercial', size=300),
         }
 
     _defaults = {
