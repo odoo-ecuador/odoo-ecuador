@@ -74,7 +74,7 @@ class Partner(models.Model):
                 return True
             if partner.type_ced_ruc == 'pasaporte':
                 return True
-            if partner.tipo_persona == '9':
+            if partner.property_account_position.tipo_persona == '9':
                 return self._check_ruc(partner)
             else:
                 return self._check_cedula(partner.vat)
@@ -90,13 +90,17 @@ class Partner(models.Model):
          ],
         'Tipo de documento',
         required=True)
-    tipo_persona = fields.Selection(
-        [('6','Persona Natural'),
-         ('9','Persona Jurídica')],
-        string='Persona',
-        required=True,
-        default="9"
-        )
+        
+### Este código se mantiene por compatibilidad con la versión anterior, eliminar en cuanto sea posible.        
+    tipo_persona = fields.Char(
+        string='Persona (compatibilidad)')
+
+    @api.one # con este on_change hacemos que el valor del tipo persona de la posición fiscal se copie automáticamente al partner.
+    @api.onchange('property_account_position')
+    def _onchange_property_account_position(self):
+        if self.property_account_position:
+            self.tipo_persona = str(self.property_account_position.tipo_persona)    
+### Fin del código de compatibilidad
 
     _constraints = [
         (_check_vat, 'Existe un error en su número de Idenficacion', ['vat'])
@@ -106,4 +110,15 @@ class ResCompany(models.Model):
     _inherit = 'res.company'
     
     ruc_contador = fields.Char('R.U.C del Contador', size=13)
-    cedula_rl = fields.Char('Cédula del Representante Legal', size=10)  
+    cedula_rl = fields.Char('Cédula del Representante Legal', size=10)
+    
+class AccountFiscalPosition(models.Model):
+    _inherit = 'account.fiscal.position'
+    
+    tipo_persona = fields.Selection(
+        [('6','Persona Natural'),
+         ('9','Persona Jurídica')],
+        string='Tipo de contribuyente',
+        required=True,
+        default="9"
+        )

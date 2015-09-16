@@ -35,8 +35,6 @@
   <field name="inherit_id" ref="base.view_partner_form"/>
   <field name="arch" type="xml">
     <xpath expr="//field[@name='parent_id']" position="after">
-      <field name="tipo_persona"
-             placeholder="Tipo de contribuyente"/>
       <field name="type_ced_ruc"
              placeholder="Tipo de identificación"/>
       <field name="vat"
@@ -46,6 +44,37 @@
   </field>
 </record>
 
+<!-- Agrega el campo tipo_persona a la vista de la posición fiscal -->
+<record id="view_account_position_form_ec" model="ir.ui.view">
+  <field name="name">view.account.position.form.ec.inherit</field>
+  <field name="model">account.fiscal.position</field>
+  <field name="inherit_id" ref="account.view_account_position_form"/>
+  <field name="arch" type="xml">
+    <xpath expr="//field[@name='country_id']" position="after">
+      <field name="tipo_persona"
+             required="1"
+             />   
+    <newline/> 
+    </xpath>
+  </field>
+</record>
+
+<!-- Edita la vista de res_partner para agregar la posición fiscal -->
+<record id="view_partner_property_form_ec" model="ir.ui.view">
+  <field name="name">view.partner.property.form.ec.inherit</field>
+  <field name="model">res.partner</field>
+  <field name="inherit_id" ref="account.view_partner_property_form"/>
+  <field name="arch" type="xml">
+    <xpath expr="//field[@name='property_account_position']" position="replace">  
+    </xpath>
+    <xpath expr="//field[@name='parent_id']" position="after">
+      <field name="property_account_position"
+             placeholder="Posición Fiscal"
+             options="{'no_quick_create':True,'no_create_edit':True}"/>   
+    <newline/> 
+    </xpath>
+  </field>
+</record>
 
 <!-- Compania -->
 

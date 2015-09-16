@@ -32,7 +32,6 @@ class TestAuthorisation(TransactionCase):
                 'vat': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
                 'type_ced_ruc': 'cedula',
-                'tipo_persona': '6'
             }
         )
         
