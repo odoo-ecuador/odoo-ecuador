@@ -4,11 +4,10 @@ __author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
 
 import time
 from datetime import datetime
+from openerp import models, fields, api
 
-from openerp.osv import osv, orm, fields
 
-
-class Partner(osv.osv):
+class Partner(models.Model):
 
     _name = 'res.partner'
     _inherit = 'res.partner'
@@ -80,47 +79,31 @@ class Partner(osv.osv):
             else:
                 return self._check_cedula(partner.vat)
 
-    _columns = {
-        'vat': fields.char('Cedula/ RUC',
-                               size=13,
-                               required=True,
-                               help='Idenficacion o Registro Unico de Contribuyentes'),
-        'type_ced_ruc': fields.selection([
-            ('cedula','Cedula'),
-            ('ruc','RUC'),
-            ('pasaporte','Pasaporte')
-            ],
-            'Tipo ID',
-            required=True),
-        'tipo_persona': fields.selection(
-            [('6','Persona Natural'),
-            ('9','Persona Juridica')],
-            string='Persona',
-            required=True
-            ),
-        }
-
-    _defaults = {
-        'tipo_persona': '9',
-        'is_company': True
-        }
+    vat = fields.Char('Cédula, RUC o Pasaporte',
+                      size=13,
+                      required=True,
+                      help='Idenficacion o Registro Unico de Contribuyentes')
+    type_ced_ruc = fields.Selection(
+        [('cedula','Cédula'),
+         ('ruc','R.U.C'),
+         ('pasaporte','Pasaporte')
+         ],
+        'Tipo de documento',
+        required=True)
+    tipo_persona = fields.Selection(
+        [('6','Persona Natural'),
+         ('9','Persona Jurídica')],
+        string='Persona',
+        required=True,
+        default="9"
+        )
 
     _constraints = [
-        (_check_vat, 'Error en su Cedula/RUC/Pasaporte', ['vat'])
+        (_check_vat, 'Existe un error en su número de Idenficacion', ['vat'])
         ]
 
-# Se reemplaza por el modulo ec_id_unico para permitir relacion entre subsidiarias.
-#   _sql_constraints = [
-#        ('partner_unique',
-#         'unique(vat,type_ced_ruc,tipo_persona,company_id)',
-#         u'El identificador es único.'),
-#        ]
-
-
-class ResCompany(osv.Model):
+class ResCompany(models.Model):
     _inherit = 'res.company'
-
-    _columns = {
-        'ruc_contador': fields.char('Ruc del Contador', size=13),
-        'cedula_rl': fields.char('Cédula Representante Legal', size=10),
-        }
+    
+    ruc_contador = fields.Char('R.U.C del Contador', size=13)
+    cedula_rl = fields.Char('Cédula del Representante Legal', size=10)  

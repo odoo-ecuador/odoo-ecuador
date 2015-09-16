@@ -35,14 +35,14 @@
   <field name="inherit_id" ref="base.view_partner_form"/>
   <field name="arch" type="xml">
     <xpath expr="//field[@name='parent_id']" position="after">
-      <field name="vat" placeholder="Cédula / RUC"/>
-      <field name="type_ced_ruc" placeholder="Tipo de Identificador"/>
-      <field name="tipo_persona" placeholder="Tipo de Persona"/>
-    <newline/>
+      <field name="tipo_persona"
+             placeholder="Tipo de contribuyente"/>
+      <field name="type_ced_ruc"
+             placeholder="Tipo de identificación"/>
+      <field name="vat"
+             placeholder="Número de identificación"/>
+      <newline/> 
     </xpath>
-    <!-- xpath expr="//field[@name='property_account_position']" position="attributes">
-      <attribute name="required">1</attribute>
-    </xpath -->
   </field>
 </record>
 

@@ -30,7 +30,8 @@
         'view/partner_view.xml',
     ],
     'depends' : [
-      'base'
+      'base',
+      'account', # se agrega la dependencia para usar la posición fiscal.    
     ],
     'js': [
     ],
