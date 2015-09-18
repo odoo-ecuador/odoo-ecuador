@@ -24,4 +24,3 @@ def check_service(env='prueba'):
     if i == 3:
         flag = True
     return flag
-

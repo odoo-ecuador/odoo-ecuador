@@ -48,7 +48,12 @@
     'test': [
     ],
     'description': '''
-    This module allows make Electronic Documents for Ecuador
+    <p>Este módulo permite generar documentos electrónicos para Ecuador.</br>
+    Requiere la instalación de la librería suds-jurko: </br>
+    En debian/Ubuntu:</br>
+    apt-get -y install python-pip</br>
+    pip install suds-jurko</br>
+    Si está utilizando la imagen docker-odoo-ecuador, la librería se encuentra instalada.</p>
     ''',
     'installable': True,
     'auto_install': False,

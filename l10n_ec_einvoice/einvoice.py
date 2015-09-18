@@ -44,14 +44,11 @@ import utils
 from .xades.sri import SriService, DocumentXML
 from .xades.xades import Xades
 
-'''
-Error al importar la Libreria suds, no se elimina el código por posible requerimiento posterior.
-'''
-#try:
-#    from suds.client import Client
-#    from suds.transport import TransportError
-#except ImportError:
-#    raise ImportError('Instalar Libreria suds')
+
+    from suds.client import Client
+    from suds.transport import TransportError
+except ImportError:
+    raise ImportError('La librería suds es requerida: pip install suds-jurko==0.7.dev0')
 
 tipoDocumento = {
     '01': '01',

@@ -43,7 +43,7 @@ try:
     from suds.client import Client
     from suds.transport import TransportError
 except ImportError:
-    raise ImportError('Instalar Libreria suds')
+    raise ImportError('La librería suds es requerida: pip install suds-jurko==0.7.dev0')
 
 from .xades.sri import SriService, DocumentXML
 
