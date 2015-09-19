@@ -31,7 +31,7 @@ import subprocess
 try:
     from OpenSSL import crypto
 except ImportError:
-    raise ImportError('Instalar la libreria para soporte OpenSSL: pip install PyOpenSSL')
+    raise ImportError('Instalar la libreria para soporte OpenSSL: python-openssl (en caso de no funcionar, use: pip install PyOpenSSL')
 
 from lxml import etree
 from pytz import timezone
