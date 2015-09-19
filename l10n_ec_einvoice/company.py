@@ -29,11 +29,11 @@ class Company(models.Model):
     electronic_signature = fields.Char('Firma Electrónica', size=128, required=True)
     password_electronic_signature = fields.Char('Clave Firma Electrónica', size=128, required=True)
     emission_code = fields.Selection([('1','Normal'),
-                                      ('2','Indisponibilidad')],
-                                      string='Tipo de Emisión',
-                                      required=True,
-                                      default='1')
-    contingency_key_ids = fields.One2many('res.company.contingency.key','company_id', string='Claves de Contingencia', help='Claves de contingencia relacionadas con esta empresa.'),
+                                    ('2','Indisponibilidad')],
+                                    string='Tipo de Emisión',
+                                    required=True,
+                                    default='1')
+    contingency_key_ids = fields.One2many('res.company.contingency.key','company_id', string='Claves de Contingencia', help='Claves de contingencia relacionadas con esta empresa.')
 
 class CompanyContingencyKey(models.Model):
     _name = 'res.company.contingency.key'
@@ -48,8 +48,8 @@ class CompanyContingencyKey(models.Model):
             
     key = fields.Char(string='Clave', size=37, required=True)
     used = fields.Boolean(string='¿Utilizada?',
-                          readonly=True,
-                          default=False)
+                        readonly=True,
+                        default=False)
     company_id = fields.Many2one('res.company', string='Empresa', required=True, default='_get_company')
     
     _sql_constraints = [

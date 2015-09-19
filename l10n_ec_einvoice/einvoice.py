@@ -44,7 +44,7 @@ import utils
 from .xades.sri import SriService, DocumentXML
 from .xades.xades import Xades
 
-
+try:
     from suds.client import Client
     from suds.transport import TransportError
 except ImportError:
@@ -90,7 +90,7 @@ class AccountInvoice(models.Model):
     clave_acceso = fields.Char('Clave de Acceso', size=49, readonly=True)
     numero_autorizacion = fields.Char('Número de Autorización', size=37, readonly=True)
     estado_autorizacion = fields.Char('Estado de Autorización', size=64, readonly=True)
-    fecha_autorizacion = fields.dDatetime('Fecha Autorización', readonly=True)
+    fecha_autorizacion = fields.Datetime('Fecha Autorización', readonly=True)
     ambiente = fields.Char('Ambiente', size=64, readonly=True)
     autorizado_sri = fields.Boolean(string='¿Autorizado SRI?', readonly=True)
     security_code = fields.Char(string='Código de Seguridad', size=8)

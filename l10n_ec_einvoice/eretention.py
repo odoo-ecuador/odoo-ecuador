@@ -30,14 +30,15 @@ import subprocess
 
 from lxml import etree
 
-from osv import osv, fields
-from tools import config
-from tools.translate import _
-from tools import ustr
+from openerp.osv import osv, fields
+from openerp.tools import config
+from openerp.tools.translate import _
+from openerp.tools import ustr
 from xml.dom.minidom import parse, parseString
 
-import decimal_precision as dp
-import netsvc
+# Comentado para permitir la instalacion en V8
+# import decimal_precision as dp
+import openerp.netsvc
 
 try:
     from suds.client import Client
