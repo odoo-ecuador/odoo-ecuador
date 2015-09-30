@@ -120,18 +120,25 @@
 	  <attribute name="required">1</attribute>
 	</xpath>
 	<xpath expr="//field[@name='journal_id']" position="after">
-	  <field name="manual_ret_num"/>
-          <field name="sustento_id" required="1" widget="selection"/>
+	  <label string="Nro. de Retención" for="withdrawing_number"/>
+	  <div>
+	    <field name="create_retention_type" class="oe_inline"/> - 
+	    <field name="withdrawing_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
+            <field name="sustento_id" placeholder="Sustento" required="1" options="{'no_open': True, 'create': false, 'create_edit': false}" class="oe_inline oe_edit_only"/>
+	  </div>
 	  <field name="retention_ir" invisible="1"/>
 	  <field name="retention_vat" invisible="1"/>
-          <field name="create_retention_type"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
 	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}' 
 		 context="{'default_partner_id': partner_id}"/>
 	</xpath>
+	<xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
+	  <attribute name="placeholder">000004321 (9 dígitos)</attribute>
+	</xpath>	
 	<xpath expr="//field[@name='amount_total']" position="replace">
 	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+	  <field name="amount_tax_retention"/>
 	  <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	</xpath>
         <xpath expr="//button[@name='invoice_open'][last()]" position="after">
@@ -143,24 +150,10 @@
 	</xpath>
       </field>
     </record>
-    <!--
-       journal views
-       -->
-    <record id="view_journal_auths_form" model="ir.ui.view">
-      <field name="name">account.journal.auths.form</field>
-      <field name="model">account.journal</field>
-      <field name="inherit_id" ref="account.view_account_journal_form"/>
-      <field name="arch" type="xml">
-	<field name="sequence_id" position="after">
-	  <field name="auth_id" domain="[('in_type','=','interno')]" context="{'in_type':'interno'}"/>
-	  <field name="auth_ret_id" domain="[('in_type','=','interno')]" context="{'in_type': 'interno'}"/>
-	</field>
-      </field>
-    </record>
 
     <!--
-       Retention object
-      -->
+       Withdrawing object
+    -->
 
     <record id="view_account_retention_tree" model="ir.ui.view">
       <field name="name">view.account.retention.tree</field>
@@ -193,21 +186,30 @@
 	    <field name="state" widget="statusbar"/>
 	  </header>
 	  <sheet>
+	    <div class="oe_title">
+	      <h1>
+		<label string="Retención Borrador" attrs="{'invisible': [('state','!=','draft')]}"/>
+		<label string="Retención Generada" attrs="{'invisible': [('state','=','draft')]}"/>
+		<field name="name" class="oe_inline" />
+	      </h1>
+	    </div>
 	    <group>
 	      <group>
-		<field name="name"  attrs="{'invisible':[('state','=','done')]}"/>
 		<field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
 		<field name="invoice_id" on_change="onchange_invoice(invoice_id)"
                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<field name="date" select="1"/>
+		<field name="in_type" required="1"/>		
 		<field name="manual" invisible="1"/>
 		<field name="to_cancel"/>
 	      </group>
 	      <group>
 		<field name="auth_id" select="1" domain="[('in_type','=','interno')]"/>
-		<field name="type" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-		<field name="date" select="1"/>
-		<field name="in_type" required="1"/>
-		<field name="num_document" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		<label string="Comprobante" for="type"/>
+		<div>
+		  <field name="type" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		  <field name="num_document" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+		</div>
 		<field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>
 	      </group>
 	    </group>
@@ -225,9 +227,10 @@
 		    <field name="amount"/>
 		  </tree>
 		</field>
-		<group>
-		  <field name="amount_total" widget="monetary"/>
+		<group class="oe_subtotal_footer oe_right">
+		  <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
 		</group>
+		<separator string=""/>
 	      </page>
 	    </notebook>
 	  </sheet>
@@ -312,7 +315,7 @@
                               domain="[('supplier', '=', True)]"/>
                             <field name="fiscal_position" widget="selection"/>
                             <field name="origin"/>
-			    <field name="manual_ret_num"/>
+			    <field name="withdrawing_number"/>
 			    <field name="sustento_id" required="1"/>
                         </group>
                         <group>
