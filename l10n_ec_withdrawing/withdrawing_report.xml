@@ -5,10 +5,10 @@
     <report auto="False"
 	    id="report_account_move" 
 	    model="account.move"
-	    name="account.move"
+	    name="account.move" menu="False"
 	    rml="retention/report/report_move.rml" string="Comprobante Contable"/>
 
-    <report auto="False" id="account.retention" model="account.retention"
+    <report auto="False" id="account.retention" model="account.retention" menu="False"
             name="account.retention" rml="l10n_ec_withdrawing/report/account_retention.mako"
             usage="default" string="Retención" header="False" report_type="webkit"/>
     

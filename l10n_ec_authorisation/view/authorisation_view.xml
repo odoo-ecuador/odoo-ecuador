@@ -12,34 +12,34 @@
       <field name="inherit_id" ref="account.view_account_journal_form"/>
       <field name="arch" type="xml">
 	<field name="sequence_id" position="after">
-	  <field name="auth_id"/>
-	  <field name="auth_ret_id"/>	  
+	  <field name="auth_id" context="{'default_in_type': 'interno'}"/>
+	  <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>	  
 	</field>
       </field>
     </record>
-	
-<record id="view_partner_auth_form" model="ir.ui.view">
-  <field name="name">account.partner.auth.form</field>
-  <field name="model">res.partner</field>
-  <field name="inherit_id" ref="base.view_partner_form"/>
-  <field name="arch" type="xml">
-  <notebook position="inside">
-    <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-      <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
-        <tree string="Autorizaciones" editable="top">
-          <field name="name" required="1"/>
-          <field name="serie_emision" required="1"/>
-          <field name="serie_entidad" required="1"/>
-          <field name="num_start" required="1"/>
-          <field name="num_end" required="1"/>
-          <field name="expiration_date" required="1"/>
-          <field name="type_id"/>
-        </tree>
+    
+    <record id="view_partner_auth_form" model="ir.ui.view">
+      <field name="name">account.partner.auth.form</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+	<notebook position="inside">
+	  <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
+	    <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
+              <tree string="Autorizaciones" editable="top">
+		<field name="name" required="1"/>
+		<field name="serie_emision" required="1"/>
+		<field name="serie_entidad" required="1"/>
+		<field name="num_start" required="1"/>
+		<field name="num_end" required="1"/>
+		<field name="expiration_date" required="1"/>
+		<field name="type_id"/>
+              </tree>
+	    </field>
+	  </page>
+	</notebook>
       </field>
-    </page>
-  </notebook>
-  </field>
-</record>
+    </record>
 
     <record id="view_account_auth_tree" model="ir.ui.view">
       <field name="name">account.auth.tree</field>

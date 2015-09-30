@@ -3,8 +3,8 @@
 import time
 from datetime import datetime
 
-from openerp import models, fields, fields, api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import models, fields, api
+from openerp.exceptions import Warning
 
 
 class AccountAtsDoc(models.Model):
@@ -112,7 +112,7 @@ class AccountAuthorisation(models.Model):
     serie_emision = fields.Char('Serie Emision', size=3, required=True)
     num_start = fields.Integer('Desde', required=True)
     num_end = fields.Integer('Hasta', required=True)
-    is_electronic = fields.Boolean('Factura Electrónica')
+    is_electronic = fields.Boolean('Documento Electrónico ?')
     expiration_date = fields.Date('Vence', required=True)
     active = fields.Boolean(
         compute='_check_active',
