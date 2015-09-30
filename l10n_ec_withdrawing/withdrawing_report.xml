@@ -13,11 +13,11 @@
             usage="default" string="Retención" header="False" report_type="webkit"/>
     
     <report auto="False" id="account.account_invoices" model="account.invoice"
-            name="account.invoice2" rml="retention/report/account_invoice.mako"
+            name="account.invoice2" rml="retention/report/account_invoice.mako" menu="False"
             usage="default" string="Factura" header="False" report_type="webkit"/>
 
    <report auto="False" id="account.account_liq" model="account.invoice"
-            name="account.liq" rml="retention/report/account_liq.mako"
+            name="account.liq" rml="retention/report/account_liq.mako" menu="False"
             usage="default" string="Liquidación" header="False" report_type="webkit"/>
 
   </data>

@@ -120,18 +120,24 @@
 	  <attribute name="required">1</attribute>
 	</xpath>
 	<xpath expr="//field[@name='journal_id']" position="after">
-	  <field name="manual_ret_num"/>
-          <field name="sustento_id" required="1" widget="selection"/>
+	  <label string="Nro. de Retención" for="withdrawing_number"/>
+	  <div>
+	    <field name="withdrawing_number" class="oe_inline"/>
+            <field name="sustento_id" placeholder="Sustento" required="1" options="{'no_open': True, 'create': false, 'create_edit': false}" class="oe_inline oe_edit_only"/>
+	  </div>
 	  <field name="retention_ir" invisible="1"/>
 	  <field name="retention_vat" invisible="1"/>
-          <field name="create_retention_type"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
 	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}' 
 		 context="{'default_partner_id': partner_id}"/>
 	</xpath>
+	<xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
+	  <attribute name="placeholder">000004321 (9 dígitos)</attribute>
+	</xpath>	
 	<xpath expr="//field[@name='amount_total']" position="replace">
 	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+	  <field name="amount_tax_retention"/>
 	  <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	</xpath>
         <xpath expr="//button[@name='invoice_open'][last()]" position="after">
@@ -312,7 +318,7 @@
                               domain="[('supplier', '=', True)]"/>
                             <field name="fiscal_position" widget="selection"/>
                             <field name="origin"/>
-			    <field name="manual_ret_num"/>
+			    <field name="withdrawing_number"/>
 			    <field name="sustento_id" required="1"/>
                         </group>
                         <group>

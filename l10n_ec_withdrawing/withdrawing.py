@@ -620,7 +620,7 @@ class Invoice(models.Model):
         store=True, readonly=True, compute='_compute_amount')
     amount_noret_ir = fields.Float(string='Monto no sujeto a IR', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax_retention = fields.Float(string='Total Retencion', digits_compute=PRECISION_DP,
+    amount_tax_retention = fields.Float(string='Total Retenciones', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax_ret_ir = fields.Float(string='Base IR', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
@@ -638,22 +638,23 @@ class Invoice(models.Model):
         store=True, readonly=True, compute='_compute_amount')
     amount_novat = fields.Float(string='Base No IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    create_retention_type = fields.Selection([
-            ('normal','Automatico'),
-            ('manual', 'Manual'),
-            ('reserve','Num Reservado'),
-            ('no_retention', 'No Generar')
-        ], string='Numerar Retención', readonly=True, states={'draft': [('readonly', False)]},
-        help=HELP_RET_TEXT)
     auth_inv_id = fields.Many2one('account.authorisation', string='Autorización SRI',
          readonly=True, states={'draft': [('readonly', False)]},
          help = 'Autorizacion del SRI para documento recibido')
     retention_id = fields.Many2one('account.retention', string='Retención de Impuestos',
          store=True, readonly=True)
-    retention_ir = fields.Boolean(string="Tiene Retención en IR", 
-         store=True, readonly=True, compute='_check_retention')
-    retention_vat = fields.Boolean(string='Tiene Retencion en IVA', 
-         store=True, readonly=True, compute='_check_retention')
+    retention_ir = fields.Boolean(
+        compute='_check_retention',
+        string="Tiene Retención en IR", 
+        store=True,
+        readonly=True,
+        )
+    retention_vat = fields.Boolean(
+        compute='_check_retention',
+        string='Tiene Retencion en IVA', 
+        store=True,
+        readonly=True,
+        )
     no_retention_ir = fields.Boolean(string='No objeto de Retención', 
          store=True, readonly=True, compute='_check_retention')
     type = fields.Selection([
@@ -663,7 +664,7 @@ class Invoice(models.Model):
             ('in_refund','Supplier Refund'),
             ('liq_purchase','Liquidacion de Compra')
             ],'Type', readonly=True, select=True, change_default=True)
-    manual_ret_num = fields.Integer(string='Num. Retención', 
+    withdrawing_number = fields.Integer(string='Num. Retención', 
         readonly=True, states = {'draft': [('readonly', False)]})
     sustento_id = fields.Many2one('account.ats.sustento', string='Sustento del Comprobante')
 
@@ -702,42 +703,34 @@ class Invoice(models.Model):
         retencion
         
         número de factura: suppplier_invoice_number
-        número de retención: manual_ret_num
+        número de retención: withdrawing_number
         """
-        INV_MIN_LIMIT = 9  # CHECK: mover a compañia ?
-        INV_MAX_LIMIT = 15
-        LIMITS = [
-            INV_MIN_LIMIT,
-            INV_MAX_LIMIT
-            ]
+        INV_LIMIT = 9  # CHECK: mover a compañia ?
 
         for obj in self:
             if obj.state in ['open', 'paid', 'cancel']:
                 return True
             if obj.type == 'out_invoice':
                 return True
-            if not len(obj.supplier_invoice_number) in LIMITS:
-                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
+            if not len(obj.supplier_invoice_number) ==  INV_LIMIT:
+                raise Warning('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)
 
             auth = obj.auth_inv_id
 
             inv_number = obj.supplier_invoice_number
 
-            if len(obj.supplier_invoice_number) == INV_MAX_LIMIT:
-                inv_number = obj.supplier_invoice_number[6:15]
-            
             if not auth:
                 raise except_orm(_('Error!'), _(u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'))
 
-            if not auth_obj.is_valid_number(auth.id, int(inv_number)):
-                raise except_orm(_('Error!'), _(u'Número de factura fuera de rango.'))
+            if not self.env['account.authorisation'].is_valid_number(auth.id, int(inv_number)):
+                raise Warning(_('Error!'), _(u'Número de factura fuera de rango.'))
 
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
                     raise except_orm(_('Error!'), _(u'No ha cofigurado una autorización de retenciones.'))
 
-                if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.manual_ret_num)):
+                if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):
                     raise except_orm(_('Error!'), _(u'El número de retención no es válido.'))
         return True
 
@@ -753,12 +746,15 @@ class Invoice(models.Model):
     @api.multi
     def copy_data(self):
         res = super(Invoice, self).copy_data()
-        res.update({'reference': False,
-                    'auth_inv_id': False,
-                    'retention_id': False,
-                    'supplier_invoice_number': False,
-                    'manual_ret_num': False,
-                    'retention_numbers': False})
+        data = {
+            'reference': False,
+            'auth_inv_id': False,
+            'retention_id': False,
+            'supplier_invoice_number': False,
+            'wthidrawing_number': False,
+            'retention_numbers': False
+        }
+        res.update(data)
         return res
 
     @api.multi
@@ -776,7 +772,6 @@ class Invoice(models.Model):
 
     @api.multi
     def action_cancel_draft(self):
-        retention_obj = self.pool.get('account.retention')
         for inv in self:
             if inv.retention_id:
                 self.env['account.retention'].unlink()
@@ -820,20 +815,9 @@ class Invoice(models.Model):
                             num = inv.supplier_number
                             account_invoice_tax = self.env['account.invoice.tax'].browse(line.id)
                             account_invoice_tax.write({'retention_id': ret_id.id, 'num_document': num})
-                    if num_ret:
-                        self.env['account.retention'].action_validate(ret_id.id, num_ret)
-                    elif inv.create_retention_type == 'normal':
-                        self.env['account.retention'].action_validate(ret_id.id)
-                    elif inv.create_retention_type == 'manual':
-                        if inv.manual_ret_num == 0:
+                        if inv.withdrawing_number == 0:
                             raise except_orm(_('Error!'), _(u'El número de retención es incorrecto.'))
-                        self.env['account.retention'].action_validate(ret_id.id, inv.manual_ret_num)
-                    elif inv.create_retention_type == 'reserve':
-                        if inv.retention_numbers:
-                            ret_num = self.env['account.retention.cache'].get_number(inv.retention_numbers)
-                            self.env['account.retention'].action_validate(ret_id.id, ret_num)
-                        else:
-                            raise except_orm(_('Error!'), _(u'Corrija el método de numeración de la retención'))
+                        self.env['account.retention'].action_validate(ret_id.id, inv.withdrawing_number)
                     self.write({'retention_id': ret_id.id})
                 else:
                     raise except_orm(

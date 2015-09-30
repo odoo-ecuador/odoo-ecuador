@@ -8,17 +8,16 @@
             <field name="signal">invoice_open</field>
         </record>
 
-        <record id="account.act_open" model="workflow.activity">
-            <field name="wkf_id" ref="account.wkf"/>
-            <field name="name">open</field>
-            <field name="action">action_date_assign()
+    <record id="account.act_open" model="workflow.activity">
+      <field name="wkf_id" ref="account.wkf"/>
+      <field name="name">open</field>
+      <field name="action">action_date_assign()
 action_move_create()
 action_number()
 action_retention_create()
-write({'state':'open'})</field>
-            <field name="kind">function</field>
-        </record>
-
+invoice_validate()</field>
+      <field name="kind">function</field>
+    </record>	
 
         <record id="account.act_cancel" model="workflow.activity">
             <field name="wkf_id" ref="account.wkf"/>
