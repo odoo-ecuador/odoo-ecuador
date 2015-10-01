@@ -105,17 +105,27 @@ class wizard_ats(osv.osv_memory):
 
     def _get_ret_iva(self, invoice):
         """
-        Return (valorRetServicios, valorRetServ100)
+        Return (valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100)
         """
+        retBien10 = 0
+        retServ20 = 0
+        retBien = 0
         retServ = 0
         retServ100 = 0
         for tax in invoice.tax_line:
+            if tax.tax_group == 'ret_vat_b':
+                if tax.percent == '10':
+                    retBien10 += abs(tax.tax_amount)
+                else:
+                    retBien += abs(tax.tax_amount)
             if tax.tax_group == 'ret_vat_srv':
                 if tax.percent == '100':
                     retServ100 += abs(tax.tax_amount)
+                elif tax.percent == '20':
+                    retServ20 += abs(tax.tax_amount)
                 else:
                     retServ += abs(tax.tax_amount)
-        return retServ, retServ100
+        return retBien10, retServ20, retBien, retServ, retServ100
 
     def act_export_ats(self, cr, uid, ids, context):
         conret = 0
@@ -173,12 +183,17 @@ class wizard_ats(osv.osv_memory):
             etree.SubElement(detallecompras, 'baseNoGraIva').text = inv.amount_novat==0 and '0.00' or '%.2f'%inv.amount_novat
             etree.SubElement(detallecompras, 'baseImponible').text = '%.2f'%inv.amount_vat_cero
             etree.SubElement(detallecompras, 'baseImpGrav').text = '%.2f'%inv.amount_vat
+            etree.SubElement(detallecompras, 'baseImpExe').text = '0.00'
             etree.SubElement(detallecompras, 'montoIce').text = '0.00'
             etree.SubElement(detallecompras, 'montoIva').text = '%.2f'%inv.amount_tax
+            valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100 = self._get_ret_iva(inv)
+            etree.SubElement(detallecompras, 'valRetBien10').text = '%.2f'%valRetBien10
+            etree.SubElement(detallecompras, 'valRetServ20').text = '%.2f'%valRetServ20
+            etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%valorRetBienes
             etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)
-            valorRetServicios, valorRetServ100 = self._get_ret_iva(inv)
             etree.SubElement(detallecompras, 'valorRetServicios').text = '%.2f'%valorRetServicios
             etree.SubElement(detallecompras, 'valRetServ100').text = '%.2f'%valorRetServ100
+            etree.SubElement(detallecompras, 'totbasesImpReemb').text = '0.00'
             pagoExterior = etree.Element('pagoExterior')
             etree.SubElement(pagoExterior, 'pagoLocExt').text = '01'
             etree.SubElement(pagoExterior, 'paisEfecPago').text = 'NA'
@@ -252,6 +267,7 @@ class wizard_ats(osv.osv_memory):
                 detalleVentas = etree.Element('detalleVentas')
                 etree.SubElement(detalleVentas, 'tpIdCliente').text = tpIdCliente[v['tpIdCliente']]
                 etree.SubElement(detalleVentas, 'idCliente').text = v['idCliente']
+                etree.SubElement(detalleVentas, 'parteRelVtas').text = 'NO'
                 etree.SubElement(detalleVentas, 'tipoComprobante').text = v['tipoComprobante']
                 etree.SubElement(detalleVentas, 'numeroComprobantes').text = str(v['numeroComprobantes'])
                 etree.SubElement(detalleVentas, 'baseNoGraIva').text = '%.2f' % v['basenoGraIva']

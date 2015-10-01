@@ -406,7 +406,6 @@ class Invoice(models.Model):
         domain = {}
 
         if company_id and part_id and type:
-            acc_id = False
             p = self.env['res.partner'].browse(part_id)
             if p.property_account_payable and p.property_account_receivable and \
                     p.property_account_payable.company_id.id != company_id and \
@@ -942,7 +941,7 @@ class AccountInvoiceLine(models.Model):
             account = product.property_account_expense or product.categ_id.property_account_expense_categ
         account = fpos.map_account(account)
         if account:
-            values['account_id'] = account
+            values['account_id'] = account.id
 
         if type in ('out_invoice', 'out_refund'):
             taxes = product.taxes_id or account.tax_ids
