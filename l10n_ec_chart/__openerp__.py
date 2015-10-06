@@ -3,6 +3,7 @@
 #
 #    Copyright (C) 2010-2012 Cristian Salamea Gnuthink Software Labs Cia. Ltda
 #    Copyright (C) 2015-Today Alcides Rivera VIRTUALSAMI CIA LTDA <alcides@virtualsami.com.ec>
+#    Copyright (C) 2015-Today Fábrica de Software Libre <desarrollo@libre.ec>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -31,10 +32,10 @@
                 'base_vat',
                 'base_iban',
                 'account_chart',
-                'account_coda',
                 ],
     'init_xml': [],
     'update_xml': [
+                'account_tax_code.xml',
                 'account_chart.xml',
                 'l10n_chart_ec_wizard.xml',
                    ],
