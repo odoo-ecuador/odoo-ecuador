@@ -44,5 +44,12 @@
 	</xpath>
       </field>
     </record>
+
+    <menuitem action="base.action_res_partner_bank_account_form"
+              id="menu_action_res_partner_bank_hr"
+              parent="hr.menu_hr_configuration"
+	      name="Cuentas de Banco"
+              sequence="3"/>
+    
   </data>
 </openerp>
