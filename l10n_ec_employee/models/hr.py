@@ -7,6 +7,7 @@ from openerp.osv import osv, fields, orm
 
 class HrEmployee(orm.Model):
     _inherit = 'hr.employee'
+    _order = 'last_name ASC'
 
     def onchange_identificador(self, cr, uid, ids, identificador):
         pass
