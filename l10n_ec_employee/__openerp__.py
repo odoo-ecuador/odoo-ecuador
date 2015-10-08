@@ -22,7 +22,7 @@
 ##############################################################################
 
 {
-    'name' : 'Accounting for Ecuador',
+    'name' : 'Employee for Ecuador',
     'version' : '3',
     "category": 'Human Resources',
     'depends' : [

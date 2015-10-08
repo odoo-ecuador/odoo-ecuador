@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
+
     <record id="view_hr_employee_ec_form" model="ir.ui.view">
       <field name="name">view_hr_employee_ec_form</field>
       <field name="model">hr.employee</field>      
       <field name="inherit_id" ref="hr.view_employee_form"/>
       <field name="arch" type="xml">
-	<field name="name" position="before">
-	  <field name="last_name" placeholder="Apellidos..."/>
-	</field>
-	<field name="name" position="attributes">
-	  <attribute name="placeholder">Nombres...</attribute>
-	</field>
+        <field name="name" position="replace">
+          <field name="name" invisible="True" nolabel="1" required="False"/>
+	  <field name="lastname" placeholder="Apellidos..."/>
+          <field name="firstname" required="1"/>
+        </field>	
 	<field name="identification_id" position="replace"/>
 	<xpath expr="//label[@for='category_ids']" position="before">
 	  <label for="identification_id" string="Cédula"/>
@@ -25,9 +25,10 @@
       <field name="model">hr.employee</field>      
       <field name="inherit_id" ref="hr.view_employee_tree"/>
       <field name="arch" type="xml">
-	<field name="name" position="before">
+	<field name="name" position="replace">
 	  <field name="identification_id"/>
-	  <field name="last_name"/>
+	  <field name="lastname"/>
+	  <field name="firstname"/>	  
 	</field>
       </field>
     </record>
@@ -39,7 +40,7 @@
       <field name="arch" type="xml">
 	<xpath expr="//h4" position="replace">
 	  <h4>
-            <a type="open"><field name="last_name"/> <field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+            <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
 	  </h4>
 	</xpath>
       </field>
