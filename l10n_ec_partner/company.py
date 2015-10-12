@@ -4,6 +4,8 @@
 #    Partner Module - Ecuador
 #    Copyright (C) 2015 VIRTUALSAMI CIA. LTDA. All Rights Reserved
 #    alcides@virtualsami.com.ec
+#    Copyright (C) 2015 FABRICA DE SOFTWARE LIBRE. All Rights Reserved
+#    desarrollo@libre.ec
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -21,12 +23,12 @@
 #
 ##############################################################################
 
-from openerp.osv import fields, osv
+from openerp import fields, models
 
-class Company(osv.osv):
+class Company(models.Model):
     _name = "res.company"
     _inherit = "res.company"
 
-    _columns = {
-        'tradename': fields.char('Nombre Comercial', size=300),
-    }
+    tradename = fields.Char('Nombre Comercial', size=300)
+    ruc_contador = fields.Char('Ruc del Contador', size=13)
+    cedula_rl = fields.Char('Cédula Representante Legal', size=10)

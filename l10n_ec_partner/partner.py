@@ -123,12 +123,3 @@ class Partner(osv.osv):
          'unique(ced_ruc,type_ced_ruc,tipo_persona,company_id)',
          u'El identificador es único.'),
         ]
-
-
-class ResCompany(osv.Model):
-    _inherit = 'res.company'
-
-    _columns = {
-        'ruc_contador': fields.char('Ruc del Contador', size=13),
-        'cedula_rl': fields.char('Cédula Representante Legal', size=10),
-        }

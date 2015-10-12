@@ -28,6 +28,7 @@
     'website': 'http://www.ayni.io',
     'data': [
         'view/partner_view.xml',
+        'view/company_view.xml',
     ],
     'depends' : [
       'base'

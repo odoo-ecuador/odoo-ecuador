@@ -1,43 +1,684 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
-
-	<record model="account.tax.code.template" id="vat_code_tax">
-		<field name="name">Tax</field>
-	</record>
-	
-	<record model="account.tax.code.template" id="vat_code_balance_net">
-		<field name="name">Tax Balance to Pay</field>
-		<field name="parent_id" ref="vat_code_tax"/>
-	</record>
-
-	<record model="account.tax.code.template" id="vat_code_due_tva">
-		<field name="name">Tax Due (Tax to pay)</field>
-		<field name="parent_id" ref="vat_code_balance_net"/>
-	</record>
-
-	<record model="account.tax.code.template" id="vat_code_payable">
-		<field name="name">Tax Payable</field>
-		<field name="parent_id" ref="vat_code_balance_net"/>
-	</record>
-
-	<record model="account.tax.code.template" id="vat_code_base_net">
-		<field name="name">Tax Bases</field>
-		<field name="parent_id" ref="vat_code_tax"/>
-	</record>
-
-
-	<record model="account.tax.code.template" id="vat_code_base_due">
-		<field name="name">Base of Taxed Sales</field>
-		<field name="parent_id" ref="vat_code_base_net"/>
-	</record>
-
-
-	<record model="account.tax.code.template" id="vat_code_receivable_net">
-		<field name="name">Base of Taxed Purchases</field>
-		<field name="parent_id" ref="vat_code_base_net"/>
-	</record>
-
+    <record model="account.tax.code.template" id="TC103">
+      <field name="name">DECLARACIÓN DE RETENCIONES EN LA FUENTE DEL IMPUESTO A LA RENTA (2015)</field>
+      <field name="code">103</field>
+    </record>
+    <record model="account.tax.code.template" id="TC349">
+      <field name="name">BASE IMPONIBLE – SUBTOTAL OPERACIONES EFECTUADAS EN EL PAIS</field>
+      <field name="parent_id" ref="TC103"/>
+      <field name="code">349</field>
+    </record>
+    <record model="account.tax.code.template" id="TC302">
+      <field name="name">BASE IMPONIBLE – EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGRAVADA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">302</field>
+    </record>
+    <record model="account.tax.code.template" id="TC303">
+      <field name="name">BASE IMPONIBLE – SERVICIOS HONORARIOS PROFESIONALES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">303</field>
+    </record>
+    <record model="account.tax.code.template" id="TC304">
+      <field name="name">BASE IMPONIBLE – SERVICIOS PREDOMINA EL INTELECTO</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">304</field>
+    </record>
+    <record model="account.tax.code.template" id="TC307">
+      <field name="name">BASE IMPONIBLE – SERVICIOS PREDOMINA MANO DE OBRA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">307</field>
+    </record>
+    <record model="account.tax.code.template" id="TC308">
+      <field name="name">BASE IMPONIBLE – SERVICIOS UTILIZACIÓN O APROVECHAMIENTO DE LA IMAGEN O RENOMBRE</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">308</field>
+    </record>
+    <record model="account.tax.code.template" id="TC309">
+      <field name="name">BASE IMPONIBLE – SERVICIOS PUBLICIDAD Y COMUNICACIÓN</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">309</field>
+    </record>
+    <record model="account.tax.code.template" id="TC310">
+      <field name="name">BASE IMPONIBLE – SERVICIOS TRANSPORTE PRIVADO DE PASAJEROS O SERVICIO PÚBLICO O PRIVADO DE CARGA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">310</field>
+    </record>
+    <record model="account.tax.code.template" id="TC311">
+      <field name="name">BASE IMPONIBLE – A TRAVÉS DE LIQUIDACIONES DE COMPRA (NIVEL CULTURAL O RUSTICIDAD)</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">311</field>
+    </record>
+    <record model="account.tax.code.template" id="TC312">
+      <field name="name">BASE IMPONIBLE – TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">312</field>
+    </record>
+    <record model="account.tax.code.template" id="TC314">
+      <field name="name">BASE IMPONIBLE – POR REGALÍAS, DERECHOS DE AUTOR, MARCAS, PATENTES Y SIMILARES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">314</field>
+    </record>
+    <record model="account.tax.code.template" id="TC319">
+      <field name="name">BASE IMPONIBLE – ARRENDAMIENTO MERCANTIL</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">319</field>
+    </record>
+    <record model="account.tax.code.template" id="TC320">
+      <field name="name">BASE IMPONIBLE – ARRENDAMIENTO BIENES INMUEBLES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">320</field>
+    </record>
+    <record model="account.tax.code.template" id="TC322">
+      <field name="name">BASE IMPONIBLE – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">322</field>
+    </record>
+    <record model="account.tax.code.template" id="TC323">
+      <field name="name">BASE IMPONIBLE – RENDIMIENTOS FINANCIEROS</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">323</field>
+    </record>
+    <record model="account.tax.code.template" id="TC324">
+      <field name="name">BASE IMPONIBLE – RENDIMIENTOS FINANCIEROS ENTRE INSTITUCIONES DEL SISTEMA FINANCIERO Y ENTIDADES DE ECONOMÍA POPULAR Y SOLIDARIA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">324</field>
+    </record>
+    <record model="account.tax.code.template" id="TC325">
+      <field name="name">BASE IMPONIBLE – ANTICIPO DIVIDENDOS</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">325</field>
+    </record>
+    <record model="account.tax.code.template" id="TC326">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS DISTRIBUIDOS QUE CORRESPONDAN AL IMPTO. A LA RENTA ÚNICO ESTABLECIDO EN EL ART. 27 DE LA LRTI</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">326</field>
+    </record>
+    <record model="account.tax.code.template" id="TC327">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES RESIDENTES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">327</field>
+    </record>
+    <record model="account.tax.code.template" id="TC328">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES RESIDENTES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">328</field>
+    </record>
+    <record model="account.tax.code.template" id="TC329">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS RESIDENTES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">329</field>
+    </record>
+    <record model="account.tax.code.template" id="TC330">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS GRAVADOS DISTRIBUIDOS EN ACCIONES (REINVERSIÓN DE UTILIDADES SIN DERECHO A REDUCCIÓN DE TARIFA IR)</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">330</field>
+    </record>
+    <record model="account.tax.code.template" id="TC331">
+      <field name="name">BASE IMPONIBLE – DIVIDENDOS EXCENTOS DISTRIBUIDOS EN ACCIONES (REINVERSIÓN DE UTILIDADES CON DERECHO A REDUCCIÓN DE TARIFA IR)</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">331</field>
+    </record>
+    <record model="account.tax.code.template" id="TC332">
+      <field name="name">BASE IMPONIBLE – PAGOS DE BIENES O SERVICIOS NO SUJETOS A RETENCIÓN</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">332</field>
+    </record>
+    <record model="account.tax.code.template" id="TC333">
+      <field name="name">BASE IMPONIBLE – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS COTIZADOS EN BOLSA ECUATORIANA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">333</field>
+    </record>
+    <record model="account.tax.code.template" id="TC334">
+      <field name="name">BASE IMPONIBLE – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS NO COTIZADOS EN BOLSA ECUATORIANA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">334</field>
+    </record>
+    <record model="account.tax.code.template" id="TC335">
+      <field name="name">BASE IMPONIBLE – LOTERÍAS, RIFAS, APUESTAS Y SIMILARES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">335</field>
+    </record>
+    <record model="account.tax.code.template" id="TC336">
+      <field name="name">BASE IMPONIBLE – VENTA DE COMBUSTIBLES A COMERCIALIZADORAS</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">336</field>
+    </record>
+    <record model="account.tax.code.template" id="TC337">
+      <field name="name">BASE IMPONIBLE – VENTA DE COMBUSTIBLES A DISTRIBUIDORAS</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">337</field>
+    </record>
+    <record model="account.tax.code.template" id="TC338">
+      <field name="name">BASE IMPONIBLE – COMPRA LOCAL DE BANANO A PRODUCTOR</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">338</field>
+    </record>
+    <record model="account.tax.code.template" id="TC339">
+      <field name="name">BASE IMPONIBLE – LIQUIDACIÓN IMPUESTO ÚNICO A LA VENTA LOCAL DE BANANO DE PRODUCCIÓN PROPIA</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">339</field>
+    </record>
+    <record model="account.tax.code.template" id="TC340">
+      <field name="name">BASE IMPONIBLE – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO DE PRODUCCIÓN PROPIA – COMPONENTE 1</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">340</field>
+    </record>
+    <record model="account.tax.code.template" id="TC341">
+      <field name="name">BASE IMPONIBLE – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO DE PRODUCCIÓN PROPIA – COMPONENTE 2</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">341</field>
+    </record>
+    <record model="account.tax.code.template" id="TC342">
+      <field name="name">BASE IMPONIBLE – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO PRODUCIDO POR TERCEROS</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">342</field>
+    </record>
+    <record model="account.tax.code.template" id="TC343">
+      <field name="name">BASE IMPONIBLE – OTRAS RETENCIONES – APLICABLES EL 1%</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">343</field>
+    </record>
+    <record model="account.tax.code.template" id="TC344">
+      <field name="name">BASE IMPONIBLE – OTRAS RETENCIONES – APLICABLES EL 2%</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">344</field>
+    </record>
+    <record model="account.tax.code.template" id="TC345">
+      <field name="name">BASE IMPONIBLE – OTRAS RETENCIONES – APLICABLES EL 8%</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">345</field>
+    </record>
+    <record model="account.tax.code.template" id="TC346">
+      <field name="name">BASE IMPONIBLE – OTRAS RETENCIONES – APLICABLES A OTROS PORCENTAJES</field>
+      <field name="parent_id" ref="TC349"/>
+      <field name="code">346</field>
+    </record>
+    <record model="account.tax.code.template" id="TC497">
+      <field name="name">BASE IMPONIBLE – SUBTOTAL OPERACIONES EFECTUADAS EN EL EXTERIOR</field>
+      <field name="parent_id" ref="TC103"/>
+      <field name="code">497</field>
+    </record>
+    <record model="account.tax.code.template" id="TC402">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES POR FINANCIAMIENTO DE PROVEEDORES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">402</field>
+    </record>
+    <record model="account.tax.code.template" id="TC403">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES DE CRÉDITOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">403</field>
+    </record>
+    <record model="account.tax.code.template" id="TC404">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">404</field>
+    </record>
+    <record model="account.tax.code.template" id="TC405">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">405</field>
+    </record>
+    <record model="account.tax.code.template" id="TC406">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">406</field>
+    </record>
+    <record model="account.tax.code.template" id="TC407">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">407</field>
+    </record>
+    <record model="account.tax.code.template" id="TC408">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">408</field>
+    </record>
+    <record model="account.tax.code.template" id="TC409">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">409</field>
+    </record>
+    <record model="account.tax.code.template" id="TC410">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">410</field>
+    </record>
+    <record model="account.tax.code.template" id="TC411">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">411</field>
+    </record>
+    <record model="account.tax.code.template" id="TC412">
+      <field name="name">BASE IMPONIBLE – CON CONVENIO DE DOBLE TRIBUTACIÓN – OTROS PAGOS AL EXTERIOR NO SUJETOS A RETENCIÓN</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">412</field>
+    </record>
+    <record model="account.tax.code.template" id="TC413">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES POR FINANCIAMIENTO DE PROVEEDORES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">413</field>
+    </record>
+    <record model="account.tax.code.template" id="TC414">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES DE CRÉDITOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">414</field>
+    </record>
+    <record model="account.tax.code.template" id="TC415">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">415</field>
+    </record>
+    <record model="account.tax.code.template" id="TC416">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">416</field>
+    </record>
+    <record model="account.tax.code.template" id="TC417">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">417</field>
+    </record>
+    <record model="account.tax.code.template" id="TC418">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">418</field>
+    </record>
+    <record model="account.tax.code.template" id="TC419">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – ENAJENACION DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">419</field>
+    </record>
+    <record model="account.tax.code.template" id="TC420">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">420</field>
+    </record>
+    <record model="account.tax.code.template" id="TC421">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">421</field>
+    </record>
+    <record model="account.tax.code.template" id="TC422">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">422</field>
+    </record>
+    <record model="account.tax.code.template" id="TC423">
+      <field name="name">BASE IMPONIBLE – SIN CONVENIO DE DOBLE TRIBUTACIÓN – OTROS PAGOS AL EXTERIOR NO SUJETOS A RETENCIÓN</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">423</field>
+    </record>
+    <record model="account.tax.code.template" id="TC424">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – INTERESES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">424</field>
+    </record>
+    <record model="account.tax.code.template" id="TC425">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">425</field>
+    </record>
+    <record model="account.tax.code.template" id="TC426">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">426</field>
+    </record>
+    <record model="account.tax.code.template" id="TC427">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">427</field>
+    </record>
+    <record model="account.tax.code.template" id="TC428">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">428</field>
+    </record>
+    <record model="account.tax.code.template" id="TC429">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – ENAJENACION DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">429</field>
+    </record>
+    <record model="account.tax.code.template" id="TC430">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">430</field>
+    </record>
+    <record model="account.tax.code.template" id="TC431">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">431</field>
+    </record>
+    <record model="account.tax.code.template" id="TC432">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">432</field>
+    </record>
+    <record model="account.tax.code.template" id="TC433">
+      <field name="name">BASE IMPONIBLE – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – OTROS PAGOS AL EXTERIOR NO SUJETOS A RETENCIÓN</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">433</field>
+    </record>
+    <record model="account.tax.code.template" id="TC399">
+      <field name="name">RETENCIÓN – SUBTOTAL OPERACIONES EFECTUADAS EN EL PAIS</field>
+      <field name="parent_id" ref="TC103"/>
+      <field name="code">399</field>
+    </record>
+    <record model="account.tax.code.template" id="TC352">
+      <field name="name">RETENCIÓN – EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGRAVADA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">352</field>
+    </record>
+    <record model="account.tax.code.template" id="TC353">
+      <field name="name">RETENCIÓN – SERVICIOS HONORARIOS PROFESIONALES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">353</field>
+    </record>
+    <record model="account.tax.code.template" id="TC354">
+      <field name="name">RETENCIÓN – SERVICIOS PREDOMINA EL INTELECTO</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">354</field>
+    </record>
+    <record model="account.tax.code.template" id="TC357">
+      <field name="name">RETENCIÓN – SERVICIOS PREDOMINA MANO DE OBRA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">357</field>
+    </record>
+    <record model="account.tax.code.template" id="TC358">
+      <field name="name">RETENCIÓN – SERVICIOS UTILIZACIÓN O APROVECHAMIENTO DE LA IMAGEN O RENOMBRE</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">358</field>
+    </record>
+    <record model="account.tax.code.template" id="TC359">
+      <field name="name">RETENCIÓN – SERVICIOS PUBLICIDAD Y COMUNICACIÓN</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">359</field>
+    </record>
+    <record model="account.tax.code.template" id="TC360">
+      <field name="name">RETENCIÓN – SERVICIOS TRANSPORTE PRIVADO DE PASAJEROS O SERVICIO PÚBLICO O PRIVADO DE CARGA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">360</field>
+    </record>
+    <record model="account.tax.code.template" id="TC361">
+      <field name="name">RETENCIÓN – A TRAVÉS DE LIQUIDACIONES DE COMPRA (NIVEL CULTURAL O RUSTICIDAD)</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">361</field>
+    </record>
+    <record model="account.tax.code.template" id="TC362">
+      <field name="name">RETENCIÓN – TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">362</field>
+    </record>
+    <record model="account.tax.code.template" id="TC364">
+      <field name="name">RETENCIÓN – POR REGALÍAS, DERECHOS DE AUTOR, MARCAS, PATENTES Y SIMILARES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">364</field>
+    </record>
+    <record model="account.tax.code.template" id="TC369">
+      <field name="name">RETENCIÓN – ARRENDAMIENTO MERCANTIL</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">369</field>
+    </record>
+    <record model="account.tax.code.template" id="TC370">
+      <field name="name">RETENCIÓN – ARRENDAMIENTO BIENES INMUEBLES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">370</field>
+    </record>
+    <record model="account.tax.code.template" id="TC372">
+      <field name="name">RETENCIÓN – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">372</field>
+    </record>
+    <record model="account.tax.code.template" id="TC373">
+      <field name="name">RETENCIÓN – RENDIMIENTOS FINANCIEROS</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">373</field>
+    </record>
+    <record model="account.tax.code.template" id="TC374">
+      <field name="name">RETENCIÓN – RENDIMIENTOS FINANCIEROS ENTRE INSTITUCIONES DEL SISTEMA FINANCIERO Y ENTIDADES DE ECONOMÍA POPULAR Y SOLIDARIA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">374</field>
+    </record>
+    <record model="account.tax.code.template" id="TC375">
+      <field name="name">RETENCIÓN – ANTICIPO DIVIDENDOS</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">375</field>
+    </record>
+    <record model="account.tax.code.template" id="TC376">
+      <field name="name">RETENCIÓN – DIVIDENDOS DISTRIBUIDOS QUE CORRESPONDAN AL IMPTO. A LA RENTA ÚNICO ESTABLECIDO EN EL ART. 27 DE LA LRTI</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">376</field>
+    </record>
+    <record model="account.tax.code.template" id="TC377">
+      <field name="name">RETENCIÓN – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES RESIDENTES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">377</field>
+    </record>
+    <record model="account.tax.code.template" id="TC378">
+      <field name="name">RETENCIÓN – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES RESIDENTES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">378</field>
+    </record>
+    <record model="account.tax.code.template" id="TC379">
+      <field name="name">RETENCIÓN – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS RESIDENTES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">379</field>
+    </record>
+    <record model="account.tax.code.template" id="TC380">
+      <field name="name">RETENCIÓN – DIVIDENDOS GRAVADOS DISTRIBUIDOS EN ACCIONES (REINVERSIÓN DE UTILIDADES SIN DERECHO A REDUCCIÓN DE TARIFA IR)</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">380</field>
+    </record>
+    <record model="account.tax.code.template" id="TC383">
+      <field name="name">RETENCIÓN – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS COTIZADOS EN BOLSA ECUATORIANA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">383</field>
+    </record>
+    <record model="account.tax.code.template" id="TC384">
+      <field name="name">RETENCIÓN – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS NO COTIZADOS EN BOLSA ECUATORIANA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">384</field>
+    </record>
+    <record model="account.tax.code.template" id="TC385">
+      <field name="name">RETENCIÓN – LOTERÍAS, RIFAS, APUESTAS Y SIMILARES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">385</field>
+    </record>
+    <record model="account.tax.code.template" id="TC386">
+      <field name="name">RETENCIÓN – VENTA DE COMBUSTIBLES A COMERCIALIZADORAS</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">386</field>
+    </record>
+    <record model="account.tax.code.template" id="TC387">
+      <field name="name">RETENCIÓN – VENTA DE COMBUSTIBLES A DISTRIBUIDORAS</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">387</field>
+    </record>
+    <record model="account.tax.code.template" id="TC388">
+      <field name="name">RETENCIÓN – COMPRA LOCAL DE BANANO A PRODUCTOR</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">388</field>
+    </record>
+    <record model="account.tax.code.template" id="TC389">
+      <field name="name">RETENCIÓN – LIQUIDACIÓN IMPUESTO ÚNICO A LA VENTA LOCAL DE BANANO DE PRODUCCIÓN PROPIA</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">389</field>
+    </record>
+    <record model="account.tax.code.template" id="TC390">
+      <field name="name">RETENCIÓN – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO DE PRODUCCIÓN PROPIA – COMPONENTE 1</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">390</field>
+    </record>
+    <record model="account.tax.code.template" id="TC391">
+      <field name="name">RETENCIÓN – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO DE PRODUCCIÓN PROPIA – COMPONENTE 2</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">391</field>
+    </record>
+    <record model="account.tax.code.template" id="TC392">
+      <field name="name">RETENCIÓN – IMPUESTO ÚNICO A LA EXPORTACIÓN DE BANANO PRODUCIDO POR TERCEROS</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">392</field>
+    </record>
+    <record model="account.tax.code.template" id="TC393">
+      <field name="name">RETENCIÓN – OTRAS RETENCIONES – APLICABLES EL 1%</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">393</field>
+    </record>
+    <record model="account.tax.code.template" id="TC394">
+      <field name="name">RETENCIÓN – OTRAS RETENCIONES – APLICABLES EL 2%</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">394</field>
+    </record>
+    <record model="account.tax.code.template" id="TC395">
+      <field name="name">RETENCIÓN – OTRAS RETENCIONES – APLICABLES EL 8%</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">395</field>
+    </record>
+    <record model="account.tax.code.template" id="TC396">
+      <field name="name">RETENCIÓN – OTRAS RETENCIONES – APLICABLES A OTROS PORCENTAJES</field>
+      <field name="parent_id" ref="TC399"/>
+      <field name="code">396</field>
+    </record>
+    <record model="account.tax.code.template" id="TC497">
+      <field name="name">RETENCIÓN – SUBTOTAL OPERACIONES EFECTUADAS EN EL EXTERIOR</field>
+      <field name="parent_id" ref="TC103"/>
+      <field name="code">497</field>
+    </record>
+    <record model="account.tax.code.template" id="TC452">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES POR FINANCIAMIENTO DE PROVEEDORES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">452</field>
+    </record>
+    <record model="account.tax.code.template" id="TC453">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES DE CRÉDITOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">453</field>
+    </record>
+    <record model="account.tax.code.template" id="TC454">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">454</field>
+    </record>
+    <record model="account.tax.code.template" id="TC456">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">456</field>
+    </record>
+    <record model="account.tax.code.template" id="TC457">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">457</field>
+    </record>
+    <record model="account.tax.code.template" id="TC458">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – ENAJENACIÓN DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">458</field>
+    </record>
+    <record model="account.tax.code.template" id="TC459">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">459</field>
+    </record>
+    <record model="account.tax.code.template" id="TC460">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">460</field>
+    </record>
+    <record model="account.tax.code.template" id="TC461">
+      <field name="name">RETENCIÓN – CON CONVENIO DE DOBLE TRIBUTACIÓN – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">461</field>
+    </record>
+    <record model="account.tax.code.template" id="TC463">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES POR FINANCIAMIENTO DE PROVEEDORES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">463</field>
+    </record>
+    <record model="account.tax.code.template" id="TC464">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – INTERESES DE CRÉDITOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">464</field>
+    </record>
+    <record model="account.tax.code.template" id="TC465">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">465</field>
+    </record>
+    <record model="account.tax.code.template" id="TC467">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">467</field>
+    </record>
+    <record model="account.tax.code.template" id="TC468">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">468</field>
+    </record>
+    <record model="account.tax.code.template" id="TC469">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – ENAJENACION DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">469</field>
+    </record>
+    <record model="account.tax.code.template" id="TC470">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">470</field>
+    </record>
+    <record model="account.tax.code.template" id="TC471">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">471</field>
+    </record>
+    <record model="account.tax.code.template" id="TC472">
+      <field name="name">RETENCIÓN – SIN CONVENIO DE DOBLE TRIBUTACIÓN – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">472</field>
+    </record>
+    <record model="account.tax.code.template" id="TC474">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – INTERESES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">474</field>
+    </record>
+    <record model="account.tax.code.template" id="TC475">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – ANTICIPO DE DIVIDENDOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">475</field>
+    </record>
+    <record model="account.tax.code.template" id="TC476">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A PERSONAS NATURALES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">476</field>
+    </record>
+    <record model="account.tax.code.template" id="TC477">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A SOCIEDADES</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">477</field>
+    </record>
+    <record model="account.tax.code.template" id="TC478">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – DIVIDENDOS DISTRIBUIDOS A FIDEICOMISOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">478</field>
+    </record>
+    <record model="account.tax.code.template" id="TC479">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – ENAJENACION DE DERECHOS REPRESENTATIVOS DE CAPITAL Y OTROS DERECHOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">479</field>
+    </record>
+    <record model="account.tax.code.template" id="TC480">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – SEGUROS Y REASEGUROS (PRIMAS Y CESIONES)</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">480</field>
+    </record>
+    <record model="account.tax.code.template" id="TC481">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – SERVICIOS TÉCNICOS, ADMINISTRATIVOS O DE CONSULTORÍA Y REGALÍAS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">481</field>
+    </record>
+    <record model="account.tax.code.template" id="TC482">
+      <field name="name">RETENCIÓN – EN PARAÍSOS FISCALES O REGÍMENES FISCALES PREFERENTES  – OTROS CONCEPTOS DE INGRESOS GRAVADOS</field>
+      <field name="parent_id" ref="TC497"/>
+      <field name="code">482</field>
+    </record>
   </data>
 </openerp>
