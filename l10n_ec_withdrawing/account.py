@@ -33,7 +33,7 @@ class account_tax(osv.osv):
     
     _name = 'account.tax'
     _inherit = 'account.tax'
-    _order = 'tax_group desc'
+    _order = 'description ASC'
 
     def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0):
         taxes = self._applicable(cr, uid, taxes, price_unit ,product, partner)
