@@ -67,9 +67,12 @@
       <field name="model">account.tax</field>
       <field name="inherit_id" ref="account.view_tax_tree"/>
       <field name="arch" type="xml">
+	<xpath expr="//field[@name='description']" position="replace">
+	  <field name="tax_group"/>	  
+	</xpath>
 	<xpath expr="//field[@name='name']" position="before">
-	  <field name="tax_group"/>
           <field name="porcentaje"/>
+	  <field name="description"/>
 	</xpath>
         <xpath expr="//field[@name='price_include']" position="replace">
           <field name="base_code_id"/>
