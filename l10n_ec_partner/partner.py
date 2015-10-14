@@ -92,7 +92,7 @@ class ResPartner(models.Model):
         'Cedula/ RUC',
         size=13,
         required=True,
-        help='Idenficacion o Registro Unico de Contribuyentes')
+        help='Idenficación o Registro Unico de Contribuyentes')
     type_ced_ruc = fields.Selection([
             ('cedula','CEDULA'),
             ('ruc','RUC'),
@@ -108,7 +108,6 @@ class ResPartner(models.Model):
         required=True,
         default='9'
     )
-    tradename = fields.Char('Nombre Comercial', size=300)
     is_company = fields.Boolean(default=True)
 
     _constraints = [

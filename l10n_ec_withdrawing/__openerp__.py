@@ -25,13 +25,14 @@
     'name' : 'Accounting for Ecuador',
     'version' : '3',
     "category": 'Generic Modules/Accounting',
-    'depends' : ['l10n_ec_authorisation', 'report_webkit',
+    'depends' : [
+        'l10n_ec_authorisation', 'report_webkit',
         ],
     'author' : 'Cristian Salamea.',
     'description': '''
-    Accounting for Ecuador, retention docuements
+    Contabilidad para Ecuador: Documentos de retenciones, liquidaciones de compra
     ''',
-    'website': 'http://www.invbox.com.ec',
+    'website': 'http://www.ayni.com.ec',
     'update_xml': [
         'invoice_workflow.xml',
         'withdrawing_view.xml',

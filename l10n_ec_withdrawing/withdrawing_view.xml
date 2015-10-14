@@ -500,6 +500,17 @@
       </field>
     </record>
 
+<record id="view_res_partner_account_ec_form" model="ir.ui.view">
+  <field name="name">res.partner.ec.form</field>
+  <field name="model">res.partner</field>
+  <field name="inherit_id" ref="account.view_partner_property_form"/>
+  <field name="arch" type="xml">
+    <xpath expr="//field[@name='property_account_position']" position="attributes">
+      <attribute name="required">1</attribute>
+    </xpath>
+  </field>
+</record>    
+
 
   </data>
 </openerp>
