@@ -5,14 +5,14 @@ __author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
 import time
 from datetime import datetime
 
-from openerp.osv import osv, orm, fields
+from openerp import models, fields, api, _
+from openerp.exceptions import except_orm, Warning, RedirectWarning
 
 
-class Partner(osv.osv):
+class ResPartner(models.Model):
 
     _name = 'res.partner'
     _inherit = 'res.partner'
-    _description = 'Formulario de Partner para Ecuador'
 
     def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):
         if not args:
@@ -88,34 +88,30 @@ class Partner(osv.osv):
                 else:
                     return self._check_cedula(partner.ced_ruc)
 
-    _columns = {
-        'ced_ruc': fields.char('Cedula/ RUC',
-                               size=13,
-                               required=True,
-                               help='Idenficacion o Registro Unico de Contribuyentes'),
-        'type_ced_ruc': fields.selection([
-            ('cedula','Cedula'),
+    ced_ruc = fields.Char(
+        'Cedula/ RUC',
+        size=13,
+        required=True,
+        help='Identificación o Registro Unico de Contribuyentes')
+    type_ced_ruc = fields.Selection([
+            ('cedula','CEDULA'),
             ('ruc','RUC'),
-            ('pasaporte','Pasaporte')
+            ('pasaporte','PASAPORTE')
             ],
             'Tipo ID',
-            required=True),
-        'tipo_persona': fields.selection(
-            [('6','Persona Natural'),
-            ('9','Persona Juridica')],
-            string='Persona',
             required=True
-            ),
-        'tradename': fields.char('Nombre Comercial', size=300),
-        }
-
-    _defaults = {
-        'tipo_persona': '9',
-        'is_company': True
-        }
+    )
+    tipo_persona = fields.Selection(
+        [('6','Persona Natural'),
+         ('9','Persona Juridica')],
+        string='Persona',
+        required=True,
+        default='9'
+    )
+    is_company = fields.Boolean(default=True)
 
     _constraints = [
-        (_check_ced_ruc, 'Error en su Cedula/RUC/Pasaporte', ['cedu_ruc'])
+        (_check_ced_ruc, 'Error en su Cedula/RUC/Pasaporte', ['ced_ruc'])
         ]
 
     _sql_constraints = [
@@ -125,10 +121,8 @@ class Partner(osv.osv):
         ]
 
 
-class ResCompany(osv.Model):
+class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    _columns = {
-        'ruc_contador': fields.char('Ruc del Contador', size=13),
-        'cedula_rl': fields.char('Cédula Representante Legal', size=10),
-        }
+    ruc_contador = fields.Char('Ruc del Contador', size=13)
+    cedula_rl = fields.Char('Cédula Representante Legal', size=10)

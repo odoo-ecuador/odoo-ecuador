@@ -25,7 +25,7 @@
     'author' : 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
-    'website': 'http://www.ayni.io',
+    'website': 'http://www.ayni.com.ec',
     'data': [
 #        'security/ir.model.access.csv',
         'view/authorisation_view.xml',
