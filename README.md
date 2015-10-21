@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=8.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador)
+
 Localizacion de OpenERP para Ecuador
 ====================================
 
