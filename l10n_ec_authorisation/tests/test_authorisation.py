@@ -4,6 +4,7 @@ from openerp.tests.common import TransactionCase  # pylint: disable=F0401
 
 import time
 
+
 class TestAuthorisation(TransactionCase):  # pylint: disable=W0232
     """
     Prueba de documentos de autorizacion

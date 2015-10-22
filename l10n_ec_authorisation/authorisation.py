@@ -70,23 +70,22 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
         return self._context.get('in_type', 'externo')
 
     def _get_partner(self):
-        user_id = self.env.user.id
+        partner = self.env.user.company_id.partner_id
         if self._context.get('partner_id'):
-            user_id = context.get('partner_id')
-        return user_id
+            partner = self._context.get('partner_id')
+        return partner
 
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, values):
         partner_id = self.env.user.company_id.partner_id.id
         if values.get('partner_id', False) and values['partner_id'] == partner_id:
-            ats_obj = self.env['account.ats.doc']
             name_type = '{0}_{1}'.format(values['name'], values['type_id'])
             code_obj = self.env['ir.sequence.type']
             seq_obj = self.env['ir.sequence']
             code_data = {
                 'code': '%s.%s.%s' % (name_type,values['serie_entidad'],values['serie_emision']),
-                'name': name_type,
+                'name': name_type
                 }
             code = code_obj.create(code_data)
             sequence_data = {
@@ -102,7 +101,7 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
     @api.multi
     def unlink(self):
         journal = self.env['account.journal']
-        res = journal.search(['|',('auth_id','=',self.id),('auth_ret_id', '=', self.id)])
+        res = journal.search(['|', ('auth_id', '=', self.id), ('auth_ret_id', '=', self.id)])
         if res:
             raise Warning('Alerta', 'Esta autorización esta relacionada a un diario.')
         return super(AccountAuthorisation, self).unlink()
@@ -155,18 +154,18 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
          u'La relación de autorización, serie entidad, serie emisor y tipo, debe ser única.'),
         ]
 
-    def is_valid_number(self, cr, uid, id, number):
+    def is_valid_number(self, cursor, uid, id, number):
         """
         Metodo que verifica si @number esta en el rango
         de [@num_start,@num_end]
         """
-        obj = self.browse(cr, uid, id)
+        obj = self.browse(cursor, uid, id)
         if obj.num_start <= number <= obj.num_end:
             return True
         return False
 
 
-class ResParter(models.Model):
+class ResParter(models.Model):  # pylint: disable=W0232, R0903
     _inherit = 'res.partner'
 
     authorisation_ids = fields.One2many(
@@ -176,7 +175,7 @@ class ResParter(models.Model):
         )
 
 
-class AccountJournal(models.Model):
+class AccountJournal(models.Model):  # pylint: disable=W0232, R0903
 
     _inherit = 'account.journal'
 
@@ -184,11 +183,11 @@ class AccountJournal(models.Model):
         'account.authorisation',
         help='Autorización utilizada para Facturas y Liquidaciones de Compra',
         string='Autorización',
-        domain=[('in_type','=','interno')]
+        domain=[('in_type', '=', 'interno')]
         )
     auth_ret_id = fields.Many2one(
         'account.authorisation',
-        domain=[('in_type','=','interno')],
+        domain=[('in_type', '=', 'interno')],
         string='Autorización de Ret.',
         help='Autorizacion utilizada para Retenciones, facturas y liquidaciones'
         )
