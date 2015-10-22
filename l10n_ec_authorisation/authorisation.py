@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-  # pylint: disable=C0111
 
 import time
 from datetime import datetime
 
-from openerp import models, fields, api
-from openerp.exceptions import Warning
+from openerp import models, fields, api  # pylint: disable=F0401
+from openerp.exceptions import Warning  # pylint: disable=F0401, W0622
 
 
-class AccountAtsDoc(models.Model):
+class AccountAtsDoc(models.Model):  # pylint: disable=W0232, R0903
     _name = 'account.ats.doc'
     _description = 'Tipos Comprobantes Autorizados'
 
@@ -15,41 +15,41 @@ class AccountAtsDoc(models.Model):
     name = fields.Char('Tipo Comprobante', size=64, required=True)
 
 
-class AccountAtsSustento(models.Model):
+class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
     _name = 'account.ats.sustento'
     _description = 'Sustento del Comprobante'
 
-    def name_get(self, cr, uid, ids, context=None):
+    def name_get(self, cursor, uid, ids, context=None):
         if context is None:
             context = {}
         if not ids:
             return []
         res = []
-        reads = self.browse(cr, uid, ids, context=context)
+        reads = self.browse(cursor, uid, ids, context=context)  # pylint: disable=E1101
         for record in reads:
             name = '%s - %s' % (record.code, record.type)
             res.append((record.id, name))
         return res
 
     _rec_name = 'type'
-    
+
     code = fields.Char('Código', size=2, required=True)
     type = fields.Char('Tipo de Sustento', size=64, required=True)
 
 
-class AccountAuthorisation(models.Model):
+class AccountAuthorisation(models.Model):  # pylint: disable=W0232
 
     _name = 'account.authorisation'
     _description = 'Authorisation for Accounting Documents'
     _order = 'expiration_date desc'
 
-    def name_get(self, cr, uid, ids, context=None):
+    def name_get(self, cursor, uid, ids, context=None):
         if context is None:
             context = {}
         if not ids:
             return []
         res = []
-        for record in self.browse(cr, uid, ids, context=context):
+        for record in self.browse(cursor, uid, ids, context=context):
             name = '%s (%s-%s)' % (record.type_id.name, record.num_start, record.num_end)
             res.append((record.id, name))
         return res
@@ -59,12 +59,12 @@ class AccountAuthorisation(models.Model):
         """
         Check the due_date to give the value active field
         """
-        now = datetime.strptime(time.strftime("%Y-%m-%d"),'%Y-%m-%d')
+        now = datetime.strptime(time.strftime("%Y-%m-%d"), '%Y-%m-%d')
         due_date = datetime.strptime(self.expiration_date, '%Y-%m-%d')
-        self.active = now<due_date
+        self.active = now < due_date
 
     def _get_type(self):
-        return self._context.get('type', 'in_invoice')
+        return self._context.get('type', 'in_invoice')  # pylint: disable=E1101
 
     def _get_in_type(self):
         return self._context.get('in_type', 'externo')

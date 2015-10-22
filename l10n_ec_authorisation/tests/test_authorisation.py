@@ -1,8 +1,10 @@
-from openerp.tests.common import TransactionCase
+# -*- coding: utf-8 -*-  # pylint: disable=C0111
+
+from openerp.tests.common import TransactionCase  # pylint: disable=F0401
 
 import time
 
-class TestAuthorisation(TransactionCase):
+class TestAuthorisation(TransactionCase):  # pylint: disable=W0232
     """
     Prueba de documentos de autorizacion
     """
@@ -35,7 +37,7 @@ class TestAuthorisation(TransactionCase):
                 'tipo_persona': '6'
             }
         )
-        
+
         auth_id = self.Authorisation.create(
             cursor,
             user_id,

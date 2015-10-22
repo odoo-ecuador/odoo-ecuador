@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-  # pylint: disable=C0111
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
@@ -19,31 +19,23 @@
 #
 ##############################################################################
 
-{
-    'name' : 'SRI Authorisation Documents',
-    'version' : '0.1.0',
-    'author' : 'Cristian Salamea',
+{  # pylint: disable=W0104
+    'name': 'SRI Authorisation Documents',
+    'version': '0.1.0',
+    'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
     'website': 'http://www.ayni.com.ec',
     'data': [
-#        'security/ir.model.access.csv',
         'view/authorisation_view.xml',
         'data/account.ats.doc.csv',
         'data/account.ats.sustento.csv'
     ],
-    'depends' : [
+    'depends': [
         'l10n_ec_partner',
         'account'
-    ],
-    'js': [
-    ],
-    'qweb': [
-    ],
-    'css': [
     ],
     'test': [
     ],
     'installable': True,
-    'auto_install': False,                
 }
