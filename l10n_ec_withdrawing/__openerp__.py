@@ -40,6 +40,6 @@
         'retention_wizard.xml',
         'data/account.fiscal.position.csv'
     ],
-    'installable': True,
+    'installable': False,
     'active': False,
 }
