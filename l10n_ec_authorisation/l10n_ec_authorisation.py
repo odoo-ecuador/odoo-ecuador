@@ -150,6 +150,8 @@ class AccountAuthorisation(osv.osv):
         de [@num_start,@num_end]
         """
         obj = self.browse(cr, uid, id)
+        if number == 0:
+            return True
         if obj.num_start <= number <= obj.num_end:
             return True
         return False
@@ -177,5 +179,3 @@ class AccountJournal(osv.osv):
                                        string='Autorización de Ret.',
                                        help='Autorizacion utilizada para Retenciones, facturas y liquidaciones')
         }
-
-

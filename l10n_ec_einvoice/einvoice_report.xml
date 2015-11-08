@@ -1,13 +1,14 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
-  <data>
+    <data>
 
-    <report auto="False" id="account.account_invoices" model="account.invoice"
-            name="account.einvoice" rml="l10n_ec_einvoice/report/account_einvoice.mako"
-            usage="default" string="Factura" header="False" report_type="webkit"/>
+        <report auto="False" id="account.account_invoices" model="account.invoice"
+                name="account.einvoice" rml="l10n_ec_einvoice/report/account_einvoice.mako"
+                usage="default" string="Factura" header="False" report_type="webkit"/>
 
-    <report auto="False" id="account.eretention" model="account.retention"
-            name="account.eretention" rml="l10n_ec_e-invoice/report/account_print_retention.rml"
-            usage="default" string="Retenciones" header="False" report_type="pdf"/>
-  </data>
+        <report auto="False" id="account.eretention" model="account.retention"
+                name="account.eretention" rml="l10n_ec_einvoice/report/account_eretention.mako"
+                usage="default" string="Retenciones" header="False" report_type="webkit"/>
+
+    </data>
 </openerp>

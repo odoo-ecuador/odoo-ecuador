@@ -2,352 +2,368 @@
   <head>
     <meta charset="UTF-8">
     <style>
-
       body {
-      font-family:helvetica, helvetica bold, Arial Bold;
-      font-size:12;
+        font-family: helvetica, helvetica bold, Arial Bold;
+        font-size: 12px;
       }
-      
       div.container {
-      margin: 15px;   
       }
-      
-      div.left, div.right {    
-      float: left;
+      div.left, div.right {
+        float: left;
       }
-      
       div.left {
-      padding-right: 21px;
+        padding-right: 10px;
+        width: 49%;
       }
       div.right {
-      border: 1px solid gray;
+        width: 49%;
       }
-
       div.logo {
-      height: 130px;
-      width: 500px;
-      padding-top: 10px;
-      padding-botton: 10px;
-      border: 1px solid gray;
-      text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
       }
-
       div.companyinfo {
-      height: 170px;
-      width: 500px;
-      border: 1px solid gray;      
+        border: 1px solid #000000;
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
       }
-
       div.invoiceinfo {
-      height: 320px;
-      width: 400px;
-      border: 1px solid gray;
-      font-size: 18px;
+        border: 1px solid #000000;
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
       }
-
       div.customer {
-      clear: both;
-      height: 80px;
-      padding-top: 10px;      
-      width: 925px;
-      border: 1px solid gray;      
+        width: 99%;
+        border: 1px solid #000000;
       }
-
+      div.espacio {
+        clear: both;
+        height: 10px;
+      }
       div.details {
-      width: 925px;
-      padding-top: 10px;
-      border: 1px solid gray;
+        width: 99%;
       }
-
       table.content {
-      text-align: center;
+        border-collapse: collapse;
       }
-
-      div.footer {
-      margin: 15px;
-      width: 900px;
+      table.content th, table.content td {
+        border: 1px solid #000000;
       }
-
-      div.fot1, div.fot2 {    
-      float: left;
+      div.fot1, div.fot2 {
+        float: left;
       }
-      
       div.fot1 {
-      width: 400px;
-      float: left;
+        width: 62%;
+        margin: 10px;
+        border: 1px solid #000000;
       }
-
       div.fot2 {
-      width: 525px;
-      float: left;
-      border: 1px solid gray;
+        width: 34%;
+        margin-top: -1px;
       }
-
-      .label {
-      text-align: left;
-      padding: 4px;
-      }
-
       .amount {
-      text-align: right;
-      padding: 4px;      
-      }
-
-      td {
-      padding: 5px;
-      }
-
-      div.info {
-      padding: 5px;
-      }
-
+        text-align: right;
+      } 
     </style>
   </head>
   %for o in objects:
   <body>
-    <div class="main">
-      <div class="container">
-	<div class="left">
-	  <div class="logo">
-	     ${helper.embed_logo_by_name('company_logo')|n}
-	  </div>
-	  <div class="companyinfo">
-	    <div class="info">
-	      <td>
-		<b>${o.company_id.name.upper()}</b>
+    <div cass="container">
+      <div class="left">
+        <div class="logo">
+          ${helper.embed_image('png', o.company_id.logo, 180, 75) | n}
+        </div>
+        <div class="espacio">
+        </div>
+        <div class="companyinfo">
+          <table>
+            <tbody>
+              <tr>
+                <td colspan="3" style="font-size: 14px">
+                  <b>${o.company_id.name}</b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  ${o.company_id.tradename or ''}
+                </td>
+              </tr>
+              <tr>
+                <td><br/><br/><br/><br/></td>
+              </tr>
+              <tr>
+                <td width="20%"><b>Dirección Matriz:</b></td>
+                <td width="70%" colspan="2">${o.company_id.street}</td>
+              </tr>
+              <tr>
+                % if o.company_id.street2:
+                <td><b>Dirección Sucursal:</b></td>
+                <td colspan="2">${o.company_id.street2}</td>
+                % else:
+                <td></td>
+                <td></td>
+                % endif
+              </tr>
+              <tr>
+                % if o.company_id.company_registry:
+                <td colspan="2"><b>Contribuyente Especial Nro.</b></td>
+                <td>${o.company_id.company_registry}</td>
+                % else:
+                <td></td>
+                <td></td>
+                %endif
+              </tr>
+              <tr>
+                <td colspan="2"><b>OBLIGADO A LLEVAR CONTABILIDAD</b></td>
+                <td width="30%">SI</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="right">
+        <div class="invoiceinfo">
+          <table>
+            <tbody>
+              <tr>
+                <td colspan="2" style="font-size: 14px">
+                  <b>R.U.C.:</b> ${o.company_id.partner_id.ced_ruc}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="font-size: 14px">
+                  <b>F A C T U R A</b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                   <b>No. ${o.number[0:3]}-${o.number[3:6]}-${o.number[6:15]}</b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <b>NÚMERO DE AUTORIZACIÓN</b>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <b>${o.authorization_number or 'NO ENVIADO'}</b>
+                </td>
+              </tr>
+              <tr>
+                <td>FECHA Y HORA DE AUTORIZACIÓN</td>
+                <td>
+                  ${formatLang(o.authorization_date or '', date_time=True)}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <b>AMBIENTE:</b> ${o.environment_code or ''}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <b>EMISIÓN:</b> ${o.emission_code or ''}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"><b>CLAVE DE ACCESO</b></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  ${ helper.barcode(o.access_key or '123', htmlAttrs={'width': '350px', 'height': '30px;'}) }
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align: center">
+                  <b>${o.access_key or '123'}</b>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="espacio">
+      </div>
+      <div class="customer">
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="2"><b>Razón Social / Apellidos y Nombres:</b></td>
+              <td>${o.partner_id.name}</td>
+              <td><b>Identificación:</b></td>
+              <td>${o.partner_id.ced_ruc}</td>
+            </tr>
+            <tr>
+              <td><b>Fecha Emisión:</b></td>
+              <td>${o.date_invoice}</td>
+              <td></td>
+              <td><b>Guía Remisión:</b></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="espacio">
+      </div>
+      <div class="details">
+        <table width="100%" class="content">
+          <thead>
+            <tr>
+              <th>Cod. Principal</th>
+              <th>Cod. Auxiliar</th>
+              <th>Cant.</th>
+              <th>Descripción</th>
+              <th>Precio Unitario</th>
+              <th>Descuento</th>
+              <th>Precio Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            %for line in o.invoice_line:
+            <tr>
+              <td style="text-align: center">
+                ${line.product_id.default_code or '**'}
+              </td>
+              <td style="text-align: center">
+                ${line.product_id.manufacturer_pref or ''}
+              </td>
+              <td style="text-align: center">
+                ${formatLang(line.quantity,digits=0)}
+              </td>
+              <td>
+                ${line.name}
+              </td>
+              <td width="63px" class="amount">
+                ${formatLang(line.price_unit,digits=2)}
+              </td>
+              <td width="63px" class="amount">
+                0.00</td>
+              <td width="63px" class="amount">
+                ${formatLang(line.price_subtotal,digits=2)}
+              </td>
+            </tr>
+            %endfor
+          </tbody>
+        </table>
+      </div>
+      <div class="fot1">
+        <b style="padding-left: 40px">Información Adicional</b>
+        <table>
+          <tbody>
+            <tr>
+              <td>Dirección:</td>
+              <td>${o.partner_id.street}</td>
+            </tr>
+            <tr>
+              <td>Teléfono:</td>
+              <td>${o.partner_id.phone}</td>
+            </tr>
+            <tr>
+              <td>Correo Electrónico:</td>
+              <td>${o.partner_id.email}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="fot2">
+        <table class="content">
+          <tbody>
+            <tr>
+              <td width="250px">
+                SUBTOTAL 12%
+              </td>
+              <td width="70px" class="amount">
+                ${formatLang(o.amount_vat,digits=2)}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                SUBTOTAL 0%
 	      </td>	      
-	    </div>
-	    <div class="info">
-	      <td>
-		<b>Dirección:</b> ${ o.company_id.street } ${ o.company_id.street2 }
-	      </td>	      
-	    </div>
-	    <div>
-	      <br>
-	      <br>
-	      <br>
-	    </div>	    
-	    <div class="info">
-	      <td>
-		Constribuyente Especial Nro: ${o.company_id.company_registry}
-	      </td>	      
-	    </div>
-	    <div class="info">
-	      <td>
-		Obligado a llevar contabilidad:
+	      <td class="amount">
+	        ${formatLang(o.amount_vat_cero,digits=2)}
 	      </td>
-	      <td>
-		SI
-	      </td>
-	    </div>
-	  </div>	
-	</div>
-	<div class="right">
-	  <div class="invoiceinfo">
-	    <div class="info">
-	      <b>RUC:</b>
-	      ${o.company_id.partner_id.ced_ruc}
-	    </div>
-	    <div class="info" style="text-align: center;">
-	      <div style="text-align: center;">
-		<b>FACTURA</b>
-	      </div>
-	      <div>
-		No. ${ o.number }
-	      </div>	      
-	    </div>
-	    <div class="info" style="text-align: left;">
-	      <b>NUMERO AUTORIZACION</b>
-	    </div>
-	    <div class="info" style="text-align: left;">
-	      ${ o.numero_autorizacion }
-	    </div>
-	    <div class="info" style="text-align: left;">
-	      <b>FECHA AUTORIZACION</b>
-	    </div>
-	    <div class="info" style="text-align: left;">
-	      ${ o.fecha_autorizacion }
-	      <div class="info" style="text-align: left;">
-		<b>AMBIENTE</b>
-		Producción
-	      </div>	    
-	      <div class="info" style="text-align: left;">
-		<b>EMISION:</b>
-		Emisión Normal
-	      </div>
-	      <div style="text-align: center;">
-		<b>CLAVE DE ACCESO</b>
-	      </div>
-	      <div style="text-align: center;">
-		${ helper.barcode(o.clave_acceso, htmlAttrs={'width': '350px', 'height': '30px;'}) }
-	      </div>
-	      <div style="font-size: 11px !important; text-align: center;">
-		${ o.clave_acceso }
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<div class="customer">
-	  <table style="border: none !important;">
-	    <tr>
-	      <td style="width: 15%; font-size:14px;">
-		<b>CLIENTE:</b>
-	      </td>
-	      <td style="width: 40%;font-size:14px;">
-		${ o.partner_id.name }
-	      </td>
-	      <td style="width: 15%; font-size:14px;">
-		<b>RUC/CI:</b>
-	      </td>
-	      <td style="width: 10%; font-size:14px;">
-		${ o.partner_id.ced_ruc }
-	      </td>	      
 	    </tr>
 	    <tr>
-	      <td style="font-size:14px;">
-		<b>FECHA DE EMISION:</b>
-	      </td>
 	      <td>
-		${ o.date_invoice }
+                SUBTOTAL No objeto de IVA
 	      </td>	      
-	      <td style="font-size:14px;">
-		<b>GUIA DE REMISION:</b>
-	      </td>
-	      <td>
-	      </td>
+	      <td class="amount">
+	        ${formatLang(o.amount_novat,digits=2)}
+              </td>
 	    </tr>
-	  </table>
-	</div>
-	<div class="details">
-	  <table class="content">
-	    <tr>
-	      <th style="width: 15%">
-		CODIGO
-	      </th>
-	      <th style="width: 50%">
-		DESCRIPCION
-	      </th>
-	      <th style="width: 5%">
-		CANTIDAD
-	      </th>	    
-	      <th style="width: 10%">
-		PRECIO
-	      </th>
-	      <th style="width: 10%">
-		DESCUENTO
-	      </th>
-	      <th style="width: 10%">
-		TOTAL
-	      </th>
-	    </tr>
-	    %for line in o.invoice_line:
+            <tr>
+              <td>
+                SUBTOTAL Exento de IVA
+              </td>
+              <td class="amount">
+                0.00
+              </td>
+            </tr>
 	    <tr>
 	      <td>
-		${ line.product_id.default_code or '**' }
+		SUBTOTAL SIN IMPUESTOS
+              </td>	      
+	      <td class="amount">
+	       	${formatLang(o.amount_untaxed,digits=2)}
 	      </td>
+	    </tr>
+	    <tr>
 	      <td>
-		${ line.product_id.name }
-	      </td>	    
-	      <td>
-		${ line.quantity }
+	        TOTAL Descuento
+	      </td>	      
+	      <td class="amount">
+	        0.00
 	      </td>
-	      <td>
-		${ line.price_unit }
+	    </tr>
+	    <tr>
+              <td>
+                ICE
+	      </td>	      
+	      <td class="amount">
+	        0.00
 	      </td>
+	    </tr>
+	    <tr>
 	      <td>
+                IVA 12%
+	      </td>	      
+	      <td class="amount">
+		${formatLang(o.amount_tax,digits=2)}
+	      </td>
+	    </tr>
+            <tr>
+              <td>
+                IRBPNR
+              </td>
+              <td class="amount">
+                0.00
+              </td>
+            </tr>
+	    <tr>
+	      <td>
+	        PROPINA
+	      </td>	      
+	      <td class="amount">
 		0.00
 	      </td>
+	    </tr>
+	    <tr>
 	      <td>
-		${ line.price_subtotal }
+	        <b>VALOR TOTAL</b>
+	      </td>	      
+	      <td class="amount">
+	        ${formatLang(o.amount_pay,digits=2)}
 	      </td>
 	    </tr>
-	    %endfor
-	  </table>
-	</div>
-	<div class="fot1">
-	  <div style="padding: 5px;">
-	    DETALLE:
-	  </div>
-	</div>
-	<div class="fot2">
-	  <div>
-	    <table class="taxes" style="width: 100%">
-	      <tr>
-		<td class="label">
-		  SUBTOTAL 12%
-		</td>
-		<td class="amount">
-		  ${ o.amount_vat }
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  SUBTOTAL 0%
-		</td>	      
-		<td class="amount">
-		  ${ o.amount_vat_cero }
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  SUBTOTAL no sujeto IVA
-		</td>	      
-		<td class="amount">
-		  ${ o.amount_novat }
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  SUBTOTAL SIN IMPUESTOS
-		</td>	      
-		<td class="amount">
-		  ${ o.amount_untaxed }
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  DESCUENTOS
-		</td>	      
-		<td class="amount">
-		  0.00
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  ICE
-		</td>	      
-		<td class="amount">
-		  0.00
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  IVA 12%
-		</td>	      
-		<td class="amount">
-		  ${ o.amount_tax }
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  PROPINA
-		</td>	      
-		<td class="amount">
-		  0.00
-		</td>
-	      </tr>
-	      <tr>
-		<td class="label">
-		  VALOR TOTAL
-		</td>	      
-		<td class="amount">
-		  ${ o.amount_pay }
-		</td>
-	      </tr>	    
-	    </table>
-	  </div>
-	</div>	
+          </tbody>
+        </table>
       </div>
+    </div>
   </body>
   %endfor
 </html>
