@@ -129,7 +129,7 @@
       <field name="domain">[('in_type', '=', 'interno')]</field>
     </record>
 
-    <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.menu_journals"/>
+    <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.account_account_menu"/>
 
     <!--
     -->
@@ -166,7 +166,7 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
-    <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.next_id_27"/>
+    <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.account_account_menu"/>
 
     <record id="view_account_ats_sustento_tree" model="ir.ui.view">
       <field name="name">account.ats.sustento.tree</field>
@@ -200,7 +200,7 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
-    <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
+    <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.account_account_menu"/>
 
     
 

@@ -92,9 +92,9 @@ class ResPartner(models.Model):
         'Cedula/ RUC',
         size=13,
         required=True,
-        help='Identificación o Registro Unico de Contribuyentes')
+        help='Identificación o Registro Único de Contribuyentes')
     type_ced_ruc = fields.Selection([
-            ('cedula','CEDULA'),
+            ('cedula','CÉDULA'),
             ('ruc','RUC'),
             ('pasaporte','PASAPORTE')
             ],
@@ -124,5 +124,6 @@ class ResPartner(models.Model):
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
+    tradename = fields.Char('Nombre Comercial', size=300)
     ruc_contador = fields.Char('Ruc del Contador', size=13)
     cedula_rl = fields.Char('Cédula Representante Legal', size=10)

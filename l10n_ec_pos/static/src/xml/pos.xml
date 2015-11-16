@@ -21,49 +21,30 @@
             <div class='client-details-box clearfix'>
               <div class='client-details-left'>
                     <div class='client-detail'>
-                        <span class='label'>Cedula / Ruc</span>
+                        <span class='label'>Tipo ID</span>
+                        <select class='detail client-address-country' name='type_ced_ruc'>
+                            <option value='cedula'>CÉDULA</option>
+                            <option value='ruc'>RUC</option>
+                            <option value='pasaporte'>PASAPORTE</option>
+                        </select>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>RUC</span>
                         <input class='detail client-address-street' name='ced_ruc' t-att-value='partner.ced_ruc' placeholder='Cedula / RUC'></input>
                     </div>		
                     <div class='client-detail'>
-                        <span class='label'>Street</span>
+                        <span class='label'>Dirección</span>
                         <input class='detail client-address-street' name='street'       t-att-value='partner.street' placeholder='Street'></input>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>City</span>
-                        <input class='detail client-address-city'   name='city'         t-att-value='partner.city' placeholder='City'></input>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Postcode</span>
-                        <input class='detail client-address-zip'    name='zip'          t-att-value='partner.zip' placeholder='ZIP'></input>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Country</span>
-                        <select class='detail client-address-country' name='country_id'>
-                            <option value=''>None</option>
-                            <t t-foreach='widget.pos.countries' t-as='country'>
-                                <option t-att-value='country.id' t-att-selected="partner_country_id ? ((country.id === partner.country_id[0]) ? true : undefined) : undefined"> 
-                                    <t t-esc='country.name'/>
-                                </option>
-                            </t>
-                        </select>
                     </div>
                 </div>
                 <div class='client-details-right'>
                     <div class='client-detail'>
-                        <span class='label'>Email</span>
+                        <span class='label'>Correo Electrónico</span>
                         <input class='detail client-email'  name='email'    type='email'    t-att-value='partner.email || ""'></input>
                     </div>
                     <div class='client-detail'>
-                        <span class='label'>Phone</span>
+                        <span class='label'>Teléfono</span>
                         <input class='detail client-phone'  name='phone'    type='tel'      t-att-value='partner.phone || ""'></input>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Barcode</span>
-                        <input class='detail barcode'       name='ean13'    t-att-value='partner.ean13 || ""'></input>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Tax ID</span>
-                        <input class='detail vat'           name='vat'     t-att-value='partner.vat || ""'></input>
                     </div>
                 </div>
             </div>
@@ -87,7 +68,7 @@
       <table class='client-list'>
         <thead>
           <tr>
-	    <th>Cedula / Ruc</th>
+            <th>RUC</th>
             <th>Name</th>
             <th>Address</th>
             <th>Phone</th>
@@ -112,19 +93,25 @@
             <div class='client-details-box clearfix'>
               <div class='client-details-left'>
                     <div class='client-detail'>
-                        <span class='label'>Cedula / Ruc</span>
+                        <span class='label'>Tipo ID</span>
+                        <span class='detail client-address'><t t-esc='partner.type_ced_ruc' /></span>
+                    </div>
+                    <div class='client-detail'>
+                        <span class='label'>RUC</span>
                         <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
                     </div>		
                     <div class='client-detail'>
-                        <span class='label'>Address</span>
+                        <span class='label'>Dirección</span>
                         <span class='detail client-address'><t t-esc='partner.address' /></span>
                     </div>
+                </div>
+                <div class='client-details-right'>
                     <div class='client-detail'>
-                        <span class='label'>Email</span>
+                        <span class='label'>Correo Electrónico</span>
                         <span class='detail client-email'><t t-esc='partner.email' /></span>
                     </div>
                     <div class='client-detail'>
-                        <span class='label'>Phone</span>
+                        <span class='label'>Teléfono</span>
                         <t t-if='partner.phone'>
                             <span class='detail client-phone'><t t-esc='partner.phone' /></span>
                         </t>
@@ -133,28 +120,252 @@
                         </t>
                     </div>
                 </div>
-                <div class='client-details-right'>
-                    <div class='client-detail'>
-                        <span class='label'>Barcode</span>
-                        <t t-if='partner.ean13'>
-                            <span class='detail client-id'><t t-esc='partner.ean13'/></span>
-                        </t>
-                        <t t-if='!partner.ean13'>
-                            <span class='detail client-id empty'>N/A</span>
-                        </t>
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Tax ID</span>
-                        <t t-if='partner.vat'>
-                            <span class='detail vat'><t t-esc='partner.vat'/></span>
-                        </t>
-                        <t t-if='!partner.vat'>
-                            <span class='detail vat empty'>N/A</span>
-                        </t>
-                    </div>
-                </div>
             </div>
         </section>
     </t>
   </t>  
+
+  <t t-extend="PosTicket">
+    <t t-jquery=".pos-sale-ticket" t-operation="replace">
+      <div class="pos-sale-ticket">
+        <div class="pos-center-align"><t t-esc="order.name"/></div>
+          <t t-if="order.get_client()">
+            Cliente: <span><t t-esc="order.get_client_name()"/></span><br />
+            R.U.C.: <span><t t-esc="order.get_client().ced_ruc"/></span><br />
+            Direccion: <span><t t-esc="order.get_client().street"/></span><br />
+          </t>
+          Fecha: <t t-esc="moment().format('L LT')"/><br />
+          <br />
+          <t t-if="receipt.header">
+            <div style='text-align:center'>
+              <t t-esc="receipt.header" />
+            </div>
+            <br />
+          </t>
+          <table class='receipt-orderlines'>
+            <colgroup>
+              <col width='15%' />
+              <col width='35%' />
+              <col width='25%' />
+              <col width='25%' />
+            </colgroup>
+            <tr>
+              <td class="pos-right-center">CANT</td>
+              <td>PRODUCTO</td>
+              <td class="pos-right-align">V.UNIT.</td>
+              <td class="pos-right-align">V.TOTAL</td>
+            </tr>
+            <tr t-foreach="orderlines" t-as="orderline">
+              <t t-if="orderline.price != 0">
+                <td class="pos-right-center"><t t-esc="orderline.get_quantity()"/></td>              
+                <td><div style="height: 15px; overflow: hidden;"><t t-esc="orderline.get_product().display_name"/></div></td>
+                <td class="pos-right-align"><t t-esc="widget.format_currency(orderline.price.toFixed(2))"/></td>
+	        <td class="pos-right-align"><t t-esc="widget.format_currency(orderline.get_display_price().toFixed(2))"/></td>
+              </t>
+            </tr>
+          </table>
+          <br />
+          <table class='receipt-total'>
+            <tr>
+              <td>Subtotal 12%:</td>
+              <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_subtotal().toFixed(2))"/></td>
+            </tr>
+            <tr>
+              <td>Subtotal 0%:</td>
+              <td class="pos-right-align">0,00</td>
+            </tr>
+            <tr>
+              <td>Subtotal:</td>
+              <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_subtotal().toFixed(2))"/></td>
+            </tr>
+            <t t-foreach="order.getTaxDetails()" t-as="taxdetail">
+              <tr>
+                <td>IVA 12%</td>
+                <td class="pos-right-align"><t t-esc="widget.format_currency(taxdetail.amount.toFixed(2))" /></td>
+              </tr>
+            </t>
+            <tr class="emph">
+              <td>Total:</td>
+              <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_total_with_tax().toFixed(2))"/></td>
+            </tr>
+          </table>
+          <br />
+          <table>
+            <tr t-foreach="paymentlines" t-as="line">
+              <td>
+                <t t-esc="line.name"/>
+              </td>
+              <td class="pos-right-align">
+                <t t-esc="widget.format_currency(line.get_amount().toFixed(2))"/>
+              </td>
+            </tr>
+          </table>
+          <br />
+          <table>
+            <tr>
+              <td>Change:</td>
+              <td class="pos-right-align">
+                <t t-esc="widget.format_currency(order.get_change().toFixed(2))"/>
+              </td>
+            </tr>
+          </table>
+          <t t-if="receipt.footer">
+            <br />
+            <div style='text-align:center'>
+              <t t-esc="receipt.footer" />
+            </div>
+          </t>
+        </div>
+    </t>
+  </t>
+  
+  <t t-name="XmlReceipt">
+        <receipt align='center' width='40' value-thousands-separator='' >
+            <t t-if='receipt.company.logo'>
+                <img t-att-src='receipt.company.logo' />
+                <br/>
+            </t>
+            <t t-if='!receipt.company.logo'>
+                <h1><t t-esc='receipt.company.name' /></h1>
+                <br/>
+            </t>
+            <div font='b'>
+                <t t-if='receipt.shop.name'>
+                    <div><t t-esc='receipt.shop.name' /></div>
+                </t>
+                <t t-if='receipt.company.contact_address'>
+                    <div><t t-esc='receipt.company.contact_address' /></div>
+                </t>
+                <t t-if='receipt.company.phone'>
+                    <div>Tel:<t t-esc='receipt.company.phone' /></div>
+                </t>
+                <t t-if='receipt.company.vat'>
+                    <div>VAT:<t t-esc='receipt.company.vat' /></div>
+                </t>
+                <t t-if='receipt.company.email'>
+                    <div><t t-esc='receipt.company.email' /></div>
+                </t>
+                <t t-if='receipt.company.website'>
+                    <div><t t-esc='receipt.company.website' /></div>
+                </t>
+                <t t-if='receipt.header'>
+                    <div><t t-esc='receipt.header' /></div>
+                </t>
+                <t t-if='receipt.cashier'>
+                    <div>--------------------------------</div>
+                    <div>Served by <t t-esc='receipt.cashier' /></div>
+                </t>
+            </div>
+            <br /><br />
+
+            <!-- Orderlines -->
+
+            <div line-ratio='0.6'>
+                <t t-foreach='receipt.orderlines' t-as='line'>
+                    <t t-set='simple' t-value='line.discount === 0 and line.unit_name === "Unit(s)" and line.quantity === 1' />
+                    <t t-if='simple'>
+                        <line>
+                            <left><t t-esc='line.product_name' /></left>
+                            <right><value><t t-esc='line.price_display' /></value></right>
+                        </line>
+                    </t>
+                    <t t-if='!simple'>
+                        <line><left><t t-esc='line.product_name' /></left></line>
+                        <t t-if='line.discount !== 0'>
+                            <line indent='1'><left>Discount: <t t-esc='line.discount' />%</left></line>
+                        </t>
+                        <line indent='1'>
+                            <left>
+                                <value value-decimals='3' value-autoint='on'>
+                                    <t t-esc='line.quantity' />
+                                </value>
+                                <t t-if='line.unit_name !== "Unit(s)"'>
+                                    <t t-esc='line.unit_name' /> 
+                                </t>
+                                x 
+                                <value value-decimals='2'>
+                                    <t t-esc='line.price' />
+                                </value>
+                            </left>
+                            <right>
+                                <value><t t-esc='line.price_display' /></value>
+                            </right>
+                        </line>
+                    </t>
+                </t>
+            </div>
+
+            <!-- Subtotal -->
+
+            <t t-set='taxincluded' t-value='Math.abs(receipt.subtotal - receipt.total_with_tax) &lt;= 0.000001' />
+            <t t-if='!taxincluded'>
+                <line><right>--------</right></line>
+                <line><left>Subtotal</left><right> <value><t t-esc="receipt.subtotal" /></value></right></line>
+                <t t-foreach='receipt.tax_details' t-as='tax'>
+                    <line>
+                        <left><t t-esc='tax.name' /></left>
+                        <right><value><t t-esc='tax.amount' /></value></right>
+                    </line>
+                </t>
+            </t>
+
+            <!-- Total -->
+
+            <line><right>--------</right></line>
+            <line size='double-height'>
+                <left><pre>        TOTAL</pre></left>
+                <right><value><t t-esc='receipt.total_with_tax' /></value></right>
+            </line>
+            <br/><br/>
+
+            <!-- Payment Lines -->
+
+            <t t-foreach='receipt.paymentlines' t-as='line'>
+                <line>
+                    <left><t t-esc='line.journal' /></left>
+                    <right><value><t t-esc='line.amount'/></value></right>
+                </line>
+            </t>
+            <br/> 
+
+            <line size='double-height'>
+                <left><pre>        CHANGE</pre></left>
+                <right><value><t t-esc='receipt.change' /></value></right>
+            </line>
+            <br/>
+            
+            <!-- Extra Payment Info -->
+
+            <t t-if='receipt.total_discount'>
+                <line>
+                    <left>Discounts</left>
+                    <right><value><t t-esc='receipt.total_discount'/></value></right>
+                </line>
+            </t>
+            <t t-if='taxincluded'>
+                <t t-foreach='receipt.tax_details' t-as='tax'>
+                    <line>
+                        <left><t t-esc='tax.name' /></left>
+                        <right><value><t t-esc='tax.amount' /></value></right>
+                    </line>
+                </t>
+            </t>
+
+            <!-- Footer -->
+            <t t-if='receipt.footer'>
+                <br/>
+                <pre><t t-esc='receipt.footer' /></pre>
+                <br/>
+                <br/>
+            </t>
+
+            <br/>
+            <div font='b'>
+                <div><t t-esc='receipt.name' /></div>
+                <div><t t-esc='receipt.date.localestring' /></div>
+            </div>
+
+        </receipt>
+    </t>
+  
 </templates>

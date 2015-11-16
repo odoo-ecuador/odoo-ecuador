@@ -21,184 +21,107 @@
 #
 ##############################################################################
 
-__author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
-
-import time
-from datetime import datetime
-
-from openerp.osv import osv, fields
+from openerp import api, fields, models, _
 
 
-class account_tax(osv.osv):
-    
-    _name = 'account.tax'
+class AccountTax(models.Model):
     _inherit = 'account.tax'
     _order = 'description ASC'
+    
+    porcentaje = fields.Char(string='Porcentaje', size=128)
+    tax_group = fields.Selection([
+        ('vat','IVA Diferente de 0%'),
+        ('vat0','IVA 0%'),
+        ('novat','No objeto de IVA'),
+        ('ret_vat_b', 'Retención de IVA (Bienes)'),
+        ('ret_vat_srv', 'Retención de IVA (Servicios)'),
+        ('ret_ir', 'Ret. Imp. Renta'),
+        ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
+        ('imp_ad', 'Imps. Aduanas'),
+        ('ice', 'ICE'),
+        ('other','Other')],
+        string='Grupo', required=True, default='vat')
 
-    def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0):
-        taxes = self._applicable(cr, uid, taxes, price_unit ,product, partner)
-        res = []
-        cur_price_unit=price_unit
-        for tax in taxes:
-            # we compute the amount for the current tax object and append it to the result
-            data = {'id':tax.id,
-                    'name':tax.description and tax.description + " - " + tax.name or tax.name,
-                    'account_collected_id':tax.account_collected_id.id,
-                    'account_paid_id':tax.account_paid_id.id,
-                    'account_analytic_collected_id': tax.account_analytic_collected_id.id,
-                    'account_analytic_paid_id': tax.account_analytic_paid_id.id,
-                    'base_code_id': tax.base_code_id.id,
-                    'ref_base_code_id': tax.ref_base_code_id.id,
-                    'sequence': tax.sequence,
-                    'base_sign': tax.base_sign,
-                    'tax_sign': tax.tax_sign,
-                    'ref_base_sign': tax.ref_base_sign,
-                    'ref_tax_sign': tax.ref_tax_sign,
-                    'price_unit': cur_price_unit,
-                    'tax_code_id': tax.tax_code_id.id,
-                    'ref_tax_code_id': tax.ref_tax_code_id.id,
-                    'tax_group': tax.tax_group,
-                    'porcentaje': tax.porcentaje
-            }
-            res.append(data)
-            if tax.type=='percent':
-                amount = cur_price_unit * tax.amount
-                data['amount'] = amount
+    @api.v8
+    def compute_all(self, price_unit, currency=None, quantity=1.0, product=None, partner=None):
+        """ Returns all information required to apply taxes (in self + their children in case of a tax goup).
+            We consider the sequence of the parent for group of taxes.
+                Eg. considering letters as taxes and alphabetic order as sequence :
+                [G, B([A, D, F]), E, C] will be computed as [A, D, F, C, E, G]
 
-            elif tax.type=='fixed':
-                data['amount'] = tax.amount
-                data['tax_amount']=quantity
-               # data['amount'] = quantity
-            elif tax.type=='code':
-                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner}
-                exec tax.python_compute in localdict
-                amount = localdict['result']
-                data['amount'] = amount
-            elif tax.type=='balance':
-                data['amount'] = cur_price_unit - reduce(lambda x,y: y.get('amount',0.0)+x, res, 0.0)
-                data['balance'] = cur_price_unit
+        RETURN: {
+            'total_excluded': 0.0,    # Total without taxes
+            'total_included': 0.0,    # Total with taxes
+            'taxes': [{               # One dict for each tax in self and their children
+                'id': int,
+                'name': str,
+                'amount': float,
+                'sequence': int,
+                'account_id': int,
+                'refund_account_id': int,
+                'analytic': boolean,
+                'tax_group'; str,
+                'porcentaje': str,
+            }]
+        } """
+        if len(self) == 0:
+            company_id = self.env.user.company_id
+        else:
+            company_id = self[0].company_id
+        if not currency:
+            currency = company_id.currency_id
+        taxes = []
+        # By default, for each tax, tax amount will first be computed
+        # and rounded at the 'Account' decimal precision for each
+        # PO/SO/invoice line and then these rounded amounts will be
+        # summed, leading to the total amount for that tax. But, if the
+        # company has tax_calculation_rounding_method = round_globally,
+        # we still follow the same method, but we use a much larger
+        # precision when we round the tax amount for each line (we use
+        # the 'Account' decimal precision + 5), and that way it's like
+        # rounding after the sum of the tax amounts of each line
+        prec = currency.decimal_places
+        if company_id.tax_calculation_rounding_method == 'round_globally':
+            prec += 5
+        total_excluded = total_included = base = round(price_unit * quantity, prec)
 
-            amount2 = data.get('amount', 0.0)
-            if tax.child_ids:
-                if tax.child_depend:
-                    latest = res.pop()
-                amount = amount2
-                child_tax = self._unit_compute(cr, uid, tax.child_ids, amount, product, partner, quantity)
-                res.extend(child_tax)
-                for child in child_tax:
-                    amount2 += child.get('amount', 0.0)
-                if tax.child_depend:
-                    for r in res:
-                        for name in ('base','ref_base'):
-                            if latest[name+'_code_id'] and latest[name+'_sign'] and not r[name+'_code_id']:
-                                r[name+'_code_id'] = latest[name+'_code_id']
-                                r[name+'_sign'] = latest[name+'_sign']
-                                r['price_unit'] = latest['price_unit']
-                                latest[name+'_code_id'] = False
-                        for name in ('tax','ref_tax'):
-                            if latest[name+'_code_id'] and latest[name+'_sign'] and not r[name+'_code_id']:
-                                r[name+'_code_id'] = latest[name+'_code_id']
-                                r[name+'_sign'] = latest[name+'_sign']
-                                r['amount'] = data['amount']
-                                latest[name+'_code_id'] = False
-            if tax.include_base_amount:
-                cur_price_unit+=amount2
-        return res
+        for tax in self:
+            if tax.amount_type == 'group':
+                ret = tax.children_tax_ids.compute_all(price_unit, currency, quantity, product, partner)
+                total_excluded = ret['total_excluded']
+                base = ret['total_excluded']
+                total_included = ret['total_included']
+                tax_amount = total_included - total_excluded
+                taxes += ret['taxes']
+                continue
 
-    def _unit_compute_inv(self, cr, uid, taxes, price_unit, product=None, partner=None):
-        taxes = self._applicable(cr, uid, taxes, price_unit,  product, partner)
-        res = []
-        taxes.reverse()
-        cur_price_unit = price_unit
+            tax_amount = tax._compute_amount(base, price_unit, quantity, product, partner)
+            tax_amount = currency.round(tax_amount)
 
-        tax_parent_tot = 0.0
-        for tax in taxes:
-            if (tax.type=='percent') and not tax.include_base_amount:
-                tax_parent_tot += tax.amount
-
-        for tax in taxes:
-            if (tax.type=='fixed') and not tax.include_base_amount:
-                cur_price_unit -= tax.amount
-
-        for tax in taxes:
-            if tax.type=='percent':
-                if tax.include_base_amount:
-                    amount = cur_price_unit - (cur_price_unit / (1 + tax.amount))
+            if tax_amount:
+                if tax.price_include:
+                    total_excluded -= tax_amount
+                    base -= tax_amount
                 else:
-                    amount = (cur_price_unit / (1 + tax_parent_tot)) * tax.amount
+                    total_included += tax_amount
 
-            elif tax.type=='fixed':
-                amount = tax.amount
+                if tax.include_base_amount:
+                    base += tax_amount
 
-            elif tax.type=='code':
-                localdict = {'price_unit':cur_price_unit, 'product':product, 'partner':partner}
-                exec tax.python_compute_inv in localdict
-                amount = localdict['result']
-            elif tax.type=='balance':
-                amount = cur_price_unit - reduce(lambda x,y: y.get('amount',0.0)+x, res, 0.0)
+                taxes.append({
+                    'id': tax.id,
+                    'name': tax.name,
+                    'amount': tax_amount,
+                    'sequence': tax.sequence,
+                    'account_id': tax.account_id.id,
+                    'refund_account_id': tax.refund_account_id.id,
+                    'analytic': tax.analytic,
+                    'tax_group': tax.tax_group,
+                    'porcentaje': tax.porcentaje,
+                })
 
-            if tax.include_base_amount:
-                cur_price_unit -= amount
-                todo = 0
-            else:
-                todo = 1
-            res.append({
-                'id': tax.id,
-                'todo': todo,
-                'name': tax.name,
-                'amount': amount,
-                'account_collected_id': tax.account_collected_id.id,
-                'account_paid_id': tax.account_paid_id.id,
-                'account_analytic_collected_id': tax.account_analytic_collected_id.id,
-                'account_analytic_paid_id': tax.account_analytic_paid_id.id,
-                'base_code_id': tax.base_code_id.id,
-                'ref_base_code_id': tax.ref_base_code_id.id,
-                'sequence': tax.sequence,
-                'base_sign': tax.base_sign,
-                'tax_sign': tax.tax_sign,
-                'ref_base_sign': tax.ref_base_sign,
-                'ref_tax_sign': tax.ref_tax_sign,
-                'price_unit': cur_price_unit,
-                'tax_code_id': tax.tax_code_id.id,
-                'ref_tax_code_id': tax.ref_tax_code_id.id,
-                'tax_group': tax.tax_group
-            })
-            if tax.child_ids:
-                if tax.child_depend:
-                    del res[-1]
-                    amount = price_unit
-
-            parent_tax = self._unit_compute_inv(cr, uid, tax.child_ids, amount, product, partner)
-            res.extend(parent_tax)
-
-        total = 0.0
-        for r in res:
-            if r['todo']:
-                total += r['amount']
-        for r in res:
-            r['price_unit'] -= total
-            r['todo'] = 0
-        return res
-
-    _columns = {
-        # dirty hack FIXME plz
-        'porcentaje': fields.char('Porcentaje', size=128),
-        'tax_group' : fields.selection([
-            ('vat','IVA Diferente de 0%'),
-            ('vat0','IVA 0%'),
-            ('novat','No objeto de IVA'),
-            ('ret_vat_b', 'Retención de IVA (Bienes)'),
-            ('ret_vat_srv', 'Retención de IVA (Servicios)'),
-            ('ret_ir', 'Ret. Imp. Renta'),
-            ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
-            ('imp_ad', 'Imps. Aduanas'),
-            ('ice', 'ICE'),
-            ('other','Other')],
-            string='Grupo',
-            required=True),
+        return {
+            'taxes': sorted(taxes, key=lambda k: k['sequence']),
+            'total_excluded': currency.round(total_excluded),
+            'total_included': currency.round(total_included),
         }
-
-    _defaults = {
-        'tax_group': 'vat',
-        }
-

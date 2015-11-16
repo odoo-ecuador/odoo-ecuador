@@ -33,6 +33,6 @@
     'website': 'www.invbox.com.ec',
     'init_xml': [],
     'update_xml': [],
-    'installable': True,
+    'installable': False,
     'active': False,
 }

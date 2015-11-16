@@ -50,6 +50,6 @@
     'description': '''
     This module allows make Electronic Documents for Ecuador
     ''',
-    'installable': True,
+    'installable': False,
     'auto_install': False,
 }

@@ -36,6 +36,6 @@
     'update_xml': ['account_advances_view.xml',
                    'account_advances_report.xml',
                    ],
-    'installable': True,
+    'installable': False,
     'active': False,
 }

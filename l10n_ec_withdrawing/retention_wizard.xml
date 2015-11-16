@@ -12,7 +12,7 @@
         <form string="Exportar Archiv ATS">
           <group col="4" colspan="4" states="choose" fill="0">
 	        <separator string="Se exportara la informacion de la empresa a la que pertenece el usuario actual." colspan="4"/>
-	        <field name="period_id" required="1"/>
+	        <field name="period" required="1"/>
 	        <field name="company_id" required="1" readonly="1"/>
             <field name="no_validate"/>
             <field name="num_estab_ruc"/>

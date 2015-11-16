@@ -30,11 +30,8 @@
                 'account',
                 'base_vat',
                 'base_iban',
-                'account_chart',
-                'account_coda',
                 ],
-    'init_xml': [],
-    'update_xml': [
+    'data': [
                 'account_chart.xml',
                 'l10n_chart_ec_wizard.xml',
                    ],
