@@ -74,9 +74,10 @@ class HrEmployee(models.Model):
         return ' ' if self.env.context.get('module') else False
 
     firstname = fields.Char(
-        "Firstname", required=True, default=_firstname_default)
+        "Firstname", default=_firstname_default)
     lastname = fields.Char(
         "Lastname", required=True, default=_firstname_default)
+    identificador = fields.Char('Cédula', required=True, size=10)
 
     @api.model
     def create(self, vals):
