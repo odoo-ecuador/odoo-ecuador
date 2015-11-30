@@ -38,13 +38,10 @@
       <div>
 	<field name="type_ced_ruc" placeholder="Tipo de Identificador" class="oe_inline"/>
 	<field name="ced_ruc" placeholder="Cédula / RUC" class="oe_inline"/>
-	<field name="tipo_persona" placeholder="Tipo de Persona"/>	
       </div>
+      <field name="tipo_persona" placeholder="Tipo de Persona"/>      
     <newline/>
     </xpath>
-    <!-- xpath expr="//field[@name='property_account_position']" position="attributes">
-      <attribute name="required">1</attribute>
-    </xpath -->
   </field>
 </record>
 
