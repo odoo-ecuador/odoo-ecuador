@@ -29,7 +29,7 @@
             <label for="category_ids" position="before">
                 <label for="firstname" required="1" class="oe_edit_only"/>
                 <h1>
-                     <field name="firstname"/>
+                     <field name="firstname" required="1"/>
                 </h1>
 		<label for="identificador"/>
 		<h1>
