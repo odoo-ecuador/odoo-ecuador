@@ -39,5 +39,7 @@
       </field>
     </record>
 
+    <menuitem action="hr.action_hr_job" id="menu_hr_job" parent="hr.menu_hr_configuration" sequence="6"/>
+    
   </data>
 </openerp>
