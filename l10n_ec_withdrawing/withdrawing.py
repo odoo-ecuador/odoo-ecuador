@@ -1,25 +1,5 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Account Module - Ecuador
-#    Copyright (C) 2014-Today Cristian Salamea All Rights Reserved
-#    Copyright (C) 2015-Today Alcides Rivera <alcides@virtualsami.com.ec>
-#    $Id$
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
+""" Modulo de implementacion de retencion para Ecuador """
 
 import time
 import logging
@@ -37,9 +17,13 @@ TYPE2JOURNAL = {
 }
 
 class AccountWithdrawing(models.Model):
+    """ Implementacion de documento de retencion """
 
     @api.multi
     def name_get(self):
+        """
+        TODO
+        """
         result = []
         for withdrawing in self:
             result.append((withdrawing.id, withdrawing.name))
@@ -48,8 +32,11 @@ class AccountWithdrawing(models.Model):
     @api.one
     @api.depends('tax_ids.amount')
     def _amount_total(self):
+        """
+        TODO
+        """
         self.amount_total = sum(tax.amount for tax in self.tax_ids)
-    
+
     @api.multi
     def _get_period(self):
         result = {}
@@ -73,7 +60,7 @@ class AccountWithdrawing(models.Model):
         context['type'] in ['in_invoice', 'liq_purchase']:
             return 'ret_in_invoice'
         else:
-            return 'ret_in_invoice'    
+            return 'ret_in_invoice'
 
     STATES_VALUE = {'draft': [('readonly', False)]}
 
@@ -94,7 +81,7 @@ class AccountWithdrawing(models.Model):
         size=64,
         readonly=True,
         required=True,
-        default='/'        
+        default='/'
         )
     manual = fields.Boolean(
         'Numeración Manual',
@@ -114,20 +101,20 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states=STATES_VALUE,
         required=True,
-        domain=[('in_type','=','interno')]
+        domain=[('in_type', '=', 'interno')]
         )
     type = fields.Selection(
-        [('in_invoice','Factura'),
-        ('liq_purchase','Liquidacion Compra')],
+        related='invoice_id.type',
         string='Tipo Comprobante',
         readonly=True,
         required=True,
-        states=STATES_VALUE,
-        default=_get_type
+        store=True
         )
     in_type = fields.Selection(
-        [('ret_in_invoice', u'Retención a Proveedor'),
-        ('ret_out_invoice', u'Retención de Cliente')],
+        [
+            ('ret_in_invoice', u'Retención a Proveedor'),
+            ('ret_out_invoice', u'Retención de Cliente')
+        ],
         string='Tipo',
         states=STATES_VALUE,
         readonly=True,
@@ -156,7 +143,7 @@ class AccountWithdrawing(models.Model):
         required=False,
         readonly=True,
         states=STATES_VALUE,
-        domain=[('state','=','open')]
+        domain=[('state', '=', 'open')]
         )
     partner_id = fields.Many2one(
         related='invoice_id.partner_id',
@@ -170,10 +157,12 @@ class AccountWithdrawing(models.Model):
         store=True
         )
     state = fields.Selection(
-        [('draft','Borrador'),
-        ('early','Anticipado'),
-        ('done','Validado'),
-        ('cancel','Anulado')],
+        [
+            ('draft', 'Borrador'),
+            ('early', 'Anticipado'),
+            ('done', 'Validado'),
+            ('cancel', 'Anulado')
+        ],
         readonly=True,
         string='Estado',
         default='draft'
@@ -195,7 +184,7 @@ class AccountWithdrawing(models.Model):
         required=True,
         change_default=True,
         readonly=True,
-        states={'draft':[('readonly',False)]},
+        states={'draft': [('readonly', False)]},
         default=lambda self: self.env['res.company']._company_default_get('account.invoice')
         )
 
@@ -211,14 +200,17 @@ class AccountWithdrawing(models.Model):
 
     @api.multi
     def onchange_invoice(self, invoice_id):
-        res = {'value': {'num_document': ''}}
+        res = {
+            'value': {
+                'num_document': ''
+            }
+        }
         if not invoice_id:
             return res
         invoice = self.env['account.invoice'].browse(invoice_id)
         if not invoice.auth_inv_id:
             return res
-        num_document = invoice.supplier_number
-        res['value']['num_document'] = num_document
+        res['value']['num_document'] = 'in_invoice' and invoice.supplier_invoice_number or invoice.number
         res['value']['type'] = invoice.type
         return res
 
@@ -284,36 +276,31 @@ class AccountWithdrawing(models.Model):
             self.write({'state': 'draft', 'name': name})
         return True
 
-    @api.multi
-    def action_cancel_draft(self):
-        """
-        Metodo que se ejecuta cuando el registro ha sido anulado
-        y el usuario decide volver al estado borrador.
-        """
-        self.write({'state': 'draft', 'name': '/'})
-        return True
 
     @api.multi
     def action_early(self):
         # Método para cambiar de estado a cancelado el documento
         self.write({'state': 'early'})
-        return True        
+        return True
 
 class AccountInvoiceTax(models.Model):
 
     _inherit = 'account.invoice.tax'
-   
-    fiscal_year = fields.Char('Ejercicio Fiscal', size = 4)
-    tax_group = fields.Selection([('vat','IVA Diferente de 0%'),
-                                        ('vat0','IVA 0%'),
-                                        ('novat','No objeto de IVA'),
-                                        ('ret_vat_b', 'Retención de IVA (Bienes)'),
-                                        ('ret_vat_srv', 'Retención de IVA (Servicios)'),
-                                        ('ret_ir', 'Ret. Imp. Renta'),
-                                        ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
-                                        ('imp_ad', 'Imps. Aduanas'),
-                                        ('ice', 'ICE'),
-                                        ('other','Other')], 'Grupo', required=True)
+
+    fiscal_year = fields.Char('Ejercicio Fiscal', size=4)
+    tax_group = fields.Selection(
+        [
+            ('vat', 'IVA Diferente de 0%'),
+            ('vat0', 'IVA 0%'),
+            ('novat', 'No objeto de IVA'),
+            ('ret_vat_b', 'Retención de IVA (Bienes)'),
+            ('ret_vat_srv', 'Retención de IVA (Servicios)'),
+            ('ret_ir', 'Ret. Imp. Renta'),
+            ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
+            ('imp_ad', 'Imps. Aduanas'),
+            ('ice', 'ICE'),
+            ('other', 'Other')
+        ], 'Grupo', required=True)
     percent = fields.Char('Porcentaje', size=20)
     num_document = fields.Char('Num. Comprobante', size=50)
     retention_id = fields.Many2one('account.retention', 'Retención', select=True)
@@ -347,7 +334,7 @@ class AccountInvoiceTax(models.Model):
                 else:
                     val['base'] = tax['price_unit'] * line['quantity']
 
-                if invoice.type in ('out_invoice','in_invoice'):
+                if invoice.type in ['out_invoice', 'in_invoice']:
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
                     val['base_amount'] = currency.compute(val['base'] * tax['base_sign'], company_currency, round=False)
@@ -392,14 +379,15 @@ class AccountInvoiceTax(models.Model):
 
 
 class Invoice(models.Model):
-    
+
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
 
     @api.multi
     def onchange_company_id(self, company_id, part_id, type, invoice_line, currency_id):
-        #TODO: add the missing context parameter when forward-porting in trunk so we can remove
-        #      this hack!
+        """
+        TODO: add the missing context parameter when forward-porting in trunk so we can remove
+        this hack! """
         self = self.with_context(self.env['res.users'].context_get())
 
         values = {}
@@ -411,8 +399,8 @@ class Invoice(models.Model):
                     p.property_account_payable.company_id.id != company_id and \
                     p.property_account_receivable.company_id.id != company_id:
                 prop = self.env['ir.property']
-                rec_dom = [('name', '=', 'property_account_receivable'), ('company_id','=',company_id)]
-                pay_dom = [('name', '=', 'property_account_payable'), ('company_id','=',company_id)]
+                rec_dom = [('name', '=', 'property_account_receivable'), ('company_id', '=', company_id)]
+                pay_dom = [('name', '=', 'property_account_payable'), ('company_id', '=', company_id)]
                 res_dom = [('res_id', '=', 'res.partner,%s' % part_id)]
                 rec_prop = prop.search(rec_dom + res_dom) or prop.search(rec_dom)
                 pay_prop = prop.search(pay_dom + res_dom) or prop.search(pay_dom)
@@ -422,7 +410,7 @@ class Invoice(models.Model):
                     action = self.env.ref('account.action_account_config')
                     msg = _('Cannot find a chart of account for this company, You should configure it. \nPlease go to Account Configuration.')
                     raise RedirectWaring(msg, action.id, _('Go to the configuration panel'))
-                    
+
                 if type in ('out_invoice', 'out_refund'):
                     acc_id = rec_account.id
                 else:
@@ -463,7 +451,7 @@ class Invoice(models.Model):
                 field_desc = journals.fields_get(['type'])
                 type_label = next(t for t, label in field_desc['type']['selection'] if t == journal_type)
                 action = self.env.ref('account.action_account_journal_form')
-                msg = _('Cannot find any account journal of type "%s" for this company, You should create one.\n Please go to Journal Configuration') % type_label 
+                msg = _('Cannot find any account journal of type "%s" for this company, You should create one.\n Please go to Journal Configuration') % type_label
                 raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
             domain = {'journal_id':  [('id', 'in', journals.ids)]}
 
@@ -487,7 +475,7 @@ class Invoice(models.Model):
             'report_name': 'invoice_report',
             'model': 'account.invoice',
             'datas': datas,
-            'nodestroy': True,                        
+            'nodestroy': True,
             }
 
     @api.multi
@@ -499,7 +487,7 @@ class Invoice(models.Model):
             'report_name': 'report_move',
             'model': 'account.move',
             'datas': datas,
-            'nodestroy': True,                        
+            'nodestroy': True,
             }
 
     @api.multi
@@ -511,7 +499,7 @@ class Invoice(models.Model):
             'report_name': 'report_liq_purchase',
             'model': 'account.invoice',
             'datas': datas,
-            'nodestroy': True,                        
+            'nodestroy': True,
             }
 
     @api.multi
@@ -527,7 +515,7 @@ class Invoice(models.Model):
             'report_name': 'account.retention',
             'model': 'account.retention',
             'datas': datas,
-            'nodestroy': True,            
+            'nodestroy': True,
         }
 
     @api.one
@@ -537,7 +525,7 @@ class Invoice(models.Model):
         for line in self.tax_line:
             if line.tax_group == 'vat':
                 self.amount_vat += line.base
-                self.amount_tax += line.amount                    
+                self.amount_tax += line.amount
             elif line.tax_group == 'vat0':
                 self.amount_vat_cero += line.base
             elif line.tax_group == 'novat':
@@ -551,7 +539,7 @@ class Invoice(models.Model):
                     self.taxed_ret_vatb += line.amount
                 elif line.tax_group == 'ret_vat_srv':
                     self.amount_tax_ret_vatsrv += line.base
-                    self.taxed_ret_vatsrv += line.amount                        
+                    self.taxed_ret_vatsrv += line.amount
                 elif line.tax_group == 'ret_ir':
                     self.amount_tax_ret_ir += line.base
                     self.taxed_ret_ir += line.amount
@@ -563,20 +551,6 @@ class Invoice(models.Model):
         self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention
         self.amount_pay = self.amount_tax + self.amount_untaxed
 
-    @api.multi
-    def _get_invoice_line(self, invoice_id):
-        result = {}
-        for line in self.env['account.invoice.line'].browse(invoice_id):
-            result[line.invoice_id.id] = True
-        return result.keys()
-
-    @api.multi
-    def _get_invoice_tax(self, invoice_id):
-        result = {}
-        for tax in self.env['account.invoice.tax'].browse(invoice_id):
-            result[tax.invoice_id.id] = True
-        return result.keys()        
-    
     @api.multi
     def name_get(self):
         TYPES = {
@@ -618,72 +592,94 @@ class Invoice(models.Model):
     Manual: El usuario ingresara el numero de retencion \
     Agrupar: Podra usar la opcion para agrupar facturas del sistema en una sola retencion.'''
 
-    PRECISION_DP = dp.get_precision('Account')    
+    PRECISION_DP = dp.get_precision('Account')
 
-    supplier_number = fields.Char(string='Factura de Proveedor', 
+    supplier_number = fields.Char(
+        string='Factura de Proveedor',
         size=32, store=True, readonly=True, compute='_get_supplier_number')
-    amount_ice = fields.Float(string='ICE', digits_compute=PRECISION_DP,
+    amount_ice = fields.Float(
+        string='ICE', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_vat = fields.Float(string='Base 12 %', digits_compute=PRECISION_DP,
+    amount_vat = fields.Float(
+        string='Base 12 %', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_untaxed = fields.Float(string='Untaxed', digits_compute=PRECISION_DP,
+    amount_untaxed = fields.Float(
+        string='Untaxed', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax = fields.Float(string='Tax', digits_compute=PRECISION_DP,
+    amount_tax = fields.Float(
+        string='Tax', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_total = fields.Float(string='Total a Pagar',  digits_compute=PRECISION_DP,
+    amount_total = fields.Float(
+        string='Total a Pagar', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_pay = fields.Float(string='Total',  digits_compute=PRECISION_DP,
+    amount_pay = fields.Float(
+        string='Total', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_noret_ir = fields.Float(string='Monto no sujeto a IR', digits_compute=PRECISION_DP,
+    amount_noret_ir = fields.Float(
+        string='Monto no sujeto a IR', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax_retention = fields.Float(string='Total Retenciones', digits_compute=PRECISION_DP,
+    amount_tax_retention = fields.Float(
+        string='Total Retenciones', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_ir = fields.Float(string='Base IR', digits_compute=PRECISION_DP,
+    amount_tax_ret_ir = fields.Float(
+        string='Base IR', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_ir = fields.Float(string='Impuesto IR', digits_compute=PRECISION_DP,
+    taxed_ret_ir = fields.Float(
+        string='Impuesto IR', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_vatb = fields.Float(string='Base Ret. IVA', digits_compute=PRECISION_DP,
+    amount_tax_ret_vatb = fields.Float(
+        string='Base Ret. IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_vatb = fields.Float(string='Retencion en IVA', digits_compute=PRECISION_DP,
+    taxed_ret_vatb = fields.Float(
+        string='Retencion en IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_vatsrv = fields.Float(string='Base Ret. IVA', digits_compute=PRECISION_DP,
+    amount_tax_ret_vatsrv = fields.Float(
+        string='Base Ret. IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_vatsrv = fields.Float(string='Retencion en IVA', digits_compute=PRECISION_DP,
+    taxed_ret_vatsrv = fields.Float(
+        string='Retencion en IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_vat_cero = fields.Float(string='Base IVA 0%', digits_compute=PRECISION_DP,
+    amount_vat_cero = fields.Float(
+        string='Base IVA 0%', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    amount_novat = fields.Float(string='Base No IVA', digits_compute=PRECISION_DP,
+    amount_novat = fields.Float(
+        string='Base No IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    auth_inv_id = fields.Many2one('account.authorisation', string='Autorización SRI',
-         readonly=True, states={'draft': [('readonly', False)]},
-         help = 'Autorizacion del SRI para documento recibido')
-    retention_id = fields.Many2one('account.retention', string='Retención de Impuestos',
-         store=True, readonly=True)
+    auth_inv_id = fields.Many2one(
+        'account.authorisation', string='Autorización SRI',
+        readonly=True, states={'draft': [('readonly', False)]},
+        help='Autorizacion del SRI para documento recibido')
+    retention_id = fields.Many2one(
+        'account.retention',
+        string='Retención de Impuestos',
+        store=True, readonly=True)
     retention_ir = fields.Boolean(
         compute='_check_retention',
-        string="Tiene Retención en IR", 
+        string="Tiene Retención en IR",
         store=True,
         readonly=True,
         )
     retention_vat = fields.Boolean(
         compute='_check_retention',
-        string='Tiene Retencion en IVA', 
+        string='Tiene Retencion en IVA',
         store=True,
         readonly=True,
         )
-    no_retention_ir = fields.Boolean(string='No objeto de Retención', 
-         store=True, readonly=True, compute='_check_retention')
-    type = fields.Selection([
-            ('out_invoice','Customer Invoice'),
-            ('in_invoice','Supplier Invoice'),
-            ('out_refund','Customer Refund'),
-            ('in_refund','Supplier Refund'),
-            ('liq_purchase','Liquidacion de Compra')
-            ],'Type', readonly=True, select=True, change_default=True)
+    no_retention_ir = fields.Boolean(
+        string='No objeto de Retención',
+        store=True, readonly=True, compute='_check_retention')
+    type = fields.Selection(
+        [
+            ('out_invoice', 'Customer Invoice'),
+            ('in_invoice', 'Supplier Invoice'),
+            ('out_refund', 'Customer Refund'),
+            ('in_refund', 'Supplier Refund'),
+            ('liq_purchase', 'Liquidacion de Compra')
+        ], 'Type', readonly=True, select=True, change_default=True)
     withdrawing_number = fields.Integer(
-        'Num. Retención', 
+        'Num. Retención',
         readonly=True,
-        states = {'draft': [('readonly', False)]}
+        states={'draft': [('readonly', False)]}
     )
     create_retention_type = fields.Selection(
         [('auto', 'Automático'),
@@ -714,14 +710,14 @@ class Invoice(models.Model):
                     'auth_inv_id': journal.auth_id.id
                 }
             }
-        return {}    
+        return {}
 
 
     @api.multi
     def _check_invoice_number(self):
         """Método de validacion de numero de factura y numero de
         retencion
-        
+
         número de factura: suppplier_invoice_number
         número de retención: withdrawing_number
         """
@@ -755,13 +751,16 @@ class Invoice(models.Model):
         return True
 
     _constraints = [
-        (_check_invoice_number,
-        u'Número fuera de rango de autorización activa.', ['Número Factura']),
+        (
+            _check_invoice_number,
+            u'Número fuera de rango de autorización activa.',
+            [u'Número Factura']
+        ),
     ]
 
     _sql_constraints = [
         ('unique_inv_supplier', 'unique(supplier_invoice_number,type,partner_id)', u'El número de factura es único.'),
-    ]    
+    ]
 
     @api.multi
     def copy_data(self):
@@ -778,8 +777,9 @@ class Invoice(models.Model):
         return res
 
     @api.multi
-    def onchange_partner_id(self, type, partner_id, date_invoice=False, 
-            payment_term=False, partner_bank_id=False, company_id=False):    
+    def onchange_partner_id(self, type, partner_id, date_invoice=False,
+                            payment_term=False, partner_bank_id=False,
+                            company_id=False):
         res1 = super(Invoice, self).onchange_partner_id(type, partner_id, date_invoice,
                                                         payment_term, partner_bank_id,
                                                         company_id)
@@ -799,9 +799,9 @@ class Invoice(models.Model):
         """
         for inv in self:
             if inv.retention_id:
-                inv.retention_id.action_cancel_draft()
+                inv.retention_id.unlink()
         super(Invoice, self).action_cancel_draft()
-        return True    
+        return True
 
     @api.multi
     def action_retention_create(self):
@@ -812,41 +812,51 @@ class Invoice(models.Model):
         * Generar retencion de reemplazo
         * Cancelar retencion generada
         """
+        TYPES_TO_VALIDATE = ['inv_invoice', 'liq_purchase']
         for inv in self:
+
+            if not (inv.retention_ir or inv.retention_vat):
+                return True
+
             if inv.create_retention_type == 'no_retention':
                 continue
 
-            wd_number = False            
+            wd_number = False
             if inv.create_retention_type == 'manual':
                 if inv.withdrawing_number <= 0:
                     raise except_orm(_('Error!'), _(u'El número de retención es incorrecto.'))
-                wd_number = inv.withdrawing_number                
-            
+                wd_number = inv.withdrawing_number
+
             if inv.retention_id:
                 inv.retention_id.action_validate(wd_number)
                 continue
 
-            if inv.type not in ['in_invoice', 'liq_purchase'] and (inv.retention_ir or inv.retention_vat):
-                return True
             if not inv.journal_id.auth_ret_id:
                 raise except_orm('Error', 'No ha configurado la autorización de retenciones en el diario.')
 
-            withdrawing = self.env['account.retention'].create({
+            withdrawing_data = {
                 'name': '/',
                 'invoice_id': inv.id,
                 'num_document': inv.supplier_invoice_number,
                 'auth_id': inv.journal_id.auth_ret_id.id,
                 'type': inv.type,
-                'in_type': 'ret_in_invoice',
+                'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
-                'period_id': inv.period_id.id
-            })
+                'period_id': inv.period_id.id,
+                'num_document': inv.type == 'in_invoice' and inv.supplier_invoice_number or inv.number
+            }
+
+            withdrawing_data.update(self.env['account.retention'].onchange_invoice(inv.id)['value'])
+
+            withdrawing = self.env['account.retention'].create(withdrawing_data)
+
             tids = [l.id for l in inv.tax_line if l.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]
             account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
-            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': inv.supplier_invoice_number})
+            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': withdrawing.num_document})
 
-            withdrawing.action_validate(wd_number)
-            
+            if inv.type in TYPES_TO_VALIDATE:
+                withdrawing.action_validate(wd_number)
+
             inv.write({'retention_id': withdrawing.id})
         return True
 
@@ -876,14 +886,14 @@ class AccountInvoiceLine(models.Model):
     def move_line_get(self, invoice_id):
         inv = self.env['account.invoice'].browse(invoice_id)
         currency = inv.currency_id.with_context(date=inv.date_invoice)
-        company_currency = inv.company_id.currency_id        
+        company_currency = inv.company_id.currency_id
 
         res = []
         for line in inv.invoice_line:
             mres = self.move_line_get_item(line)
             mres['invl_id'] = line.id
             res.append(mres)
-            tax_code_found= False
+            tax_code_found = False
             taxes = line.invoice_line_tax_id.compute_all(
                 (line.price_unit * (1.0 - (line.discount or 0.0) / 100.0)),
                 line.quantity, line.product_id, inv.partner_id)['taxes']
@@ -910,13 +920,14 @@ class AccountInvoiceLine(models.Model):
         return res
 
     @api.multi
-    def product_id_change(self, product, uom_id, qty=0, name='', type='out_invoice', 
-            partner_id=False, fposition_id=False, price_unit=False, currency_id=False, 
-            company_id=None):
+    def product_id_change(self, product, uom_id, qty=0, name='', type='out_invoice',
+                          partner_id=False, fposition_id=False,
+                          price_unit=False, currency_id=False,
+                          company_id=None):
         context = self._context
-        company_id = company_id if company_id is not None else context.get('company_id',False)
+        company_id = company_id if company_id is not None else context.get('company_id', False)
         self = self.with_context(company_id=company_id, force_company=company_id)
-        
+
         if not partner_id:
             raise except_orm(_('No Partner Defined!'), _("You must first select a partner!"))
         if not product:
@@ -935,7 +946,7 @@ class AccountInvoiceLine(models.Model):
         product = self.env['product.product'].browse(product)
 
         values['name'] = product.partner_ref
-        if type in ('out_invoice','out_refund'):
+        if type in ['out_invoice', 'out_refund']:
             account = product.property_account_income or product.categ_id.property_account_income_categ
         else:
             account = product.property_account_expense or product.categ_id.property_account_expense_categ
@@ -1003,4 +1014,3 @@ class AccountInvoiceRefund(models.Model):
     _defaults = {
         'description': _get_description,
         }
-            
