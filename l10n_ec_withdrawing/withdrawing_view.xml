@@ -48,17 +48,7 @@
 	</tree>
       </field>
     </record>
-    <record id="view_account_retention_graph" model="ir.ui.view">
-      <field name="name">account.retention.graph</field>
-      <field name="model">account.retention</field>
-      <field name="type">graph</field>
-      <field name="arch" type="xml">
-	<graph string="Retenciones a Proveedores" type="bar">
-	  <field name="partner_id"/>
-	  <field name="amount_total" operator="+"/>
-	</graph>
-      </field>
-    </record>
+
     <!--
        Grupo de impuestos visible
       -->
@@ -68,7 +58,7 @@
       <field name="inherit_id" ref="account.view_tax_tree"/>
       <field name="arch" type="xml">
 	<xpath expr="//field[@name='description']" position="replace">
-	  <field name="tax_group"/>	  
+	  <field name="tax_group"/>
 	</xpath>
 	<xpath expr="//field[@name='name']" position="before">
           <field name="porcentaje"/>
@@ -125,7 +115,7 @@
 	<xpath expr="//field[@name='journal_id']" position="after">
 	  <label string="Nro. de Retención" for="withdrawing_number"/>
 	  <div>
-	    <field name="create_retention_type" class="oe_inline"/> - 
+	    <field name="create_retention_type" class="oe_inline"/> -
 	    <field name="withdrawing_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
             <field name="sustento_id" placeholder="Sustento" required="1" options="{'no_open': True, 'create': false, 'create_edit': false}" class="oe_inline oe_edit_only"/>
 	  </div>
@@ -133,12 +123,12 @@
 	  <field name="retention_vat" invisible="1"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="after">
-	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}' 
+	  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
 		 context="{'default_partner_id': partner_id}"/>
 	</xpath>
 	<xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
 	  <attribute name="placeholder">000004321 (9 dígitos)</attribute>
-	</xpath>	
+	</xpath>
 	<xpath expr="//field[@name='amount_total']" position="replace">
 	  <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	  <field name="amount_tax_retention"/>
@@ -166,13 +156,41 @@
 	<tree string="Retenciones de Impuestos" colors="blue:state == 'draft';black:state in ('done');gray:state == 'cancel'">
           <field name="name"/>
           <field name="partner_id"/>
-          <field name="num_document" select="1"/>
-          <field name="type" select="1"/>
-	  <field name="in_type"/>
-	  <field name="amount_total"/>
-          <field name="date" select="1"/>
-	  <field name="state" select="1"/>
+          <field name="num_document"/>
+          <field name="date" />
+          <field name="type" />
+	  <field name="amount_total" sum="TOTAL"/>
+	  <field name="state"/>
 	</tree>
+      </field>
+    </record>
+
+    <record id="view_account_retention_graph" model="ir.ui.view">
+      <field name="name">account.retention.graph</field>
+      <field name="model">account.retention</field>
+      <field name="type">graph</field>
+      <field name="arch" type="xml">
+	<graph string="Retenciones a Proveedores" type="bar">
+	  <field name="partner_id"/>
+	  <field name="amount_total" operator="+"/>
+	</graph>
+      </field>
+    </record>
+
+    <record id="view_account_retention_search" model="ir.ui.view">
+      <field name="name">account.retention.search</field>
+      <field name="model">account.retention</field>
+      <field name="type">search</field>
+      <field name="arch" type="xml">
+	<search>
+	  <field name="partner_id"/>
+	  <field name="name"/>
+	  <field name="num_document"/>
+	  <group expand="1" string="Group By">
+	    <filter name="group_by_partner_id" string="Partner" context="{'group_by':'partner_id'}"/>
+	    <filter name="group_by_state" string="Estado" context="{'group_by':'state'}"/>
+	  </group>
+	</search>
       </field>
     </record>
 
@@ -202,7 +220,7 @@
 		<field name="invoice_id" on_change="onchange_invoice(invoice_id)"
                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
 		<field name="date" select="1"/>
-		<field name="in_type" required="1"/>		
+		<field name="in_type" required="1"/>
 		<field name="manual" invisible="1"/>
 		<field name="to_cancel"/>
 	      </group>
@@ -236,7 +254,7 @@
 	      </page>
 	      <page string="Info Extra">
 		<group>
-		  <field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>		  
+		  <field name="move_id" attrs="{'invisible':[('to_cancel','=',True)]}"/>
 		</group>
 	      </page>
 	    </notebook>
@@ -261,10 +279,10 @@
       <field name="res_model">account.retention</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
-      <field name="domain">[('type','=','out_invoice')]</field>      
+      <field name="domain">[('type','=','out_invoice')]</field>
     </record>
 
-    <menuitem action="action_account_retention_out_tree" id="menu_action_retention_receivable" parent="account.menu_finance_receivables"/>    
+    <menuitem action="action_account_retention_out_tree" id="menu_action_retention_receivable" parent="account.menu_finance_receivables"/>
 
     <act_window
        id="act_window_retention"
@@ -528,7 +546,7 @@
       <attribute name="required">1</attribute>
     </xpath>
   </field>
-</record>    
+</record>
 
 
   </data>
