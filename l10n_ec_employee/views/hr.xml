@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+
+    <record id="view_hr_employee_ec_form" model="ir.ui.view">
+      <field name="name">view_hr_employee_ec_form</field>
+      <field name="model">hr.employee</field>      
+      <field name="inherit_id" ref="hr.view_employee_form"/>
+      <field name="arch" type="xml">
+        <field name="name" position="replace">
+          <field name="name" invisible="True" nolabel="1" required="False"/>
+	  <field name="lastname" placeholder="Apellidos..."/>
+          <field name="firstname" required="1"/>
+        </field>	
+	<field name="identification_id" position="replace"/>
+	<xpath expr="//label[@for='category_ids']" position="before">
+	  <label for="identification_id" string="Cédula"/>
+	  <field name="identification_id" placeholder="0102030405" required="1" on_change="onchange_identificador(identification_id)"/>
+	</xpath>
+      </field>
+    </record>
+
+    <record id="view_hr_employee_ec_tree" model="ir.ui.view">
+      <field name="name">view_hr_employee_ec_tree</field>
+      <field name="model">hr.employee</field>      
+      <field name="inherit_id" ref="hr.view_employee_tree"/>
+      <field name="arch" type="xml">
+	<field name="name" position="replace">
+	  <field name="identification_id"/>
+	  <field name="lastname"/>
+	  <field name="firstname"/>	  
+	</field>
+      </field>
+    </record>
+
+    <record id="view_hr_employee_ec_kanban" model="ir.ui.view">
+      <field name="name">view_hr_employee_ec_kanban</field>
+      <field name="model">hr.employee</field>      
+      <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+      <field name="arch" type="xml">
+	<xpath expr="//h4" position="replace">
+	  <h4>
+            <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+	  </h4>
+	</xpath>
+      </field>
+    </record>
+
+    <menuitem action="base.action_res_partner_bank_account_form"
+              id="menu_action_res_partner_bank_hr"
+              parent="hr.menu_hr_configuration"
+	      name="Cuentas de Banco"
+              sequence="3"/>
+
+  </data>
+</openerp>
