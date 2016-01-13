@@ -7,6 +7,9 @@ WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/Autorizac
 WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
 WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 
+ORIGINAL = u'áàäéèëíìïóòöúùuñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ'
+REPLACEMENT = u'aaaeeeiiiooouuunAAAEEEIIIOOOUUUNcC'
+
 def check_service(env='prueba'):
     flag = False
     if env == 'prueba':
@@ -25,3 +28,5 @@ def check_service(env='prueba'):
         flag = True
     return flag
 
+def remove_special_characters(cadena):
+    return cadena.replace(ORIGINAL, REPLACEMENT)

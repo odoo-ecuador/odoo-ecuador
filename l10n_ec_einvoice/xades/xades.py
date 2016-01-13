@@ -87,7 +87,9 @@ class Xades(object):
         JAR_PATH = 'firma/firmaXadesBes.jar'
         JAVA_CMD = 'java'
         xml_str = etree.tostring(xml_document, encoding='utf8', method='xml')
+        # firma electrónica del xml
         firma_path = os.path.join(os.path.dirname(__file__), JAR_PATH)
+        # invocación del jar de la firma electrónica
         p = subprocess.Popen([JAVA_CMD, '-jar', firma_path, xml_str, file_pk12, password], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         res = p.communicate()
         return res[0]

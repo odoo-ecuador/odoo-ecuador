@@ -108,9 +108,13 @@ class AccountInvoice(osv.osv):
         etree.SubElement(infoTributaria, 'ambiente').text = SriService.get_active_env()
         etree.SubElement(infoTributaria, 'tipoEmision').text = emission_code
         etree.SubElement(infoTributaria, 'razonSocial').text = company.name
-        etree.SubElement(infoTributaria, 'nombreComercial').text = company.name
+        if company.tradename:
+            etree.SubElement(infoTributaria, 'nombreComercial').text = company.tradename
         etree.SubElement(infoTributaria, 'ruc').text = company.partner_id.ced_ruc
-        etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
+        if access_key:
+            etree.SubElement(infoTributaria, 'claveAcceso').text = access_key
+        else:
+            raise osv.except_osv(u'Error', u'La Clave de Acceso no puede ser nula')
         etree.SubElement(infoTributaria, 'codDoc').text = tipoDocumento[auth.type_id.code]
         etree.SubElement(infoTributaria, 'estab').text = auth.serie_entidad
         etree.SubElement(infoTributaria, 'ptoEmi').text = auth.serie_emision
@@ -125,7 +129,8 @@ class AccountInvoice(osv.osv):
         partner = invoice.partner_id
         infoFactura = etree.Element('infoFactura')
         etree.SubElement(infoFactura, 'fechaEmision').text = time.strftime('%d/%m/%Y',time.strptime(invoice.date_invoice, '%Y-%m-%d'))
-        etree.SubElement(infoFactura, 'dirEstablecimiento').text = company.street2
+        if company.street2:
+            etree.SubElement(infoFactura, 'dirEstablecimiento').text = company.street2
         if company.company_registry:
             etree.SubElement(infoFactura, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoFactura, 'obligadoContabilidad').text = 'SI'
@@ -162,19 +167,17 @@ class AccountInvoice(osv.osv):
         partner = refund.partner_id
         infoNotaCredito = etree.Element('infoNotaCredito')
         etree.SubElement(infoNotaCredito, 'fechaEmision').text = time.strftime('%d/%m/%Y',time.strptime(refund.date_invoice, '%Y-%m-%d'))
-        etree.SubElement(infoNotaCredito, 'dirEstablecimiento').text = company.street2
+        if company.street2:
+            etree.SubElement(infoNotaCredito, 'dirEstablecimiento').text = company.street2
         etree.SubElement(infoNotaCredito, 'tipoIdentificacionComprador').text = tipoIdentificacion[partner.type_ced_ruc]
         etree.SubElement(infoNotaCredito, 'razonSocialComprador').text = partner.name
         etree.SubElement(infoNotaCredito, 'identificacionComprador').text = partner.ced_ruc
-        etree.SubElement(infoNotaCredito, 'contribuyenteEspecial').text = company.company_registry
+        if company.company_registry:
+            etree.SubElement(infoNotaCredito, 'contribuyenteEspecial').text = company.company_registry
         etree.SubElement(infoNotaCredito, 'obligadoContabilidad').text = 'SI'
         etree.SubElement(infoNotaCredito, 'codDocModificado').text = '01'
-        if refund.name:
-            etree.SubElement(infoNotaCredito, 'numDocModificado').text = invoice[0].supplier_invoice_number
-            etree.SubElement(infoNotaCredito, 'fechaEmisionDocSustento').text = time.strftime('%d/%m/%Y',time.strptime(invoice[0].date_invoice, '%Y-%m-%d'))
-        else:
-            etree.SubElement(infoNotaCredito, 'numDocModificado').text = refund.reference_invoice_number
-            etree.SubElement(infoNotaCredito, 'fechaEmisionDocSustento').text = time.strftime('%d/%m/%Y',time.strptime(refund.reference_invoice_date, '%Y-%m-%d'))
+        etree.SubElement(infoNotaCredito, 'numDocModificado').text = invoice[0].supplier_invoice_number
+        etree.SubElement(infoNotaCredito, 'fechaEmisionDocSustento').text = time.strftime('%d/%m/%Y',time.strptime(invoice[0].date_invoice, '%Y-%m-%d'))
         etree.SubElement(infoNotaCredito, 'totalSinImpuestos').text = '%.2f' % (abs(refund.amount_untaxed))
         etree.SubElement(infoNotaCredito, 'valorModificacion').text = '%.2f' % (abs(refund.amount_pay))
         etree.SubElement(infoNotaCredito, 'moneda').text = 'DOLAR'
@@ -208,6 +211,8 @@ class AccountInvoice(osv.osv):
         for line in invoice.invoice_line:
             detalle = etree.Element('detalle')
             etree.SubElement(detalle, 'codigoPrincipal').text = fix_chars(line.product_id.default_code)
+            if line.product_id.manufacturer_pref
+                etree.SubElement(detalle, 'codigoAuxiliar').text = line.product_id.manufacturer_pref
             etree.SubElement(detalle, 'descripcion').text = fix_chars(line.product_id.name)
             etree.SubElement(detalle, 'cantidad').text = '%.6f' % (line.quantity)
             etree.SubElement(detalle, 'precioUnitario').text = '%.6f' % (line.price_unit)
@@ -271,9 +276,9 @@ class AccountInvoice(osv.osv):
         factura.append(infoFactura)
         
         #generar detalles
-        detalles = self._get_detail_element(invoice)
-        
+        detalles = self._get_detail_element(invoice)        
         factura.append(detalles)
+
         return factura
 
     def _generate_xml_refund(self, refund, invoice, access_key, emission_code):
@@ -285,8 +290,7 @@ class AccountInvoice(osv.osv):
         
         # generar infoTributaria
         infoTributaria = self._get_tax_element(refund, access_key, emission_code)
-        notaCredito.append(infoTributaria)
-        
+        notaCredito.append(infoTributaria)        
         
         # generar infoNotaCredito
         infoNotaCredito = self._get_refund_element(refund, invoice)

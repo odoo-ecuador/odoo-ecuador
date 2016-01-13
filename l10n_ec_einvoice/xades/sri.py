@@ -42,12 +42,14 @@ from .xades import CheckDigit
 SCHEMAS = {
     'out_invoice': 'schemas/factura.xsd',
     'out_refund': 'schemas/nota_credito.xsd',
-    'retention': 'schemas/retention.xsd',
-    'delivery': 'schemas/delivery.xsd',
-    'in_refund': 'schemas/nota_debito.xsd'
+    'retention': 'schemas/retencion.xsd',
+    'delivery': 'schemas/guia_remision.xsd',
+    'in_refund': 'schemas/nota_debito.xsd',
+    'lote': 'schemas/lote.xsd'
 }
 
 class DocumentXML(object):
+
     _schema = False
     document = False
 
@@ -60,7 +62,6 @@ class DocumentXML(object):
         self.document = document
         self.type_document = type
         self._schema = SCHEMAS[self.type_document]
-        self.signed_document = False
 
     @classmethod
     def validate_xml(self):
@@ -74,47 +75,59 @@ class DocumentXML(object):
         try:
             xmlschema.assertValid(self.document)
         except DocumentInvalid as e:
-            print e
-            raise osv.except_osv('Error de Datos', MSG_SCHEMA_INVALID)
+            raise osv.except_osv(u'Error de Datos', u'{0}: {1}'.format(MSG_SCHEMA_INVALID, e))
 
     @classmethod
-    def send_receipt(self, document):
+    def send_receipt(self, xml):
         """
         TODO: documentar
         """
         buf = StringIO.StringIO()
-        buf.write(document)
+        buf.write(xml)
         buffer_xml = base64.encodestring(buf.getvalue())
 
         if not utils.check_service('prueba'):
             raise osv.except_osv('Error SRI', 'Servicio SRI no disponible.')
 
+        messages = []
         client = Client(SriService.get_active_ws()[0])
         result =  client.service.validarComprobante(buffer_xml)
         if result.estado == 'RECIBIDA':
-            return True
+            return True, messages
         else:
-            return False, result
+            comprobante = result[1].comprobante
+            i = 0
+            while i < len(comprobante[0].mensajes):
+                m = comprobante[0].mensajes[i]
+                messages.append([m[i].identificador, u'{0}'.format(m[i].mensaje), u'{0}'.format(m[i].tipo), u'{0}'.format(m[i].informacionAdicional)])
+                i += 1
+            return False, messages
 
+    @classmethod
     def request_authorization(self, access_key):
         messages = []
         client = Client(SriService.get_active_ws()[1])
-        result =  client.service.autorizacionComprobante(access_key)
-        autorizacion = result.autorizaciones[0][0]
-        for m in autorizacion.mensajes[0]:
-            messages.append([m.identificador, m.mensaje, m.tipo])
-                
-        if autorizacion.estado == 'AUTORIZADO':
-            autorizacion_xml = etree.Element('autorizacion')
-            etree.SubElement(autorizacion_xml, 'estado').text = autorizacion.estado
-            etree.SubElement(autorizacion_xml, 'numeroAutorizacion').text = autorizacion.numeroAutorizacion
-            etree.SubElement(autorizacion_xml, 'ambiente').text = autorizacion.ambiente
-            etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(autorizacion.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"))
-            etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
-            return autorizacion_xml, messages, autorizacion
-        else:
-            return False, messages, False
-
+        result = client.service.autorizacionComprobante(access_key)
+        autorizaciones = result[2].autorizacion
+        i = 0
+        while i < len(autorizaciones):
+            autorizacion = autorizaciones[i]                
+            if autorizacion.estado == 'AUTORIZADO':
+                autorizacion_xml = etree.Element('autorizacion')
+                etree.SubElement(autorizacion_xml, 'estado').text = autorizacion.estado
+                etree.SubElement(autorizacion_xml, 'numeroAutorizacion').text = autorizacion.numeroAutorizacion
+                etree.SubElement(autorizacion_xml, 'ambiente').text = autorizacion.ambiente
+                etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(autorizacion.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"))
+                etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
+                return autorizacion_xml, messages, autorizacion
+            else:
+                j = 0
+                while j < len(autorizacion.mensajes):
+                    mensaje = autorizacion.mensajes[j]
+                    messages.append([mensaje[j].identificador, u'{0}'.format(mensaje[j].mensaje), u'{0}'.format(mensaje[j].tipo), u'{0}'.format(mensaje[j].informacionAdicional)])
+                    j += 1
+            i += 1
+        return False, messages, False
 
 class SriService(object):
 
