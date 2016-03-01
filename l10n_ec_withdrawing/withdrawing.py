@@ -16,6 +16,7 @@ TYPE2JOURNAL = {
     'in_refund': 'purchase_refund',
 }
 
+
 class AccountWithdrawing(models.Model):
     """ Implementacion de documento de retencion """
 
@@ -56,7 +57,7 @@ class AccountWithdrawing(models.Model):
     @api.multi
     def _get_in_type(self):
         context = self._context
-        if context.has_key('type') and \
+        if 'type' in context and \
         context['type'] in ['in_invoice', 'liq_purchase']:
             return 'ret_in_invoice'
         else:
@@ -188,7 +189,13 @@ class AccountWithdrawing(models.Model):
         default=lambda self: self.env['res.company']._company_default_get('account.invoice')
         )
 
-    _sql_constraints = [('unique_number_name', 'unique(name)', u'El número de retención es único.')]
+    _sql_constraints = [
+        (
+            'unique_number_name',
+            'unique(name)',
+            u'El número de retención es único.'
+        )
+    ]
 
     @api.multi
     def unlink(self):
@@ -283,6 +290,7 @@ class AccountWithdrawing(models.Model):
         self.write({'state': 'early'})
         return True
 
+
 class AccountInvoiceTax(models.Model):
 
     _inherit = 'account.invoice.tax'
@@ -300,10 +308,17 @@ class AccountInvoiceTax(models.Model):
             ('imp_ad', 'Imps. Aduanas'),
             ('ice', 'ICE'),
             ('other', 'Other')
-        ], 'Grupo', required=True)
+        ],
+        'Grupo',
+        required=True
+    )
     percent = fields.Char('Porcentaje', size=20)
     num_document = fields.Char('Num. Comprobante', size=50)
-    retention_id = fields.Many2one('account.retention', 'Retención', select=True)
+    retention_id = fields.Many2one(
+        'account.retention',
+        'Retención',
+        select=True
+    )
 
     @api.v8
     def compute(self, invoice):
@@ -507,7 +522,10 @@ class Invoice(models.Model):
         """
         Método para imprimir reporte de retencion
         """
-        datas = {'ids' : [self.retention_id.id], 'model': 'account.retention'}
+        datas = {
+            'ids': [self.retention_id.id],
+            'model': 'account.retention'
+        }
         if not self.retention_id:
             raise Warning('Aviso', u'No tiene retención')
         return {
@@ -646,9 +664,12 @@ class Invoice(models.Model):
         string='Base No IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     auth_inv_id = fields.Many2one(
-        'account.authorisation', string='Autorización SRI',
-        readonly=True, states={'draft': [('readonly', False)]},
-        help='Autorizacion del SRI para documento recibido')
+        'account.authorisation',
+        string='Autorización SRI',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help='Autorizacion del SRI para documento recibido'
+    )
     retention_id = fields.Many2one(
         'account.retention',
         string='Retención de Impuestos',
