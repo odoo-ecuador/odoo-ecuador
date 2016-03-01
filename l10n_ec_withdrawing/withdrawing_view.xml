@@ -517,6 +517,9 @@
 	<xpath expr="//field[@name='date_invoice']" position="attributes">
 	  <attribute name="required">1</attribute>
 	</xpath>
+	<xpath expr="//field[@name='fiscal_position']" position="attributes">
+	  <attribute name="required">1</attribute>
+	</xpath>
 	<xpath expr="//field[@name='move_id']" position="after">
 	  <field name="retention_id"/>
 	</xpath>

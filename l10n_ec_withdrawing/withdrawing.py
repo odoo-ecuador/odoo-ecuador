@@ -101,7 +101,6 @@ class AccountWithdrawing(models.Model):
         'Autorizacion',
         readonly=True,
         states=STATES_VALUE,
-        required=True,
         domain=[('in_type', '=', 'interno')]
         )
     type = fields.Selection(
@@ -767,7 +766,7 @@ class Invoice(models.Model):
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
-                    raise except_orm(_('Error!'), _(u'No ha cofigurado una autorización de retenciones.'))
+                    raise except_orm(_('Error!'), _(u'No ha configurado una autorización de retenciones.'))
 
                 if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):
                     raise except_orm(_('Error!'), _(u'El número de retención no es válido.'))
@@ -858,7 +857,7 @@ class Invoice(models.Model):
                 inv.retention_id.action_validate(wd_number)
                 continue
 
-            if not inv.journal_id.auth_ret_id:
+            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:
                 raise except_orm('Error', 'No ha configurado la autorización de retenciones en el diario.')
 
             withdrawing_data = {
