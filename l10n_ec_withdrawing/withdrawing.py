@@ -709,7 +709,10 @@ class Invoice(models.Model):
         required=True,
         default='auto'
     )
-    sustento_id = fields.Many2one('account.ats.sustento', string='Sustento del Comprobante')
+    sustento_id = fields.Many2one(
+        'account.ats.sustento',
+        string='Sustento del Comprobante'
+    )
 
     @api.multi
     def onchange_journal_id(self, journal_id=False):
@@ -733,7 +736,6 @@ class Invoice(models.Model):
             }
         return {}
 
-
     @api.multi
     def _check_invoice_number(self):
         """Método de validacion de numero de factura y numero de
@@ -749,7 +751,7 @@ class Invoice(models.Model):
                 return True
             if obj.type == 'out_invoice':
                 return True
-            if not len(obj.supplier_invoice_number) ==  INV_LIMIT:
+            if not len(obj.supplier_invoice_number) == INV_LIMIT:
                 raise Warning('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)
 
             auth = obj.auth_inv_id
@@ -780,7 +782,11 @@ class Invoice(models.Model):
     ]
 
     _sql_constraints = [
-        ('unique_inv_supplier', 'unique(supplier_invoice_number,type,partner_id)', u'El número de factura es único.'),
+        (
+            'unique_inv_supplier',
+            'unique(supplier_invoice_number,type,partner_id)',
+            u'El número de factura es único.'
+        )
     ]
 
     @api.multi
@@ -804,7 +810,7 @@ class Invoice(models.Model):
         res1 = super(Invoice, self).onchange_partner_id(type, partner_id, date_invoice,
                                                         payment_term, partner_bank_id,
                                                         company_id)
-        if res1['value'].has_key('reference_type'):
+        if 'reference_type' in res1['value']:
             res1['value'].pop('reference_type')
         res = self.env['account.authorisation'].search([('partner_id','=',partner_id),('in_type','=','externo')], limit=1)
         if res:
