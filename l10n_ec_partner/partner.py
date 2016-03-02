@@ -20,7 +20,7 @@ class ResPartner(models.Model):
         if not context:
             context = {}
         if name:
-            ids = self.search(cr, uid, [('ced_ruc', '=', name)] + args, limit=limit, context=context)
+            ids = self.search(cr, uid, [('ced_ruc', operator, name)] + args, limit=limit, context=context)
             if not ids:
                 ids = self.search(cr, uid, [('name', operator, name)] + args, limit=limit, context=context)
         else:
