@@ -2,10 +2,56 @@
 
 import requests
 
+
+tipoDocumento = {
+    '01': '01',
+    '04': '04',
+    '05': '05',
+    '06': '06',
+    '07': '07',
+    '18': '01',
+}
+
+tipoIdentificacion = {
+    'ruc': '04',
+    'cedula': '05',
+    'pasaporte': '06',
+    'venta_consumidor_final': '07',
+    'identificacion_exterior': '08',
+    'placa': '09',
+}
+
+codigoImpuesto = {
+    'vat': '2',
+    'vat0': '2',
+    'ice': '3',
+    'other': '5'
+}
+
+codigoImpuestoRetencion = {
+    'ret_ir': '1',
+    'ret_vat_b': '2',
+    'ret_vat_srv': '2',
+    'ice': '3',
+}
+
+tarifaImpuesto = {
+    'vat0': '0',
+    'vat': '2',
+    'novat': '6',
+    'other': '7',
+}
+
+MSG_SCHEMA_INVALID = u"El sistema generó el XML pero"
+" el comprobante electrónico no pasa la validación XSD del SRI."
+
+SITE_BASE_TEST = 'https://celcer.sri.gob.ec/'
+SITE_BASE_PROD = 'https://cel.sri.gob.ec/'
 WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
 WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
 WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
 WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
+
 
 def check_service(env='prueba'):
     flag = False
@@ -24,4 +70,3 @@ def check_service(env='prueba'):
     if i == 3:
         flag = True
     return flag
-
