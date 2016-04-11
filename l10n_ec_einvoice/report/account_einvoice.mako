@@ -7,15 +7,15 @@
       font-family:helvetica, helvetica bold, Arial Bold;
       font-size:12;
       }
-      
+
       div.container {
-      margin: 15px;   
+      margin: 15px;
       }
-      
-      div.left, div.right {    
+
+      div.left, div.right {
       float: left;
       }
-      
+
       div.left {
       padding-right: 21px;
       }
@@ -35,7 +35,7 @@
       div.companyinfo {
       height: 170px;
       width: 500px;
-      border: 1px solid gray;      
+      border: 1px solid gray;
       }
 
       div.invoiceinfo {
@@ -48,9 +48,9 @@
       div.customer {
       clear: both;
       height: 80px;
-      padding-top: 10px;      
+      padding-top: 10px;
       width: 925px;
-      border: 1px solid gray;      
+      border: 1px solid gray;
       }
 
       div.details {
@@ -68,10 +68,10 @@
       width: 900px;
       }
 
-      div.fot1, div.fot2 {    
+      div.fot1, div.fot2 {
       float: left;
       }
-      
+
       div.fot1 {
       width: 400px;
       float: left;
@@ -90,7 +90,7 @@
 
       .amount {
       text-align: right;
-      padding: 4px;      
+      padding: 4px;
       }
 
       td {
@@ -109,28 +109,28 @@
       <div class="container">
 	<div class="left">
 	  <div class="logo">
-	     ${helper.embed_logo_by_name('company_logo')|n}
+	     ${helper.embed_logo_by_name('company_logo')|safe}
 	  </div>
 	  <div class="companyinfo">
 	    <div class="info">
 	      <td>
 		<b>${o.company_id.name.upper()}</b>
-	      </td>	      
+	      </td>
 	    </div>
 	    <div class="info">
 	      <td>
-		<b>Dirección:</b> ${ o.company_id.street } ${ o.company_id.street2 }
-	      </td>	      
+		<b>DIRECCION</b> ${ o.company_id.street } ${ o.company_id.street2 }
+	      </td>
 	    </div>
 	    <div>
 	      <br>
 	      <br>
 	      <br>
-	    </div>	    
+	    </div>
 	    <div class="info">
 	      <td>
 		Constribuyente Especial Nro: ${o.company_id.company_registry}
-	      </td>	      
+	      </td>
 	    </div>
 	    <div class="info">
 	      <td>
@@ -140,7 +140,7 @@
 		SI
 	      </td>
 	    </div>
-	  </div>	
+	  </div>
 	</div>
 	<div class="right">
 	  <div class="invoiceinfo">
@@ -154,7 +154,7 @@
 	      </div>
 	      <div>
 		No. ${ o.number }
-	      </div>	      
+	      </div>
 	    </div>
 	    <div class="info" style="text-align: left;">
 	      <b>NUMERO AUTORIZACION</b>
@@ -169,17 +169,17 @@
 	      ${ o.fecha_autorizacion }
 	      <div class="info" style="text-align: left;">
 		<b>AMBIENTE</b>
-		Producción
-	      </div>	    
+		PRODUCCION
+	      </div>
 	      <div class="info" style="text-align: left;">
 		<b>EMISION:</b>
-		Emisión Normal
+		EMISION NORMAL
 	      </div>
 	      <div style="text-align: center;">
 		<b>CLAVE DE ACCESO</b>
 	      </div>
 	      <div style="text-align: center;">
-		${ helper.barcode(o.clave_acceso, htmlAttrs={'width': '350px', 'height': '30px;'}) }
+		${ helper.barcode(o.clave_acceso, htmlAttrs={'width': '350px', 'height': '30px;'}) | safe}
 	      </div>
 	      <div style="font-size: 11px !important; text-align: center;">
 		${ o.clave_acceso }
@@ -201,7 +201,7 @@
 	      </td>
 	      <td style="width: 10%; font-size:14px;">
 		${ o.partner_id.ced_ruc }
-	      </td>	      
+	      </td>
 	    </tr>
 	    <tr>
 	      <td style="font-size:14px;">
@@ -209,7 +209,7 @@
 	      </td>
 	      <td>
 		${ o.date_invoice }
-	      </td>	      
+	      </td>
 	      <td style="font-size:14px;">
 		<b>GUIA DE REMISION:</b>
 	      </td>
@@ -229,7 +229,7 @@
 	      </th>
 	      <th style="width: 5%">
 		CANTIDAD
-	      </th>	    
+	      </th>
 	      <th style="width: 10%">
 		PRECIO
 	      </th>
@@ -247,7 +247,7 @@
 	      </td>
 	      <td>
 		${ line.product_id.name }
-	      </td>	    
+	      </td>
 	      <td>
 		${ line.quantity }
 	      </td>
@@ -283,7 +283,7 @@
 	      <tr>
 		<td class="label">
 		  SUBTOTAL 0%
-		</td>	      
+		</td>
 		<td class="amount">
 		  ${ o.amount_vat_cero }
 		</td>
@@ -291,7 +291,7 @@
 	      <tr>
 		<td class="label">
 		  SUBTOTAL no sujeto IVA
-		</td>	      
+		</td>
 		<td class="amount">
 		  ${ o.amount_novat }
 		</td>
@@ -299,7 +299,7 @@
 	      <tr>
 		<td class="label">
 		  SUBTOTAL SIN IMPUESTOS
-		</td>	      
+		</td>
 		<td class="amount">
 		  ${ o.amount_untaxed }
 		</td>
@@ -307,7 +307,7 @@
 	      <tr>
 		<td class="label">
 		  DESCUENTOS
-		</td>	      
+		</td>
 		<td class="amount">
 		  0.00
 		</td>
@@ -315,7 +315,7 @@
 	      <tr>
 		<td class="label">
 		  ICE
-		</td>	      
+		</td>
 		<td class="amount">
 		  0.00
 		</td>
@@ -323,7 +323,7 @@
 	      <tr>
 		<td class="label">
 		  IVA 12%
-		</td>	      
+		</td>
 		<td class="amount">
 		  ${ o.amount_tax }
 		</td>
@@ -331,7 +331,7 @@
 	      <tr>
 		<td class="label">
 		  PROPINA
-		</td>	      
+		</td>
 		<td class="amount">
 		  0.00
 		</td>
@@ -339,14 +339,14 @@
 	      <tr>
 		<td class="label">
 		  VALOR TOTAL
-		</td>	      
+		</td>
 		<td class="amount">
 		  ${ o.amount_pay }
 		</td>
-	      </tr>	    
+	      </tr>
 	    </table>
 	  </div>
-	</div>	
+	</div>
       </div>
   </body>
   %endfor

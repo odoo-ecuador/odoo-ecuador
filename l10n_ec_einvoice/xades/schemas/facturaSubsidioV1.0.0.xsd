@@ -337,22 +337,22 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="cantidad">
 		<xsd:restriction base="xsd:decimal">
-			<xsd:totalDigits value="18"/>
-			<xsd:fractionDigits value="6"/>
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
 			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="precioUnitario">
 		<xsd:restriction base="xsd:decimal">
-			<xsd:totalDigits value="18"/>
-			<xsd:fractionDigits value="6"/>
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
 			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="precioSinSubsidio">
 		<xsd:restriction base="xsd:decimal">
-			<xsd:totalDigits value="18"/>
-			<xsd:fractionDigits value="6"/>
+			<xsd:totalDigits value="14"/>
+			<xsd:fractionDigits value="2"/>
 			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -382,30 +382,6 @@
 			<xsd:minLength value="1"/>
 			<xsd:maxLength value="300"/>
 			<xsd:pattern value="[^\n]*"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="codigoRetencion">
-		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="[4]{1}"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="codigoPorcentajeRetencion">
-		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="[0-9]{1,3}"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="tarifaRetencion">
-		<xsd:restriction base="xsd:decimal">
-			<xsd:totalDigits value="5"/>
-			<xsd:fractionDigits value="2"/>
-			<xsd:minInclusive value="0"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="valorRetencion">
-		<xsd:restriction base="xsd:decimal">
-			<xsd:fractionDigits value="2"/>
-			<xsd:totalDigits value="14"/>
-			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="comercioExterior">
@@ -555,7 +531,7 @@
 			<xsd:element name="codigoPorcentaje" type="codigoPorcentaje"/>
 			<xsd:element name="tarifa" type="tarifa" minOccurs="1"/>
 			<xsd:element name="baseImponible" type="baseImponible" minOccurs="1"/>
-			<xsd:element name="valor" type="valor"/>
+			<xsd:element name="valor" type="valor"/>			
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:simpleType name="codigoDocumentoReembolso">
@@ -725,7 +701,7 @@
 				<xsd:element name="infoFactura">
 					<xsd:complexType>
 						<xsd:sequence>
-							<xsd:element name="fechaEmision" type="fechaEmision"> </xsd:element>
+							<xsd:element name="fechaEmision" type="fechaEmision"/>
 							<xsd:element name="dirEstablecimiento" type="dirEstablecimiento" minOccurs="0"/>
 							<xsd:element name="contribuyenteEspecial" type="contribuyenteEspecial" minOccurs="0"/>
 							<xsd:element name="obligadoContabilidad" minOccurs="0"	type="obligadoContabilidad"/>
@@ -839,22 +815,6 @@
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="reembolsos" minOccurs="0" type="reembolsos"/>
-				<xsd:element minOccurs="0" name="retenciones">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element maxOccurs="unbounded" name="retencion">
-								<xsd:complexType>
-									<xsd:sequence>
-										<xsd:element name="codigo" type="codigoRetencion"/>
-										<xsd:element name="codigoPorcentaje" type="codigoPorcentajeRetencion"/>
-										<xsd:element name="tarifa" type="tarifaRetencion"/>
-										<xsd:element name="valor" type="valorRetencion"/>
-									</xsd:sequence>
-								</xsd:complexType>
-							</xsd:element>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
 				<xsd:element name="infoAdicional" minOccurs="0">
 					<xsd:complexType>
 						<xsd:sequence>

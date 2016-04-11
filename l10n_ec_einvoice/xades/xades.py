@@ -1,40 +1,10 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    XADES 
-#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
-#    cristian.salamea@gmail.com
-#    $Id$
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
 
-import os
 import base64
-import StringIO
-import hashlib
-import datetime
+import os
 import subprocess
 
-try:
-    from OpenSSL import crypto
-except ImportError:
-    raise ImportError('Instalar la libreria para soporte OpenSSL: pip install PyOpenSSL')
-
 from lxml import etree
-from pytz import timezone
 
 
 class CheckDigit(object):
@@ -66,7 +36,7 @@ class CheckDigit(object):
         """
         total = 0
         weight = self._MODULO_11['PESO']
-        
+
         for item in reversed(dato):
             total += int(item) * weight
             weight += 1
@@ -80,14 +50,33 @@ class CheckDigit(object):
 
 class Xades(object):
 
-    def apply_digital_signature(self, xml_document, file_pk12, password):
+    def sign(self, xml_document, file_pk12, password):
         """
         Metodo que aplica la firma digital al XML
+        TODO: Revisar return
         """
+        xml_str = xml_document.encode('utf-8')
         JAR_PATH = 'firma/firmaXadesBes.jar'
         JAVA_CMD = 'java'
-        xml_str = etree.tostring(xml_document, encoding='utf8', method='xml')
         firma_path = os.path.join(os.path.dirname(__file__), JAR_PATH)
-        p = subprocess.Popen([JAVA_CMD, '-jar', firma_path, xml_str, file_pk12, password], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        command = [
+            JAVA_CMD,
+            '-jar',
+            firma_path,
+            xml_str,
+            base64.b64encode(file_pk12),
+            base64.b64encode(password)
+        ]
+        try:
+            subprocess.check_output(command)
+        except subprocess.CalledProcessError as e:
+            print e.returncode
+            raise
+
+        p = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
         res = p.communicate()
         return res[0]

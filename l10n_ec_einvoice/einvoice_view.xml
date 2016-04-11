@@ -52,8 +52,8 @@
         </xpath>
       </field>
     </record>
-    <!-- eInvoice Tree -->
-    <record id="view_eretention_tree" model="ir.ui.view">
+
+    <!-- record id="view_eretention_tree" model="ir.ui.view">
       <field name="name">account.eretention.tree</field>
       <field name="model">account.retention</field>
       <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_tree"/>
@@ -62,12 +62,12 @@
           <attribute name="colors">blue:state == 'draft';green:authorization_sri == False;black:state in ('done');gray:state == 'cancel'</attribute>
         </xpath>
         <xpath expr="//tree//field[@name='name']" position="after">
-          <field name="authorization_sri" invisible="1"/>
+          <field name="autorizado_sri" invisible="1"/>
         </xpath>
       </field>
-    </record>
+    </record -->
     <!-- eRetention Tree -->
-    <record id="view_eretention_tree" model="ir.ui.view">
+    <!-- record id="view_eretention_tree" model="ir.ui.view">
       <field name="name">account.eretention.tree</field>
       <field name="model">account.retention</field>
       <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_tree"/>
@@ -79,7 +79,7 @@
           <field name="authorization_sri" invisible="1"/>
         </xpath>
       </field>
-    </record>
+    </record -->
     <!-- eInvoice Form -->
     <record id="view_account_einvoice_form" model="ir.ui.view">
       <field name="name">account.einvoice.form</field>
@@ -100,7 +100,7 @@
       </field>
     </record>
     <!-- eRetention Form -->
-    <record id="view_account_eretention_form" model="ir.ui.view">
+    <!-- record id="view_account_eretention_form" model="ir.ui.view">
       <field name="name">account.eretention.form</field>
       <field name="model">account.retention</field>
       <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_form"/>
@@ -115,6 +115,6 @@
           <field name="access_key"/>
         </xpath>
       </field>
-    </record>
+    </record -->
   </data>
 </openerp>

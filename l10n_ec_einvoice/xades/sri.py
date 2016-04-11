@@ -1,51 +1,28 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    XADES 
-#    Copyright (C) 2014 Cristian Salamea All Rights Reserved
-#    cristian.salamea@gmail.com
-#    $Id$
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
 
-import logging
 import os
-import StringIO
+from StringIO import StringIO
 import base64
 
 from lxml import etree
-from lxml.etree import DocumentInvalid
+from lxml.etree import fromstring, DocumentInvalid
 
 try:
     from suds.client import Client
-    from suds.transport import TransportError
 except ImportError:
-    raise ImportError('Instalar Libreria suds')
+    raise ImportError('Instalar Libreria suds')  # pip install suds-jurko
 
-from osv import osv
 from openerp.addons.l10n_ec_einvoice import utils
 from .xades import CheckDigit
 
 SCHEMAS = {
     'out_invoice': 'schemas/factura.xsd',
     'out_refund': 'schemas/nota_credito.xsd',
-    'retention': 'schemas/retention.xsd',
-    'delivery': 'schemas/delivery.xsd',
+    'withdrawing': 'schemas/retencion.xsd',
+    'delivery': 'schemas/guia_remision.xsd',
     'in_refund': 'schemas/nota_debito.xsd'
 }
+
 
 class DocumentXML(object):
     _schema = False
@@ -57,7 +34,8 @@ class DocumentXML(object):
         document: XML representation
         type: determinate schema
         """
-        self.document = document
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+        self.document = fromstring(document.encode('utf-8'), parser=parser)
         self.type_document = type
         self._schema = SCHEMAS[self.type_document]
         self.signed_document = False
@@ -65,55 +43,55 @@ class DocumentXML(object):
     @classmethod
     def validate_xml(self):
         """
+        Validar esquema XML
         """
-        MSG_SCHEMA_INVALID = u"El sistema generó el XML pero el comprobante electrónico no pasa la validación XSD del SRI."
         file_path = os.path.join(os.path.dirname(__file__), self._schema)
         schema_file = open(file_path)
         xmlschema_doc = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xmlschema_doc)
         try:
             xmlschema.assertValid(self.document)
-        except DocumentInvalid as e:
-            print e
-            raise osv.except_osv('Error de Datos', MSG_SCHEMA_INVALID)
+            return True
+        except DocumentInvalid:
+            return False
 
     @classmethod
     def send_receipt(self, document):
         """
-        TODO: documentar
+        Metodo que envia el XML al WS
         """
-        buf = StringIO.StringIO()
+        buf = StringIO()
         buf.write(document)
         buffer_xml = base64.encodestring(buf.getvalue())
 
         if not utils.check_service('prueba'):
-            raise osv.except_osv('Error SRI', 'Servicio SRI no disponible.')
+            # TODO: implementar modo offline
+            raise 'Error SRI', 'Servicio SRI no disponible.'
 
         client = Client(SriService.get_active_ws()[0])
-        result =  client.service.validarComprobante(buffer_xml)
+        result = client.service.validarComprobante(buffer_xml)
+        errores = []
         if result.estado == 'RECIBIDA':
-            return True
+            return True, errores
         else:
-            return False, result
+            for comp in result.comprobantes:
+                for m in comp[1][0].mensajes:
+                    rs = [m[1][0].tipo, m[1][0].mensaje]
+                    rs.append(getattr(m[1][0], 'informacionAdicional', ''))
+                    errores.append(' '.join(rs))
+            return False, ', '.join(errores)
 
     def request_authorization(self, access_key):
         messages = []
         client = Client(SriService.get_active_ws()[1])
-        result =  client.service.autorizacionComprobante(access_key)
+        result = client.service.autorizacionComprobante(access_key)
         autorizacion = result.autorizaciones[0][0]
-        for m in autorizacion.mensajes[0]:
+        mensajes = autorizacion.mensajes and autorizacion.mensajes[0] or []
+        for m in mensajes:
             messages.append([m.identificador, m.mensaje, m.tipo])
-                
-        if autorizacion.estado == 'AUTORIZADO':
-            autorizacion_xml = etree.Element('autorizacion')
-            etree.SubElement(autorizacion_xml, 'estado').text = autorizacion.estado
-            etree.SubElement(autorizacion_xml, 'numeroAutorizacion').text = autorizacion.numeroAutorizacion
-            etree.SubElement(autorizacion_xml, 'ambiente').text = autorizacion.ambiente
-            etree.SubElement(autorizacion_xml, 'fechaAutorizacion').text = str(autorizacion.fechaAutorizacion.strftime("%d/%m/%Y %H:%M:%S"))
-            etree.SubElement(autorizacion_xml, 'comprobante').text = etree.CDATA(autorizacion.comprobante)
-            return autorizacion_xml, messages, autorizacion
-        else:
-            return False, messages, False
+        if not autorizacion.estado == 'AUTORIZADO':
+            return False, messages
+        return autorizacion, messages
 
 
 class SriService(object):
@@ -144,7 +122,7 @@ class SriService(object):
     @classmethod
     def get_ws_test(self):
         return self.__WS_TEST_RECEIV, self.__WS_TEST_AUTH
-    
+
     @classmethod
     def get_ws_prod(self):
         return self.__WS_RECEIV, self.__WS_AUTH
@@ -163,4 +141,3 @@ class SriService(object):
         modulo = CheckDigit.compute_mod11(dato)
         access_key = ''.join([dato, str(modulo)])
         return access_key
-

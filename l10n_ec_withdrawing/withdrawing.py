@@ -185,13 +185,13 @@ class AccountWithdrawing(models.Model):
         change_default=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
-        default=lambda self: self.env['res.company']._company_default_get('account.invoice')
+        default=lambda self: self.env['res.company']._company_default_get('account.invoice')  # noqa
         )
 
     _sql_constraints = [
         (
             'unique_number_name',
-            'unique(name)',
+            'unique(name,partner_id)',
             u'El número de retención es único.'
         )
     ]
@@ -254,8 +254,12 @@ class AccountWithdrawing(models.Model):
                 wd_number = self.env['ir.sequence'].get_id(sequence.id)
             else:
                 wd_number = str(number).zfill(sequence.padding)
-            number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad, wd.auth_id.serie_emision, wd_number)
-            wd.write({'state': 'done', 'name': number, 'internal_number': number})
+            number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
+                                        wd.auth_id.serie_emision,
+                                        wd_number)
+            wd.write({'state': 'done',
+                      'name': number,
+                      'internal_number': number})
         return True
 
     @api.multi
@@ -838,11 +842,11 @@ class Invoice(models.Model):
         * Generar retencion de reemplazo
         * Cancelar retencion generada
         """
-        TYPES_TO_VALIDATE = ['inv_invoice', 'liq_purchase']
+        TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
         for inv in self:
 
             if not (inv.retention_ir or inv.retention_vat):
-                return True
+                continue
 
             if inv.create_retention_type == 'no_retention':
                 continue
@@ -850,7 +854,8 @@ class Invoice(models.Model):
             wd_number = False
             if inv.create_retention_type == 'manual':
                 if inv.withdrawing_number <= 0:
-                    raise except_orm(_('Error!'), _(u'El número de retención es incorrecto.'))
+                    raise except_orm(_('Error!'),
+                                     u'El número de retención es incorrecto.')
                 wd_number = inv.withdrawing_number
 
             if inv.retention_id:
@@ -861,7 +866,7 @@ class Invoice(models.Model):
                 raise except_orm('Error', 'No ha configurado la autorización de retenciones en el diario.')
 
             withdrawing_data = {
-                'name': '/',
+                'name': wd_number,
                 'invoice_id': inv.id,
                 'num_document': inv.supplier_invoice_number,
                 'auth_id': inv.journal_id.auth_ret_id.id,

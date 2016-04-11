@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp.osv import osv, fields
+from openerp.osv import osv
 
 
 class AccountInvoice(osv.osv):
@@ -14,7 +14,7 @@ class AccountInvoice(osv.osv):
         """
         if context is None:
             context = {}
-        # TODO: not correct fix but required a frech values before reading it.
+        #TODO: not correct fix but required a frech values before reading it.
         self.write(cr, uid, ids, {})
 
         for obj_inv in self.browse(cr, uid, ids, context=context):
@@ -37,11 +37,11 @@ class AccountInvoice(osv.osv):
 
             if invtype in ('in_invoice', 'in_refund'):
                 if not reference:
-                    ref = self._convert_ref(cr, uid, number)
+                    ref = number
                 else:
                     ref = reference
             else:
-                ref = self._convert_ref(cr, uid, number)
+                ref = number
 
             cr.execute('UPDATE account_move SET ref=%s ' \
                     'WHERE id=%s AND (ref is null OR ref = \'\')',
