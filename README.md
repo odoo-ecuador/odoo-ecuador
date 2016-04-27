@@ -7,6 +7,15 @@ Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
 empresa ecuatoriana.
 
+Por qué usamos aún la versión 8.0 ?
+-----------------------------------
+
+Consideramos que la versión 9.0 ha sido *capada* en varios features y hasta no tener un reemplazo total desde la comunidad seguiremos trabajando con la versión 8.0.
+
+Ya existen iniciativas desde odoo-community.org en desarrollar lo que falta, sobre en el área financiera, como reportes de impuestos y reportes financieros.
+
+Es importante también recalcar que este proyecto siempre esta activo, esta versión de localización esta en producción en muchos lugares. Te invitamos a incluir en la [Wiki](https://github.com/odoo-ecuador/odoo-ecuador/wiki/Referencia-de-clientes) de referencias a tus clientes en donde has implementado estos módulos, esto lo consideramos importante para dar valor al trabajo en conjunto que se realiza por la comunidad.
+
 Aclaratorio a la Licencia
 -------------------------
 
@@ -26,12 +35,12 @@ Uso de Módulos
 --------------
 
 Para la instalación y uso::
-     
+
      $ git clone https://github.com/odoo-ecuador/odoo-ecuador.git
 
 Ahora ejecutar odoo agregando al path de módulos::
 
-     $ ./openerp-server --addons-path=addons,../odoo-ecuador 
+     $ ./openerp-server --addons-path=addons,../odoo-ecuador
 
 El comando anterior asume que odoo y odoo-ecuador estan al mismo nivel.
 
