@@ -1,23 +1,4 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Author :  Cristian Salamea cristian.salamea@gnuthink.com
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
 
 import time
 import base64
@@ -28,12 +9,12 @@ import os
 import datetime
 import logging
 
-from openerp.osv import osv, fields
+from openerp.osv import osv, orm, fields
 
 tpIdProv = {
-    'ruc' : '01',
-    'cedula' : '02',
-    'pasaporte' : '03',
+    'ruc': '01',
+    'cedula': '02',
+    'pasaporte': '03',
 }
 
 tpIdCliente = {
@@ -43,7 +24,7 @@ tpIdCliente = {
     }
 
 
-class wizard_ats(osv.osv_memory):
+class wizard_ats(orm.TransientModel):
 
     _name = 'wizard.ats'
     _description = 'Anexo Transaccional Simplificado'
@@ -61,7 +42,7 @@ class wizard_ats(osv.osv_memory):
         return user.company_id.id
 
     def act_cancel(self, cr, uid, ids, context):
-        return {'type':'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.act_window_close'}
 
     def process_lines(self, cr, uid, lines):
         """
@@ -69,17 +50,19 @@ class wizard_ats(osv.osv_memory):
         @data_air: [{baseImpAir: 0, ...}]
         """
         data_air = []
-        flag = False
         temp = {}
         for line in lines:
             if line.tax_group in ['ret_ir', 'no_ret_ir']:
                 if not temp.get(line.base_code_id.code):
-                    temp[line.base_code_id.code] = {'baseImpAir': 0, 'valRetAir': 0}
+                    temp[line.base_code_id.code] = {
+                        'baseImpAir': 0,
+                        'valRetAir': 0
+                    }
                 temp[line.base_code_id.code]['baseImpAir'] += line.base_amount
                 temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code
                 temp[line.base_code_id.code]['porcentajeAir'] = line.percent and float(line.percent) or 0.00
                 temp[line.base_code_id.code]['valRetAir'] += abs(line.amount)
-        for k,v in temp.items():
+        for k, v in temp.items():
             data_air.append(v)
         return data_air
 
@@ -93,19 +76,25 @@ class wizard_ats(osv.osv_memory):
         return date.strftime('%d/%m/%Y')
 
     def _get_ventas(self, cr, period_id, journal_id=False):
-        sql_ventas = "SELECT sum(amount_vat+amount_vat_cero+amount_novat) AS base \
+        sql_ventas = "SELECT type, sum(amount_vat+amount_vat_cero+amount_novat) AS base \
                       FROM account_invoice \
-                      WHERE type = 'out_invoice' AND state IN ('open','paid') AND period_id = %s" % period_id
+                      WHERE type IN ('out_invoice', 'out_refund') \
+                      AND state IN ('open','paid') \
+                      AND period_id = %s" % period_id
         if journal_id:
             where = " AND journal_id=%s" % journal_id
             sql_ventas += where
+        sql_ventas += " GROUP BY type"
         cr.execute(sql_ventas)
-        result = cr.fetchone()[0]
-        return '%.2f' % (result and result or 0.00)
+        res = cr.fetchall()
+        resultado = sum(map(lambda x: x[0]=='out_refund' and x[1]*-1 or x[1], res))
+        return '%.2f' % resultado
 
     def _get_ret_iva(self, invoice):
         """
-        Return (valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100)
+        Return (valRetBien10, valRetServ20,
+        valorRetBienes,
+        valorRetServicios, valorRetServ100)
         """
         retBien10 = 0
         retServ20 = 0
@@ -128,7 +117,6 @@ class wizard_ats(osv.osv_memory):
         return retBien10, retServ20, retBien, retServ, retServ100
 
     def act_export_ats(self, cr, uid, ids, context):
-        conret = 0
         inv_obj = self.pool.get('account.invoice')
         journal_obj = self.pool.get('account.journal')
         wiz = self.browse(cr, uid, ids)[0]
@@ -139,7 +127,7 @@ class wizard_ats(osv.osv_memory):
         etree.SubElement(ats, 'IdInformante').text = str(ruc)
         etree.SubElement(ats, 'razonSocial').text = wiz.company_id.name
         period = self.pool.get('account.period').browse(cr, uid, [period_id])[0]
-        etree.SubElement(ats, 'Anio').text = time.strftime('%Y',time.strptime(period.date_start, '%Y-%m-%d'))        
+        etree.SubElement(ats, 'Anio').text = time.strftime('%Y',time.strptime(period.date_start, '%Y-%m-%d'))
         etree.SubElement(ats, 'Mes'). text = time.strftime('%m',time.strptime(period.date_start, '%Y-%m-%d'))
         etree.SubElement(ats, 'numEstabRuc').text = wiz.num_estab_ruc.zfill(3)
         total_ventas = self._get_ventas(cr, period_id)
@@ -151,7 +139,7 @@ class wizard_ats(osv.osv_memory):
                                             ('period_id','=',period_id),
                                             ('type','in',['in_invoice','liq_purchase']),
                                             ('company_id','=',wiz.company_id.id)])
-        self.__logger.info("Compras registradas: %s" % len(inv_ids))        
+        self.__logger.info("Compras registradas: %s" % len(inv_ids))
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detallecompras = etree.Element('detalleCompras')
             etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code
@@ -190,7 +178,7 @@ class wizard_ats(osv.osv_memory):
             etree.SubElement(detallecompras, 'valRetBien10').text = '%.2f'%valRetBien10
             etree.SubElement(detallecompras, 'valRetServ20').text = '%.2f'%valRetServ20
             etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%valorRetBienes
-            etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)
+            #etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)
             etree.SubElement(detallecompras, 'valorRetServicios').text = '%.2f'%valorRetServicios
             etree.SubElement(detallecompras, 'valRetServ100').text = '%.2f'%valorRetServ100
             etree.SubElement(detallecompras, 'totbasesImpReemb').text = '0.00'
@@ -215,53 +203,59 @@ class wizard_ats(osv.osv_memory):
                     etree.SubElement(detalleAir, 'valRetAir').text = '%.2f' % da['valRetAir']
                     air.append(detalleAir)
                 detallecompras.append(air)
-            flag = False            
+            flag = False
             if inv.retention_id and (inv.retention_ir or inv.retention_vat):
                 flag = True
                 etree.SubElement(detallecompras, 'estabRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_entidad or '000'
                 etree.SubElement(detallecompras, 'ptoEmiRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_emision or '000'
-                etree.SubElement(detallecompras, 'secRetencion1').text = flag and inv.retention_id.number[6:] or '%09d'%0
+                etree.SubElement(detallecompras, 'secRetencion1').text = flag and inv.retention_id.num_document[6:] or '%09d'%0
                 etree.SubElement(detallecompras, 'autRetencion1').text = flag and inv.journal_id.auth_ret_id.name or '%010d'%0
                 etree.SubElement(detallecompras, 'fechaEmiRet1').text = flag and self.convertir_fecha(inv.retention_id.date)
-            ## etree.SubElement(detallecompras, 'docModificado').text = '0'
-            ## etree.SubElement(detallecompras, 'estabModificado').text = '000'
-            ## etree.SubElement(detallecompras, 'ptoEmiModificado').text = '000'
-            ## etree.SubElement(detallecompras, 'secModificado').text = '0'
-            ## etree.SubElement(detallecompras, 'autModificado').text = '0000'
             compras.append(detallecompras)
         ats.append(compras)
         if float(total_ventas) > 0:
             """VENTAS DECLARADAS"""
             ventas = etree.Element('ventas')
-            inv_ids = inv_obj.search(cr, uid, [('state','in',['open','paid']),
-                                               ('period_id','=',period_id),
-                                               ('type','=','out_invoice'),
-                                               ('company_id','=',wiz.company_id.id)])
+            inv_ids = inv_obj.search(cr, uid, [
+                ('state', 'in', ['open', 'paid']),
+                ('period_id', '=', period_id),
+                ('type', 'in', ['out_invoice', 'out_refund']),
+                ('company_id', '=', wiz.company_id.id)])
             pdata = {}
             self.__logger.info("Ventas registradas: %s" % len(inv_ids))
             for inv in inv_obj.browse(cr, uid, inv_ids):
-                if not pdata.get(inv.partner_id.id, False):
-                    partner_data = {inv.partner_id.id: {'tpIdCliente': inv.partner_id.type_ced_ruc,
-                                                        'idCliente': inv.partner_id.ced_ruc,
-                                                        'numeroComprobantes': 0,
-                                                        'basenoGraIva': 0,
-                                                        'baseImponible': 0,
-                                                        'baseImpGrav': 0,
-                                                        'montoIva': 0,
-                                                        'valorRetRenta': 0,
-                                                        'valorRetIva': 0}}
+                part_id = inv.partner_id.id
+                tipoComprobante = inv.journal_id.auth_id.type_id.code
+                keyp = '%s-%s' % (part_id, tipoComprobante)
+                partner_data = {
+                    keyp: {
+                        'tpIdCliente': inv.partner_id.type_ced_ruc,
+                        'idCliente': inv.partner_id.ced_ruc,
+                        'numeroComprobantes': 0,
+                        'basenoGraIva': 0,
+                        'baseImponible': 0,
+                        'baseImpGrav': 0,
+                        'montoIva': 0,
+                        'valorRetRenta': 0,
+                        'tipoComprobante': tipoComprobante,
+                        'valorRetIva': 0
+                    }
+                }
+                if not pdata.get(keyp, False):
                     pdata.update(partner_data)
-                pdata[inv.partner_id.id]['numeroComprobantes'] += 1
-                pdata[inv.partner_id.id]['basenoGraIva'] += inv.amount_novat
-                pdata[inv.partner_id.id]['baseImponible'] += inv.amount_vat_cero
-                pdata[inv.partner_id.id]['baseImpGrav'] += inv.amount_vat
-                pdata[inv.partner_id.id]['montoIva'] += inv.amount_tax
-                pdata[inv.partner_id.id]['tipoComprobante'] = inv.journal_id.auth_id.type_id.code
+                elif pdata[keyp]['tipoComprobante'] == tipoComprobante:
+                    pdata[keyp]['numeroComprobantes'] += 1
+                else:
+                    pdata.update(partner_data)
+                pdata[keyp]['basenoGraIva'] += inv.amount_novat
+                pdata[keyp]['baseImponible'] += inv.amount_vat_cero
+                pdata[keyp]['baseImpGrav'] += inv.amount_vat
+                pdata[keyp]['montoIva'] += inv.amount_tax
                 if inv.retention_ir:
                     data_air = self.process_lines(cr, uid, inv.tax_line)
                     for dt in data_air:
-                        pdata[inv.partner_id.id]['valorRetRenta'] += dt['valRetAir']
-                pdata[inv.partner_id.id]['valorRetIva'] += abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)
+                        pdata[keyp]['valorRetRenta'] += dt['valRetAir']
+                pdata[keyp]['valorRetIva'] += abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)
 
             for k, v in pdata.items():
                 detalleVentas = etree.Element('detalleVentas')
@@ -280,12 +274,10 @@ class wizard_ats(osv.osv_memory):
             ats.append(ventas)
         """ Ventas establecimiento """
         ventasEstablecimiento = etree.Element('ventasEstablecimiento')
-        jour_ids = journal_obj.search(cr, uid, [('type','=','sale')])
-        for j in journal_obj.browse(cr, uid, jour_ids):
-            ventaEst = etree.Element('ventaEst')
-            etree.SubElement(ventaEst, 'codEstab').text = j.auth_id.serie_emision
-            etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id, j.id)
-            ventasEstablecimiento.append(ventaEst)
+        ventaEst = etree.Element('ventaEst')
+        etree.SubElement(ventaEst, 'codEstab').text = inv.journal_id.auth_id.serie_emision
+        etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id)
+        ventasEstablecimiento.append(ventaEst)
         ats.append(ventasEstablecimiento)
         """Documentos Anulados"""
         anulados = etree.Element('anulados')
@@ -293,7 +285,7 @@ class wizard_ats(osv.osv_memory):
                                             ('period_id','=',period_id),
                                             ('type','=','out_invoice'),
                                             ('company_id','=',wiz.company_id.id)])
-        self.__logger.info("Ventas Anuladas: %s" % len(inv_ids))        
+        self.__logger.info("Ventas Anuladas: %s" % len(inv_ids))
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detalleAnulados = etree.Element('detalleAnulados')
             etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code
@@ -326,8 +318,8 @@ class wizard_ats(osv.osv_memory):
             etree.SubElement(detalleAnulados, 'tipoComprobante').text = ret.auth_id.type_id.code
             etree.SubElement(detalleAnulados, 'establecimiento').text = ret.auth_id.serie_entidad
             etree.SubElement(detalleAnulados, 'puntoEmision').text = ret.auth_id.serie_emision
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(ret.number[8:]))
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(ret.number[8:]))
+            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(ret.num_document[8:]))
+            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(ret.num_document[8:]))
             etree.SubElement(detalleAnulados, 'autorizacion').text = ret.auth_id.name
             anulados.append(detalleAnulados)
         ats.append(anulados)
@@ -341,33 +333,61 @@ class wizard_ats(osv.osv_memory):
             try:
                 xmlschema.assertValid(ats)
             except DocumentInvalid as e:
-                raise osv.except_osv('Error de Datos', """El sistema generó el XML pero los datos no pasan la validación XSD del SRI.
-                \nLos errores mas comunes son:\n* RUC,Cédula o Pasaporte contiene caracteres no válidos.\n* Números de documentos están duplicados.\n\nEl siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))
+                raise osv.except_osv(
+                    'Error de Datos',
+                    u"""El sistema generó el XML pero los datos no pasan la validación XSD del SRI.
+                    \nLos errores mas comunes son:\n
+                    * RUC,Cédula o Pasaporte contiene caracteres no válidos.
+                    \n* Números de documentos están duplicados.\n\nE
+                    l siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))
         buf = StringIO.StringIO()
         buf.write(file_ats)
-        out=base64.encodestring(buf.getvalue())
+        out = base64.encodestring(buf.getvalue())
         buf.close()
-        name = "%s%s%s.XML" % ("AT", wiz.period_id.name[:2], wiz.period_id.name[3:8])
-        return self.write(cr, uid, ids, {'state': 'export', 'data': out, 'name': name})        
-        
+        name = "%s%s%s.XML" % (
+            "AT",
+            wiz.period_id.name[:2],
+            wiz.period_id.name[3:8]
+        )
+        self.write(cr, uid, ids, {
+            'state': 'export',
+            'data': out,
+            'fcname': name
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'wizard.ats',
+            'view_mode': ' form',
+            'view_type': ' form',
+            'res_id': wiz.id,
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+
     _columns = {
-        'name' : fields.char('Nombre de Archivo', size=50, readonly=True),
-        'period_id' : fields.many2one('account.period', 'Periodo'),
+        'fcname': fields.char('Nombre de Archivo', size=50, readonly=True),
+        'period_id': fields.many2one('account.period', 'Periodo'),
         'company_id': fields.many2one('res.company', 'Compania'),
-        'num_estab_ruc': fields.char('Num. de Establecimientos', size=3, required=True),
+        'num_estab_ruc': fields.char(
+            'Num. de Establecimientos',
+            size=3,
+            required=True
+        ),
         'pay_limit': fields.float('Limite de Pago'),
-        'data' : fields.binary('Archivo XML'),
+        'data': fields.binary('Archivo XML'),
         'no_validate': fields.boolean('No Validar'),
-        'state' : fields.selection((('choose', 'choose'),
-                                    ('export', 'export'))),        
+        'state': fields.selection(
+            (
+                ('choose', 'choose'),
+                ('export', 'export')
+            )
+        ),
         }
 
     _defaults = {
-        'state' : 'choose',
+        'state': 'choose',
         'period_id': _get_period,
         'company_id': _get_company,
         'pay_limit': 1000.00,
         'num_estab_ruc': '001'
-    }    
-
-wizard_ats()
+    }

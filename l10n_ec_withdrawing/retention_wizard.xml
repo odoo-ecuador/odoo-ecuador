@@ -9,33 +9,32 @@
       <field name="model">wizard.ats</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-        <form string="Exportar Archiv ATS">
-          <group col="4" colspan="4" states="choose" fill="0">
-	        <separator string="Se exportara la informacion de la empresa a la que pertenece el usuario actual." colspan="4"/>
-	        <field name="period_id" required="1"/>
-	        <field name="company_id" required="1" readonly="1"/>
+        <form string="Exportar Archivo ATS" version="7.0">
+	  <field name="state" invisible="1"/>
+          <group states="choose">
+	    <separator string="Se exportara la información de la empresa a la que pertenece el usuario actual." colspan="4"/>
+	    <field name="period_id" required="1" options="{'no_open': True}"/>
+	    <field name="company_id" required="1" readonly="1" options="{'no_open': True}"/>
             <field name="no_validate"/>
             <field name="num_estab_ruc"/>
             <field name="pay_limit" readonly="1"/>
           </group>
-	      <group col="4" colspan="4" states="export" fill="0">
-	        <separator string="Archivo generado correctamente, guardelo en su ubicacion de preferencia." colspan="4"/>
-	        <field name="name" colspan="4"/>
-	        <field name="data" colspan="4"/>
-	      </group>
-	      <field name="state" invisible="1"/>
-          <group colspan="4">
-            <button icon="gtk-cancel" name="act_cancel" special="cancel" states="choose" string="Cancelar" type="object"/>
-            <button icon="gtk-execute" name="act_export_ats" states="choose" string="Exportar XML" type="object"/>
-	        <button icon="gtk-ok" name="act_cancel" states="export" string="Cerrar" type="object"/>
-          </group>                    
+	  <group states="export">
+	    <separator string="Archivo generado correctamente, guardelo en su ubicación de preferencia." colspan="4"/>
+	    <field name="fcname" invisible="1"/>
+	    <field name="data" filename="fcname"/>
+	  </group>
+	  <footer class="oe_right">
+	    <button icon="gtk-cancel" class="oe_link" special="cancel" states="choose" string="Cancelar"/>
+	    <button icon="gtk-execute" name="act_export_ats" states="choose" string="Exportar XML" type="object"/>
+	    <button icon="gtk-ok" states="export" string="Cerrar" class="oe_link" special="cancel"/>
+	  </footer>
         </form>
       </field>
     </record>
-    
+
     <record id="action_export_ats" model="ir.actions.act_window">
       <field name="name">Exportar Anexo Transaccional Simplificado</field>
-      <field name="type">ir.actions.act_window</field>
       <field name="res_model">wizard.ats</field>
       <field name="view_type">form</field>
       <field name="view_mode">form</field>
