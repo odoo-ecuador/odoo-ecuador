@@ -852,18 +852,25 @@ class Invoice(models.Model):
                 continue
 
             wd_number = False
-            if inv.create_retention_type == 'manual':
+
+            if inv.create_retention_type == 'auto':
+                sequence = inv.journal_id.auth_ret_id.sequence_id
+                wd_number = self.env['ir.sequence'].get(sequence.code)
+            else:
                 if inv.withdrawing_number <= 0:
                     raise except_orm(_('Error!'),
                                      u'El número de retención es incorrecto.')
-                wd_number = inv.withdrawing_number
+                wd_number = inv.withdrawing_number  # TODO: validate number
 
             if inv.retention_id:
                 inv.retention_id.action_validate(wd_number)
                 continue
 
             if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:
-                raise except_orm('Error', 'No ha configurado la autorización de retenciones en el diario.')
+                raise except_orm(
+                    'Error',
+                    'No ha configurado la autorización de retenciones en el diario.'
+                )
 
             withdrawing_data = {
                 'name': wd_number,
