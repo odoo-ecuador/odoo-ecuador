@@ -1,1 +1,1 @@
-suds-jurko==0.7.dev0
+-e https://github.com/ovnicraft/suds.git
