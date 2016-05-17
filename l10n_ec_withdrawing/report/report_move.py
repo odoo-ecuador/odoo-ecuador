@@ -1,28 +1,9 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#    
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.     
-#
-##############################################################################
 
 import time
 from openerp.report import report_sxw
-from openerp.osv import osv
 from openerp import pooler
+
 
 class move(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
@@ -34,7 +15,6 @@ class move(report_sxw.rml_parse):
         })
 
     def get_analytic_lines(self, obj_id, data):
-        print obj_id, data
         move = self.pool.get('account.move').browse(self.cr, self.uid, obj_id)
         lines = []
         for line in move.line_id:
@@ -59,6 +39,5 @@ class move(report_sxw.rml_parse):
             user = user_pool.browse(self.cr, self.uid, data[0])
             user_name = user.name
         return user_name
-   
-report_sxw.report_sxw('report.account.move','account.move','addons/retention/report/report_move.rml',parser=move)
 
+report_sxw.report_sxw('report.account.move','account.move','addons/retention/report/report_move.rml',parser=move)

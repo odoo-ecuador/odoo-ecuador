@@ -20,9 +20,9 @@
 ##############################################################################
 
 {
-    'name' : 'OpenERP OTE for Ecuador',
-    'version' : '0.1.0',
-    'author' : 'VIRTUALSAI CIA. LTDA.',
+    'name': 'OpenERP OTE for Ecuador',
+    'version': '0.1.0',
+    'author': 'VIRTUALSAMI CIA. LTDA.',
     'category': 'Localization',
     'complexity': 'normal',
     'website': 'http://www.virtualsami.com.ec',
@@ -33,17 +33,8 @@
         'data/res_country.xml',
         'security/ir.model.access.csv',
     ],
-    'depends' : [
+    'depends': [
       'base'
     ],
-    'js': [
-    ],
-    'qweb': [
-    ],
-    'css': [
-    ],
-    'test': [
-    ],
     'installable': True,
-    'auto_install': False,
 }

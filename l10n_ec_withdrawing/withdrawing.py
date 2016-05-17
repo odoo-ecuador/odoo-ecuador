@@ -875,7 +875,6 @@ class Invoice(models.Model):
             withdrawing_data = {
                 'name': wd_number,
                 'invoice_id': inv.id,
-                'num_document': inv.supplier_invoice_number,
                 'auth_id': inv.journal_id.auth_ret_id.id,
                 'type': inv.type,
                 'in_type': 'ret_%s' % inv.type,

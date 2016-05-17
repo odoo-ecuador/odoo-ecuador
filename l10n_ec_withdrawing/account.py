@@ -1,71 +1,46 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    Account Module - Ecuador
-#    Copyright (C) 2015 Cristian Salamea All Rights Reserved
-#    cristian.salamea@gmail.com
-#    $Id$
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
-
-__author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
-
-import time
-from datetime import datetime
 
 from openerp.osv import osv, fields
 
 
 class account_tax(osv.osv):
-    
+
     _name = 'account.tax'
     _inherit = 'account.tax'
     _order = 'description ASC'
 
-    def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0):
-        taxes = self._applicable(cr, uid, taxes, price_unit ,product, partner)
+    def _unit_compute(self, cr, uid, taxes, price_unit, product=None, partner=None, quantity=0):  # noqa
+        taxes = self._applicable(cr, uid, taxes, price_unit, product, partner)
         res = []
         cur_price_unit=price_unit
         for tax in taxes:
             # we compute the amount for the current tax object and append it to the result
-            data = {'id':tax.id,
-                    'name':tax.description and tax.description + " - " + tax.name or tax.name,
-                    'account_collected_id':tax.account_collected_id.id,
-                    'account_paid_id':tax.account_paid_id.id,
-                    'account_analytic_collected_id': tax.account_analytic_collected_id.id,
-                    'account_analytic_paid_id': tax.account_analytic_paid_id.id,
-                    'base_code_id': tax.base_code_id.id,
-                    'ref_base_code_id': tax.ref_base_code_id.id,
-                    'sequence': tax.sequence,
-                    'base_sign': tax.base_sign,
-                    'tax_sign': tax.tax_sign,
-                    'ref_base_sign': tax.ref_base_sign,
-                    'ref_tax_sign': tax.ref_tax_sign,
-                    'price_unit': cur_price_unit,
-                    'tax_code_id': tax.tax_code_id.id,
-                    'ref_tax_code_id': tax.ref_tax_code_id.id,
-                    'tax_group': tax.tax_group,
-                    'porcentaje': tax.porcentaje
+            data = {
+                'id':tax.id,
+                'name':tax.description and tax.description + " - " + tax.name or tax.name,
+                'account_collected_id':tax.account_collected_id.id,
+                'account_paid_id':tax.account_paid_id.id,
+                'account_analytic_collected_id': tax.account_analytic_collected_id.id,
+                'account_analytic_paid_id': tax.account_analytic_paid_id.id,
+                'base_code_id': tax.base_code_id.id,
+                'ref_base_code_id': tax.ref_base_code_id.id,
+                'sequence': tax.sequence,
+                'base_sign': tax.base_sign,
+                'tax_sign': tax.tax_sign,
+                'ref_base_sign': tax.ref_base_sign,
+                'ref_tax_sign': tax.ref_tax_sign,
+                'price_unit': cur_price_unit,
+                'tax_code_id': tax.tax_code_id.id,
+                'ref_tax_code_id': tax.ref_tax_code_id.id,
+                'tax_group': tax.tax_group,
+                'porcentaje': tax.porcentaje
             }
             res.append(data)
-            if tax.type=='percent':
+            if tax.type == 'percent':
                 amount = cur_price_unit * tax.amount
                 data['amount'] = amount
 
-            elif tax.type=='fixed':
+            elif tax.type == 'fixed':
                 data['amount'] = tax.amount
                 data['tax_amount']=quantity
                # data['amount'] = quantity
@@ -183,17 +158,18 @@ class account_tax(osv.osv):
     _columns = {
         # dirty hack FIXME plz
         'porcentaje': fields.char('Porcentaje', size=128),
-        'tax_group' : fields.selection([
-            ('vat','IVA Diferente de 0%'),
-            ('vat0','IVA 0%'),
-            ('novat','No objeto de IVA'),
+        'tax_group': fields.selection([
+            ('vat', 'IVA Diferente de 0%'),
+            ('vat0', 'IVA 0%'),
+            ('novat', 'No objeto de IVA'),
             ('ret_vat_b', 'Retención de IVA (Bienes)'),
             ('ret_vat_srv', 'Retención de IVA (Servicios)'),
             ('ret_ir', 'Ret. Imp. Renta'),
             ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
             ('imp_ad', 'Imps. Aduanas'),
+            ('imp_sbs', 'Super de Bancos'),
             ('ice', 'ICE'),
-            ('other','Other')],
+            ('other', 'Other')],
             string='Grupo',
             required=True),
         }
@@ -201,4 +177,3 @@ class account_tax(osv.osv):
     _defaults = {
         'tax_group': 'vat',
         }
-

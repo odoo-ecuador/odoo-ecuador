@@ -1,4 +1,3 @@
-import report_move
-import report_retention
-import report_invoice
-
+from . import report_move
+from . import report_retention
+from . import report_invoice

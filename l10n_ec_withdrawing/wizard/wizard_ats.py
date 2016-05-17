@@ -134,7 +134,7 @@ class wizard_ats(orm.TransientModel):
         etree.SubElement(ats, 'totalVentas').text = total_ventas
         etree.SubElement(ats, 'codigoOperativo').text = 'IVA'
         compras = etree.Element('compras')
-        '''Facturas de Compra con retenciones '''
+        # Facturas de Compra con retenciones
         inv_ids = inv_obj.search(cr, uid, [('state','in',['open','paid']),
                                             ('period_id','=',period_id),
                                             ('type','in',['in_invoice','liq_purchase']),
@@ -214,7 +214,7 @@ class wizard_ats(orm.TransientModel):
             compras.append(detallecompras)
         ats.append(compras)
         if float(total_ventas) > 0:
-            """VENTAS DECLARADAS"""
+            # VENTAS DECLARADAS
             ventas = etree.Element('ventas')
             inv_ids = inv_obj.search(cr, uid, [
                 ('state', 'in', ['open', 'paid']),
@@ -272,14 +272,14 @@ class wizard_ats(orm.TransientModel):
                 etree.SubElement(detalleVentas, 'valorRetRenta').text = '%.2f' % v['valorRetRenta']
                 ventas.append(detalleVentas)
             ats.append(ventas)
-        """ Ventas establecimiento """
+        # Ventas establecimiento
         ventasEstablecimiento = etree.Element('ventasEstablecimiento')
         ventaEst = etree.Element('ventaEst')
         etree.SubElement(ventaEst, 'codEstab').text = inv.journal_id.auth_id.serie_emision
         etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id)
         ventasEstablecimiento.append(ventaEst)
         ats.append(ventasEstablecimiento)
-        """Documentos Anulados"""
+        # Documentos Anulados
         anulados = etree.Element('anulados')
         inv_ids = inv_obj.search(cr, uid, [('state','=','cancel'),
                                             ('period_id','=',period_id),
