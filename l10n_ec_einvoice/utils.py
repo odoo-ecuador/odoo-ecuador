@@ -63,10 +63,9 @@ def check_service(env='prueba'):
     for i in [1, 2, 3]:
         try:
             res = requests.head(URL, timeout=3)
-            print res.status_code
         except requests.exceptions.RequestException, e:
-            print "Error", e
+            raise "Error", e
             break
     if i == 3:
         flag = True
-    return flag
+    return flag, res

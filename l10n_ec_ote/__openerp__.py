@@ -14,7 +14,7 @@
         'data/res.country.state.csv',
         'data/res.country.city.csv',
         'data/res_country.xml',
-        'security/ir.model.access.csv',
+        'security/ir.model.access.csv'
     ],
     'depends': [
       'base'

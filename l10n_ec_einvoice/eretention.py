@@ -78,7 +78,6 @@ class AccountWithdrawing(models.Model):
         data.update(self._info_withdrawing(document))
         data.update(self._impuestos(document))
         edocument = ewithdrawing_tmpl.render(data)
-        print edocument
         return edocument
 
     def render_authorized_document(self, autorizacion):

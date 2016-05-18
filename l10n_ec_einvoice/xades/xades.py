@@ -68,8 +68,7 @@ class Xades(object):
         try:
             subprocess.check_output(command)
         except subprocess.CalledProcessError as e:
-            print e.returncode
-            raise
+            raise e.returncode
 
         p = subprocess.Popen(
             command,

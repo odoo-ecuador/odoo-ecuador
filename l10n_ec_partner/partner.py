@@ -7,6 +7,7 @@ from openerp.exceptions import Warning as UserError
 Partners para Ecuador
 """
 
+
 class ResPartner(models.Model):
 
     _name = 'res.partner'

@@ -82,7 +82,7 @@ class AccountInvoice(models.Model):
                 'precioUnitario': '%.6f' % (line.price_unit),
                 'descuento': '0.00',
                 'precioTotalSinImpuesto': '%.2f' % (line.price_subtotal)
-             }
+            }
             impuestos = []
             for tax_line in line.invoice_line_tax_id:
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
@@ -133,7 +133,6 @@ class AccountInvoice(models.Model):
         """
         for obj in self:
             if obj.type not in ['out_invoice', 'out_refund']:
-                print "no disponible para otros documentos"
                 continue
             self.check_date(obj.date_invoice)
             self.check_before_sent()

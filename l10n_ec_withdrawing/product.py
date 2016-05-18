@@ -16,4 +16,4 @@ class ProductCategory(osv.osv):
             'categ_supplier_taxes_rel', 'prod_id', 'tax_id',
             'Supplier Taxes',
             domain=[('parent_id', '=', False), ('type_tax_use', 'in', ['purchase', 'all'])]),  # noqa
-    )
+    }
