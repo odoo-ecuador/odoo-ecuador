@@ -14,7 +14,7 @@ class AccountInvoice(osv.osv):
         """
         if context is None:
             context = {}
-        #TODO: not correct fix but required a frech values before reading it.
+        # TODO: not correct fix but required a frech values before reading it.
         self.write(cr, uid, ids, {})
 
         for obj_inv in self.browse(cr, uid, ids, context=context):
@@ -26,8 +26,8 @@ class AccountInvoice(osv.osv):
                 auth = obj_inv.journal_id.auth_id
                 number = obj_inv.internal_number
                 if not number:
-                    tmp_number = self.pool.get('ir.sequence').get(cr, uid, auth.sequence_id.code)
-                    number = '{0}{1}{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)
+                    tmp_number = self.pool.get('ir.sequence').get(cr, uid, auth.sequence_id.code)  # noqa
+                    number = u'{0}{1}{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)  # noqa
                 data_number.update({'number': number})
 
             move_id = obj_inv.move_id and obj_inv.move_id.id or False
@@ -43,15 +43,15 @@ class AccountInvoice(osv.osv):
             else:
                 ref = number
 
-            cr.execute('UPDATE account_move SET ref=%s ' \
-                    'WHERE id=%s AND (ref is null OR ref = \'\')',
-                    (ref, move_id))
-            cr.execute('UPDATE account_move_line SET ref=%s ' \
-                    'WHERE move_id=%s AND (ref is null OR ref = \'\')',
-                    (ref, move_id))
-            cr.execute('UPDATE account_analytic_line SET ref=%s ' \
-                    'FROM account_move_line ' \
-                    'WHERE account_move_line.move_id = %s ' \
-                        'AND account_analytic_line.move_id = account_move_line.id',
-                        (ref, move_id))
+            cr.execute('UPDATE account_move SET ref=%s '
+                       'WHERE id=%s AND (ref is null OR ref = \'\')',
+                       (ref, move_id))
+            cr.execute('UPDATE account_move_line SET ref=%s '
+                       'WHERE move_id=%s AND (ref is null OR ref = \'\')',
+                       (ref, move_id))
+            cr.execute('UPDATE account_analytic_line SET ref=%s '
+                       'FROM account_move_line '
+                       'WHERE account_move_line.move_id = %s '
+                       'AND account_analytic_line.move_id = account_move_line.id',  # noqa
+                       (ref, move_id))
         return True

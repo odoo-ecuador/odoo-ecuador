@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-from urllib import urlretrieve
+
 import requests
 
+
 def validate_from_sri():
-    captcha_url == "https://declaraciones.sri.gob.ec/facturacion-internet/images/jcaptcha.jpg"
-    SRI_URL = "https://declaraciones.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos1.jspa"
+    captcha_url == "https://declaraciones.sri.gob.ec/facturacion-internet/images/jcaptcha.jpg"  # noqa
+    SRI_URL = "https://declaraciones.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos1.jspa"  # noqa
     payload = {
         'texto': '0103893954001',
         'opcion': '1',
-        'j_captcha_response': 
+        'j_captcha_response': 0
     }
     res = requests.post(SRI_URL, params=payload)
-    import pdb
-    pdb.set_trace()
-    print res.text
-    print res.status_code
+    return res
+
 
 validate_from_sri()

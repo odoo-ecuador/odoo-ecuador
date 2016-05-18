@@ -59,8 +59,8 @@ class wizard_ats(orm.TransientModel):
                         'valRetAir': 0
                     }
                 temp[line.base_code_id.code]['baseImpAir'] += line.base_amount
-                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code
-                temp[line.base_code_id.code]['porcentajeAir'] = line.percent and float(line.percent) or 0.00
+                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code  # noqa
+                temp[line.base_code_id.code]['porcentajeAir'] = line.percent and float(line.percent) or 0.00  # noqa
                 temp[line.base_code_id.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
@@ -87,7 +87,7 @@ class wizard_ats(orm.TransientModel):
         sql_ventas += " GROUP BY type"
         cr.execute(sql_ventas)
         res = cr.fetchall()
-        resultado = sum(map(lambda x: x[0]=='out_refund' and x[1]*-1 or x[1], res))
+        resultado = sum(map(lambda x: x[0] == 'out_refund' and x[1] * -1 or x[1], res))  # noqa
         return '%.2f' % resultado
 
     def _get_ret_iva(self, invoice):
@@ -118,7 +118,6 @@ class wizard_ats(orm.TransientModel):
 
     def act_export_ats(self, cr, uid, ids, context):
         inv_obj = self.pool.get('account.invoice')
-        journal_obj = self.pool.get('account.journal')
         wiz = self.browse(cr, uid, ids)[0]
         period_id = wiz.period_id.id
         ruc = wiz.company_id.partner_id.ced_ruc
@@ -126,33 +125,33 @@ class wizard_ats(orm.TransientModel):
         etree.SubElement(ats, 'TipoIDInformante').text = 'R'
         etree.SubElement(ats, 'IdInformante').text = str(ruc)
         etree.SubElement(ats, 'razonSocial').text = wiz.company_id.name
-        period = self.pool.get('account.period').browse(cr, uid, [period_id])[0]
-        etree.SubElement(ats, 'Anio').text = time.strftime('%Y',time.strptime(period.date_start, '%Y-%m-%d'))
-        etree.SubElement(ats, 'Mes'). text = time.strftime('%m',time.strptime(period.date_start, '%Y-%m-%d'))
+        period = self.pool.get('account.period').browse(cr, uid, [period_id])[0]  # noqa
+        etree.SubElement(ats, 'Anio').text = time.strftime('%Y', time.strptime(period.date_start, '%Y-%m-%d'))  # noqa
+        etree.SubElement(ats, 'Mes'). text = time.strftime('%m', time.strptime(period.date_start, '%Y-%m-%d'))  # noqa
         etree.SubElement(ats, 'numEstabRuc').text = wiz.num_estab_ruc.zfill(3)
         total_ventas = self._get_ventas(cr, period_id)
         etree.SubElement(ats, 'totalVentas').text = total_ventas
         etree.SubElement(ats, 'codigoOperativo').text = 'IVA'
         compras = etree.Element('compras')
         # Facturas de Compra con retenciones
-        inv_ids = inv_obj.search(cr, uid, [('state','in',['open','paid']),
-                                            ('period_id','=',period_id),
-                                            ('type','in',['in_invoice','liq_purchase']),
-                                            ('company_id','=',wiz.company_id.id)])
+        inv_ids = inv_obj.search(cr, uid, [('state', 'in', ['open', 'paid']),
+                                           ('period_id', '=', period_id),
+                                           ('type', 'in', ['in_invoice', 'liq_purchase']),  # noqa
+                                           ('company_id', '=', wiz.company_id.id)])  # noqa
         self.__logger.info("Compras registradas: %s" % len(inv_ids))
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detallecompras = etree.Element('detalleCompras')
-            etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code
+            etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code  # noqa
             if not inv.partner_id.ced_ruc:
-                raise osv.except_osv('Datos incompletos', 'No ha ingresado toda los datos de %s' % inv.partner_id.name)
-            etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_ced_ruc]
-            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.ced_ruc
+                raise osv.except_osv('Datos incompletos', 'No ha ingresado toda los datos de %s' % inv.partner_id.name)  # noqa
+            etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_ced_ruc]  # noqa
+            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.ced_ruc  # noqa
             if inv.auth_inv_id:
                 tcomp = inv.auth_inv_id.type_id.code
             else:
                 tcomp = '03'
             etree.SubElement(detallecompras, 'tipoComprobante').text = tcomp
-            etree.SubElement(detallecompras, 'fechaRegistro').text = self.convertir_fecha(inv.date_invoice)
+            etree.SubElement(detallecompras, 'fechaRegistro').text = self.convertir_fecha(inv.date_invoice)  # noqa
             if inv.type == 'in_invoice':
                 se = inv.auth_inv_id.serie_entidad
                 pe = inv.auth_inv_id.serie_emision
@@ -166,21 +165,21 @@ class wizard_ats(orm.TransientModel):
             etree.SubElement(detallecompras, 'establecimiento').text = se
             etree.SubElement(detallecompras, 'puntoEmision').text = pe
             etree.SubElement(detallecompras, 'secuencial').text = sec
-            etree.SubElement(detallecompras, 'fechaEmision').text = self.convertir_fecha(inv.date_invoice)
+            etree.SubElement(detallecompras, 'fechaEmision').text = self.convertir_fecha(inv.date_invoice)  # noqa
             etree.SubElement(detallecompras, 'autorizacion').text = auth
-            etree.SubElement(detallecompras, 'baseNoGraIva').text = inv.amount_novat==0 and '0.00' or '%.2f'%inv.amount_novat
-            etree.SubElement(detallecompras, 'baseImponible').text = '%.2f'%inv.amount_vat_cero
-            etree.SubElement(detallecompras, 'baseImpGrav').text = '%.2f'%inv.amount_vat
+            etree.SubElement(detallecompras, 'baseNoGraIva').text = inv.amount_novat == 0 and '0.00' or '%.2f' % inv.amount_novat  # noqa
+            etree.SubElement(detallecompras, 'baseImponible').text = '%.2f' % inv.amount_vat_cero  # noqa
+            etree.SubElement(detallecompras, 'baseImpGrav').text = '%.2f' % inv.amount_vat  # noqa
             etree.SubElement(detallecompras, 'baseImpExe').text = '0.00'
             etree.SubElement(detallecompras, 'montoIce').text = '0.00'
-            etree.SubElement(detallecompras, 'montoIva').text = '%.2f'%inv.amount_tax
-            valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100 = self._get_ret_iva(inv)
-            etree.SubElement(detallecompras, 'valRetBien10').text = '%.2f'%valRetBien10
-            etree.SubElement(detallecompras, 'valRetServ20').text = '%.2f'%valRetServ20
-            etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%valorRetBienes
-            #etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)
-            etree.SubElement(detallecompras, 'valorRetServicios').text = '%.2f'%valorRetServicios
-            etree.SubElement(detallecompras, 'valRetServ100').text = '%.2f'%valorRetServ100
+            etree.SubElement(detallecompras, 'montoIva').text = '%.2f' % inv.amount_tax  # noqa
+            valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100 = self._get_ret_iva(inv)  # noqa
+            etree.SubElement(detallecompras, 'valRetBien10').text = '%.2f' % valRetBien10  # noqa
+            etree.SubElement(detallecompras, 'valRetServ20').text = '%.2f' % valRetServ20  # noqa
+            etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f' % valorRetBienes  # noqa
+            # etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)  # noqa
+            etree.SubElement(detallecompras, 'valorRetServicios').text = '%.2f' % valorRetServicios  # noqa
+            etree.SubElement(detallecompras, 'valRetServ100').text = '%.2f' % valorRetServ100  # noqa
             etree.SubElement(detallecompras, 'totbasesImpReemb').text = '0.00'
             pagoExterior = etree.Element('pagoExterior')
             etree.SubElement(pagoExterior, 'pagoLocExt').text = '01'
@@ -197,20 +196,20 @@ class wizard_ats(orm.TransientModel):
                 data_air = self.process_lines(cr, uid, inv.tax_line)
                 for da in data_air:
                     detalleAir = etree.Element('detalleAir')
-                    etree.SubElement(detalleAir, 'codRetAir').text = da['codRetAir']
-                    etree.SubElement(detalleAir, 'baseImpAir').text = '%.2f' % da['baseImpAir']
-                    etree.SubElement(detalleAir, 'porcentajeAir').text = '%.2f' % da['porcentajeAir']
-                    etree.SubElement(detalleAir, 'valRetAir').text = '%.2f' % da['valRetAir']
+                    etree.SubElement(detalleAir, 'codRetAir').text = da['codRetAir']  # noqa
+                    etree.SubElement(detalleAir, 'baseImpAir').text = '%.2f' % da['baseImpAir']  # noqa
+                    etree.SubElement(detalleAir, 'porcentajeAir').text = '%.2f' % da['porcentajeAir']  # noqa
+                    etree.SubElement(detalleAir, 'valRetAir').text = '%.2f' % da['valRetAir']  # noqa
                     air.append(detalleAir)
                 detallecompras.append(air)
             flag = False
             if inv.retention_id and (inv.retention_ir or inv.retention_vat):
                 flag = True
-                etree.SubElement(detallecompras, 'estabRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_entidad or '000'
-                etree.SubElement(detallecompras, 'ptoEmiRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_emision or '000'
-                etree.SubElement(detallecompras, 'secRetencion1').text = flag and inv.retention_id.num_document[6:] or '%09d'%0
-                etree.SubElement(detallecompras, 'autRetencion1').text = flag and inv.journal_id.auth_ret_id.name or '%010d'%0
-                etree.SubElement(detallecompras, 'fechaEmiRet1').text = flag and self.convertir_fecha(inv.retention_id.date)
+                etree.SubElement(detallecompras, 'estabRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_entidad or '000'  # noqa
+                etree.SubElement(detallecompras, 'ptoEmiRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_emision or '000'  # noqa
+                etree.SubElement(detallecompras, 'secRetencion1').text = flag and inv.retention_id.num_document[6:] or '%09d' % 0  # noqa
+                etree.SubElement(detallecompras, 'autRetencion1').text = flag and inv.journal_id.auth_ret_id.name or '%010d' % 0  # noqa
+                etree.SubElement(detallecompras, 'fechaEmiRet1').text = flag and self.convertir_fecha(inv.retention_id.date)  # noqa
             compras.append(detallecompras)
         ats.append(compras)
         if float(total_ventas) > 0:
@@ -255,78 +254,81 @@ class wizard_ats(orm.TransientModel):
                     data_air = self.process_lines(cr, uid, inv.tax_line)
                     for dt in data_air:
                         pdata[keyp]['valorRetRenta'] += dt['valRetAir']
-                pdata[keyp]['valorRetIva'] += abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)
+                pdata[keyp]['valorRetIva'] += abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)  # noqa
 
             for k, v in pdata.items():
                 detalleVentas = etree.Element('detalleVentas')
-                etree.SubElement(detalleVentas, 'tpIdCliente').text = tpIdCliente[v['tpIdCliente']]
-                etree.SubElement(detalleVentas, 'idCliente').text = v['idCliente']
+                etree.SubElement(detalleVentas, 'tpIdCliente').text = tpIdCliente[v['tpIdCliente']]  # noqa
+                etree.SubElement(detalleVentas, 'idCliente').text = v['idCliente']  # noqa
                 etree.SubElement(detalleVentas, 'parteRelVtas').text = 'NO'
-                etree.SubElement(detalleVentas, 'tipoComprobante').text = v['tipoComprobante']
-                etree.SubElement(detalleVentas, 'numeroComprobantes').text = str(v['numeroComprobantes'])
-                etree.SubElement(detalleVentas, 'baseNoGraIva').text = '%.2f' % v['basenoGraIva']
-                etree.SubElement(detalleVentas, 'baseImponible').text = '%.2f' % v['baseImponible']
-                etree.SubElement(detalleVentas, 'baseImpGrav').text = '%.2f' % v['baseImpGrav']
-                etree.SubElement(detalleVentas, 'montoIva').text = '%.2f' % v['montoIva']
-                etree.SubElement(detalleVentas, 'valorRetIva').text = '%.2f' % v['valorRetIva']
-                etree.SubElement(detalleVentas, 'valorRetRenta').text = '%.2f' % v['valorRetRenta']
+                etree.SubElement(detalleVentas, 'tipoComprobante').text = v['tipoComprobante']  # noqa
+                etree.SubElement(detalleVentas, 'numeroComprobantes').text = str(v['numeroComprobantes'])  # noqa
+                etree.SubElement(detalleVentas, 'baseNoGraIva').text = '%.2f' % v['basenoGraIva']  # noqa
+                etree.SubElement(detalleVentas, 'baseImponible').text = '%.2f' % v['baseImponible']  # noqa
+                etree.SubElement(detalleVentas, 'baseImpGrav').text = '%.2f' % v['baseImpGrav']  # noqa
+                etree.SubElement(detalleVentas, 'montoIva').text = '%.2f' % v['montoIva']  # noqa
+                etree.SubElement(detalleVentas, 'valorRetIva').text = '%.2f' % v['valorRetIva']  # noqa
+                etree.SubElement(detalleVentas, 'valorRetRenta').text = '%.2f' % v['valorRetRenta']  # noqa
                 ventas.append(detalleVentas)
             ats.append(ventas)
         # Ventas establecimiento
         ventasEstablecimiento = etree.Element('ventasEstablecimiento')
         ventaEst = etree.Element('ventaEst')
-        etree.SubElement(ventaEst, 'codEstab').text = inv.journal_id.auth_id.serie_emision
-        etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id)
+        etree.SubElement(ventaEst, 'codEstab').text = inv.journal_id.auth_id.serie_emision  # noqa
+        etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id)  # noqa
         ventasEstablecimiento.append(ventaEst)
         ats.append(ventasEstablecimiento)
         # Documentos Anulados
         anulados = etree.Element('anulados')
-        inv_ids = inv_obj.search(cr, uid, [('state','=','cancel'),
-                                            ('period_id','=',period_id),
-                                            ('type','=','out_invoice'),
-                                            ('company_id','=',wiz.company_id.id)])
+        inv_ids = inv_obj.search(cr, uid, [('state', '=', 'cancel'),
+                                           ('period_id', '=', period_id),
+                                           ('type', '=', 'out_invoice'),
+                                           ('company_id', '=', wiz.company_id.id)])  # noqa
         self.__logger.info("Ventas Anuladas: %s" % len(inv_ids))
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code
-            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))
-            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name
+            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code  # noqa
+            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad  # noqa
+            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name  # noqa
             anulados.append(detalleAnulados)
-        liq_ids = inv_obj.search(cr, uid, [('state','=','cancel'),
-                                            ('period_id','=',period_id),
-                                            ('type','=','liq_purchase'),
-                                            ('company_id','=',wiz.company_id.id)])
+        # Liquidaciones de compra
+        liq_ids = inv_obj.search(cr, uid, [('state', '=', 'cancel'),
+                                           ('period_id', '=', period_id),
+                                           ('type', '=', 'liq_purchase'),
+                                           ('company_id', '=', wiz.company_id.id)])  # noqa
         for inv in inv_obj.browse(cr, uid, liq_ids):
             detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code
-            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))
-            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name
+            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code  # noqa
+            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad  # noqa
+            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name  # noqa
             anulados.append(detalleAnulados)
         retention_obj = self.pool.get('account.retention')
-        ret_ids = retention_obj.search(cr, uid, [('state','=','cancel'),
-                                                 ('in_type','=','ret_out_invoice'),
-                                                 ('date','>=',wiz.period_id.date_start),
-                                                 ('date','<=',wiz.period_id.date_stop)])
+        ret_ids = retention_obj.search(cr, uid, [('state', '=', 'cancel'),
+                                                 ('in_type', '=', 'ret_out_invoice'),  # noqa
+                                                 ('date', '>=', wiz.period_id.date_start),  # noqa
+                                                 ('date', '<=', wiz.period_id.date_stop)])  # noqa
         for ret in retention_obj.browse(cr, uid, ret_ids):
             detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = ret.auth_id.type_id.code
-            etree.SubElement(detalleAnulados, 'establecimiento').text = ret.auth_id.serie_entidad
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = ret.auth_id.serie_emision
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(ret.num_document[8:]))
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(ret.num_document[8:]))
-            etree.SubElement(detalleAnulados, 'autorizacion').text = ret.auth_id.name
+            etree.SubElement(detalleAnulados, 'tipoComprobante').text = ret.auth_id.type_id.code  # noqa
+            etree.SubElement(detalleAnulados, 'establecimiento').text = ret.auth_id.serie_entidad  # noqa
+            etree.SubElement(detalleAnulados, 'puntoEmision').text = ret.auth_id.serie_emision  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(ret.num_document[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(ret.num_document[8:]))  # noqa
+            etree.SubElement(detalleAnulados, 'autorizacion').text = ret.auth_id.name  # noqa
             anulados.append(detalleAnulados)
         ats.append(anulados)
         file_path = os.path.join(os.path.dirname(__file__), 'XSD/ats.xsd')
         schema_file = open(file_path)
-        file_ats = etree.tostring(ats, pretty_print=True, encoding='iso-8859-1')
-        #validata schema
+        file_ats = etree.tostring(ats,
+                                  pretty_print=True,
+                                  encoding='iso-8859-1')
+        # validata schema
         xmlschema_doc = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xmlschema_doc)
         if not wiz.no_validate:
@@ -338,8 +340,8 @@ class wizard_ats(orm.TransientModel):
                     u"""El sistema generó el XML pero los datos no pasan la validación XSD del SRI.
                     \nLos errores mas comunes son:\n
                     * RUC,Cédula o Pasaporte contiene caracteres no válidos.
-                    \n* Números de documentos están duplicados.\n\nE
-                    l siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))
+                    \n* Números de documentos están duplicados.\n\n
+                    El siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))  # noqa
         buf = StringIO.StringIO()
         buf.write(file_ats)
         out = base64.encodestring(buf.getvalue())
