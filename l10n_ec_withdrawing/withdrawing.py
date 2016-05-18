@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
-""" Modulo de implementacion de retencion para Ecuador """
+# © <2016> <Cristian Salamea>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import time
 import logging
 
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import (
+    models,
+    fields,
+    api,
+    _
+)
+from openerp.exceptions import (
+    except_orm,
+    Warning as UserError,
+    RedirectWarning
+    )
 import openerp.addons.decimal_precision as dp
 
 # mapping invoice type to journal type
@@ -57,8 +67,7 @@ class AccountWithdrawing(models.Model):
     @api.multi
     def _get_in_type(self):
         context = self._context
-        if 'type' in context and \
-        context['type'] in ['in_invoice', 'liq_purchase']:
+        if 'type' in context and context['type'] in ['in_invoice', 'liq_purchase']:  # noqa
             return 'ret_in_invoice'
         else:
             return 'ret_in_invoice'
@@ -200,7 +209,7 @@ class AccountWithdrawing(models.Model):
     def unlink(self):
         for obj in self:
             if obj.state in ['done']:
-                raise Warning(_('No se permite borrar retenciones validadas.'))
+                raise UserError('No se permite borrar retenciones validadas.')
         res = super(AccountWithdrawing, self).unlink()
         return res
 
@@ -216,7 +225,7 @@ class AccountWithdrawing(models.Model):
         invoice = self.env['account.invoice'].browse(invoice_id)
         if not invoice.auth_inv_id:
             return res
-        res['value']['num_document'] = 'in_invoice' and invoice.supplier_invoice_number or invoice.number
+        res['value']['num_document'] = 'in_invoice' and invoice.supplier_invoice_number or invoice.number  # noqa
         res['value']['type'] = invoice.type
         return res
 
@@ -246,7 +255,7 @@ class AccountWithdrawing(models.Model):
         """
         for wd in self:
             if wd.to_cancel:
-                raise Warning(_('El documento fue marcado para anular.'))
+                raise UserError('El documento fue marcado para anular.')
             sequence = wd.invoice_id.journal_id.auth_ret_id.sequence_id
             if wd.internal_number and not number:
                 wd_number = wd.internal_number[6:]
@@ -271,11 +280,14 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             data = {'state': 'cancel'}
             if ret.to_cancel:
-                if len(ret.name) == 9 and auth_obj.is_valid_number(ret.auth_id.id, int(ret.name)):
-                    number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name
+                if len(ret.name) == 9 and auth_obj.is_valid_number(ret.auth_id.id, int(ret.name)):  # noqa
+                    number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name  # noqa
                     data.update({'name': number})
                 else:
-                    raise except_orm(_('Error'), u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.')
+                    raise except_orm(
+                        'Error',
+                        u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.'  # noqa
+                    )
             self.write({'state': 'cancel'})
         return True
 
@@ -285,7 +297,6 @@ class AccountWithdrawing(models.Model):
             name = obj.name[6:]
             self.write({'state': 'draft', 'name': name})
         return True
-
 
     @api.multi
     def action_early(self):
@@ -326,7 +337,7 @@ class AccountInvoiceTax(models.Model):
     @api.v8
     def compute(self, invoice):
         tax_grouped = {}
-        currency = invoice.currency_id.with_context(date=invoice.date_invoice or fields.Date.context_today(invoice))
+        currency = invoice.currency_id.with_context(date=invoice.date_invoice or fields.Date.context_today(invoice))  # noqa
         company_currency = invoice.company_id.currency_id
         for line in invoice.invoice_line:
             taxes = line.invoice_line_tax_id.compute_all(
@@ -339,7 +350,7 @@ class AccountInvoiceTax(models.Model):
                     'amount': tax['amount'],
                     'manual': False,
                     'sequence': tax['sequence'],
-                    'base': currency.round(tax['price_unit'] * line['quantity']),
+                    'base': currency.round(tax['price_unit'] * line['quantity']),  # noqa
                     'tax_group': tax['tax_group'],
                     'percent': tax['porcentaje'],
                 }
@@ -348,7 +359,7 @@ class AccountInvoiceTax(models.Model):
                     ret = float(str(tax['porcentaje'])) / 100
                     bi = tax['price_unit'] * line['quantity']
                     imp = (abs(tax['amount']) / (ret * bi)) * 100
-                    val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100
+                    val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100  # noqa
                 else:
                     val['base'] = tax['price_unit'] * line['quantity']
 
@@ -404,8 +415,10 @@ class Invoice(models.Model):
     @api.multi
     def onchange_company_id(self, company_id, part_id, type, invoice_line, currency_id):
         """
-        TODO: add the missing context parameter when forward-porting in trunk so we can remove
-        this hack! """
+        TODO: add the missing context parameter
+        when forward-porting in trunk so we can remove
+        this hack!
+        """
         self = self.with_context(self.env['res.users'].context_get())
 
         values = {}
@@ -530,7 +543,7 @@ class Invoice(models.Model):
             'model': 'account.retention'
         }
         if not self.retention_id:
-            raise Warning('Aviso', u'No tiene retención')
+            raise UserError('Aviso', u'No tiene retención')
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'account.retention',
@@ -755,25 +768,34 @@ class Invoice(models.Model):
             if obj.type == 'out_invoice':
                 return True
             if not len(obj.supplier_invoice_number) == INV_LIMIT:
-                raise Warning('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)
+                raise UserError('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)
 
             auth = obj.auth_inv_id
 
             inv_number = obj.supplier_invoice_number
 
             if not auth:
-                raise except_orm(_('Error!'), _(u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'))
+                raise except_orm(
+                    'Error!',
+                    u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'
+                )
 
             if not self.env['account.authorisation'].is_valid_number(auth.id, int(inv_number)):
-                raise Warning(_('Error!'), _(u'Número de factura fuera de rango.'))
+                raise UserError('Error!', u'Número de factura fuera de rango.')
 
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
-                    raise except_orm(_('Error!'), _(u'No ha configurado una autorización de retenciones.'))
+                    raise except_orm(
+                        'Error!',
+                        u'No ha configurado una autorización de retenciones.'
+                    )
 
                 if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):
-                    raise except_orm(_('Error!'), _(u'El número de retención no es válido.'))
+                    raise except_orm(
+                        'Error!',
+                        u'El número de retención no es válido.'
+                    )
         return True
 
     _constraints = [
@@ -1036,16 +1058,17 @@ class AccountInvoiceRefund(models.Model):
 
     _inherit = 'account.invoice.refund'
 
-    @api.multi
+    @api.model
     def _get_description(self):
         number = '/'
-        if not context.get('active_id'):
+        active_id = self._context.get('active_id', False)
+        if not active_id:
             return number
-        invoice = self.env['account.invoice'].browse(context.get('active_id'))
+        invoice = self.env['account.invoice'].browse(active_id)
         if invoice.type == 'out_invoice':
             number = invoice.number
         else:
-            number = invoice.supplier_number
+            number = invoice.supplier_invoice_number
         return number
 
     _defaults = {

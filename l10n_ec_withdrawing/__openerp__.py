@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
+# © <2016> <Cristian Salamea>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     'name': 'Accounting for Ecuador',
-    'version': '4',
+    'version': '4.0',
     "category": 'Generic Modules/Accounting',
     'depends': [
-        'l10n_ec_authorisation', 'report_webkit',
-        ],
+        'l10n_ec_authorisation',
+        'report_webkit',
+    ],
     'author': 'Cristian Salamea.',
-    'description': '''
-Contabilidad para Ecuador
-=========================
-    Documentos de retenciones, liquidaciones de compra, ATS
-    ''',
     'website': 'http://www.ayni.com.ec',
     'update_xml': [
         'invoice_workflow.xml',
