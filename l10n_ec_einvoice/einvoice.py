@@ -161,12 +161,12 @@ class AccountInvoice(models.Model):
                 if not obj.origin:
                     raise Warning('Error de Datos',
                                   u'Sin motivo de la devolución')
-                inv_ids = self.search(cr, uid, [('number', '=', obj.name)])
-                factura_origen = self.browse(cr, uid, inv_ids, context=context)
+                inv_ids = self.search([('number', '=', obj.name)])
+                factura_origen = self.browse(inv_ids)
                 # XML del comprobante electrónico: factura
                 factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)  # noqa
                 # envío del correo electrónico de nota de crédito al cliente
-                self.send_mail_refund(cr, uid, obj, access_key, context)
+                self.send_mail_refund(obj, access_key)
 
     @api.multi
     def invoice_print(self):

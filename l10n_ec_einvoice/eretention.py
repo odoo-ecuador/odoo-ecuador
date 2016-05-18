@@ -3,7 +3,6 @@
 import os
 import time
 import logging
-import base64
 import itertools
 
 from jinja2 import Environment, FileSystemLoader

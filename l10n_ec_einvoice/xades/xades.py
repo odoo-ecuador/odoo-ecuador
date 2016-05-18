@@ -4,8 +4,6 @@ import base64
 import os
 import subprocess
 
-from lxml import etree
-
 
 class CheckDigit(object):
 
