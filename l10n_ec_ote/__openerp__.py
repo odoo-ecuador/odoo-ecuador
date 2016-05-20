@@ -17,7 +17,7 @@
         'security/ir.model.access.csv'
     ],
     'depends': [
-      'base'
+        'base'
     ],
     'installable': True,
 }

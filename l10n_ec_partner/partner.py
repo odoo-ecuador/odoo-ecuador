@@ -3,10 +3,6 @@
 from openerp import models, fields
 from openerp.exceptions import Warning as UserError
 
-"""
-Partners para Ecuador
-"""
-
 
 class ResPartner(models.Model):
 
