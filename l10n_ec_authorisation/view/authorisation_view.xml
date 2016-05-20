@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
-
     <!--
        Account Authorisation
     -->
-
     <record id="view_journal_auth_form" model="ir.ui.view">
       <field name="name">account.journal.auth.form</field>
       <field name="model">account.journal</field>
@@ -13,11 +11,11 @@
       <field name="arch" type="xml">
 	<field name="sequence_id" position="after">
 	  <field name="auth_id" context="{'default_in_type': 'interno'}"/>
-	  <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>	  
+	  <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>
 	</field>
       </field>
     </record>
-    
+
     <record id="view_partner_auth_form" model="ir.ui.view">
       <field name="name">account.partner.auth.form</field>
       <field name="model">res.partner</field>
@@ -44,15 +42,14 @@
     <record id="view_account_auth_tree" model="ir.ui.view">
       <field name="name">account.auth.tree</field>
       <field name="model">account.authorisation</field>
-      <field name="type">tree</field>
       <field name="arch" type="xml">
 	<tree string="Autorizaciones del SRI">
-          <field name="name" select="1"/>
-          <field name="partner_id" select="1"/>
-          <field name="serie_entidad" select="1"/>
-          <field name="serie_emision" select="1"/>
-          <field name="expiration_date" select="1"/>
-          <field name="type_id" select="1"/>
+          <field name="name"/>
+          <field name="partner_id"/>
+          <field name="serie_entidad"/>
+          <field name="serie_emision"/>
+          <field name="expiration_date"/>
+          <field name="type_id"/>
 	</tree>
       </field>
     </record>
@@ -64,19 +61,29 @@
       <field name="arch" type="xml">
 	<form string="Autorizaciones SRI">
 	  <sheet>
-            <group col="4" colspan="4">
-              <field name="name"/>
-              <field name="is_electronic"/>
-              <field name="serie_entidad"/>
-              <field name="serie_emision"/>
-              <field name="num_start"/>
-              <field name="num_end"/>
-              <field name="expiration_date"/>
-              <field name="active"/>
-              <field name="type_id" widget="selection"/>
-	      <field name="in_type"/>
-              <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
-              <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
+            <group>
+	      <group>
+		<field name="is_electronic"/>
+		<field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+		<label string="Establecimiento" for="serie_entidad"/>
+		<div>
+		  <field name="serie_entidad" class="oe_inline" placeholder="001"/> -
+		  <field name="serie_emision" class="oe_inline" placeholder="001"/>
+		</div>
+		<label string="Secuencia de Comprobante" for="num_start"/>
+		<div>
+		  <field name="num_start" class="oe_inline"/> -
+		  <field name="num_end" class="oe_inline"/>
+		</div>
+		<field name="expiration_date"/>
+	      </group>
+	      <group>
+		<field name="active"/>
+		<field name="type_id" widget="selection"/>
+		<field name="in_type"/>
+		<field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
+		<field name="sequence_id" invisible="1"/>
+	      </group>
             </group>
 	  </sheet>
 	</form>
@@ -202,7 +209,7 @@
     </record>
     <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
 
-    
+
 
   </data>
 </openerp>

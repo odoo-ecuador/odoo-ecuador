@@ -3,11 +3,11 @@
 import time
 from datetime import datetime
 
-from openerp import models, fields, api  # pylint: disable=F0401
-from openerp.exceptions import Warning  # pylint: disable=F0401, W0622
+from openerp import models, fields, api
+from openerp.exceptions import Warning as UserError
 
 
-class AccountAtsDoc(models.Model):  # pylint: disable=W0232, R0903
+class AccountAtsDoc(models.Model):
     _name = 'account.ats.doc'
     _description = 'Tipos Comprobantes Autorizados'
 
@@ -15,7 +15,7 @@ class AccountAtsDoc(models.Model):  # pylint: disable=W0232, R0903
     name = fields.Char('Tipo Comprobante', size=64, required=True)
 
 
-class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
+class AccountAtsSustento(models.Model):
     _name = 'account.ats.sustento'
     _description = 'Sustento del Comprobante'
 
@@ -37,7 +37,7 @@ class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
     type = fields.Char('Tipo de Sustento', size=64, required=True)
 
 
-class AccountAuthorisation(models.Model):  # pylint: disable=W0232
+class AccountAuthorisation(models.Model):
 
     _name = 'account.authorisation'
     _description = 'Authorisation for Accounting Documents'
@@ -107,19 +107,19 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
         journal = self.env['account.journal']
         res = journal.search(['|', ('auth_id', '=', self.id), ('auth_ret_id', '=', self.id)])  # noqa
         if res:
-            raise Warning(
+            raise UserError(
                 'Alerta',
                 'Esta autorización esta relacionada a un diario.'
             )
         return super(AccountAuthorisation, self).unlink()
 
-    name = fields.Char('Num. de Autorizacion', size=128, required=True)
+    name = fields.Char('Num. de Autorización', size=128)
     serie_entidad = fields.Char('Serie Entidad', size=3, required=True)
     serie_emision = fields.Char('Serie Emision', size=3, required=True)
     num_start = fields.Integer('Desde', required=True)
     num_end = fields.Integer('Hasta', required=True)
     is_electronic = fields.Boolean('Documento Electrónico ?')
-    expiration_date = fields.Date('Vence', required=True)
+    expiration_date = fields.Date('Fecha de Vencimiento', required=True)
     active = fields.Boolean(
         compute='_check_active',
         string='Activo',
