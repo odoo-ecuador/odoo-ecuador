@@ -1,1 +1,1 @@
--e https://github.com/ovnicraft/suds.git
+git+https://github.com/ovnicraft/suds.git
