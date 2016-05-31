@@ -1,132 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-  <data>
-
+    <data>
     <!--
        Account Authorisation
     -->
-
     <record id="view_journal_auth_form" model="ir.ui.view">
-      <field name="name">account.journal.auth.form</field>
-      <field name="model">account.journal</field>
-      <field name="inherit_id" ref="account.view_account_journal_form"/>
-      <field name="arch" type="xml">
-	<field name="sequence_id" position="after">
-	  <field name="auth_id" context="{'default_in_type': 'interno'}"/>
-	  <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>	  
-	</field>
-      </field>
+        <field name="name">account.journal.auth.form</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+	        <field name="sequence_id" position="after">
+	            <field name="auth_id" context="{'default_in_type': 'interno'}"/>
+	            <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>
+	        </field>
+        </field>
     </record>
-    
+
     <record id="view_partner_auth_form" model="ir.ui.view">
-      <field name="name">account.partner.auth.form</field>
-      <field name="model">res.partner</field>
-      <field name="inherit_id" ref="base.view_partner_form"/>
-      <field name="arch" type="xml">
-	<notebook position="inside">
-	  <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-	    <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
-              <tree string="Autorizaciones" editable="top">
-		<field name="name" required="1"/>
-		<field name="serie_emision" required="1"/>
-		<field name="serie_entidad" required="1"/>
-		<field name="num_start" required="1"/>
-		<field name="num_end" required="1"/>
-		<field name="expiration_date" required="1"/>
-		<field name="type_id"/>
-              </tree>
-	    </field>
-	  </page>
-	</notebook>
-      </field>
+        <field name="name">account.partner.auth.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+	        <notebook position="inside">
+	            <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
+	                <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
+                        <tree string="Autorizaciones" editable="top">
+		                    <field name="name" required="1"/>
+		                    <field name="serie_emision" required="1"/>
+		                    <field name="serie_entidad" required="1"/>
+		                    <field name="num_start" required="1"/>
+		                    <field name="num_end" required="1"/>
+		                    <field name="expiration_date" required="1"/>
+		                    <field name="type_id"/>
+                        </tree>
+	                </field>
+	            </page>
+	        </notebook>
+        </field>
     </record>
 
     <record id="view_account_auth_tree" model="ir.ui.view">
-      <field name="name">account.auth.tree</field>
-      <field name="model">account.authorisation</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-	<tree string="Autorizaciones del SRI">
-          <field name="name" select="1"/>
-          <field name="partner_id" select="1"/>
-          <field name="serie_entidad" select="1"/>
-          <field name="serie_emision" select="1"/>
-          <field name="expiration_date" select="1"/>
-          <field name="type_id" select="1"/>
-	</tree>
-      </field>
+        <field name="name">account.auth.tree</field>
+        <field name="model">account.authorisation</field>
+        <field name="arch" type="xml">
+	        <tree string="Autorizaciones del SRI">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="serie_entidad"/>
+                <field name="serie_emision"/>
+                <field name="expiration_date"/>
+                <field name="type_id"/>
+	        </tree>
+        </field>
     </record>
 
     <record id="view_account_auth_form" model="ir.ui.view">
-      <field name="name">account.auth.form</field>
-      <field name="model">account.authorisation</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-	<form string="Autorizaciones SRI">
-	  <sheet>
-            <group col="4" colspan="4">
-              <field name="name"/>
-              <field name="is_electronic"/>
-              <field name="serie_entidad"/>
-              <field name="serie_emision"/>
-              <field name="num_start"/>
-              <field name="num_end"/>
-              <field name="expiration_date"/>
-              <field name="active"/>
-              <field name="type_id" widget="selection"/>
-	      <field name="in_type"/>
-              <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
-              <field name="sequence_id" attrs="{'invisible':[('in_type','=','externo')]}"/>
-            </group>
-	  </sheet>
-	</form>
-      </field>
+        <field name="name">account.auth.form</field>
+        <field name="model">account.authorisation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+	        <form string="Autorizaciones SRI">
+	            <sheet>
+                    <group>
+	                    <group>
+		                    <field name="is_electronic"/>
+		                    <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+		                    <label string="Establecimiento" for="serie_entidad"/>
+		                    <div>
+		                        <field name="serie_entidad" class="oe_inline" placeholder="001"/> -
+		                        <field name="serie_emision" class="oe_inline" placeholder="001"/>
+		                    </div>
+		                    <label string="Secuencia de Comprobante" for="num_start"/>
+		                    <div>
+		                        <field name="num_start" class="oe_inline"/> -
+		                        <field name="num_end" class="oe_inline"/>
+		                    </div>
+		                    <field name="expiration_date"/>
+	                    </group>
+	                    <group>
+		                    <field name="active"/>
+		                    <field name="type_id" widget="selection"/>
+		                    <field name="in_type"/>
+		                    <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
+		                    <field name="sequence_id" invisible="1"/>
+	                    </group>
+                    </group>
+	            </sheet>
+	        </form>
+        </field>
     </record>
 
     <record id="view_account_auth_filter" model="ir.ui.view">
-      <field name="name">account.authorisation.select</field>
-      <field name="model">account.authorisation</field>
-      <field name="type">search</field>
-      <field name="arch" type="xml">
-        <search string="Buscar Autorizaciones">
-          <group col="10" colspan="4">
-            <filter icon="terp-camera_test" string="Activos" domain="[('active','=',True)]" help="Autorizaciones Activas"/>
-            <separator orientation="vertical"/>
-            <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('active','=',False)]" help="Autorizaciones Inactivas"/>
-            <separator orientation="vertical"/>
-            <field name="name"/>
-            <field name="partner_id"/>
-            <field name="type_id"/>
-          </group>
-          <newline/>
-          <group expand="0" string="Agrupar por...">
-            <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
-            <separator orientation="vertical"/>
-	    <filter string="Tipo" domain="[]" context="{'group_by': 'type_id'}"/>
-          </group>
-        </search>
-      </field>
+        <field name="name">account.authorisation.select</field>
+        <field name="model">account.authorisation</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Autorizaciones">
+                <group col="10" colspan="4">
+                    <filter icon="terp-camera_test" string="Activos" domain="[('active','=',True)]" help="Autorizaciones Activas"/>
+                    <separator orientation="vertical"/>
+                    <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('active','=',False)]" help="Autorizaciones Inactivas"/>
+                    <separator orientation="vertical"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="type_id"/>
+                </group>
+                <newline/>
+                <group expand="0" string="Agrupar por...">
+                    <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <separator orientation="vertical"/>
+	                <filter string="Tipo" domain="[]" context="{'group_by': 'type_id'}"/>
+                </group>
+            </search>
+        </field>
     </record>
     <record id="action_account_auth_tree" model="ir.actions.act_window">
-      <field name="name">Autorizaciones SRI</field>
-      <field name="res_model">account.authorisation</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-      <field name="search_view_id" ref="view_account_auth_filter"/>
-      <field name="context">{'in_type': 'externo'}</field>
-      <field name="domain">[('in_type', '=', 'externo')]</field>
+        <field name="name">Autorizaciones SRI</field>
+        <field name="res_model">account.authorisation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_account_auth_filter"/>
+        <field name="context">{'in_type': 'externo'}</field>
+        <field name="domain">[('in_type', '=', 'externo')]</field>
     </record>
 
     <menuitem action="action_account_auth_tree" id="menu_action_authorisation" parent="account.menu_finance_payables"/>
 
     <record id="action_account_authin_tree" model="ir.actions.act_window">
-      <field name="name">Autorizaciones SRI</field>
-      <field name="res_model">account.authorisation</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-      <field name="search_view_id" ref="view_account_auth_filter"/>
-      <field name="context">{'in_type': 'interno'}</field>
-      <field name="domain">[('in_type', '=', 'interno')]</field>
+        <field name="name">Autorizaciones SRI</field>
+        <field name="res_model">account.authorisation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_account_auth_filter"/>
+        <field name="context">{'in_type': 'interno'}</field>
+        <field name="domain">[('in_type', '=', 'interno')]</field>
     </record>
 
     <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.menu_journals"/>
@@ -135,74 +142,72 @@
     -->
 
     <record id="view_account_ats_doc_tree" model="ir.ui.view">
-      <field name="name">account.ats.doc.tree</field>
-      <field name="model">account.ats.doc</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-	<tree string="Tipos de Comprobantes Autorizados">
-          <field name="code" select="1"/>
-	  <field name="name"/>
-	</tree>
-      </field>
+        <field name="name">account.ats.doc.tree</field>
+        <field name="model">account.ats.doc</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+	        <tree string="Tipos de Comprobantes Autorizados">
+                <field name="code" select="1"/>
+	            <field name="name"/>
+	        </tree>
+        </field>
     </record>
 
     <record id="view_account_ats_doc_form" model="ir.ui.view">
-      <field name="name">account.ats.doc.form</field>
-      <field name="model">account.ats.doc</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-	<form string="Tipo de Comprobante Autorizado">
-          <group col="4" colspan="4">
-            <field name="code" required="1"/>
-	    <field name="name"/>
-          </group>
-	</form>
-      </field>
+        <field name="name">account.ats.doc.form</field>
+        <field name="model">account.ats.doc</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+	        <form string="Tipo de Comprobante Autorizado">
+                <group col="4" colspan="4">
+                    <field name="code" required="1"/>
+	                <field name="name"/>
+                </group>
+	        </form>
+        </field>
     </record>
 
     <record id="action_account_ats_doc" model="ir.actions.act_window">
-      <field name="name">Tipos de Comprobantes Autorizados</field>
-      <field name="res_model">account.ats.doc</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+        <field name="name">Tipos de Comprobantes Autorizados</field>
+        <field name="res_model">account.ats.doc</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
     </record>
     <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.next_id_27"/>
 
     <record id="view_account_ats_sustento_tree" model="ir.ui.view">
-      <field name="name">account.ats.sustento.tree</field>
-      <field name="model">account.ats.sustento</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-	<tree string="Sustento del Comprobante">
-          <field name="code" select="1"/>
-	  <field name="type"/>
-	</tree>
-      </field>
+        <field name="name">account.ats.sustento.tree</field>
+        <field name="model">account.ats.sustento</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+	        <tree string="Sustento del Comprobante">
+                <field name="code" select="1"/>
+	            <field name="type"/>
+	        </tree>
+        </field>
     </record>
 
     <record id="view_account_ats_sustent_form" model="ir.ui.view">
-      <field name="name">account.ats.sustento.form</field>
-      <field name="model">account.ats.sustento</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-	<form string="Sustento del Comprobante">
-          <group col="4" colspan="4">
-            <field name="code" required="1"/>
-	    <field name="type"/>
-          </group>
-	</form>
-      </field>
+        <field name="name">account.ats.sustento.form</field>
+        <field name="model">account.ats.sustento</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+	        <form string="Sustento del Comprobante">
+                <group col="4" colspan="4">
+                    <field name="code" required="1"/>
+	                <field name="type"/>
+                </group>
+	        </form>
+        </field>
     </record>
 
     <record id="action_account_ats_sustent" model="ir.actions.act_window">
-      <field name="name">Sustento del Comprobante</field>
-      <field name="res_model">account.ats.sustento</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+        <field name="name">Sustento del Comprobante</field>
+        <field name="res_model">account.ats.sustento</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
     </record>
     <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
 
-    
-
-  </data>
+    </data>
 </openerp>

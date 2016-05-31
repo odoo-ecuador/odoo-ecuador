@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-  # pylint: disable=C0111
+# -*- coding: utf-8 -*-
 
-{  # pylint: disable=W0104
+{
     'name': 'SRI Authorisation Documents',
     'version': '0.1.0',
     'author': 'Cristian Salamea',

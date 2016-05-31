@@ -3,11 +3,11 @@
 import time
 from datetime import datetime
 
-from openerp import models, fields, api  # pylint: disable=F0401
-from openerp.exceptions import Warning  # pylint: disable=F0401, W0622
+from openerp import models, fields, api
+from openerp.exceptions import Warning as UserError
 
 
-class AccountAtsDoc(models.Model):  # pylint: disable=W0232, R0903
+class AccountAtsDoc(models.Model):
     _name = 'account.ats.doc'
     _description = 'Tipos Comprobantes Autorizados'
 
@@ -15,7 +15,7 @@ class AccountAtsDoc(models.Model):  # pylint: disable=W0232, R0903
     name = fields.Char('Tipo Comprobante', size=64, required=True)
 
 
-class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
+class AccountAtsSustento(models.Model):
     _name = 'account.ats.sustento'
     _description = 'Sustento del Comprobante'
 
@@ -25,7 +25,7 @@ class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
         if not ids:
             return []
         res = []
-        reads = self.browse(cursor, uid, ids, context=context)  # pylint: disable=E1101
+        reads = self.browse(cursor, uid, ids, context=context)
         for record in reads:
             name = '%s - %s' % (record.code, record.type)
             res.append((record.id, name))
@@ -37,7 +37,7 @@ class AccountAtsSustento(models.Model):  # pylint: disable=W0232, R0903
     type = fields.Char('Tipo de Sustento', size=64, required=True)
 
 
-class AccountAuthorisation(models.Model):  # pylint: disable=W0232
+class AccountAuthorisation(models.Model):
 
     _name = 'account.authorisation'
     _description = 'Authorisation for Accounting Documents'
@@ -50,7 +50,11 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
             return []
         res = []
         for record in self.browse(cursor, uid, ids, context=context):
-            name = '%s (%s-%s)' % (record.type_id.name, record.num_start, record.num_end)
+            name = u'%s (%s-%s)' % (
+                record.type_id.name,
+                record.num_start,
+                record.num_end
+            )
             res.append((record.id, name))
         return res
 
@@ -79,12 +83,12 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
     @api.returns('self', lambda value: value.id)
     def create(self, values):
         partner_id = self.env.user.company_id.partner_id.id
-        if values.get('partner_id', False) and values['partner_id'] == partner_id:
+        if values.get('partner_id', False) and values['partner_id'] == partner_id:  # noqa
             name_type = '{0}_{1}'.format(values['name'], values['type_id'])
             code_obj = self.env['ir.sequence.type']
             seq_obj = self.env['ir.sequence']
             code_data = {
-                'code': '%s.%s.%s' % (name_type,values['serie_entidad'],values['serie_emision']),
+                'code': '%s.%s.%s' % (name_type, values['serie_entidad'], values['serie_emision']),  # noqa
                 'name': name_type
                 }
             code = code_obj.create(code_data)
@@ -101,18 +105,21 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
     @api.multi
     def unlink(self):
         journal = self.env['account.journal']
-        res = journal.search(['|', ('auth_id', '=', self.id), ('auth_ret_id', '=', self.id)])
+        res = journal.search(['|', ('auth_id', '=', self.id), ('auth_ret_id', '=', self.id)])  # noqa
         if res:
-            raise Warning('Alerta', 'Esta autorización esta relacionada a un diario.')
+            raise UserError(
+                'Alerta',
+                'Esta autorización esta relacionada a un diario.'
+            )
         return super(AccountAuthorisation, self).unlink()
 
-    name = fields.Char('Num. de Autorizacion', size=128, required=True)
+    name = fields.Char('Num. de Autorización', size=128)
     serie_entidad = fields.Char('Serie Entidad', size=3, required=True)
     serie_emision = fields.Char('Serie Emision', size=3, required=True)
     num_start = fields.Integer('Desde', required=True)
     num_end = fields.Integer('Hasta', required=True)
     is_electronic = fields.Boolean('Documento Electrónico ?')
-    expiration_date = fields.Date('Vence', required=True)
+    expiration_date = fields.Date('Fecha de Vencimiento', required=True)
     active = fields.Boolean(
         compute='_check_active',
         string='Activo',
@@ -141,7 +148,7 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
     sequence_id = fields.Many2one(
         'ir.sequence',
         'Secuencia',
-        help='Secuencia Alfanumerica para el documento, se debe registrar cuando pertenece a la compañia',
+        help='Secuencia Alfanumerica para el documento, se debe registrar cuando pertenece a la compañia',  # noqa
         ondelete='cascade'
         )
 
@@ -151,7 +158,7 @@ class AccountAuthorisation(models.Model):  # pylint: disable=W0232
     _sql_constraints = [
         ('number_unique',
          'unique(name,partner_id,serie_entidad,serie_emision,type_id)',
-         u'La relación de autorización, serie entidad, serie emisor y tipo, debe ser única.'),
+         u'La relación de autorización, serie entidad, serie emisor y tipo, debe ser única.'),  # noqa
         ]
 
     def is_valid_number(self, cursor, uid, id, number):
@@ -189,8 +196,5 @@ class AccountJournal(models.Model):  # pylint: disable=W0232, R0903
         'account.authorisation',
         domain=[('in_type', '=', 'interno')],
         string='Autorización de Ret.',
-        help='Autorizacion utilizada para Retenciones, facturas y liquidaciones'
+        help='Autorizacion utilizada para Retenciones, facturas y liquidaciones'  # noqa
         )
-
-
-

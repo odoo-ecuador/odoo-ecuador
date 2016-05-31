@@ -58,8 +58,7 @@ class AccountWithdrawing(models.Model):
     @api.multi
     def _get_type(self):
         context = self._context
-        if context.has_key('type') and \
-        context['type'] in ['in_invoice', 'out_invoice']:
+        if 'type' in context and context['type'] in ['in_invoice', 'out_invoice']:  # noqa
             return 'in_invoice'
         else:
             return 'liq_purchase'
@@ -366,28 +365,28 @@ class AccountInvoiceTax(models.Model):
                 if invoice.type in ['out_invoice', 'in_invoice']:
                     val['base_code_id'] = tax['base_code_id']
                     val['tax_code_id'] = tax['tax_code_id']
-                    val['base_amount'] = currency.compute(val['base'] * tax['base_sign'], company_currency, round=False)
-                    val['tax_amount'] = currency.compute(val['amount'] * tax['tax_sign'], company_currency, round=False)
-                    val['account_id'] = tax['account_collected_id'] or line.account_id.id
-                    val['account_analytic_id'] = tax['account_analytic_collected_id']
+                    val['base_amount'] = currency.compute(val['base'] * tax['base_sign'], company_currency, round=False)  # noqa
+                    val['tax_amount'] = currency.compute(val['amount'] * tax['tax_sign'], company_currency, round=False)  # noqa
+                    val['account_id'] = tax['account_collected_id'] or line.account_id.id  # noqa
+                    val['account_analytic_id'] = tax['account_analytic_collected_id']  # noqa
                 else:
                     val['base_code_id'] = tax['ref_base_code_id']
                     val['tax_code_id'] = tax['ref_tax_code_id']
-                    val['base_amount'] = currency.compute(val['base'] * tax['ref_base_sign'], company_currency, round=False)
-                    val['tax_amount'] = currency.compute(val['amount'] * tax['ref_tax_sign'], company_currency, round=False)
-                    val['account_id'] = tax['account_paid_id'] or line.account_id.id
-                    val['account_analytic_id'] = tax['account_analytic_paid_id']
+                    val['base_amount'] = currency.compute(val['base'] * tax['ref_base_sign'], company_currency, round=False)  # noqa
+                    val['tax_amount'] = currency.compute(val['amount'] * tax['ref_tax_sign'], company_currency, round=False)  # noqa
+                    val['account_id'] = tax['account_paid_id'] or line.account_id.id  # noqa
+                    val['account_analytic_id'] = tax['account_analytic_paid_id']  # noqa
 
-                # If the taxes generate moves on the same financial account as the invoice line
-                # and no default analytic account is defined at the tax level, propagate the
-                # analytic account from the invoice line to the tax line. This is necessary
+                # If the taxes generate moves on the same financial account as the invoice line  # noqa
+                # and no default analytic account is defined at the tax level, propagate the  # noqa
+                # analytic account from the invoice line to the tax line. This is necessary  # noqa
                 # in situations were (part of) the taxes cannot be reclaimed,
-                # to ensure the tax move is allocated to the proper analytic account.
-                if not val.get('account_analytic_id') and line.account_analytic_id and val['account_id'] == line.account_id.id:
+                # to ensure the tax move is allocated to the proper analytic account.  # noqa
+                if not val.get('account_analytic_id') and line.account_analytic_id and val['account_id'] == line.account_id.id:  # noqa
                     val['account_analytic_id'] = line.account_analytic_id.id
 
-                key = (val['tax_code_id'], val['base_code_id'], val['account_id'])
-                if not key in tax_grouped:
+                key = (val['tax_code_id'], val['base_code_id'], val['account_id'])  # noqa
+                if key not in tax_grouped:
                     tax_grouped[key] = val
                 else:
                     tax_grouped[key]['amount'] += val['amount']
@@ -413,7 +412,7 @@ class Invoice(models.Model):
     __logger = logging.getLogger(_inherit)
 
     @api.multi
-    def onchange_company_id(self, company_id, part_id, type, invoice_line, currency_id):
+    def onchange_company_id(self, company_id, part_id, type, invoice_line, currency_id):  # noqa
         """
         TODO: add the missing context parameter
         when forward-porting in trunk so we can remove
@@ -426,21 +425,19 @@ class Invoice(models.Model):
 
         if company_id and part_id and type:
             p = self.env['res.partner'].browse(part_id)
-            if p.property_account_payable and p.property_account_receivable and \
-                    p.property_account_payable.company_id.id != company_id and \
-                    p.property_account_receivable.company_id.id != company_id:
+            if p.property_account_payable and p.property_account_receivable and p.property_account_payable.company_id.id != company_id and p.property_account_receivable.company_id.id != company_id:  # noqa
                 prop = self.env['ir.property']
-                rec_dom = [('name', '=', 'property_account_receivable'), ('company_id', '=', company_id)]
-                pay_dom = [('name', '=', 'property_account_payable'), ('company_id', '=', company_id)]
+                rec_dom = [('name', '=', 'property_account_receivable'), ('company_id', '=', company_id)]  # noqa
+                pay_dom = [('name', '=', 'property_account_payable'), ('company_id', '=', company_id)]  # noqa
                 res_dom = [('res_id', '=', 'res.partner,%s' % part_id)]
-                rec_prop = prop.search(rec_dom + res_dom) or prop.search(rec_dom)
-                pay_prop = prop.search(pay_dom + res_dom) or prop.search(pay_dom)
+                rec_prop = prop.search(rec_dom + res_dom) or prop.search(rec_dom)  # noqa
+                pay_prop = prop.search(pay_dom + res_dom) or prop.search(pay_dom)  # noqa
                 rec_account = rec_prop.get_by_record(rec_prop)
                 pay_account = pay_prop.get_by_record(pay_prop)
                 if not rec_account and not pay_account:
                     action = self.env.ref('account.action_account_config')
-                    msg = _('Cannot find a chart of account for this company, You should configure it. \nPlease go to Account Configuration.')
-                    raise RedirectWaring(msg, action.id, _('Go to the configuration panel'))
+                    msg = _('Cannot find a chart of account for this company, You should configure it. \nPlease go to Account Configuration.')  # noqa
+                    raise RedirectWaring(msg, action.id, _('Go to the configuration panel'))  # noqa
 
                 if type in ('out_invoice', 'out_refund'):
                     acc_id = rec_account.id
@@ -455,35 +452,35 @@ class Invoice(models.Model):
                             continue
                         if line.account_id.company_id.id == company_id:
                             continue
-                        accounts = self.env['account.account'].search([('name', '=', line.account_id.name), ('company_id', '=', company_id)])
+                        accounts = self.env['account.account'].search([('name', '=', line.account_id.name), ('company_id', '=', company_id)])  # noqa
                         if not accounts:
-                            action = self.env.ref('account.action_account_config')
-                            msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')
-                            raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
+                            action = self.env.ref('account.action_account_config')  # noqa
+                            msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')  # noqa
+                            raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))  # noqa
                         line.write({'account_id': accounts[-1].id})
             else:
                 for line_cmd in invoice_line or []:
                     if len(line_cmd) >= 3 and isinstance(line_cmd[2], dict):
-                        line = self.env['account.account'].browse(line_cmd[2]['account_id'])
+                        line = self.env['account.account'].browse(line_cmd[2]['account_id'])  # noqa
                         if line.company_id.id != company_id:
                             raise except_orm(
                                 _('Configuration Error!'),
-                                _("Invoice line account's company and invoice's company does not match."))
+                                _("Invoice line account's company and invoice's company does not match."))  # noqa
 
         if company_id and type:
             journal_type = TYPE2JOURNAL[type]
-            journals = self.env['account.journal'].search([('type', '=', journal_type), ('company_id', '=', company_id)])
+            journals = self.env['account.journal'].search([('type', '=', journal_type), ('company_id', '=', company_id)])  # noqa
             if journals:
                 values['journal_id'] = journals[0].id
-            journal_defaults = self.env['ir.values'].get_defaults_dict('account.invoice', 'type=%s' % type)
+            journal_defaults = self.env['ir.values'].get_defaults_dict('account.invoice', 'type=%s' % type)  # noqa
             if 'journal_id' in journal_defaults:
-                values['journal_id'] = jounral_defaults['journal_id']
+                values['journal_id'] = jounral_defaults['journal_id']  # noqa
             if not values.get('journal_id'):
                 field_desc = journals.fields_get(['type'])
-                type_label = next(t for t, label in field_desc['type']['selection'] if t == journal_type)
+                type_label = next(t for t, label in field_desc['type']['selection'] if t == journal_type)  # noqa
                 action = self.env.ref('account.action_account_journal_form')
-                msg = _('Cannot find any account journal of type "%s" for this company, You should create one.\n Please go to Journal Configuration') % type_label
-                raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
+                msg = _('Cannot find any account journal of type "%s" for this company, You should create one.\n Please go to Journal Configuration') % type_label  # noqa
+                raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))  # noqa
             domain = {'journal_id':  [('id', 'in', journals.ids)]}
 
         return {'value': values, 'domain': domain}
@@ -555,7 +552,7 @@ class Invoice(models.Model):
     @api.one
     @api.depends('invoice_line.price_subtotal', 'tax_line.amount')
     def _compute_amount(self):
-        self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line)
+        self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line)  # noqa
         for line in self.tax_line:
             if line.tax_group == 'vat':
                 self.amount_vat += line.base
@@ -568,7 +565,7 @@ class Invoice(models.Model):
                 self.amount_noret_ir += line.base
             elif line.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:
                 self.amount_tax_retention += line.amount
-                if line.tax_group == 'ret_vat_b':#in ['ret_vat_b', 'ret_vat_srv']:
+                if line.tax_group == 'ret_vat_b':
                     self.amount_tax_ret_vatb += line.base
                     self.taxed_ret_vatb += line.amount
                 elif line.tax_group == 'ret_vat_srv':
@@ -582,7 +579,7 @@ class Invoice(models.Model):
         # base vat not defined, amount_vat_cero by default
         if self.amount_vat == 0 and self.amount_vat_cero == 0:
             self.amount_vat_cero = self.amount_untaxed
-        self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention
+        self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention  # noqa
         self.amount_pay = self.amount_tax + self.amount_untaxed
 
     @api.multi
@@ -596,7 +593,7 @@ class Invoice(models.Model):
         }
         result = []
         for inv in self:
-            result.append((inv.id, "%s %s" % (inv.number or TYPES[inv.type], inv.name or '')))
+            result.append((inv.id, "%s %s" % (inv.number or TYPES[inv.type], inv.name or '')))  # noqa
         return result
 
     @api.one
@@ -617,14 +614,16 @@ class Invoice(models.Model):
         for inv in self:
             number = '/'
             if inv.type == 'in_invoice' and inv.auth_inv_id:
-                n = inv.supplier_invoice_number and inv.supplier_invoice_number.zfill(9) or '*'
-                number = ''.join([inv.auth_inv_id.serie_entidad,inv.auth_inv_id.serie_emision,n])
+                n = inv.supplier_invoice_number and inv.supplier_invoice_number.zfill(9) or '*'  # noqa
+                number = ''.join([inv.auth_inv_id.serie_entidad, inv.auth_inv_id.serie_emision, n])  # noqa
             result[inv.id] = number
         return result
 
-    HELP_RET_TEXT = '''Automatico: El sistema identificara los impuestos y creara la retencion automaticamente, \
-    Manual: El usuario ingresara el numero de retencion \
-    Agrupar: Podra usar la opcion para agrupar facturas del sistema en una sola retencion.'''
+    HELP_RET_TEXT = '''Automatico: El sistema identificara los impuestos
+    y creara la retencion automaticamente,
+    Manual: El usuario ingresara el numero de retencion
+    Agrupar: Podra usar la opcion para agrupar facturas
+    del sistema en una sola retencion.'''
 
     PRECISION_DP = dp.get_precision('Account')
 
@@ -740,12 +739,12 @@ class Invoice(models.Model):
                 return {
                     'warning': {
                         'title': 'Error',
-                        'message': u'No se ha configurado una autorización en este diario.'
+                        'message': u'No se ha configurado una autorización en este diario.'  # noqa
                         }
                     }
             return {
                 'value': {
-                    'currency_id': journal.currency.id or journal.company_id.currency_id.id,
+                    'currency_id': journal.currency.id or journal.company_id.currency_id.id,  # noqa
                     'company_id': journal.company_id.id,
                     'auth_inv_id': journal.auth_id.id
                 }
@@ -768,7 +767,7 @@ class Invoice(models.Model):
             if obj.type == 'out_invoice':
                 return True
             if not len(obj.supplier_invoice_number) == INV_LIMIT:
-                raise UserError('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)
+                raise UserError('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)  # noqa
 
             auth = obj.auth_inv_id
 
@@ -777,10 +776,10 @@ class Invoice(models.Model):
             if not auth:
                 raise except_orm(
                     'Error!',
-                    u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'
+                    u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'  # noqa
                 )
 
-            if not self.env['account.authorisation'].is_valid_number(auth.id, int(inv_number)):
+            if not self.env['account.authorisation'].is_valid_number(auth.id, int(inv_number)):  # noqa
                 raise UserError('Error!', u'Número de factura fuera de rango.')
 
             # validacion de numero de retencion para facturas de proveedor
@@ -791,7 +790,7 @@ class Invoice(models.Model):
                         u'No ha configurado una autorización de retenciones.'
                     )
 
-                if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):
+                if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):  # noqa
                     raise except_orm(
                         'Error!',
                         u'El número de retención no es válido.'
@@ -832,12 +831,12 @@ class Invoice(models.Model):
     def onchange_partner_id(self, type, partner_id, date_invoice=False,
                             payment_term=False, partner_bank_id=False,
                             company_id=False):
-        res1 = super(Invoice, self).onchange_partner_id(type, partner_id, date_invoice,
-                                                        payment_term, partner_bank_id,
+        res1 = super(Invoice, self).onchange_partner_id(type, partner_id, date_invoice,  # noqa
+                                                        payment_term, partner_bank_id,  # noqa
                                                         company_id)
         if 'reference_type' in res1['value']:
             res1['value'].pop('reference_type')
-        res = self.env['account.authorisation'].search([('partner_id','=',partner_id),('in_type','=','externo')], limit=1)
+        res = self.env['account.authorisation'].search([('partner_id', '=', partner_id), ('in_type', '=', 'externo')], limit=1)  # noqa
         if res:
             res1['value']['auth_inv_id'] = res[0]
         return res1
@@ -888,10 +887,10 @@ class Invoice(models.Model):
                 inv.retention_id.action_validate(wd_number)
                 continue
 
-            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:
+            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:  # noqa
                 raise except_orm(
                     'Error',
-                    'No ha configurado la autorización de retenciones en el diario.'
+                    'No ha configurado la autorización de retenciones en el diario.'  # noqa
                 )
 
             withdrawing_data = {
@@ -902,16 +901,16 @@ class Invoice(models.Model):
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
                 'period_id': inv.period_id.id,
-                'num_document': inv.type == 'in_invoice' and inv.supplier_invoice_number or inv.number
+                'num_document': inv.type == 'in_invoice' and inv.supplier_invoice_number or inv.number  # noqa
             }
 
-            withdrawing_data.update(self.env['account.retention'].onchange_invoice(inv.id)['value'])
+            withdrawing_data.update(self.env['account.retention'].onchange_invoice(inv.id)['value'])  # noqa
 
-            withdrawing = self.env['account.retention'].create(withdrawing_data)
+            withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
 
-            tids = [l.id for l in inv.tax_line if l.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]
+            tids = [l.id for l in inv.tax_line if l.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]  # noqa
             account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
-            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': withdrawing.num_document})
+            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': withdrawing.num_document})  # noqa
 
             if inv.type in TYPES_TO_VALIDATE:
                 withdrawing.action_validate(wd_number)
@@ -959,10 +958,10 @@ class AccountInvoiceLine(models.Model):
             for tax in taxes:
                 if inv.type in ('out_invoice', 'in_invoice', 'liq_purchase'):
                     tax_code_id = tax['base_code_id']
-                    tax_amount = tax['price_unit'] * line.quantity * tax['base_sign']
+                    tax_amount = tax['price_unit'] * line.quantity * tax['base_sign']  # noqa
                 else:
                     tax_code_id = tax['ref_base_code_id']
-                    tax_amount = tax['price_unit'] * line.quantity * tax['ref_base_sign']
+                    tax_amount = tax['price_unit'] * line.quantity * tax['ref_base_sign']  # noqa
 
                 if tax_code_found:
                     if not tax_code_id:
@@ -975,25 +974,26 @@ class AccountInvoiceLine(models.Model):
                 tax_code_found = True
 
                 res[-1]['tax_code_id'] = tax_code_id
-                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)
+                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)  # noqa
         return res
 
     @api.multi
-    def product_id_change(self, product, uom_id, qty=0, name='', type='out_invoice',
+    def product_id_change(self, product, uom_id, qty=0,
+                          name='', type='out_invoice',
                           partner_id=False, fposition_id=False,
                           price_unit=False, currency_id=False,
                           company_id=None):
         context = self._context
-        company_id = company_id if company_id is not None else context.get('company_id', False)
-        self = self.with_context(company_id=company_id, force_company=company_id)
+        company_id = company_id if company_id is not None else context.get('company_id', False)  # noqa
+        self = self.with_context(company_id=company_id, force_company=company_id)  # noqa
 
         if not partner_id:
-            raise except_orm(_('No Partner Defined!'), _("You must first select a partner!"))
+            raise except_orm(_('No Partner Defined!'), _("You must first select a partner!"))  # noqa
         if not product:
             if type in ('in_invoice', 'in_refund'):
                 return {'value': {}, 'domain': {'uos_id': []}}
             else:
-                return {'value': {'price_unit': 0.0}, 'domain': {'uos_id':[]}}
+                return {'value': {'price_unit': 0.0}, 'domain': {'uos_id': []}}
 
         values = {}
 
@@ -1006,9 +1006,9 @@ class AccountInvoiceLine(models.Model):
 
         values['name'] = product.partner_ref
         if type in ['out_invoice', 'out_refund']:
-            account = product.property_account_income or product.categ_id.property_account_income_categ
+            account = product.property_account_income or product.categ_id.property_account_income_categ  # noqa
         else:
-            account = product.property_account_expense or product.categ_id.property_account_expense_categ
+            account = product.property_account_expense or product.categ_id.property_account_expense_categ  # noqa
         account = fpos.map_account(account)
         if account:
             values['account_id'] = account.id
@@ -1036,7 +1036,7 @@ class AccountInvoiceLine(models.Model):
             if product.uom_id.category_id.id == uom.category_id.id:
                 values['uos_id'] = uom_id
 
-        domain = {'uos_id': [('category_id', '=', product.uom_id.category_id.id)]}
+        domain = {'uos_id': [('category_id', '=', product.uom_id.category_id.id)]}  # noqa
 
         company = self.env['res.company'].browse(company_id)
         currency = self.env['res.currency'].browse(currency_id)

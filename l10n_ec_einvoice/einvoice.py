@@ -82,7 +82,7 @@ class AccountInvoice(models.Model):
                 'precioUnitario': '%.6f' % (line.price_unit),
                 'descuento': '0.00',
                 'precioTotalSinImpuesto': '%.2f' % (line.price_subtotal)
-             }
+            }
             impuestos = []
             for tax_line in line.invoice_line_tax_id:
                 if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
@@ -133,7 +133,6 @@ class AccountInvoice(models.Model):
         """
         for obj in self:
             if obj.type not in ['out_invoice', 'out_refund']:
-                print "no disponible para otros documentos"
                 continue
             self.check_date(obj.date_invoice)
             self.check_before_sent()
@@ -161,12 +160,12 @@ class AccountInvoice(models.Model):
                 if not obj.origin:
                     raise Warning('Error de Datos',
                                   u'Sin motivo de la devolución')
-                inv_ids = self.search(cr, uid, [('number', '=', obj.name)])
-                factura_origen = self.browse(cr, uid, inv_ids, context=context)
+                inv_ids = self.search([('number', '=', obj.name)])
+                factura_origen = self.browse(inv_ids)
                 # XML del comprobante electrónico: factura
                 factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)  # noqa
                 # envío del correo electrónico de nota de crédito al cliente
-                self.send_mail_refund(cr, uid, obj, access_key, context)
+                self.send_mail_refund(obj, access_key)
 
     @api.multi
     def invoice_print(self):

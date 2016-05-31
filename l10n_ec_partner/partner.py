@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-Partners para Ecuador
-"""
 
-__author__ = 'Cristian Salamea (cristian.salamea@gmail.com)'
-
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp import models, fields
+from openerp.exceptions import Warning as UserError
 
 
 class ResPartner(models.Model):
@@ -14,15 +9,15 @@ class ResPartner(models.Model):
     _name = 'res.partner'
     _inherit = 'res.partner'
 
-    def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):
+    def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):  # noqa
         if not args:
             args = []
         if not context:
             context = {}
         if name:
-            ids = self.search(cr, uid, [('ced_ruc', operator, name)] + args, limit=limit, context=context)
+            ids = self.search(cr, uid, [('ced_ruc', operator, name)] + args, limit=limit, context=context)  # noqa
             if not ids:
-                ids = self.search(cr, uid, [('name', operator, name)] + args, limit=limit, context=context)
+                ids = self.search(cr, uid, [('name', operator, name)] + args, limit=limit, context=context)  # noqa
         else:
             ids = self.search(cr, uid, args, limit=limit, context=context)
         return self.name_get(cr, uid, ids, context)
@@ -39,7 +34,7 @@ class ResPartner(models.Model):
         for c in cedula:
             val = int(c) * coef.pop()
             suma += val > 9 and val-9 or val
-        result = 10 - ((suma % 10) != 0 and suma%10 or 10)
+        result = 10 - ((suma % 10) != 0 and suma % 10 or 10)
         if result == int(identificador[9:10]):
             return True
         else:
@@ -58,7 +53,7 @@ class ResPartner(models.Model):
             coef.reverse()
             verificador = int(ruc[8:9])
         else:
-            raise osv.except_osv('Error', 'Cambie el tipo de persona')
+            raise UserError('Error', 'Cambie el tipo de persona')
         suma = 0
         for c in ruc[:10]:
             suma += int(c) * coef.pop()
@@ -124,8 +119,11 @@ class ResPartner(models.Model):
         ]
 
     def validate_from_sri(self):
-        SRI_LINK = "https://declaraciones.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos1.jspa"
-        texto = '0103893954'
+        """
+        TODO
+        """
+        SRI_LINK = "https://declaraciones.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos1.jspa"  # noqa
+        texto = '0103893954'  # noqa
 
 
 class ResCompany(models.Model):

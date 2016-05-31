@@ -11,7 +11,7 @@
         'view/partner_view.xml',
     ],
     'depends': [
-      'base'
+        'base'
     ],
     'installable': True,
 }

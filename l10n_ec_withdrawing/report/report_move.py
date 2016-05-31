@@ -34,10 +34,13 @@ class move(report_sxw.rml_parse):
         if move.line_id and move.line_id[0] and move.line_id[0].invoice:
             user_name = move.line_id[0].invoice.user_id.name
         else:
-            self.cr.execute("select create_uid from account_move where id=%s" % move.id)
+            self.cr.execute("select create_uid from account_move where id=%s" % move.id)  # noqa
             data = self.cr.fetchone()
             user = user_pool.browse(self.cr, self.uid, data[0])
             user_name = user.name
         return user_name
 
-report_sxw.report_sxw('report.account.move','account.move','addons/retention/report/report_move.rml',parser=move)
+report_sxw.report_sxw('report.account.move',
+                      'account.move',
+                      'addons/retention/report/report_move.rml',
+                      parser=move)

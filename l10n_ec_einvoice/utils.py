@@ -47,10 +47,10 @@ MSG_SCHEMA_INVALID = u"El sistema generó el XML pero"
 
 SITE_BASE_TEST = 'https://celcer.sri.gob.ec/'
 SITE_BASE_PROD = 'https://cel.sri.gob.ec/'
-WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
-WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'
-WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'
+WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'  # noqa
+WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'  # noqa
+WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantes?wsdl'  # noqa
+WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantes?wsdl'  # noqa
 
 
 def check_service(env='prueba'):
@@ -63,10 +63,8 @@ def check_service(env='prueba'):
     for i in [1, 2, 3]:
         try:
             res = requests.head(URL, timeout=3)
-            print res.status_code
         except requests.exceptions.RequestException, e:
-            print "Error", e
-            break
+            raise "Error", e
     if i == 3:
         flag = True
-    return flag
+    return flag, res

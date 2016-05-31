@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <openerp>
-  <data>
+    <data>
 
-    <report auto="False"
-	    id="report_account_move" 
-	    model="account.move"
-	    name="account.move" menu="False"
-	    rml="retention/report/report_move.rml" string="Comprobante Contable"/>
+        <report auto="False"
+	            id="report_account_move"
+	            model="account.move"
+	            name="account.move" menu="False"
+	            rml="retention/report/report_move.rml" string="Comprobante Contable"/>
 
-    <report auto="False" id="account.retention" model="account.retention" menu="False"
-            name="account.retention" rml="l10n_ec_withdrawing/report/account_retention.mako"
-            usage="default" string="Retención" header="False" report_type="webkit"/>
-    
-    <report auto="False" id="account.account_invoices" model="account.invoice"
-            name="account.invoice2" rml="retention/report/account_invoice.mako" menu="False"
-            usage="default" string="Factura" header="False" report_type="webkit"/>
+        <report auto="False" id="account.retention" model="account.retention" menu="False"
+                name="account.retention" rml="l10n_ec_withdrawing/report/account_retention.mako"
+                usage="default" string="Retención" header="False" report_type="webkit"/>
 
-   <report auto="False" id="account.account_liq" model="account.invoice"
-            name="account.liq" rml="retention/report/account_liq.mako" menu="False"
-            usage="default" string="Liquidación" header="False" report_type="webkit"/>
+        <report auto="False" id="account.account_invoices" model="account.invoice"
+                name="account.invoice2" rml="retention/report/account_invoice.mako" menu="False"
+                usage="default" string="Factura" header="False" report_type="webkit"/>
 
-  </data>
+        <report auto="False" id="account.account_liq" model="account.invoice"
+                name="account.liq" rml="retention/report/account_liq.mako" menu="False"
+                usage="default" string="Liquidación" header="False" report_type="webkit"/>
+
+    </data>
 </openerp>

@@ -1,1 +1,3 @@
-import account_print_retention
+# -*- coding: utf-8 -*-
+
+from . import account_print_retention
