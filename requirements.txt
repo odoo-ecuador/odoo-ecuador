@@ -1,1 +1,2 @@
 git+https://github.com/ovnicraft/suds.git
+python-stdnum==1.2

@@ -3,6 +3,8 @@
 from openerp import models, fields
 from openerp.exceptions import Warning as UserError
 
+from stdnum import ec
+
 
 class ResPartner(models.Model):
 
@@ -64,24 +66,13 @@ class ResPartner(models.Model):
             return False
 
     def _check_ced_ruc(self, cr, uid, ids):
-        partners = self.browse(cr, uid, ids)
-        for partner in partners:
-            if not partner.ced_ruc:
-                return True
-            if partner.type_ced_ruc == 'pasaporte':
-                return True
+        for partner in self.browse(cr, uid, ids):
+            if partner.type_ced_ruc == 'cedula':
+                return ec.ci.is_valid(partner.ced_ruc)
             elif partner.type_ced_ruc == 'ruc':
-                if not len(partner.ced_ruc) == 13:
-                    return False
-                if partner.tipo_persona == '9':
-                    return self._check_ruc(partner)
-                else:
-                    return self._check_cedula(partner.ced_ruc)
-            elif partner.type_ced_ruc == 'cedula':
-                if not len(partner.ced_ruc) == 10:
-                    return False
-                else:
-                    return self._check_cedula(partner.ced_ruc)
+                return ec.ruc.is_valid(partner.ced_ruc)
+            else:
+                return True
 
     ced_ruc = fields.Char(
         'Cedula/ RUC',
