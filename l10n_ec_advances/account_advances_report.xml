@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <report auto="False" 
-		        id="report_account_advances"
-		        model="account.voucher" 
-		        name="account.advances" 
-		        rml="account_advances/report/report_advances.rml"
-                menu="False"
-		        string="Comprobante"/>
+        <report
+            auto="False"
+		    id="report_account_advances"
+		    model="account.voucher"
+		    name="account.advances"
+		    rml="account_advances/report/report_advances.rml"
+            menu="False"
+		    string="Comprobante"/>
 
 
     </data>
