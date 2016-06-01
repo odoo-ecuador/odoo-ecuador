@@ -26,8 +26,9 @@ Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende
 Estado de Módulos
 -----------------
 
+
 | MODULO                   | ESTADO    | OBSERVACIONES                           |
-|--------------------------+-----------+-----------------------------------------|
+|--------------------------|-----------|-----------------------------------------|
 | l10n_ec_advances         | NO USABLE | No migrado a la v 8.0                   |
 | l10n_ec_authorisation    | ESTABLE   |                                         |
 | l10n_ec_chart            | ESTABLE   |                                         |
