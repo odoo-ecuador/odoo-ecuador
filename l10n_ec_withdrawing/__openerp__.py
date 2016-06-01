@@ -12,7 +12,8 @@
     ],
     'author': 'Cristian Salamea.',
     'website': 'http://www.ayni.com.ec',
-    'update_xml': [
+    'data': [
+        'security/ir.model.access.csv',
         'invoice_workflow.xml',
         'withdrawing_view.xml',
         'withdrawing_report.xml',
