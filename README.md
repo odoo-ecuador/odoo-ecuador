@@ -23,6 +23,24 @@ Este proyecto es un trabajo derivado de AGPL v3, si utilizas este trabajo es nec
 
 Dedicado a toda esa gente linda de mi país que aplica la viveza criolla y vende este software y cambia el autor.
 
+Estado de Módulos
+-----------------
+
+
+| MODULO                   | ESTADO    | OBSERVACIONES                           |
+|--------------------------|-----------|-----------------------------------------|
+| l10n_ec_advances         | NO USABLE | No migrado a la v 8.0                   |
+| l10n_ec_authorisation    | ESTABLE   |                                         |
+| l10n_ec_chart            | ESTABLE   |                                         |
+| l10n_ec_einvoice         | ESTABLE   |                                         |
+| l10n_ec_employee         | ESTABLE   |                                         |
+| l10n_ec_invoice_sequence | ESTABLE   |                                         |
+| l10n_ec_ote              | ESTABLE   |                                         |
+| l10n_ec_partner          | ESTABLE   |                                         |
+| l10n_ec_pos              | NO USABLE | Errores reportados, ver builds & issues |
+| l10n_ec_withdrawing      | ESTABLE   |                                         |
+
+
 Objetivos principales
 ---------------------
 
