@@ -12,7 +12,8 @@
     'category': 'POS',
     'version': '0.1',
     'depends': [
-        'l10n_ec_partner'
+        'l10n_ec_partner',
+        'point_of_sale'
     ],
     'data': [
         'views.xml'
