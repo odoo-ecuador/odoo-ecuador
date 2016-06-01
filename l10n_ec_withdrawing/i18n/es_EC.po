@@ -1,0 +1,857 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* l10n_ec_withdrawing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-31 20:42+0000\n"
+"PO-Revision-Date: 2016-05-31 16:04-0500\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "(update)"
+msgstr "(actualizar)"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+msgid "000004321 (9 dígitos)"
+msgstr "000004321 (9 dígitos)"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_wizard_ats
+msgid "Anexo Transaccional Simplificado"
+msgstr "Anexo Transaccional Simplificado"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,state:0
+msgid "Anticipado"
+msgstr "Anticipado"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,state:0
+msgid "Anulado"
+msgstr "Anulado"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Anular"
+msgstr "Anular"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,data:0
+msgid "Archivo XML"
+msgstr "Archivo XML"
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Archivo generado correctamente, guardelo en su ubicación de preferencia."
+msgstr "Archivo generado correctamente, guardelo en su ubicación de preferencia."
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,move_id:0
+msgid "Asiento Contable"
+msgstr "Asiento Contable"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Ask Refund"
+msgstr "Pedir reembolso"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice,create_retention_type:0
+msgid "Automático"
+msgstr "Automático"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,auth_id:0
+msgid "Autorizacion"
+msgstr "Autorización"
+
+#. module: l10n_ec_withdrawing
+#: help:account.invoice,auth_inv_id:0
+msgid "Autorizacion del SRI para documento recibido"
+msgstr "Autorización del SRI para documento recibido"
+
+#. module: l10n_ec_withdrawing
+#: view:account.authorisation:l10n_ec_withdrawing.view_account_auth_tree
+msgid "Autorizaciones del SRI"
+msgstr "Autorizaciones del SRI"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,auth_inv_id:0
+msgid "Autorización SRI"
+msgstr "Autorización del SRI"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_vat:0
+msgid "Base 12 %"
+msgstr "Base 12%"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_tax_ret_ir:0
+msgid "Base IR"
+msgstr "Base IR"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_vat_cero:0
+msgid "Base IVA 0%"
+msgstr "Base IVA 0%"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_novat:0
+msgid "Base No IVA"
+msgstr "Base no IVA"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_tax_ret_vatb:0
+#: field:account.invoice,amount_tax_ret_vatsrv:0
+msgid "Base Ret. IVA"
+msgstr "Base Ret. IVA"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,state:0
+msgid "Borrador"
+msgstr "Borrador"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Cancel Invoice"
+msgstr "Anular Factura"
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Cancelar"
+msgstr "Cancelar"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:439
+#, python-format
+msgid "Cannot find a chart of account for this company, You should configure it. \n"
+"Please go to Account Configuration."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:458
+#, python-format
+msgid "Cannot find a chart of accounts for this company, You should configure it. \n"
+"Please go to Account Configuration."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:482
+#, python-format
+msgid "Cannot find any account journal of type \"%s\" for this company, You should create one.\n"
+" Please go to Journal Configuration"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Cerrar"
+msgstr "Cerrar"
+
+#. module: l10n_ec_withdrawing
+#: view:account.tax:l10n_ec_withdrawing.view_account_tax_search2
+msgid "Cod. Base Imponible"
+msgstr "Cod. Base Imponible"
+
+#. module: l10n_ec_withdrawing
+#: view:account.tax:l10n_ec_withdrawing.view_account_tax_search2
+msgid "Cod. Imp. Generado"
+msgstr "Cod. Imp. Generado"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,company_id:0
+msgid "Compania"
+msgstr "Compañía"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,company_id:0
+msgid "Company"
+msgstr "Compañía"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Comprobante"
+msgstr "Comprobante"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.act_window_move
+#: model:ir.actions.report.xml,name:l10n_ec_withdrawing.report_account_move
+msgid "Comprobante Contable"
+msgstr "Comprobante Contable"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:467
+#, python-format
+msgid "Configuration Error!"
+msgstr "Error de Configuración"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,create_uid:0
+#: field:wizard.ats,create_uid:0
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,create_date:0
+#: field:wizard.ats,create_date:0
+msgid "Created on"
+msgstr "Creado"
+
+#. module: l10n_ec_withdrawing
+#: field:product.category,taxes_id:0
+msgid "Customer Taxes"
+msgstr "Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,tax_ids:0
+msgid "Detalle de Impuestos"
+msgstr "Detalle de Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,display_name:0
+#: field:wizard.ats,display_name:0
+msgid "Display Name"
+msgstr "Descripción"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,invoice_id:0
+msgid "Documento"
+msgstr "Documento"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.action_account_retention_out_tree
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.action_account_retention_tree
+#: model:ir.ui.menu,name:l10n_ec_withdrawing.menu_action_retention
+#: model:ir.ui.menu,name:l10n_ec_withdrawing.menu_action_retention_receivable
+msgid "Documentos de Retención"
+msgstr "Documentos de Retención"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Draft Invoice"
+msgstr "Borrador"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Draft Refund"
+msgstr "Reembolso en borrador"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice.tax,fiscal_year:0
+msgid "Ejercicio Fiscal"
+msgstr "Ejercicio Fiscal"
+
+#. module: l10n_ec_withdrawing
+#: sql_constraint:account.invoice:0
+msgid "El número de factura es único."
+msgstr "El número de factura es único."
+
+#. module: l10n_ec_withdrawing
+#: sql_constraint:account.retention:0
+msgid "El número de retención es único."
+msgstr "El número de retención es único."
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,partner_id:0
+msgid "Empresa"
+msgstr "Empresa"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:880
+#, python-format
+msgid "Error!"
+msgstr "Error!"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_search
+#: field:account.retention,state:0
+msgid "Estado"
+msgstr "Estado"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.action_export_ats
+#: model:ir.ui.menu,name:l10n_ec_withdrawing.menu_export_ats
+msgid "Exportar Anexo Transaccional Simplificado"
+msgstr "Exportar Anexo Transaccional Simplificado"
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Exportar Archivo ATS"
+msgstr "Exportar Archivo ATS"
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Exportar XML"
+msgstr "Exportar XML"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,supplier_number:0
+msgid "Factura de Proveedor"
+msgstr "Factura de Proveedor"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,date:0
+msgid "Fecha Emision"
+msgstr "Fecha de Emisión"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:440
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:459
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:483
+#, python-format
+msgid "Go to the configuration panel"
+msgstr "Ir al panel de configuración"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice.tax,tax_group:0
+#: field:account.tax,tax_group:0
+msgid "Grupo"
+msgstr "Grupo"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_ice:0
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "ICE"
+msgstr "ICE"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,id:0
+#: field:wizard.ats,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "IVA 0%"
+msgstr "IVA 0%"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "IVA Diferente de 0%"
+msgstr "IVA diferente de 0%"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Imprimir"
+msgstr "Imprimir"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "Imps. Aduanas"
+msgstr "Imps. Aduanas"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,taxed_ret_ir:0
+msgid "Impuesto IR"
+msgstr "Impuesto IR"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Impuestos"
+msgstr "Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Impuestos Aplicados"
+msgstr "Impuestos Aplicados"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Info Extra"
+msgstr "Info Extra"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:586
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_invoice
+#, python-format
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_invoice_line
+msgid "Invoice Line"
+msgstr "Detalle de factura"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_invoice_refund
+msgid "Invoice Refund"
+msgstr "Reembolso"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_invoice_tax
+msgid "Invoice Tax"
+msgstr "Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:468
+#, python-format
+msgid "Invoice line account's company and invoice's company does not match."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Invoice lines"
+msgstr "Detalle de Factura"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,__last_update:0
+#: field:wizard.ats,__last_update:0
+msgid "Last Modified on"
+msgstr "Ultima modificación"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,write_uid:0
+#: field:wizard.ats,write_uid:0
+msgid "Last Updated by"
+msgstr "Ultima modificación por"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,write_date:0
+#: field:wizard.ats,write_date:0
+msgid "Last Updated on"
+msgstr "Ultima actualización"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,pay_limit:0
+msgid "Limite de Pago"
+msgstr "Límite de pago"
+
+#. module: l10n_ec_withdrawing
+#: help:account.retention,move_id:0
+msgid "Link to the automatically generated Journal Items."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:590
+#, python-format
+msgid "Liquid. de Compra"
+msgstr "Liquidación de Compra"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Liquidacion de Compra"
+msgstr "Liquidación de Compra"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.action_liq_purchase_tree
+#: model:ir.ui.menu,name:l10n_ec_withdrawing.menu_action_liq_purchase
+msgid "Liquidaciones de Compra"
+msgstr "Liquidación de Compra"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Liquidación de Compra"
+msgstr "Liquidación de Compra"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice,create_retention_type:0
+msgid "Manual"
+msgstr "Manual"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_noret_ir:0
+msgid "Monto no sujeto a IR"
+msgstr "Monto no sujeto a IR"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:989
+#, python-format
+msgid "No Partner Defined!"
+msgstr "No ha definido una empresa !"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,no_validate:0
+msgid "No Validar"
+msgstr "No Validar"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "No objeto de IVA"
+msgstr "No objeto de IVA"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,no_retention_ir:0
+msgid "No objeto de Retención"
+msgstr "No objeto de Retención"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "No sujetos a Ret. de Imp. Renta"
+msgstr "No sujetos a Ret. de IR"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,fcname:0
+msgid "Nombre de Archivo"
+msgstr "Nombre de Archivo"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+msgid "Nro. de Retención"
+msgstr "Nro. de Retención"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice.tax,num_document:0
+#: field:account.retention,num_document:0
+msgid "Num. Comprobante"
+msgstr "Num. Comprobante"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,withdrawing_number:0
+msgid "Num. Retención"
+msgstr "Num. Retención"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,num_estab_ruc:0
+msgid "Num. de Establecimientos"
+msgstr "Num. de Establecimientos"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,manual:0
+msgid "Numeración Manual"
+msgstr "Numeración Manual"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,create_retention_type:0
+msgid "Numerar Retención"
+msgstr "Numerar Retención"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,name:0
+msgid "Número"
+msgstr "Número"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,internal_number:0
+msgid "Número Interno"
+msgstr "Número Interno"
+
+#. module: l10n_ec_withdrawing
+#: constraint:account.invoice:0
+msgid "Número fuera de rango de autorización activa."
+msgstr "Número fuera de rango de autorización activa."
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "Other"
+msgstr "Otro"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Other Info"
+msgstr "Otra Info"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,to_cancel:0
+msgid "Para anulación"
+msgstr "Para anulación"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_search
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Payment Date"
+msgstr "Fecha de Pago"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,period_id:0
+#: field:wizard.ats,period_id:0
+msgid "Periodo"
+msgstr "Período"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice.tax,percent:0
+#: field:account.tax,porcentaje:0
+msgid "Porcentaje"
+msgstr "Porcentaje"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_product_category
+msgid "Product Category"
+msgstr "Categoría de Productos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Re-Open"
+msgstr "Re Abrir"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Recompute taxes and total"
+msgstr "Recalcular impuestos y total"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:588
+#, python-format
+msgid "Refund"
+msgstr "Reembolso"
+
+#. module: l10n_ec_withdrawing
+#: model:ir.ui.menu,name:l10n_ec_withdrawing.menu_sri_reporting
+msgid "Reportes SRI"
+msgstr "Reportes SRI"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "Ret. Imp. Renta"
+msgstr "Ret. Imp. Renta"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,taxed_ret_vatb:0
+#: field:account.invoice,taxed_ret_vatsrv:0
+msgid "Retencion en IVA"
+msgstr "Retención en IVA"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_graph
+msgid "Retenciones a Proveedores"
+msgstr "Retenciones a Proveedores"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_tree
+msgid "Retenciones de Impuestos"
+msgstr "Retención de Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+#: field:account.invoice.tax,retention_id:0
+#: model:ir.actions.act_window,name:l10n_ec_withdrawing.act_window_retention
+#: model:ir.actions.report.xml,name:l10n_ec_withdrawing.account_withdrawing_document
+msgid "Retención"
+msgstr "Retención"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Retención Borrador"
+msgstr "Retención Borrador"
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Retención Generada"
+msgstr "Retención Generada"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,in_type:0
+msgid "Retención a Proveedor"
+msgstr "Retención a Proveedor"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,in_type:0
+msgid "Retención de Cliente"
+msgstr "Retención de Cliente"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "Retención de IVA (Bienes)"
+msgstr "Retención de IVA (Bienes)"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.invoice.tax,tax_group:0
+#: selection:account.tax,tax_group:0
+msgid "Retención de IVA (Servicios)"
+msgstr "Retención de IVA (Servicios)"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,retention_id:0
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Retención de Impuestos"
+msgstr "Retención de Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: view:wizard.ats:l10n_ec_withdrawing.wizard_export_ats_form
+msgid "Se exportara la información de la empresa a la que pertenece el usuario actual."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Set to Draft"
+msgstr "Pasar a borrador"
+
+#. module: l10n_ec_withdrawing
+#: selection:account.tax,tax_group:0
+msgid "Super de Bancos"
+msgstr "Superint. de Bancos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:587
+#, python-format
+msgid "Supplier Invoice"
+msgstr "Factura Proveedor"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:589
+#, python-format
+msgid "Supplier Refund"
+msgstr "Nota de Débito"
+
+#. module: l10n_ec_withdrawing
+#: field:product.category,supplier_taxes_id:0
+msgid "Supplier Taxes"
+msgstr "Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+msgid "Sustento"
+msgstr "Sustento"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,sustento_id:0
+msgid "Sustento del Comprobante"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_tree
+msgid "TOTAL"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_tax
+msgid "Tax"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "This button only appears when the state of the invoice is 'paid' (showing that it has been fully reconciled) and auto-computed boolean 'reconciled' is False (depicting that it's not the case anymore). In other words, the invoice has been dereconciled and it does not fit anymore the 'paid' state. You should press this button to re-open it and let it continue its normal process after having resolved the eventual exceptions it may have created."
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,retention_vat:0
+msgid "Tiene Retencion en IVA"
+msgstr "Tiene Retención en IVA"
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,retention_ir:0
+msgid "Tiene Retención en IR"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,in_type:0
+msgid "Tipo"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: field:account.retention,type:0
+msgid "Tipo Comprobante"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+#: field:account.invoice,amount_pay:0
+#: field:account.retention,amount_total:0
+msgid "Total"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_invoice_retention_tree2
+msgid "Total Base 0"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_invoice_retention_tree2
+msgid "Total Base 12"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: field:account.invoice,amount_tax_retention:0
+msgid "Total Retenciones"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+msgid "Total a Pagar"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: selection:account.retention,state:0
+msgid "Validado"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Validar"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.invoice_liq_purchase_form
+msgid "Validate"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: view:account.retention:l10n_ec_withdrawing.view_account_retention_form
+msgid "Volver a Borrador"
+msgstr ""
+
+#. module: l10n_ec_withdrawing
+#: model:ir.model,name:l10n_ec_withdrawing.model_account_retention
+msgid "Withdrawing Documents"
+msgstr "Documentos de Retención"
+
+#. module: l10n_ec_withdrawing
+#: code:addons/l10n_ec_withdrawing/withdrawing.py:989
+#, python-format
+msgid "You must first select a partner!"
+msgstr "Debes seleccionar primero una empresa"
+
+#. module: l10n_ec_withdrawing
+#: selection:wizard.ats,state:0
+msgid "choose"
+msgstr "elegir"
+
+#. module: l10n_ec_withdrawing
+#: selection:wizard.ats,state:0
+msgid "export"
+msgstr "exportar"
+
+#. module: l10n_ec_withdrawing
+#: field:wizard.ats,state:0
+msgid "unknown"
+msgstr "estado"
+
+#. module: l10n_ec_withdrawing
+#: view:account.invoice:l10n_ec_withdrawing.view_retention_authinv_form
+msgid "{'required':[('type','=','in_invoice')]}"
+msgstr ""
+
