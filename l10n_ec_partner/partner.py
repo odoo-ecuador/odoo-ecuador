@@ -8,7 +8,6 @@ from stdnum import ec
 
 class ResPartner(models.Model):
 
-    _name = 'res.partner'
     _inherit = 'res.partner'
 
     def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):  # noqa
@@ -86,7 +85,8 @@ class ResPartner(models.Model):
             ('pasaporte', 'PASAPORTE')
             ],
         'Tipo ID',
-        required=True
+        required=True,
+        default='pasaporte'
     )
     tipo_persona = fields.Selection(
         [
