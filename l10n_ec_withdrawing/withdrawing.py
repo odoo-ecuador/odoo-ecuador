@@ -75,7 +75,7 @@ class AccountWithdrawing(models.Model):
 
     _name = 'account.retention'
     _description = 'Withdrawing Documents'
-    _order = 'date desc, name desc'
+    _order = 'date ASC'
 
     name = fields.Char(
         'Número',
@@ -154,9 +154,11 @@ class AccountWithdrawing(models.Model):
         domain=[('state', '=', 'open')]
         )
     partner_id = fields.Many2one(
-        related='invoice_id.partner_id',
+        'res.partner',
         string='Empresa',
-        store=True
+        required=True,
+        readonly=True,
+        states=STATES_VALUE
         )
     move_id = fields.Many2one(
         related='invoice_id.move_id',
@@ -198,8 +200,8 @@ class AccountWithdrawing(models.Model):
 
     _sql_constraints = [
         (
-            'unique_number_name',
-            'unique(name,partner_id)',
+            'unique_number_partner',
+            'unique(name,partner_id,type)',
             u'El número de retención es único.'
         )
     ]
@@ -212,21 +214,26 @@ class AccountWithdrawing(models.Model):
         res = super(AccountWithdrawing, self).unlink()
         return res
 
-    @api.multi
-    def onchange_invoice(self, invoice_id):
-        res = {
-            'value': {
-                'num_document': ''
-            }
-        }
-        if not invoice_id:
-            return res
-        invoice = self.env['account.invoice'].browse(invoice_id)
-        if not invoice.auth_inv_id:
-            return res
-        res['value']['num_document'] = 'in_invoice' and invoice.supplier_invoice_number or invoice.number  # noqa
-        res['value']['type'] = invoice.type
-        return res
+    @api.onchange('name')
+    def onchange_name(self):
+        if self.name:
+            self.name = self.name.zfill(9)
+
+    @api.onchange('to_cancel')
+    def onchange_tocancel(self):
+        if self.to_cancel:
+            self.partner_id = self.company_id.partner_id.id
+
+    @api.onchange('date')
+    def onchange_date(self):
+        self.period_id = self.env['account.period'].find(self.date)
+
+    @api.onchange('invoice_id')
+    def onchange_invoice(self):
+        if not self.invoice_id:
+            return
+        self.num_document = self.invoice_id.invoice_number
+        self.type = self.invoice_id.type
 
     @api.multi
     def button_validate(self):
@@ -237,11 +244,11 @@ class AccountWithdrawing(models.Model):
         """
         for ret in self:
             if ret.manual:
-                self.action_validate(ret.id, ret.name)
+                self.action_validate(ret.name)
                 invoice = self.env['account.invoice'].browse(ret.invoice_id.id)
                 invoice.write({'retention_id': ret.id})
             else:
-                self.action_validate(ret.id)
+                self.action_validate()
         return True
 
     @api.multi
@@ -292,9 +299,7 @@ class AccountWithdrawing(models.Model):
 
     @api.multi
     def action_draft(self):
-        for obj in self:
-            name = obj.name[6:]
-            self.write({'state': 'draft', 'name': name})
+        self.write({'state': 'draft'})
         return True
 
     @api.multi
@@ -302,6 +307,18 @@ class AccountWithdrawing(models.Model):
         # Método para cambiar de estado a cancelado el documento
         self.write({'state': 'early'})
         return True
+
+    @api.multi
+    def action_print(self):
+        report_name = 'l10n_ec_withdrawing.account_withdrawing'
+        datas = {'ids': [self.id], 'model': 'account.retention'}
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': report_name,
+            'model': 'account.retention',
+            'datas': datas,
+            'nodestroy': True,
+            }
 
 
 class AccountInvoiceTax(models.Model):
@@ -680,10 +697,10 @@ class Invoice(models.Model):
         store=True, readonly=True, compute='_compute_amount')
     auth_inv_id = fields.Many2one(
         'account.authorisation',
-        string='Autorización SRI',
+        string='Establecimiento',
         readonly=True,
         states={'draft': [('readonly', False)]},
-        help='Autorizacion del SRI para documento recibido'
+        help='Autorizacion para documento recibido'
     )
     retention_id = fields.Many2one(
         'account.retention',
@@ -722,7 +739,7 @@ class Invoice(models.Model):
          ('manual', 'Manual')],
         string='Numerar Retención',
         required=True,
-        default='auto'
+        default='manual'
     )
     sustento_id = fields.Many2one(
         'account.ats.sustento',
@@ -812,6 +829,25 @@ class Invoice(models.Model):
             u'El número de factura es único.'
         )
     ]
+
+    @api.onchange('supplier_invoice_number')
+    def check_invoice_supplier(self):
+        if self.supplier_invoice_number and len(self.supplier_invoice_number) != 9:  # noqa
+            self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
+
+    @api.constrains
+    def check_reference(self):
+        """
+        Metodo que verifica la longitud de la autorizacion
+        10: documento fisico
+        35: factura electronica modo online
+        49: factura electronica modo offline
+        """
+        if self.reference and len(self.reference) not in [10, 35, 49]:
+            raise Warning(
+                'Error',
+                u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
+            )
 
     @api.multi
     def copy_data(self):

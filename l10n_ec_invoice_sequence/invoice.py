@@ -1,57 +1,38 @@
 # -*- coding: utf-8 -*-
 
-from openerp.osv import osv
+from openerp import (
+    models,
+    fields,
+    api
+)
 
 
-class AccountInvoice(osv.osv):
+class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
 
-    def action_number(self, cr, uid, ids, context=None):
+    @api.one
+    @api.depends(
+        'state',
+        'supplier_invoice_number'
+    )
+    def _get_invoice_number(self):
         """
-        Copiado el metodo del ERP
-        CHECK: modificar para numeracion automatica en venta?
+        Calcula el numero de factura segun el
+        establecimiento seleccionado
         """
-        if context is None:
-            context = {}
-        # TODO: not correct fix but required a frech values before reading it.
-        self.write(cr, uid, ids, {})
+        if self.supplier_invoice_number:
+            self.invoice_number = '{0}{1}{2}'.format(
+                self.auth_inv_id.serie_entidad,
+                self.auth_inv_id.serie_emision,
+                self.supplier_invoice_number
+            )
+        else:
+            self.invoice_number = '*'
 
-        for obj_inv in self.browse(cr, uid, ids, context=context):
-            invtype = obj_inv.type
-            number = obj_inv.number
-            data_number = {'internal_number': number}
-
-            if invtype in ['out_invoice', 'liq_purchase']:
-                auth = obj_inv.journal_id.auth_id
-                number = obj_inv.internal_number
-                if not number:
-                    tmp_number = self.pool.get('ir.sequence').get(cr, uid, auth.sequence_id.code)  # noqa
-                    number = u'{0}{1}{2}'.format(auth.serie_entidad, auth.serie_emision, tmp_number)  # noqa
-                data_number.update({'number': number})
-
-            move_id = obj_inv.move_id and obj_inv.move_id.id or False
-            reference = obj_inv.reference or ''
-
-            self.write(cr, uid, ids, data_number)
-
-            if invtype in ('in_invoice', 'in_refund'):
-                if not reference:
-                    ref = number
-                else:
-                    ref = reference
-            else:
-                ref = number
-
-            cr.execute('UPDATE account_move SET ref=%s '
-                       'WHERE id=%s AND (ref is null OR ref = \'\')',
-                       (ref, move_id))
-            cr.execute('UPDATE account_move_line SET ref=%s '
-                       'WHERE move_id=%s AND (ref is null OR ref = \'\')',
-                       (ref, move_id))
-            cr.execute('UPDATE account_analytic_line SET ref=%s '
-                       'FROM account_move_line '
-                       'WHERE account_move_line.move_id = %s '
-                       'AND account_analytic_line.move_id = account_move_line.id',  # noqa
-                       (ref, move_id))
-        return True
+    invoice_number = fields.Char(
+        compute='_get_invoice_number',
+        store=True,
+        readonly=True,
+        copy=False
+    )
