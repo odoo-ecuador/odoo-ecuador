@@ -37,7 +37,7 @@ Estado de Módulos
 | l10n_ec_invoice_sequence | ESTABLE   |                                         |
 | l10n_ec_ote              | ESTABLE   |                                         |
 | l10n_ec_partner          | ESTABLE   |                                         |
-| l10n_ec_pos              | NO USABLE | Errores reportados, ver builds & issues |
+| l10n_ec_pos              | ESTABLE |  |
 | l10n_ec_withdrawing      | ESTABLE   |                                         |
 
 
