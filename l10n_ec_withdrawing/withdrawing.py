@@ -69,7 +69,7 @@ class AccountWithdrawing(models.Model):
         if 'type' in context and context['type'] in ['in_invoice', 'liq_purchase']:  # noqa
             return 'ret_in_invoice'
         else:
-            return 'ret_in_invoice'
+            return 'ret_out_invoice'
 
     STATES_VALUE = {'draft': [('readonly', False)]}
 
@@ -82,8 +82,7 @@ class AccountWithdrawing(models.Model):
         size=64,
         readonly=True,
         required=True,
-        states=STATES_VALUE,
-        default='/'
+        states=STATES_VALUE
         )
     internal_number = fields.Char(
         'Número Interno',
@@ -107,6 +106,7 @@ class AccountWithdrawing(models.Model):
     auth_id = fields.Many2one(
         'account.authorisation',
         'Autorizacion',
+        required=True,
         readonly=True,
         states=STATES_VALUE,
         domain=[('in_type', '=', 'interno')]
@@ -115,7 +115,6 @@ class AccountWithdrawing(models.Model):
         related='invoice_id.type',
         string='Tipo Comprobante',
         readonly=True,
-        required=True,
         store=True
         )
     in_type = fields.Selection(
@@ -644,9 +643,6 @@ class Invoice(models.Model):
 
     PRECISION_DP = dp.get_precision('Account')
 
-    supplier_number = fields.Char(
-        string='Factura de Proveedor',
-        size=32, store=True, readonly=True, compute='_get_supplier_number')
     amount_ice = fields.Float(
         string='ICE', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
@@ -695,17 +691,12 @@ class Invoice(models.Model):
     amount_novat = fields.Float(
         string='Base No IVA', digits_compute=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
-    auth_inv_id = fields.Many2one(
-        'account.authorisation',
-        string='Establecimiento',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        help='Autorizacion para documento recibido'
-    )
     retention_id = fields.Many2one(
         'account.retention',
         string='Retención de Impuestos',
-        store=True, readonly=True)
+        store=True, readonly=True,
+        copy=False
+    )
     retention_ir = fields.Boolean(
         compute='_check_retention',
         string="Tiene Retención en IR",
@@ -732,7 +723,8 @@ class Invoice(models.Model):
     withdrawing_number = fields.Integer(
         'Num. Retención',
         readonly=True,
-        states={'draft': [('readonly', False)]}
+        states={'draft': [('readonly', False)]},
+        copy=False
     )
     create_retention_type = fields.Selection(
         [('auto', 'Automático'),
@@ -835,7 +827,7 @@ class Invoice(models.Model):
         if self.supplier_invoice_number and len(self.supplier_invoice_number) != 9:  # noqa
             self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
 
-    @api.constrains
+    @api.constrains('reference')
     def check_reference(self):
         """
         Metodo que verifica la longitud de la autorizacion
@@ -848,20 +840,6 @@ class Invoice(models.Model):
                 'Error',
                 u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
             )
-
-    @api.multi
-    def copy_data(self):
-        res = super(Invoice, self).copy_data()
-        data = {
-            'reference': False,
-            'auth_inv_id': False,
-            'retention_id': False,
-            'supplier_invoice_number': False,
-            'wthidrawing_number': False,
-            'retention_numbers': False
-        }
-        res.update(data)
-        return res
 
     @api.multi
     def onchange_partner_id(self, type, partner_id, date_invoice=False,
@@ -937,7 +915,7 @@ class Invoice(models.Model):
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
                 'period_id': inv.period_id.id,
-                'num_document': inv.type == 'in_invoice' and inv.supplier_invoice_number or inv.number  # noqa
+                'num_document': self.invoice_number
             }
 
             withdrawing_data.update(self.env['account.retention'].onchange_invoice(inv.id)['value'])  # noqa

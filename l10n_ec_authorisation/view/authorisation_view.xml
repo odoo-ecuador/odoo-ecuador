@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
+  <data>
+
+    <record id="view_account_invoice_authoris_form" model="ir.ui.view">
+      <field name="name">account.invoice.authoris.form</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_supplier_form"/>
+      <field name="arch" type="xml">
+	<xpath expr="//label[@for='reference_type']" position="attributes">
+	  <attribute name="string">Autorización</attribute>
+	</xpath>
+	<field name="reference_type" position="replace"/>
+	<field name="reference" position="attributes">
+	  <attribute name="required">True</attribute>
+	</field>
+      </field>
+    </record>
+
     <!--
        Account Authorisation
     -->
@@ -24,14 +40,15 @@
 	        <notebook position="inside">
 	            <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
 	                <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
-                        <tree string="Autorizaciones" editable="top">
-		                    <field name="name" required="1"/>
-		                    <field name="serie_emision" required="1"/>
-		                    <field name="serie_entidad" required="1"/>
-		                    <field name="num_start" required="1"/>
-		                    <field name="num_end" required="1"/>
-		                    <field name="expiration_date" required="1"/>
-		                    <field name="type_id"/>
+                          <tree string="Autorizaciones" editable="top">
+			    <field name="is_electronic"/>
+		            <field name="type_id"/>
+		            <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+		            <field name="serie_emision"/>
+		            <field name="serie_entidad"/>
+		            <field name="num_start" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+		            <field name="num_end" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+		            <field name="expiration_date" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
                         </tree>
 	                </field>
 	            </page>
@@ -43,14 +60,13 @@
         <field name="name">account.auth.tree</field>
         <field name="model">account.authorisation</field>
         <field name="arch" type="xml">
-	        <tree string="Autorizaciones del SRI">
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="serie_entidad"/>
-                <field name="serie_emision"/>
-                <field name="expiration_date"/>
-                <field name="type_id"/>
-	        </tree>
+	  <tree string="Autorizaciones del SRI">
+            <field name="is_electronic"/>
+            <field name="type_id"/>
+            <field name="partner_id"/>
+            <field name="serie_entidad"/>
+            <field name="serie_emision"/>
+	  </tree>
         </field>
     </record>
 
