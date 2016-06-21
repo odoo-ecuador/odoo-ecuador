@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-  # pylint: disable=C0111
+# -*- coding: utf-8 -*-
+# © <2016> <Cristian Salamea>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import time
 from datetime import datetime
@@ -172,7 +174,7 @@ class AccountAuthorisation(models.Model):
         return False
 
 
-class ResParter(models.Model):  # pylint: disable=W0232, R0903
+class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     authorisation_ids = fields.One2many(
@@ -182,7 +184,7 @@ class ResParter(models.Model):  # pylint: disable=W0232, R0903
         )
 
 
-class AccountJournal(models.Model):  # pylint: disable=W0232, R0903
+class AccountJournal(models.Model):
 
     _inherit = 'account.journal'
 
@@ -198,3 +200,54 @@ class AccountJournal(models.Model):  # pylint: disable=W0232, R0903
         string='Autorización de Ret.',
         help='Autorizacion utilizada para Retenciones, facturas y liquidaciones'  # noqa
         )
+
+
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
+
+    @api.multi
+    def onchange_partner_id(self, type, partner_id, date_invoice=False,
+                            payment_term=False, partner_bank_id=False,
+                            company_id=False):
+        res1 = super(AccountInvoice, self).onchange_partner_id(
+            type, partner_id, date_invoice,
+            payment_term, partner_bank_id,
+            company_id
+        )
+        if 'reference_type' in res1['value']:
+            res1['value'].pop('reference_type')
+        res = self.env['account.authorisation'].search(
+            [('partner_id', '=', partner_id),
+             ('in_type', '=', 'externo')],
+            limit=1
+        )
+        if res:
+            res1['value']['auth_inv_id'] = res[0]
+        return res1
+
+    auth_inv_id = fields.Many2one(
+        'account.authorisation',
+        string='Establecimiento',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help='Autorizacion para documento recibido',
+        copy=False
+    )
+
+    @api.onchange(
+        'supplier_invoice_number',
+        'auth_inv_id'
+    )
+    def check_invoice_supplier(self):
+        if self.supplier_invoice_number:
+            res = self.auth_inv_id.is_valid_number(self.supplier_invoice_number)  # noqa
+            if res:
+                self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
+            else:
+                self.supplier_invoice_number = ''
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'El número {0} no es válido'.format(self.supplier_invoice_number)  # noqa
+                    }
+                }
