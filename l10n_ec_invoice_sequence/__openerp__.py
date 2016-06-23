@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Accounting for Ecuador',
+    'name': 'Sequence for Documents Ecuador',
     "category": 'Generic Modules/Accounting',
     'version': '3',
     'depends': [
