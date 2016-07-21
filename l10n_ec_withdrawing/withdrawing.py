@@ -624,17 +624,6 @@ class Invoice(models.Model):
                 elif tax.tax_group == 'no_ret_ir':
                     self.no_retention_ir = True
 
-    @api.multi
-    def _get_supplier_number(self):
-        result = {}
-        for inv in self:
-            number = '/'
-            if inv.type == 'in_invoice' and inv.auth_inv_id:
-                n = inv.supplier_invoice_number and inv.supplier_invoice_number.zfill(9) or '*'  # noqa
-                number = ''.join([inv.auth_inv_id.serie_entidad, inv.auth_inv_id.serie_emision, n])  # noqa
-            result[inv.id] = number
-        return result
-
     HELP_RET_TEXT = '''Automatico: El sistema identificara los impuestos
     y creara la retencion automaticamente,
     Manual: El usuario ingresara el numero de retencion
@@ -917,8 +906,6 @@ class Invoice(models.Model):
                 'period_id': inv.period_id.id,
                 'num_document': self.invoice_number
             }
-
-            withdrawing_data.update(self.env['account.retention'].onchange_invoice(inv.id)['value'])  # noqa
 
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
 
