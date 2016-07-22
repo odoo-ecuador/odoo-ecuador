@@ -3,13 +3,26 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Accounting for Ecuador',
+    'name': 'Retenciones para Ecuador',
     'version': '4.0',
     "category": 'Generic Modules/Accounting',
     'depends': [
         'l10n_ec_authorisation',
         'l10n_ec_invoice_sequence'
     ],
+    'description': """
+Gestion Contable para Ecuador
+==============================
+
+Modulo para gestion de:
+
+    * retenciones
+    * Exportar ATS
+    * liquidaciones de compra
+    * codigos para formularios 103 y 104
+    * Impreso de asiento contable
+
+    """,
     'author': 'Cristian Salamea.',
     'website': 'http://www.ayni.com.ec',
     'data': [

@@ -8,3 +8,13 @@ Retenciones para Ecuador
 
 Este módulo implementa los documentos de retención para Ecuador.
 Personaliza el cálculo de impuestos.
+
+Modulo para gestion de:
+
+    * retenciones
+    * Exportar ATS
+    * liquidaciones de compra
+    * codigos para formularios 103 y 104
+    * Impreso de asiento contable
+    * Impuesto a la Renta
+    * Impuesto al valor agregado
