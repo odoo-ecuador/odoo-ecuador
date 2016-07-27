@@ -124,6 +124,22 @@
             </field>
         </record>
 
+        <record id="view_account_retention_tree" model="ir.ui.view">
+            <field name="name">account.retention.tree</field>
+            <field name="model">account.retention</field>
+            <field name="arch" type="xml">
+	            <tree string="Retenciones">
+	                <field name="partner_id"/>
+	                <field name="date"/>
+	                <field name="num_document"/>
+	                <field name="invoice_id"/>
+			<field name="period_id"/>
+	                <field name="amount_total"/>
+	                <field name="state"/>
+	            </tree>
+            </field>
+        </record>
+
         <record id="view_account_retention_form" model="ir.ui.view">
             <field name="name">view.account.retention.form</field>
             <field name="model">account.retention</field>
@@ -193,8 +209,8 @@
             </field>
         </record>
 
-        <record id="action_account_retention_tree" model="ir.actions.act_window">
-            <field name="name">Documentos de Retención</field>
+        <record id="action_account_retention2_tree" model="ir.actions.act_window">
+            <field name="name">Retención</field>
             <field name="res_model">account.retention</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -202,7 +218,7 @@
         </record>
 
 
-        <menuitem action="action_account_retention_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
+        <menuitem action="action_account_retention2_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
 
         <record id="action_account_retention_out_tree" model="ir.actions.act_window">
             <field name="name">Documentos de Retención</field>
