@@ -77,7 +77,8 @@ class HrEmployee(models.Model):
         "Firstname", default=_firstname_default)
     lastname = fields.Char(
         "Lastname", required=True, default=_firstname_default)
-    identificador = fields.Char('Cédula', required=True, size=10)
+    identificador = fields.Char('Cédula', required=True,
+                                size=10, default='9999999999')
 
     @api.model
     def create(self, vals):

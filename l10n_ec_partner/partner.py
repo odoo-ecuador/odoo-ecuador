@@ -23,47 +23,6 @@ class ResPartner(models.Model):
             ids = self.search(cr, uid, args, limit=limit, context=context)
         return self.name_get(cr, uid, ids, context)
 
-    def _check_cedula(self, identificador):
-        if len(identificador) == 13 and not identificador[10:13] == '001':
-            return False
-        else:
-            if len(identificador) < 10:
-                return False
-        coef = [2, 1, 2, 1, 2, 1, 2, 1, 2]
-        cedula = identificador[:9]
-        suma = 0
-        for c in cedula:
-            val = int(c) * coef.pop()
-            suma += val > 9 and val-9 or val
-        result = 10 - ((suma % 10) != 0 and suma % 10 or 10)
-        if result == int(identificador[9:10]):
-            return True
-        else:
-            return False
-
-    def _check_ruc(self, partner):
-        ruc = partner.ced_ruc
-        if not len(ruc) == 13:
-            return False
-        if ruc[2:3] == '9':
-            coef = [4, 3, 2, 7, 6, 5, 4, 3, 2, 0]
-            coef.reverse()
-            verificador = int(ruc[9:10])
-        elif ruc[2:3] == '6':
-            coef = [3, 2, 7, 6, 5, 4, 3, 2, 0, 0]
-            coef.reverse()
-            verificador = int(ruc[8:9])
-        else:
-            raise UserError('Error', 'Cambie el tipo de persona')
-        suma = 0
-        for c in ruc[:10]:
-            suma += int(c) * coef.pop()
-        result = 11 - (suma > 0 and suma % 11 or 11)
-        if result == verificador:
-            return True
-        else:
-            return False
-
     def _check_ced_ruc(self, cr, uid, ids):
         for partner in self.browse(cr, uid, ids):
             if partner.type_ced_ruc == 'cedula':
@@ -77,6 +36,7 @@ class ResPartner(models.Model):
         'Cedula/ RUC',
         size=13,
         required=True,
+        default='99999',
         help='Identificación o Registro Unico de Contribuyentes')
     type_ced_ruc = fields.Selection(
         [
