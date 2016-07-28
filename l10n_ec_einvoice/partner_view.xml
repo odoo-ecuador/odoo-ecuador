@@ -12,8 +12,8 @@
             <groups>
               <group>
                 <field name="electronic_signature"/>
-                <field name="password_electronic_signature" password="1"/>
-                <field name="emission_code"/>
+                <field name="password_electronic_signature" password="1" required="1"/>
+                <field name="emission_code" required="1"/>
               </group>
               <group string="Claves de Contingencia">
                 <field name="contingency_key_ids" nolabel="1" widget="one2many_list">

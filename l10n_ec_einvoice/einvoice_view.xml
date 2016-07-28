@@ -5,10 +5,9 @@
     <record id="view_contingency_key_tree" model="ir.ui.view">
       <field name="name">res.company.contingency.key.tree</field>
       <field name="model">res.company.contingency.key</field>
-      <field name="type">tree</field>
       <field name="arch" type="xml">
         <tree string="Claves de Contingencia">
-          <field name="key" select="1"/>
+          <field name="key"/>
           <field name="used"/>
           <field name="company_id" invisible="1"/>
         </tree>
@@ -18,10 +17,9 @@
     <record id="view_contingency_key_form" model="ir.ui.view">
       <field name="name">res.company.contingency.key.form</field>
       <field name="model">res.company.contingency.key</field>
-      <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Clave de Contingencia">
-          <group col="4" colspan="4">
+          <group>
             <field name="key" required="1"/>
             <field name="used"/>
 	    <field name="company_id"/>
