@@ -2,10 +2,10 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp.osv import osv, fields
+from openerp import models, fields
 
 
-class account_tax(osv.osv):
+class AccountTax(models.Model):
 
     _name = 'account.tax'
     _inherit = 'account.tax'
@@ -166,10 +166,9 @@ class account_tax(osv.osv):
             r['todo'] = 0
         return res
 
-    _columns = {
-        # dirty hack FIXME plz
-        'porcentaje': fields.char('Porcentaje', size=128),
-        'tax_group': fields.selection([
+    porcentaje = fields.Char('Porcentaje', size=128)
+    tax_group = fields.Selection(
+        [
             ('vat', 'IVA Diferente de 0%'),
             ('vat0', 'IVA 0%'),
             ('novat', 'No objeto de IVA'),
@@ -180,11 +179,9 @@ class account_tax(osv.osv):
             ('imp_ad', 'Imps. Aduanas'),
             ('imp_sbs', 'Super de Bancos'),
             ('ice', 'ICE'),
-            ('other', 'Other')],
-            string='Grupo',
-            required=True),
-        }
-
-    _defaults = {
-        'tax_group': 'vat',
-        }
+            ('other', 'Other')
+        ],
+        string='Grupo',
+        required=True,
+        default='vat'
+    )

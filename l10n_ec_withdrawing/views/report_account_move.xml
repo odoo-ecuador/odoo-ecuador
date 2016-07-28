@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
-<template id="account_move_report" name="Reporte Comprobante de Movimiento">
-    <t t-call="report.html_container">
-        <t t-foreach="docs" t-as="o">
-            <t t-call="report.internal_layout">
-                <div class="page">
-                    <p><strong>Comprobante Contable Nro. : </strong><t t-esc="o.name"></t></p>
-                    <p><strong>Diario : </strong><t t-esc="o.journal_id.name"></t></p>
+      <template id="account_move_report" name="Reporte Comprobante de Movimiento">
+          <t t-call="report.html_container">
+              <t t-foreach="docs" t-as="o">
+                  <t t-call="report.internal_layout">
+                      <div class="page">
+                          <p><strong>Comprobante Contable Nro. : </strong><t t-esc="o.name"></t></p>
+                          <p><strong>Diario : </strong><t t-esc="o.journal_id.name"></t></p>
 
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td><strong>Fecha:</strong></td>
-                                <td><t t-esc="o.date"></t></td>
-                                <td><strong>Factura:</strong></td>
-				<t t-if="o.line_id[0].invoice">
-                                  <td><t t-esc="o.line_id[0].invoice.supplier_invoice_number"></t></td>
-				</t>
-                            </tr>
-                            <tr>
-                                <td><strong>Empresa:</strong></td>
-                                <td><t t-esc="o.partner_id.name"></t></td>
-                                <td><strong>Referencia:</strong></td>
-                                <td><t t-esc="o.ref"></t></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                          <table class="table">
+                              <tbody>
+                                  <tr>
+                                      <td><strong>Fecha:</strong></td>
+                                      <td><t t-esc="o.date"></t></td>
+                                      <td><strong>Factura:</strong></td>
+                                      <t t-if="o.line_id[0].invoice">
+                                          <td><t t-esc="o.line_id[0].invoice.supplier_invoice_number"></t></td>
+                                      </t>
+                                  </tr>
+                                  <tr>
+                                      <td><strong>Empresa:</strong></td>
+                                      <td><t t-esc="o.partner_id.name"></t></td>
+                                      <td><strong>Referencia:</strong></td>
+                                      <td><t t-esc="o.ref"></t></td>
+                                  </tr>
+                              </tbody>
+                          </table>
 
-                    <br></br>
-                    <p style="text-align: left;"><strong>Detalle Contable</strong></p>
-                    <br></br>
+                          <br></br>
+                          <p style="text-align: left;"><strong>Detalle Contable</strong></p>
+                          <br></br>
 
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 131.033px;">CODIGO</th>
-                                <th style="text-align: center; width: 799.25px;">CUENTA</th>
-                                <th style="text-align: center; width: 168.717px;">DEBE</th>
-                                <th style="width: 168px; text-align: center;">HABER</th>
-                            </tr>
-                        </thead>
-                        <tbody style="font-size: 10pt">
-                            <t t-set="total_debit" t-value="0"/>
-                            <t t-set="total_credit" t-value="0"/>
-                            <t t-foreach="o.line_id" t-as="move">
-                                <t t-if="move.debit != 0 or move.credit != 0">
-                                    <tr>
-                                        <td style="text-align: left; width: 131.033px;"><t t-esc="move.account_id.code"></t></td>
-                                        <td style="text-align: center; width: 799.25px;"><t t-esc="move.account_id.name"></t></td>
-                                        <td style="text-align: right; width: 168.717px;"><t t-esc="move.debit"></t></td>
-                                        <td style="width: 168px; text-align: right;"><t t-esc="move.credit"></t></td>
-                                        <t t-set="total_debit" t-value="total_debit+move.debit"/>
-                                        <t t-set="total_credit" t-value="total_credit+move.credit"/>
-                                    </tr>
-                                </t>
-                            </t>
-                        </tbody>
+                          <table class="table table-striped">
+                              <thead>
+                                  <tr>
+                                      <th style="text-align: center; width: 131.033px;">CODIGO</th>
+                                      <th style="text-align: center; width: 799.25px;">CUENTA</th>
+                                      <th style="text-align: center; width: 168.717px;">DEBE</th>
+                                      <th style="width: 168px; text-align: center;">HABER</th>
+                                  </tr>
+                              </thead>
+                              <tbody style="font-size: 10pt">
+                                  <t t-set="total_debit" t-value="0"/>
+                                  <t t-set="total_credit" t-value="0"/>
+                                  <t t-foreach="o.line_id" t-as="move">
+                                      <t t-if="move.debit != 0 or move.credit != 0">
+                                          <tr>
+                                              <td style="text-align: left; width: 131.033px;"><t t-esc="move.account_id.code"></t></td>
+                                              <td style="text-align: center; width: 799.25px;"><t t-esc="move.account_id.name"></t></td>
+                                              <td style="text-align: right; width: 168.717px;"><t t-esc="move.debit"></t></td>
+                                              <td style="width: 168px; text-align: right;"><t t-esc="move.credit"></t></td>
+                                              <t t-set="total_debit" t-value="total_debit+move.debit"/>
+                                              <t t-set="total_credit" t-value="total_credit+move.credit"/>
+                                          </tr>
+                                      </t>
+                                  </t>
+                              </tbody>
 
-                        <tfoot style="font-size: 10pt">
-                            <tr>
-                                <td style="text-align: right;" colspan="2"><strong>Totales</strong></td>
-                                <td style="text-align: right;"><strong><t t-esc="total_debit"></t></strong></td>
-                                <td style="text-align: right;"><strong><t t-esc="total_credit"></t></strong></td>
-                            </tr>
-                        </tfoot>
-		    </table>
+                              <tfoot style="font-size: 10pt">
+                                  <tr>
+                                      <td style="text-align: right;" colspan="2"><strong>Totales</strong></td>
+                                      <td style="text-align: right;"><strong><t t-esc="total_debit"></t></strong></td>
+                                      <td style="text-align: right;"><strong><t t-esc="total_credit"></t></strong></td>
+                                  </tr>
+                              </tfoot>
+                          </table>
 
-                  </div>
-		  <br/><br/><br/><br/>
-		<table class="table table-striped">
-                  <tr>
-                    <td style="text-align: center">Revisado por:</td>
-                    <td style="text-align: center">Autorizado Por:</td>
-                    <td style="text-align: center" colspan="2">Recibi Conforme:</td>
-                  </tr>
-                </table>
-            </t>
-        </t>
-    </t>
-</template>
+                      </div>
+                      <br/><br/><br/><br/>
+                      <table class="table table-striped">
+                          <tr>
+                              <td style="text-align: center">Revisado por:</td>
+                              <td style="text-align: center">Autorizado Por:</td>
+                              <td style="text-align: center" colspan="2">Recibi Conforme:</td>
+                          </tr>
+                      </table>
+                  </t>
+              </t>
+          </t>
+      </template>
 
-    </data>
+  </data>
 </openerp>

@@ -1070,6 +1070,4 @@ class AccountInvoiceRefund(models.Model):
             number = invoice.supplier_invoice_number
         return number
 
-    _defaults = {
-        'description': _get_description,
-        }
+    description = fields.Char(default=_get_description)

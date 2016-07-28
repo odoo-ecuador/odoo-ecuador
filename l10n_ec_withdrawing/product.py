@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from openerp.osv import osv, fields
+from openerp import models, fields
 
 
-class ProductCategory(osv.osv):
+class ProductCategory(models.Model):
     _inherit = 'product.category'
 
-    _columns = {
-        'taxes_id': fields.many2many(
+    taxes_id = fields.Many2many(
             'account.tax', 'categ_taxes_rel',
             'prod_id', 'tax_id', 'Customer Taxes',
-            domain=[('parent_id', '=', False), ('type_tax_use', 'in', ['sale', 'all'])]),  # noqa
-        'supplier_taxes_id': fields.many2many(
+            domain=[('parent_id', '=', False), ('type_tax_use', 'in', ['sale', 'all'])])  # noqa
+    supplier_taxes_id = fields.Many2many(
             'account.tax',
             'categ_supplier_taxes_rel', 'prod_id', 'tax_id',
             'Supplier Taxes',
-            domain=[('parent_id', '=', False), ('type_tax_use', 'in', ['purchase', 'all'])]),  # noqa
-    }
+            domain=[('parent_id', '=', False), ('type_tax_use', 'in', ['purchase', 'all'])])  # noqa
