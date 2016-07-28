@@ -339,7 +339,8 @@ class AccountInvoiceTax(models.Model):
             ('other', 'Other')
         ],
         'Grupo',
-        required=True
+        required=True,
+        default='vat'
     )
     percent = fields.Char('Porcentaje', size=20)
     num_document = fields.Char('Num. Comprobante', size=50)
@@ -525,14 +526,10 @@ class Invoice(models.Model):
     @api.multi
     def print_move(self):
         # Método para imprimir comprobante contable
-        datas = {'ids': [self.move_id.id], 'model': 'account.move'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'report_move',
-            'model': 'account.move',
-            'datas': datas,
-            'nodestroy': True,
-            }
+        return self.env['report'].get_action(
+            self.move_id,
+            'l10n_ec_withdrawing.account_move_report'
+        )
 
     @api.multi
     def print_liq_purchase(self):

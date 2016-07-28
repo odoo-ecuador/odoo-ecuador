@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields
-from openerp.exceptions import Warning as UserError
 
 from stdnum import ec
 

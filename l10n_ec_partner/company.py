@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from openerp.osv import fields, osv
+from openerp import models, fields
 
 
-class Company(osv.osv):
+class ResCompany(models.Model):
     _name = "res.company"
     _inherit = "res.company"
 
-    _columns = {
-        'tradename': fields.char('Nombre Comercial', size=300),
-    }
+    tradename = fields.Char('Nombre Comercial', size=300)

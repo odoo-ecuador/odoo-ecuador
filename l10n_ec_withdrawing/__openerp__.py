@@ -29,6 +29,7 @@ Modulo para gestion de:
         'data/account.fiscal.position.csv',
         'security/ir.model.access.csv',
         'invoice_workflow.xml',
+        'views/report_account_move.xml',
         'withdrawing_view.xml',
         'withdrawing_report.xml',
         'retention_wizard.xml'
