@@ -10,12 +10,10 @@ class Company(models.Model):
     electronic_signature = fields.Char(
         'Firma Electrónica',
         size=128,
-        required=True
     )
     password_electronic_signature = fields.Char(
         'Clave Firma Electrónica',
         size=255,
-        required=True
     )
     emission_code = fields.Selection(
         [
@@ -23,6 +21,15 @@ class Company(models.Model):
             ('2', 'Indisponibilidad')
         ],
         string='Tipo de Emisión',
+        required=True,
+        default=1
+    )
+    env_service = fields.Selection(
+        [
+            ('1', 'Pruebas'),
+            ('2', 'Producción')
+        ],
+        string='Tipo de Ambiente',
         required=True,
         default=1
     )

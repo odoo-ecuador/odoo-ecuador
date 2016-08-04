@@ -53,68 +53,46 @@
       </field>
     </record>
 
-    <!-- record id="view_eretention_tree" model="ir.ui.view">
-      <field name="name">account.eretention.tree</field>
-      <field name="model">account.retention</field>
-      <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_tree"/>
-      <field name="arch" type="xml">
-        <xpath expr="//tree[@string='Retenciones de Impuestos']" position="attributes">
-          <attribute name="colors">blue:state == 'draft';green:authorization_sri == False;black:state in ('done');gray:state == 'cancel'</attribute>
-        </xpath>
-        <xpath expr="//tree//field[@name='name']" position="after">
-          <field name="autorizado_sri" invisible="1"/>
-        </xpath>
-      </field>
-    </record -->
-    <!-- eRetention Tree -->
-    <!-- record id="view_eretention_tree" model="ir.ui.view">
-      <field name="name">account.eretention.tree</field>
-      <field name="model">account.retention</field>
-      <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_tree"/>
-      <field name="arch" type="xml">
-        <xpath expr="//tree[@string='Retenciones de Impuestos']" position="attributes">
-          <attribute name="colors">blue:state == 'draft';green:authorization_sri == False;black:state in ('done');gray:state == 'cancel'</attribute>
-        </xpath>
-        <xpath expr="//tree//field[@name='partner_id']" position="after">
-          <field name="authorization_sri" invisible="1"/>
-        </xpath>
-      </field>
-    </record -->
     <!-- eInvoice Form -->
     <record id="view_account_einvoice_form" model="ir.ui.view">
-      <field name="name">account.einvoice.form</field>
-      <field name="model">account.invoice</field>
-      <field name="inherit_id" ref="account.invoice_form"/>
-      <field name="arch" type="xml">
-        <button name="action_invoice_sent" position="before">
-          <button name="action_generate_einvoice" type="object" string="Factura Electrónica" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', 'in', ('draft','cancel'))]}"/>
-        </button>
-        <xpath expr="//field[@name='move_id']" position="after">
-          <field name="clave_acceso"/>
-          <field name="numero_autorizacion"/>
-          <field name="fecha_autorizacion"/>
-          <field name="estado_autorizacion"/>
-	  <field name="ambiente"/>
-	  <field name="autorizado_sri"/>
-        </xpath>
-      </field>
+        <field name="name">account.einvoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <button name="action_invoice_sent" position="before">
+                <button name="action_generate_einvoice" type="object" string="Factura Electrónica" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', 'in', ('draft','cancel'))]}"/>
+            </button>
+            <xpath expr="//field[@name='move_id']" position="after">
+                <field name="clave_acceso"/>
+                <field name="numero_autorizacion"/>
+                <field name="fecha_autorizacion"/>
+                <field name="estado_autorizacion"/>
+	        <field name="ambiente"/>
+	        <field name="autorizado_sri"/>
+            </xpath>
+        </field>
     </record>
     <!-- eRetention Form -->
-    <!-- record id="view_account_eretention_form" model="ir.ui.view">
-      <field name="name">account.eretention.form</field>
-      <field name="model">account.retention</field>
-      <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_form"/>
-      <field name="arch" type="xml">
-        <button name="action_cancel" position="before">
-          <button name="action_generate_eretention" type="object" string="Enviar SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
-          <button name="action_authorization_sri" type="object" string="Autorización SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
-        </button>
-        <xpath expr="//field[@name='to_cancel']" position="after">
-          <field name="authorization_number"/>
-          <field name="authorization_date"/>
-          <field name="access_key"/>
-        </xpath>
-      </field>
-    </record -->
+    <record id="view_account_eretention_form" model="ir.ui.view">
+        <field name="name">account.eretention.form</field>
+        <field name="model">account.retention</field>
+        <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_form"/>
+        <field name="arch" type="xml">
+            <button name="action_cancel" position="before">
+                <button name="action_generate_eretention" type="object" string="Enviar SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
+                <button name="action_authorization_sri" type="object" string="Autorización SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
+            </button>
+            <xpath expr="//field[@name='move_id']" position="after">
+                <field name="clave_acceso"/>
+                <field name="numero_autorizacion"/>
+                <field name="fecha_autorizacion"/>
+                <field name="estado_autorizacion"/>
+	        <field name="ambiente"/>
+	        <field name="autorizado_sri"/>
+            </xpath>
+
+        </field>
+    </record>
+
   </data>
 </openerp>

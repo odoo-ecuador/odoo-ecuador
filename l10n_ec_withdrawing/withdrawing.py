@@ -909,7 +909,7 @@ class Invoice(models.Model):
 
             tids = [l.id for l in inv.tax_line if l.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]  # noqa
             account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
-            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': withdrawing.num_document})  # noqa
+            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': inv.supplier_invoice_number})  # noqa
 
             if inv.type in TYPES_TO_VALIDATE:
                 withdrawing.action_validate(wd_number)
