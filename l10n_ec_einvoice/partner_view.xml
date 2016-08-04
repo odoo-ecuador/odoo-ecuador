@@ -11,9 +11,10 @@
           <page string="Documentos Electrónicos">
             <groups>
               <group>
-                <field name="electronic_signature"/>
+                <field name="electronic_signature" required="1"/>
                 <field name="password_electronic_signature" password="1" required="1"/>
-                <field name="emission_code" required="1"/>
+                <field name="emission_code"/>
+                <field name="env_service"/>
               </group>
               <group string="Claves de Contingencia">
                 <field name="contingency_key_ids" nolabel="1" widget="one2many_list">

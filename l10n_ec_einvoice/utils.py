@@ -28,6 +28,22 @@ codigoImpuesto = {
     'other': '5'
 }
 
+tabla20 = {
+    'ret_ir': '1',
+    'ret_vat_b': '2',
+    'ret_vat_srv': '2',
+    'ret_isd': '6'
+}
+
+tabla21 = {
+    '10': '9',
+    '20': '10',
+    '30': '1',
+    '50': '11',
+    '70': '2',
+    '100': '3'
+}
+
 codigoImpuestoRetencion = {
     'ret_ir': '1',
     'ret_vat_b': '2',
@@ -63,8 +79,7 @@ def check_service(env='prueba'):
     for i in [1, 2, 3]:
         try:
             res = requests.head(URL, timeout=3)
+            flag = True
         except requests.exceptions.RequestException, e:
-            raise "Error", e
-    if i == 3:
-        flag = True
+            raise e
     return flag, res

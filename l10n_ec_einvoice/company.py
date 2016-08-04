@@ -24,6 +24,15 @@ class Company(models.Model):
         required=True,
         default=1
     )
+    env_service = fields.Selection(
+        [
+            ('1', 'Pruebas'),
+            ('2', 'Producción')
+        ],
+        string='Tipo de Ambiente',
+        required=True,
+        default=1
+    )
     contingency_key_ids = fields.One2many(
         'res.company.contingency.key',
         'company_id',
