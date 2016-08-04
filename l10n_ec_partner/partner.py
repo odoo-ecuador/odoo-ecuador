@@ -35,7 +35,6 @@ class ResPartner(models.Model):
         'Cedula/ RUC',
         size=13,
         required=True,
-        default='99999',
         help='Identificación o Registro Unico de Contribuyentes')
     type_ced_ruc = fields.Selection(
         [

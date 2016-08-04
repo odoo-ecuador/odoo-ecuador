@@ -21,6 +21,9 @@ class AccountWithdrawing(models.Model):
     _inherit = ['account.retention', 'account.edocument']
     __logger = logging.getLogger(_name)
 
+    def get_secuencial(self):
+        return getattr(self, 'name')[6:15]
+
     def _info_withdrawing(self, withdrawing):
         """
         """
@@ -57,8 +60,8 @@ class AccountWithdrawing(models.Model):
         impuestos = []
         for line in retention.tax_ids:
             impuesto = {
-                'codigo': utils.codigoImpuestoRetencion[line.tax_group],
-                'codigoRetencion': get_codigo_retencion(line),
+                'codigo': utils.tabla20[line.tax_group],
+                'codigoRetencion': utils.tabla21[line.percent],
                 'baseImponible': '%.2f' % (line.base),
                 'porcentajeRetener': str(line.percent),
                 'valorRetenido': '%.2f' % (abs(line.amount)),
@@ -78,6 +81,7 @@ class AccountWithdrawing(models.Model):
         data.update(self._info_withdrawing(document))
         data.update(self._impuestos(document))
         edocument = ewithdrawing_tmpl.render(data)
+        print edocument
         return edocument
 
     def render_authorized_document(self, autorizacion):

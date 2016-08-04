@@ -14,6 +14,7 @@ from .xades.sri import SriService
 class Edocument(models.AbstractModel):
 
     _name = 'account.edocument'
+    SriServiceObj = SriService()
 
     clave_acceso = fields.Char(
         'Clave de Acceso',
@@ -43,17 +44,22 @@ class Edocument(models.AbstractModel):
     security_code = fields.Char('Código de Seguridad', size=8)
     emission_code = fields.Char('Tipo de Emisión', size=1)
 
+    def get_auth(self, document):
+        if document._name == 'account.invoice':
+            return document.journal_id.auth_id
+        elif document._name == 'account.retention':
+            return document.invoice_id.journal_id.auth_ret_id
+
+    def get_secuencial(self):
+        return getattr(self, 'number')[6:15]
+
     def _info_tributaria(self, document, access_key, emission_code):
         """
         """
         company = document.company_id
-        auth = False
-        if document._name == 'account.invoice':
-            auth = document.journal_id.auth_id
-        elif document._name == 'account.retention':
-            auth = document.invoice_id.journal_id.auth_ret_id
+        auth = self.get_auth(document)
         infoTributaria = {
-            'ambiente': SriService.get_active_env(),
+            'ambiente': self.env.user.company_id.env_service,
             'tipoEmision': emission_code,
             'razonSocial': company.name,
             'nombreComercial': company.name,
@@ -62,7 +68,7 @@ class Edocument(models.AbstractModel):
             'codDoc': utils.tipoDocumento[auth.type_id.code],
             'estab': auth.serie_entidad,
             'ptoEmi': auth.serie_emision,
-            'secuencial': getattr(self, 'number', document.name)[6:15],  # noqa
+            'secuencial': self.get_secuencial(),
             'dirMatriz': company.street
         }
         return infoTributaria
@@ -74,7 +80,8 @@ class Edocument(models.AbstractModel):
     @api.multi
     def _get_codes(self, name='account.invoice'):
         ak_temp = self.get_access_key(name)
-        access_key = SriService.create_access_key(ak_temp)
+        self.SriServiceObj.set_active_env(self.env.user.company_id.env_service)
+        access_key = self.SriServiceObj.create_access_key(ak_temp)
         emission_code = self.company_id.emission_code
         return access_key, emission_code
 
