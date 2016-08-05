@@ -57,9 +57,6 @@
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
-            <button name="action_invoice_sent" position="before">
-                <button name="action_generate_einvoice" type="object" string="Factura Electrónica" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', 'in', ('draft','cancel'))]}"/>
-            </button>
             <xpath expr="//field[@name='move_id']" position="after">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>
@@ -76,10 +73,6 @@
         <field name="model">account.retention</field>
         <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_form"/>
         <field name="arch" type="xml">
-            <button name="action_cancel" position="before">
-                <button name="action_generate_eretention" type="object" string="Enviar SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
-                <button name="action_authorization_sri" type="object" string="Autorización SRI" class="oe_highlight" groups="base.group_user" attrs="{'invisible':[('state', '=', 'draft')]}"/>
-            </button>
             <xpath expr="//field[@name='move_id']" position="after">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>

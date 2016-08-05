@@ -51,7 +51,7 @@
         <impuesto>
           <codigo>{{ tax['codigo'] }}</codigo>
           <codigoPorcentaje>{{ tax['codigoPorcentaje'] }}</codigoPorcentaje>
-          <tarifa>0.00</tarifa>
+          <tarifa>{{ tax['tarifa'] }}</tarifa>
           <baseImponible>{{ tax['baseImponible'] }}</baseImponible>
           <valor>{{ tax['valor'] }}</valor>
         </impuesto>

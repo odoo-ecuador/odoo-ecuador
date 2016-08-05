@@ -49,8 +49,8 @@ class AccountInvoice(models.Model):
         for tax in invoice.tax_line:
             if tax.tax_group in ['vat', 'vat0', 'ice', 'other']:
                 totalImpuesto = {
-                    'codigo': utils.codigoImpuesto[tax.tax_group],
-                    'codigoPorcentaje': utils.tarifaImpuesto[tax.tax_group],
+                    'codigo': utils.tabla17[tax.tax_group],
+                    'codigoPorcentaje': utils.tabla18[tax.percent],
                     'baseImponible': '{:.2f}'.format(tax.base_amount),
                     'valor': '{:.2f}'.format(tax.tax_amount)
                     }
@@ -75,9 +75,12 @@ class AccountInvoice(models.Model):
 
         detalles = []
         for line in invoice.invoice_line:
+            codigoPrincipal = line.product_id and \
+                line.product_id.default_code and \
+                fix_chars(line.product_id.default_code) or '001'
             detalle = {
-                'codigoPrincipal': fix_chars(line.product_id.default_code),
-                'descripcion': fix_chars(line.name),
+                'codigoPrincipal': codigoPrincipal,
+                'descripcion': fix_chars(line.name.strip()),
                 'cantidad': '%.6f' % (line.quantity),
                 'precioUnitario': '%.6f' % (line.price_unit),
                 'descuento': '0.00',
@@ -85,10 +88,10 @@ class AccountInvoice(models.Model):
             }
             impuestos = []
             for tax_line in line.invoice_line_tax_id:
-                if tax_line.tax_group in ['vat', 'vat0', 'ice', 'other']:
+                if tax_line.tax_group in ['vat', 'vat0', 'ice']:
                     impuesto = {
-                        'codigo': utils.codigoImpuesto[tax_line.tax_group],
-                        'codigoPorcentaje': utils.tarifaImpuesto[tax_line.tax_group],  # noqa
+                        'codigo': utils.tabla17[tax_line.tax_group],
+                        'codigoPorcentaje': utils.tabla18[tax_line.porcentaje],  # noqa
                         'tarifa': tax_line.porcentaje,
                         'baseImponible': '{:.2f}'.format(line.price_subtotal),
                         'valor': '{:.2f}'.format(line.price_subtotal *
@@ -168,13 +171,6 @@ class AccountInvoice(models.Model):
                 self.send_mail_refund(obj, access_key)
 
     @api.multi
-    def invoice_print(self):
-        # Método para imprimir reporte de liquidacion de compra
-        datas = {'ids': [self.id], 'model': 'account.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'account_einvoice',
-            'model': 'account.invoice',
-            'datas': datas,
-            'nodestroy': True,
-            }
+    def invoice_validate(self):
+        super(AccountInvoice, self).invoice_validate()
+        self.action_generate_einvoice()

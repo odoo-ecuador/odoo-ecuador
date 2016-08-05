@@ -14,6 +14,10 @@ from .xades.sri import SriService
 class Edocument(models.AbstractModel):
 
     _name = 'account.edocument'
+    _FIELDS = {
+        'account.invoice': 'supplier_invoice_number',
+        'account.retention': 'name'
+    }
     SriServiceObj = SriService()
 
     clave_acceso = fields.Char(
@@ -51,7 +55,7 @@ class Edocument(models.AbstractModel):
             return document.invoice_id.journal_id.auth_ret_id
 
     def get_secuencial(self):
-        return getattr(self, 'number')[6:15]
+        return getattr(self, self._FIELDS[self._name])
 
     def _info_tributaria(self, document, access_key, emission_code):
         """
@@ -77,27 +81,21 @@ class Edocument(models.AbstractModel):
         code = self.env['ir.sequence'].get('edocuments.code')
         return code
 
-    @api.multi
-    def _get_codes(self, name='account.invoice'):
-        ak_temp = self.get_access_key(name)
-        self.SriServiceObj.set_active_env(self.env.user.company_id.env_service)
-        access_key = self.SriServiceObj.create_access_key(ak_temp)
-        emission_code = self.company_id.emission_code
-        return access_key, emission_code
-
     def get_access_key(self, name):
         if name == 'account.invoice':
             auth = self.journal_id.auth_id
             ld = self.date_invoice.split('-')
+            field = 'supplier_invoice_number'
         elif name == 'account.retention':
             auth = self.invoice_id.journal_id.auth_ret_id
             ld = self.date.split('-')
+            field = 'name'
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
         ruc = self.company_id.partner_id.ced_ruc
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
-        numero = getattr(self, 'number', self.name)[6:15]
+        numero = getattr(self, field)
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
         access_key = (
@@ -105,6 +103,14 @@ class Edocument(models.AbstractModel):
             [serie, numero, codigo_numero, tipo_emision]
             )
         return access_key
+
+    @api.multi
+    def _get_codes(self, name='account.invoice'):
+        ak_temp = self.get_access_key(name)
+        self.SriServiceObj.set_active_env(self.env.user.company_id.env_service)
+        access_key = self.SriServiceObj.create_access_key(ak_temp)
+        emission_code = self.company_id.emission_code
+        return access_key, emission_code
 
     @api.multi
     def check_before_sent(self):
@@ -117,13 +123,14 @@ class Edocument(models.AbstractModel):
             'y secuencial. Por favor enviar primero el',
             ' comprobante inmediatamente anterior.'])
         FIELD = {
-            'account.invoice': 'number',
+            'account.invoice': 'supplier_invoice_number',
             'account.retention': 'name'
         }
-        number = getattr(self, 'number', self.name)
+        number = getattr(self, FIELD[self._name])
         sql = ' '.join([
             "SELECT autorizado_sri, %s FROM %s" % (FIELD[self._name], self._table),  # noqa
             "WHERE state='open' AND %s < '%s'" % (FIELD[self._name], number),  # noqa
+            self._name == 'account.invoice' and "AND type = 'out_invoice'" or '',
             "ORDER BY %s DESC LIMIT 1" % FIELD[self._name]
         ])
         self.env.cr.execute(sql)

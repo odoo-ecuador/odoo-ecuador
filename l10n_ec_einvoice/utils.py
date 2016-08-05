@@ -28,6 +28,20 @@ codigoImpuesto = {
     'other': '5'
 }
 
+tabla17 = {
+    'vat': '2',
+    'ice': '3',
+    'irbpnr': '5'
+}
+
+tabla18 = {
+    '0': '0',
+    '12': '2',
+    '14': '3',
+    'novat': '6',
+    'excento': '7'
+}
+
 tabla20 = {
     'ret_ir': '1',
     'ret_vat_b': '2',

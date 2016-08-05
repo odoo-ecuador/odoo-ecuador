@@ -201,6 +201,11 @@
 			<xsd:pattern value="[0][4-9]"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="tipoIdentificacion">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0][4-9]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="guiaRemision">
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="[0-9]{3}-[0-9]{3}-[0-9]{9}"/>
@@ -501,7 +506,8 @@
 	<xsd:simpleType name="formaPago">
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="[0][1-9]"/>
-			<xsd:pattern value="[1][0-5]"/>
+			<xsd:pattern value="[1][0-9]"/>
+			<xsd:pattern value="[2][0-1]"/>
 		</xsd:restriction>
 	</xsd:simpleType>	
 	<xsd:simpleType name="total">
@@ -532,6 +538,62 @@
 			<xsd:pattern value="[^\n]*"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="placa">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="motivoTraslado">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="docAduaneroUnico">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="64"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dirPartida">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>	
+	<xsd:simpleType name="dirDestinatario">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>	
+	<xsd:simpleType name="rucTransportista">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ruta">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="concepto">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="300"/>
+			<xsd:pattern value="[^\n]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:complexType name="pagos">	
 		<xsd:sequence>
 			<xsd:element name="pago" minOccurs="1" maxOccurs="unbounded">
@@ -556,6 +618,26 @@
 			<xsd:element name="tarifa" type="tarifa" minOccurs="1"/>
 			<xsd:element name="baseImponible" type="baseImponible" minOccurs="1"/>
 			<xsd:element name="valor" type="valor"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="destino">
+		<xsd:annotation>
+			<xsd:documentation>Contiene la informacion del destinatario</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="motivoTraslado" type="motivoTraslado"/>
+			<xsd:element name="docAduaneroUnico" type="docAduaneroUnico" minOccurs="0"/>
+			<xsd:element name="codEstabDestino" type="establecimiento" minOccurs="0"/>
+			<xsd:element name="ruta" type="ruta" minOccurs="0"/>			
+		</xsd:sequence>
+	</xsd:complexType>	
+	<xsd:complexType name="rubro">
+		<xsd:annotation>
+			<xsd:documentation>Contiene la informacion del rubro</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="concepto" type="concepto" minOccurs="1"/>
+			<xsd:element name="total" type="total" minOccurs="1"/>			
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:simpleType name="codigoDocumentoReembolso">
@@ -697,7 +779,34 @@
 			</xsd:element>						
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="reembolsos">	
+	<xsd:simpleType name="codigoPorcentajeCompensacion">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[1]"/>
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="compensacion">
+		<xsd:sequence>
+			<xsd:element name="codigo" minOccurs="1" type="codigoPorcentajeCompensacion"/>
+			<xsd:element name="tarifa" minOccurs="1" type="tarifa"/>
+			<xsd:element name="valor" minOccurs="1" type="valor"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compensaciones">	
+		<xsd:sequence>
+			<xsd:element name="compensacion" minOccurs="1" maxOccurs="unbounded" type="compensacion"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compensacionesReembolso">
+		<xsd:sequence>
+			<xsd:element name="compensacionReembolso" minOccurs="1" maxOccurs="unbounded" type="compensacion"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="reembolsos">
 		<xsd:sequence>
 			<xsd:element name="reembolsoDetalle" minOccurs="1" maxOccurs="unbounded">
 				<xsd:complexType>
@@ -713,6 +822,7 @@
 						<xsd:element name="fechaEmisionDocReembolso" minOccurs="1" type="fechaEmisionDocReembolso"/>	
 						<xsd:element name="numeroautorizacionDocReemb" minOccurs="1" type="numeroautorizacionDocReemb"/>
 						<xsd:element name="detalleImpuestos" minOccurs="1" type="detalleImpuestos"/>
+ 						<xsd:element name="compensacionesReembolso" minOccurs="0" maxOccurs="1" type="compensacionesReembolso"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>						
@@ -725,7 +835,7 @@
 				<xsd:element name="infoFactura">
 					<xsd:complexType>
 						<xsd:sequence>
-							<xsd:element name="fechaEmision" type="fechaEmision"> </xsd:element>
+							<xsd:element name="fechaEmision" type="fechaEmision"/>
 							<xsd:element name="dirEstablecimiento" type="dirEstablecimiento" minOccurs="0"/>
 							<xsd:element name="contribuyenteEspecial" type="contribuyenteEspecial" minOccurs="0"/>
 							<xsd:element name="obligadoContabilidad" minOccurs="0"	type="obligadoContabilidad"/>
@@ -769,7 +879,8 @@
 									</xsd:sequence>
 								</xsd:complexType>
 							</xsd:element>
-							<xsd:element name="propina" type="propina" minOccurs="1"/>
+							<xsd:element name="compensaciones" minOccurs="0" maxOccurs="1" type="compensaciones"/>
+							<xsd:element name="propina" type="propina" minOccurs="0"/>
 							<xsd:element name="fleteInternacional" minOccurs="0" type="fleteInternacional"/>
 							<xsd:element name="seguroInternacional" minOccurs="0" type="seguroInternacional"/>
 							<xsd:element name="gastosAduaneros" minOccurs="0" type="gastosAduaneros"/>
@@ -854,6 +965,40 @@
 							</xsd:element>
 						</xsd:sequence>
 					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="infoSustitutivaGuiaRemision" minOccurs="0"  maxOccurs="1">
+					<xsd:complexType>
+						<xsd:annotation>
+							<xsd:documentation>Contiene la informacion sustitutiva de guia de remision</xsd:documentation>
+						</xsd:annotation>
+						<xsd:sequence>
+							<xsd:element name="dirPartida" type="dirPartida" minOccurs="1"/>
+							<xsd:element name="dirDestinatario" type="dirDestinatario" minOccurs="1"/>
+							<xsd:element name="fechaIniTransporte" type="fechaType" minOccurs="1"/>
+							<xsd:element name="fechaFinTransporte" type="fechaType" minOccurs="1"/>
+							<xsd:element name="razonSocialTransportista" type="razonSocial"/>
+							<xsd:element name="tipoIdentificacionTransportista" type="tipoIdentificacion"/>
+							<xsd:element name="rucTransportista" type="rucTransportista"/>
+							<xsd:element name="placa" type="placa"/>
+							<xsd:element name="destinos">
+								<xsd:complexType>	
+									<xsd:sequence>
+										<xsd:element name="destino" type="destino"  minOccurs="1" maxOccurs="unbounded"/>						
+									</xsd:sequence>
+								</xsd:complexType>	
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="otrosRubrosTerceros" minOccurs="0" maxOccurs="1">	
+					<xsd:complexType>				
+						<xsd:annotation>
+							<xsd:documentation>Contiene la informacion sustitutiva de rubros de terceros</xsd:documentation>
+						</xsd:annotation>						
+						<xsd:sequence>
+							<xsd:element name="rubro" type="rubro" minOccurs="1" maxOccurs="unbounded"/>						
+						</xsd:sequence>						
+					</xsd:complexType>	
 				</xsd:element>
 				<xsd:element name="infoAdicional" minOccurs="0">
 					<xsd:complexType>

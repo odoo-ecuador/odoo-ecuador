@@ -902,7 +902,7 @@ class Invoice(models.Model):
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
                 'period_id': inv.period_id.id,
-                'num_document': self.invoice_number
+                'num_document': self.invoice_number,
             }
 
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
