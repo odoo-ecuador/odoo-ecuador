@@ -10,7 +10,7 @@
      body {
        font-family:helvetica, helvetica bold, Arial Bold;
        font-size:12px;
-       height: 297mm;
+       height: 260mm;
        width: 210mm
      }
 
