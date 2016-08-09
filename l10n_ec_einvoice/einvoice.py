@@ -19,7 +19,7 @@ class AccountInvoice(models.Model):
 
     _name = 'account.invoice'
     _inherit = ['account.invoice', 'account.edocument']
-    __logger = logging.getLogger('account.edocument')
+    _logger = logging.getLogger('account.edocument')
 
     def _info_factura(self, invoice):
         """
@@ -52,6 +52,7 @@ class AccountInvoice(models.Model):
                     'codigo': utils.tabla17[tax.tax_group],
                     'codigoPorcentaje': utils.tabla18[tax.percent],
                     'baseImponible': '{:.2f}'.format(tax.base_amount),
+                    'tarifa': tax.percent,
                     'valor': '{:.2f}'.format(tax.tax_amount)
                     }
                 totalConImpuestos.append(totalImpuesto)
@@ -158,6 +159,7 @@ class AccountInvoice(models.Model):
                 auth_einvoice = self.render_authorized_einvoice(auth)
                 self.update_document(auth, [access_key, emission_code])
                 self.add_attachment(auth_einvoice, auth)
+                self.send_einvoice()
             else:
                 # Revisar codigo que corre aca
                 if not obj.origin:
@@ -170,7 +172,25 @@ class AccountInvoice(models.Model):
                 # envío del correo electrónico de nota de crédito al cliente
                 self.send_mail_refund(obj, access_key)
 
-    @api.multi
-    def invoice_validate(self):
-        super(AccountInvoice, self).invoice_validate()
-        self.action_generate_einvoice()
+    @api.one
+    def send_einvoice(self):
+        self._logger.info('Enviando documento electronico por correo')
+        tmpl = self.env.ref('l10n_ec_einvoice.email_template_einvoice')
+        self.pool.get('email.template').send_mail(
+            self.env.cr,
+            self.env.user.id,
+            tmpl.id,
+            self.id
+        )
+        self.sent = True
+        return True
+
+    def invoice_print(self, cr, uid, ids, context=None):
+        datas = {'ids': ids, 'model': 'account.invoice'}
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'account_einvoice',
+            'model': 'account.invoice',
+            'datas': datas,
+            'nodestroy': True,
+            }

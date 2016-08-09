@@ -86,16 +86,18 @@ class Edocument(models.AbstractModel):
             auth = self.journal_id.auth_id
             ld = self.date_invoice.split('-')
             field = 'supplier_invoice_number'
+            numero = getattr(self, field)
         elif name == 'account.retention':
             auth = self.invoice_id.journal_id.auth_ret_id
             ld = self.date.split('-')
             field = 'name'
+            numero = getattr(self, field)
+            numero = numero[6:15]
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
         ruc = self.company_id.partner_id.ced_ruc
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
-        numero = getattr(self, field)
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
         access_key = (

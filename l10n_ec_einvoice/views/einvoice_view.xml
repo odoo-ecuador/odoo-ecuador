@@ -36,27 +36,17 @@
     </record>
     <!-- Contingency Key MenuItem -->
     <menuitem action="action_contingency_key" id="menu_action_contingency_key" parent="account.menu_journals"/>
-    <!-- eInvoice Tree -->
-    <record id="view_einvoice_tree" model="ir.ui.view">
-      <field name="name">account.einvoice.tree</field>
-      <field name="model">account.invoice</field>
-      <field name="inherit_id" ref="account.invoice_tree"/>
-      <field name="arch" type="xml">
-        <xpath expr="//tree//field[@name='partner_id']" position="after">
-          <field name="autorizado_sri" invisible="1"/>
-        </xpath>
-        <xpath expr="//tree[@string='Invoice']" position="attributes">
-          <attribute name="colors">blue:state == 'draft';green:autorizado_sri == False;black:state in ('proforma','proforma2','open');gray:state == 'cancel'</attribute>
-        </xpath>
-      </field>
-    </record>
-
     <!-- eInvoice Form -->
     <record id="view_account_einvoice_form" model="ir.ui.view">
         <field name="name">account.einvoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_invoice_sent']" position="replace"/>
+            <xpath expr="//button[@name='action_invoice_sent']" position="replace">
+                <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('sent','=',True),('state','!=','open')]}"
+                        string="Generar Fact. Electrónica" class="oe_highlight"/>
+            </xpath>
             <xpath expr="//field[@name='move_id']" position="after">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>

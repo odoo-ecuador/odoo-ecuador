@@ -167,7 +167,7 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="numAutDocSustento">
 		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="[0-9]{10,37}"/>
+			<xsd:pattern value="[0-9]{10,49}"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="fechaEmisionDocSustento">

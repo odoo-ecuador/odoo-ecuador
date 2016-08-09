@@ -2,30 +2,22 @@
 {
     'name': 'Electronic Documents for Ecuador',
     'version': '0.1.0',
-    'author': 'Cristian Salamea, VIRTUALSAMI CIA. LTDA.',
+    'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
     'data': [
-        'data_einvoice.xml',
-        'einvoice_view.xml',
-        'partner_view.xml',
-        'einvoice_report.xml',
-        'edi/einvoice_data.xml'
+        'edi/einvoice_edi.xml',
+        'data/data_einvoice.xml',
+        'views/einvoice_view.xml',
+        'views/partner_view.xml',
+        'views/report_einvoice.xml',
+        'einvoice_report.xml'
     ],
     'depends': [
-        'l10n_ec_withdrawing'
-    ],
-    'update_xml': [
-    ],
-    'js': [
-    ],
-    'qweb': [
-    ],
-    'css': [
-    ],
-    'test': [
+        'report_webkit',
+        'l10n_ec_withdrawing',
     ],
     'description': '''
-    This module allows make Electronic Documents for Ecuador
+    This module allows generate Electronic Documents for Ecuador
     ''',
 }

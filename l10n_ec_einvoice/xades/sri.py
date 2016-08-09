@@ -48,6 +48,7 @@ class DocumentXML(object):
         Validar esquema XML
         """
         self.logger.info('Validacion de esquema')
+        self.logger.debug(etree.tostring(self.document, pretty_print=True))
         file_path = os.path.join(os.path.dirname(__file__), self._schema)
         schema_file = open(file_path)
         xmlschema_doc = etree.parse(schema_file)
@@ -91,7 +92,8 @@ class DocumentXML(object):
         messages = []
         client = Client(SriService.get_active_ws()[1])
         result = client.service.autorizacionComprobante(access_key)
-        print result
+        self.logger.debug("Respuesta de autorizacionComprobante:SRI")
+        self.logger.debug(result)
         autorizacion = result.autorizaciones[0][0]
         mensajes = autorizacion.mensajes and autorizacion.mensajes[0] or []
         self.logger.info('Estado de autorizacion %s' % autorizacion.estado)

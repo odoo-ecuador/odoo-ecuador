@@ -30,6 +30,7 @@ codigoImpuesto = {
 
 tabla17 = {
     'vat': '2',
+    'vat0': '2',
     'ice': '3',
     'irbpnr': '5'
 }

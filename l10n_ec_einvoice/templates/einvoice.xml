@@ -28,7 +28,7 @@
         <codigo>{{ item['codigo'] }}</codigo>
         <codigoPorcentaje>{{ item['codigoPorcentaje'] }}</codigoPorcentaje>
         <baseImponible>{{ item['baseImponible'] }}</baseImponible>
-        <tarifa>0.00</tarifa>
+        <tarifa>{{ item['tarifa'] }}</tarifa>
         <valor>{{ item['valor'] }}</valor>
       </totalImpuesto>
       {% endfor %}
