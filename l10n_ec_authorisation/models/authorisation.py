@@ -234,10 +234,9 @@ class AccountInvoice(models.Model):
         copy=False
     )
 
-    @api.onchange(
-        'supplier_invoice_number',
-        'auth_inv_id'
-    )
+#    @api.onchange(
+#        'auth_inv_id'
+#    )
     def check_invoice_supplier(self):
         if self.supplier_invoice_number:
             res = self.auth_inv_id.is_valid_number(self.supplier_invoice_number)  # noqa

@@ -72,10 +72,7 @@
                     <field name="retention_ir" invisible="1"/>
                     <field name="retention_vat" invisible="1"/>
                 </xpath>
-                <xpath expr="//field[@name='supplier_invoice_number']" position="before">
-                    <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
-                           context="{'default_partner_id': partner_id}"/>
-                </xpath>
+
                 <xpath expr="//field[@name='date_invoice']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>

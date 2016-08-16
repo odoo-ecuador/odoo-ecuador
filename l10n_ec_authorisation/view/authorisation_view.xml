@@ -7,13 +7,14 @@
           <field name="model">account.invoice</field>
           <field name="inherit_id" ref="account.invoice_supplier_form"/>
           <field name="arch" type="xml">
-	      <xpath expr="//label[@for='reference_type']" position="attributes">
-	          <attribute name="string">Autorización</attribute>
-	      </xpath>
-	      <field name="reference_type" position="replace"/>
 	      <field name="reference" position="attributes">
 	          <attribute name="required">True</attribute>
+	          <attribute name="string">Autorización</attribute>
 	      </field>
+              <xpath expr="//field[@name='reference']" position="before">
+                  <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
+                         context="{'default_partner_id': partner_id}"/>
+              </xpath>
           </field>
       </record>
 
@@ -143,7 +144,7 @@
     <menuitem action="action_account_auth_tree" id="menu_action_authorisation" parent="account.menu_finance_payables"/>
 
     <record id="action_account_authin_tree" model="ir.actions.act_window">
-        <field name="name">Autorizaciones SRI</field>
+        <field name="name">Establecimientos</field>
         <field name="res_model">account.authorisation</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
@@ -152,7 +153,7 @@
         <field name="domain">[('in_type', '=', 'interno')]</field>
     </record>
 
-    <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.menu_journals"/>
+    <menuitem action="action_account_authin_tree" id="menu_action_authorisation_in" parent="account.account_account_menu"/>
 
     <!--
     -->
@@ -189,14 +190,14 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.next_id_27"/>
+    <menuitem action="action_account_ats_doc" id="menu_action_account_ats_doc" parent="account.account_account_menu"/>
 
     <record id="view_account_ats_sustento_tree" model="ir.ui.view">
         <field name="name">account.ats.sustento.tree</field>
         <field name="model">account.ats.sustento</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-	    <tree string="Sustento del Comprobante">
+	    <tree string="Sustento del Comprobante" editable="top">
                 <field name="code" select="1"/>
 	        <field name="type"/>
 	    </tree>
@@ -223,7 +224,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.next_id_27"/>
+    <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.account_account_menu"/>
 
 </data>
 </openerp>

@@ -10,24 +10,10 @@ Este módulo agrega la funcionalidad para controlar los establecimientos
 de partners y de la compañia.
 
 
-Installation
-============
+Uso
+===
 
-To install this module, you need to:
-
-#. Do this ...
-
-Configuration
-=============
-
-To configure this module, you need to:
-
-#. Go to ...
-
-Usage
-=====
-
-To use this module, you need to:
+Este módulo es parte de la localización ecuatoriana.
 
 #. Go to ...
 
@@ -41,7 +27,7 @@ To use this module, you need to:
 Known issues / Roadmap
 ======================
 
-* ...
+* Numeración de facturas depende aun del campo supplier_invoice_number
 
 Bug Tracker
 ===========
