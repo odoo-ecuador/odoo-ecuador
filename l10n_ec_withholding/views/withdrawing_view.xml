@@ -10,16 +10,8 @@
             <field name="model">account.tax</field>
             <field name="inherit_id" ref="account.view_tax_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='description']" position="replace">
-                    <field name="tax_group"/>
-                </xpath>
                 <xpath expr="//field[@name='name']" position="before">
                     <field name="porcentaje"/>
-                    <field name="description"/>
-                </xpath>
-                <xpath expr="//field[@name='price_include']" position="replace">
-                    <field name="base_code_id"/>
-                    <field name="tax_code_id"/>
                 </xpath>
             </field>
         </record>
@@ -30,23 +22,7 @@
             <field name="inherit_id" ref="account.view_tax_form"/>
             <field name="arch" type="xml">
                 <field name="active" position="after">
-                    <field name="tax_group"/>
                     <field name="porcentaje" required="1"/>
-                </field>
-            </field>
-        </record>
-
-        <record id="view_account_tax_search2" model="ir.ui.view">
-            <field name="name">account.tax.tree2</field>
-            <field name="model">account.tax</field>
-            <field name="inherit_id" ref="account.view_account_tax_search"/>
-            <field name="arch" type="xml">
-                <field name="name" position="after">
-                    <field name="tax_group"/>
-                    <field name="porcentaje"/>
-                    <field name="base_code_id" select="1" string="Cod. Base Imponible"/>
-                    <field name="tax_code_id" select="1" string="Cod. Imp. Generado"/>
-                    <field name="type_tax_use"/>
                 </field>
             </field>
         </record>
@@ -57,16 +33,16 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='move_id']" position="after">
-                    <field name="retention_id" context="{'in_type': type}"/>
+                    <field name="retention_id"/>
                 </xpath>
-                <xpath expr="//field[@name='fiscal_position']" position="attributes">
-                    <attribute name="attrs">{'required':[('type','=','in_invoice')]}</attribute>
+                <xpath expr="//field[@name='fiscal_position_id']" position="attributes">
+                    <attribute name="required">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='journal_id']" position="after">
+                <xpath expr="//field[@name='date_due']" position="after">
                     <label string="Nro. de Retención" for="withdrawing_number"/>
                     <div>
                         <field name="create_retention_type" class="oe_inline"/> -
-                        <field name="withdrawing_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
+                        <field name="withholding_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
                         <field name="sustento_id" placeholder="Sustento" required="1" widget="selection" class="oe_inline oe_edit_only"/>
                     </div>
                     <field name="retention_ir" invisible="1"/>
@@ -76,9 +52,8 @@
                 <xpath expr="//field[@name='date_invoice']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='supplier_invoice_number']" position="attributes">
-                    <attribute name="placeholder">000004321 (9 dígitos)</attribute>
-                    <attribute name="required">1</attribute>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="string">Proveedor</attribute>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="replace">
                     <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -130,7 +105,6 @@
                     <field name="date"/>
                     <field name="num_document"/>
                     <field name="invoice_id"/>
-                    <field name="period_id"/>
                     <field name="amount_total"/>
                     <field name="state"/>
                 </tree>
@@ -181,13 +155,7 @@
 		                <field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
 		                    <tree string="Impuestos Aplicados">
 		                        <field name="invoice_id" invisible="1"/>
-		                        <field name="fiscal_year"/>
-		                        <field name="base"/>
-		                        <field name="percent"/>
-                                        <field name="base_code_id"/>
-		                        <field name="tax_code_id"/>
-                                        <field name="tax_group"/>
-		                        <field name="amount"/>
+
 		                    </tree>
 		                </field>
 		                <group class="oe_subtotal_footer oe_right">
@@ -207,7 +175,7 @@
         </record>
 
         <record id="action_account_retention2_tree" model="ir.actions.act_window">
-            <field name="name">Retención</field>
+            <field name="name">Retenciones a Proveedor</field>
             <field name="res_model">account.retention</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -218,7 +186,7 @@
         <menuitem action="action_account_retention2_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
 
         <record id="action_account_retention_out_tree" model="ir.actions.act_window">
-            <field name="name">Documentos de Retención</field>
+            <field name="name">Retenciones de Cliente</field>
             <field name="res_model">account.retention</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
@@ -241,19 +209,15 @@
 	    src_model="account.invoice"
 	    res_model="account.move"/>
 
-        <record id="view_invoice_retention_tree2" model="ir.ui.view">
-            <field name="name">view.invoice.retention.tree2</field>
+        <record id="view_account_invoice_tree22" model="ir.ui.view">
+            <field name="name">view.account.invoice.tree22</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_tree"/>
             <field name="arch" type="xml">
-	        <xpath expr="/tree/field[@name='amount_untaxed']" position="replace">
+	        <xpath expr="//field[@name='amount_total_signed']" position="before">
 	            <field name="amount_vat_cero" sum="Total Base 0"/>
 	            <field name="amount_vat" sum="Total Base 12"/>
 	        </xpath>
-	        <xpath expr="/tree/field[@name='origin']" position="replace">
-                    <field name="supplier_invoice_number"/>
-                </xpath>
-	        <xpath expr="/tree/field[@name='currency_id']" position="replace"/>
             </field>
         </record>
 
@@ -261,7 +225,7 @@
             Liquidacion de Compra
         -->
 
-        <record id="invoice_liq_purchase_form" model="ir.ui.view">
+        <!-- record id="invoice_liq_purchase_form" model="ir.ui.view">
             <field name="name">account.invoice.liq.purchase.form</field>
             <field name="model">account.invoice</field>
             <field name="type">form</field>
@@ -381,7 +345,6 @@
                                     </group>
                                     <group>
                                         <field name="move_id" groups="account.group_account_user"/>
-                                        <field name="period_id" domain="[('state', '=', 'draft'), ('company_id', '=', company_id)]" groups="account.group_account_user"/>
                                         <field name="company_id" on_change="onchange_company_id(company_id,partner_id,type,invoice_line,currency_id)" widget="selection" groups="base.group_multi_company"/>
                                     </group>
                                 </group>
@@ -409,7 +372,7 @@
                     </div>
                 </form>
             </field>
-        </record>
+        </record -->
 
         <record id="action_liq_purchase_tree" model="ir.actions.act_window">
             <field name="name">Liquidaciones de Compra</field>
@@ -428,7 +391,7 @@
         <record id="action_liq_purchase_tree_view2" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="invoice_liq_purchase_form"/>
+            <!-- field name="view_id" ref="invoice_liq_purchase_form"/ -->
             <field name="act_window_id" ref="action_liq_purchase_tree"/>
         </record>
 
@@ -438,36 +401,21 @@
             Customer Invoice
         -->
 
-        <record id="view_account_invoice_filter2" model="ir.ui.view">
-            <field name="name">account.invoice.reference.cust2.form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
-            <field name="arch" type="xml">
-	        <xpath expr="//field[@name='period_id']" position="after">
-                    <field name="supplier_invoice_number"/>
-	        </xpath>
-            </field>
-        </record>
-
         <record id="view_invoice_reference_customer_form" model="ir.ui.view">
             <field name="name">account.invoice.reference.cust.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
-	        <field name="fiscal_position" position="after">
-	            <field name="auth_inv_id" domain="[('in_type','=','interno')]" required="1" options="{'no_create':True, 'no_create_edit': True}"/>
-	            <field name="supplier_invoice_number" required="1" placeholder="000004321 (9 DIGITOS)" string="Nro. de Factura"/>
-	        </field>
 	        <xpath expr="//field[@name='date_invoice']" position="attributes">
 	            <attribute name="required">1</attribute>
 	        </xpath>
-	        <xpath expr="//field[@name='fiscal_position']" position="attributes">
+	        <xpath expr="//field[@name='fiscal_position_id']" position="attributes">
 	            <attribute name="required">1</attribute>
 	        </xpath>
 	        <xpath expr="//field[@name='move_id']" position="after">
 	            <field name="retention_id"/>
 	        </xpath>
-	        <xpath expr="//field[@name='account_id']" position="after">
+	        <!-- xpath expr="//field[@name='account_id']" position="after">
 	            <label string="Nro. de Retención" for="withdrawing_number"/>
 	            <div>
 	                <field name="create_retention_type" class="oe_inline"/> -
@@ -478,21 +426,7 @@
 	            <field name="amount_pay" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
 	            <field name="amount_tax_retention"/>
 	            <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-	        </xpath>
-            </field>
-        </record>
-
-        <!-- Compania -->
-
-        <record id="view_res_company_ec_form" model="ir.ui.view">
-            <field name="name">account.res.company.ec.form</field>
-            <field name="model">res.company</field>
-            <field name="inherit_id" ref="base.view_company_form"/>
-            <field name="arch" type="xml">
-	        <field name="partner_id" position="after">
-	            <field name="ruc_contador"/>
-	            <field name="cedula_rl"/>
-	        </field>
+	        </xpath -->
             </field>
         </record>
 
@@ -501,7 +435,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="account.view_partner_property_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='property_account_position']" position="attributes">
+                <xpath expr="//field[@name='property_account_position_id']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>
             </field>

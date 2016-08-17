@@ -15,8 +15,8 @@
                                       <td><strong>Fecha:</strong></td>
                                       <td><t t-esc="o.date"></t></td>
                                       <td><strong>Factura:</strong></td>
-                                      <t t-if="o.line_id[0].invoice">
-                                          <td><t t-esc="o.line_id[0].invoice.supplier_invoice_number"></t></td>
+                                      <t t-if="o.line_ids[0].invoice_id">
+                                          <td><t t-esc="o.ref"></t></td>
                                       </t>
                                   </tr>
                                   <tr>
@@ -44,7 +44,7 @@
                               <tbody style="font-size: 10pt">
                                   <t t-set="total_debit" t-value="0"/>
                                   <t t-set="total_credit" t-value="0"/>
-                                  <t t-foreach="o.line_id" t-as="move">
+                                  <t t-foreach="o.line_ids" t-as="move">
                                       <t t-if="move.debit != 0 or move.credit != 0">
                                           <tr>
                                               <td style="text-align: left; width: 131.033px;"><t t-esc="move.account_id.code"></t></td>

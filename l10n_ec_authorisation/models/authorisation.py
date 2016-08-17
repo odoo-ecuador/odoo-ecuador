@@ -205,39 +205,59 @@ class AccountJournal(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.multi
-    def onchange_partner_id(self, type, partner_id, date_invoice=False,
-                            payment_term=False, partner_bank_id=False,
-                            company_id=False):
-        res1 = super(AccountInvoice, self).onchange_partner_id(
-            type, partner_id, date_invoice,
-            payment_term, partner_bank_id,
-            company_id
-        )
-        if 'reference_type' in res1['value']:
-            res1['value'].pop('reference_type')
+    @api.onchange('partner_id', 'company_id')
+    def _onchange_partner_id(self):
+        types = {
+            'in_invoice': '01'
+        }
+        if self.type not in ['in_invoice', 'liq_purchase']:
+            return
+
+        super(AccountInvoice, self)._onchange_partner_id()
         res = self.env['account.authorisation'].search(
-            [('partner_id', '=', partner_id),
-             ('in_type', '=', 'externo')],
+            [
+                ('partner_id', '=', self.partner_id.id),
+                ('in_type', '=', 'externo'),
+                ('type_id.code', '=', types.get(self.type))
+            ],
             limit=1
         )
-        if res:
-            res1['value']['auth_inv_id'] = res[0]
-        return res1
+        self.auth_inv_id = res
 
     auth_inv_id = fields.Many2one(
         'account.authorisation',
         string='Establecimiento',
         readonly=True,
         states={'draft': [('readonly', False)]},
-        help='Autorizacion para documento recibido',
+        help='Autorizacion para documento',
         copy=False
     )
+    auth_number = fields.Char('Autorización')
 
-#    @api.onchange(
-#        'auth_inv_id'
-#    )
-    def check_invoice_supplier(self):
+    @api.constrains('auth_number')
+    def check_reference(self):
+        """
+        Metodo que verifica la longitud de la autorizacion
+        10: documento fisico
+        35: factura electronica modo online
+        49: factura electronica modo offline
+        """
+        if self.type not in ['in_invoice', 'liq_purchase']:
+            return
+        if self.auth_number and len(self.auth_number) not in [10, 35, 49]:
+            raise UserError(
+                u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
+            )
+
+    @api.constrains('reference')
+    def check_reference(self):
+        LEN_NUMBER = 15
+        if not len(self.reference) == LEN_NUMBER:
+            raise UserError(
+                u'El número de factura es incorrecto.'
+            )
+
+    def check_invoice_number(self):
         if self.supplier_invoice_number:
             res = self.auth_inv_id.is_valid_number(self.supplier_invoice_number)  # noqa
             if res:

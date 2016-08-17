@@ -7,11 +7,15 @@
           <field name="model">account.invoice</field>
           <field name="inherit_id" ref="account.invoice_supplier_form"/>
           <field name="arch" type="xml">
+              <field name="reference" position="after">
+                  <field name="auth_number" required="1"/>
+              </field>
 	      <field name="reference" position="attributes">
 	          <attribute name="required">True</attribute>
-	          <attribute name="string">Autorización</attribute>
+	          <attribute name="string">Num. Factura</attribute>
+	          <attribute name="placeholder">001001000004597</attribute>
 	      </field>
-              <xpath expr="//field[@name='reference']" position="before">
+              <xpath expr="//field[@name='journal_id']" position="after">
                   <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
                          context="{'default_partner_id': partner_id}"/>
               </xpath>
