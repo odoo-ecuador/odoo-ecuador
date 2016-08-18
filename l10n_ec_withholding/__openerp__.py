@@ -9,6 +9,7 @@
     'license': 'AGPL-3',
     'depends': [
         'l10n_ec_authorisation',
+        'l10n_ec_tax'
     ],
     'author': 'Cristian Salamea.',
     'website': 'http://www.ayni.com.ec',

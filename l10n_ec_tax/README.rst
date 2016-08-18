@@ -2,23 +2,19 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-============================
-Plan de Cuentas para Ecuador
-============================
+================================
+Módulo de Impuestos para Ecuador
+================================
 
-Este módulo carga un plan de cuentas para uso de empresas privadas bajo NIIF
+Este módulo agrega grupos de impuestos junto con el catalogo 103 y 104.
+Información requerida para el cálculo el facturación.
 
 
 Configuración
 =============
 
-Esta disponible como cualquier plantilla de cuentas, se puede seleccionar e instalar normalmente.
+No requiere configuración extra.
 
-
-Uso
-===
-
-Extender bajo necesidad las cuentas contables.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot
@@ -28,8 +24,8 @@ Extender bajo necesidad las cuentas contables.
 .. branch is "8.0" for example
 
 
-Bug Tracker
-===========
+Reportar Errores
+================
 
 Bugs are tracked on `GitHub Issues
 <https://github.com/odoo-ecuador/odoo-ecuador/issues>`_. In case of trouble, please
@@ -40,7 +36,6 @@ help us smashing it by providing a detailed and welcomed feedback.
 Contributors
 ------------
 
-* Alcides Rivera
 * Cristian Salamea <cristian.salamea@ayni.com.ec>
 
 

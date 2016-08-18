@@ -3,21 +3,18 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Ecuador - Accounting Chart',
-    'version': '1.1',
+    'name': 'Ecuador - Chart of Accounts',
+    'version': '9.0.1.1.0',
     'category': 'Localisation/Account Charts',
-    'description': """
-    This is the base module to manage
-    the accounting chart for Ecuador in OpenERP.
-    """,
-    'author': 'Alcides Rivera',
+    'author': 'Alcides Rivera, Cristian Salamea',
+    'license': 'AGPL-3',
     'depends': [
         'account',
-        'account_chart',
     ],
-    'update_xml': [
+    'data': [
         'account_chart.xml',
+
         'l10n_chart_ec_wizard.xml',
     ],
-    'installable': False,
+    'installable': True,
 }

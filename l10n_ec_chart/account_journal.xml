@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        <record model="account.journal" id="account_journal_sale">
+            <field name="name">DIARIO DE VENTAS</field>
+            <field name="type">sale</field>
+            <field name="code">DV</field>
+        </record>
+
+        <record model="account.journal" id="account_journal_purchases">
+            <field name="name">DIARIO DE COMPRAS</field>
+            <field name="type">purchase</field>
+            <field name="code">DC</field>
+        </record>
+
+        <record model="account.journal" id="account_journal_stock">
+            <field name="name">DIARIO DE INVENTARIO</field>
+            <field name="type">general</field>
+            <field name="code">DI</field>
+        </record>
+
+        <record model="account.journal" id="account_journal_general">
+            <field name="name">DIARIO DE AJUSTES</field>
+            <field name="type">general</field>
+            <field name="code">DG</field>
+        </record>
+
+        <record model="account.journal" id="account_journal_bank01">
+            <field name="name">DIARIO DE BANCOS</field>
+            <field name="type">bank</field>
+            <field name="code">DB</field>
+        </record>
+
+        <record model="account.journal" id="account_journal_cash01">
+            <field name="name">CAJA CHICA</field>
+            <field name="type">cash</field>
+            <field name="code">DM</field>
+        </record>
+
+    </data>
+</openerp>
