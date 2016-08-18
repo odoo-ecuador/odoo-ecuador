@@ -39,14 +39,13 @@
                     <attribute name="required">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='date_due']" position="after">
-                    <label string="Nro. de Retención" for="withdrawing_number"/>
-                    <div>
-                        <field name="create_retention_type" class="oe_inline"/> -
+                    <label string="Nro. de Retención" for="withdrawing_number" attrs="{'invisible': [('has_retention','=',False)]}"/>
+                    <div attrs="{'invisible': [('has_retention','=',False)]}">
+                        <field name="create_retention_type" class="oe_inline"/>
                         <field name="withholding_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
                         <field name="sustento_id" placeholder="Sustento" required="1" widget="selection" class="oe_inline oe_edit_only"/>
                     </div>
-                    <field name="retention_ir" invisible="1"/>
-                    <field name="retention_vat" invisible="1"/>
+                    <field name="has_retention" invisible="1"/>
                 </xpath>
 
                 <xpath expr="//field[@name='date_invoice']" position="attributes">
@@ -146,22 +145,21 @@
                                 <label string="Comprobante" for="type"/>
                                 <div>
                                     <field name="type" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-		                    <field name="num_document" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
 		                </div>
-	                    </group>
+                            </group>
 	                </group>
 	                <notebook colspan="4">
 	                    <page string="Impuestos">
-		                <field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
-		                    <tree string="Impuestos Aplicados">
-		                        <field name="invoice_id" invisible="1"/>
-
-		                    </tree>
-		                </field>
-		                <group class="oe_subtotal_footer oe_right">
-		                    <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
-		                </group>
-		                <separator string=""/>
+		                <field name="tax_ids" widget="many2many" nolabel="1"
+                                       domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
+                                    <tree string="Impuestos Aplicados">
+                                        <field name="invoice_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                                </group>
+                                <separator string=""/>
 	                    </page>
 	                    <page string="Info Extra">
 		                <group>
@@ -182,9 +180,7 @@
             <field name="domain">[('type','=','in_invoice')]</field>
         </record>
 
-
         <menuitem action="action_account_retention2_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
-
         <record id="action_account_retention_out_tree" model="ir.actions.act_window">
             <field name="name">Retenciones de Cliente</field>
             <field name="res_model">account.retention</field>

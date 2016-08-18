@@ -19,5 +19,5 @@
         'account_chart.xml',
         'l10n_chart_ec_wizard.xml',
     ],
-    'installable': True,
+    'installable': False,
 }

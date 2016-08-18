@@ -3,18 +3,15 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import time
-import logging
 
 from openerp import (
     models,
     fields,
-    api,
-    _
+    api
 )
 from openerp.exceptions import (
     except_orm,
-    Warning as UserError,
-    RedirectWarning
+    Warning as UserError
     )
 import openerp.addons.decimal_precision as dp
 

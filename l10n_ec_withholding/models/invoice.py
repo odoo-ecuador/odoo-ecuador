@@ -2,7 +2,6 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import time
 import logging
 
 from openerp import (
@@ -13,9 +12,8 @@ from openerp import (
 )
 from openerp.exceptions import (
     except_orm,
-    Warning as UserError,
-    RedirectWarning
-    )
+    Warning as UserError
+)
 import openerp.addons.decimal_precision as dp
 
 # mapping invoice type to journal type
@@ -84,63 +82,62 @@ class Invoice(models.Model):
         }
 
     @api.one
-    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount')
+    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'currency_id', 'company_id')  # noqa
     def _compute_amount(self):
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line_ids)  # noqa
         for line in self.tax_line_ids:
-            if line.tax_group == 'vat':
+            if line.tax_id.tax_group_id.code == 'vat':
                 self.amount_vat += line.base
                 self.amount_tax += line.amount
-            elif line.tax_group == 'vat0':
+            elif line.tax_id.tax_group_id.code == 'vat0':
                 self.amount_vat_cero += line.base
-            elif line.tax_group == 'novat':
+            elif line.tax_id.tax_group_id.code == 'novat':
                 self.amount_novat += line.base
-            elif line.tax_group == 'no_ret_ir':
+            elif line.tax_id.tax_group_id.code == 'no_ret_ir':
                 self.amount_noret_ir += line.base
-            elif line.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:
+            elif line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:  # noqa
                 self.amount_tax_retention += line.amount
-                if line.tax_group == 'ret_vat_b':
+                if line.tax_id.tax_group_id.code == 'ret_vat_b':
                     self.amount_tax_ret_vatb += line.base
                     self.taxed_ret_vatb += line.amount
-                elif line.tax_group == 'ret_vat_srv':
+                elif line.tax_id.tax_group_id.code == 'ret_vat_srv':
                     self.amount_tax_ret_vatsrv += line.base
                     self.taxed_ret_vatsrv += line.amount
-                elif line.tax_group == 'ret_ir':
+                elif line.tax_id.tax_group_id.code == 'ret_ir':
                     self.amount_tax_ret_ir += line.base
                     self.taxed_ret_ir += line.amount
-            elif line.tax_group == 'ice':
+            elif line.tax_id.tax_group_id.code == 'ice':
                 self.amount_ice += line.amount
         if self.amount_vat == 0 and self.amount_vat_cero == 0:
-        # base vat not defined, amount_vat by default
+            # base vat not defined, amount_vat by default
             self.amount_vat_cero = self.amount_untaxed
         self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention  # noqa
         self.amount_pay = self.amount_tax + self.amount_untaxed
+        # continue odoo code for *signed fields
+        amount_total_company_signed = self.amount_total
+        amount_untaxed_signed = self.amount_untaxed
+        if self.currency_id and self.currency_id != self.company_id.currency_id:  # noqa
+            amount_total_company_signed = self.currency_id.compute(self.amount_total, self.company_id.currency_id)  # noqa
+            amount_untaxed_signed = self.currency_id.compute(self.amount_untaxed, self.company_id.currency_id) # noqa
+        sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
+        self.amount_total_company_signed = amount_total_company_signed * sign
+        self.amount_total_signed = self.amount_total * sign
+        self.amount_untaxed_signed = amount_untaxed_signed * sign
 
     @api.multi
     def name_get(self):
-        TYPES = {
-            'out_invoice': _('Invoice'),
-            'in_invoice': _('Supplier Invoice'),
-            'out_refund': _('Refund'),
-            'in_refund': _('Supplier Refund'),
-            'liq_purchase': _('Liquid. de Compra')
-        }
         result = []
         for inv in self:
-            result.append((inv.id, "%s %s" % (inv.number or TYPES[inv.type], inv.name or '')))  # noqa
+            result.append((inv.id, "%s %s" % (inv.reference, inv.name and inv.name or '*')))  # noqa
         return result
 
     @api.one
-    @api.depends('tax_line_ids.tax_group')
+    @api.depends('tax_line_ids.tax_id')
     def _check_retention(self):
-        for inv in self:
-            for tax in inv.tax_line_ids:
-                if tax.tax_group in ['ret_vat_b', 'ret_vat_srv']:
-                    self.retention_vat = True
-                elif tax.tax_group == 'ret_ir':
-                    self.retention_ir = True
-                elif tax.tax_group == 'no_ret_ir':
-                    self.no_retention_ir = True
+        TAXES = ['ret_vat_b', 'ret_vat_srv', 'ret_ir', 'no_ret_ir']  # noqa
+        for tax in self.tax_line_ids:
+            if tax.tax_id.tax_group_id.code in TAXES:
+                self.has_retention = True
 
     HELP_RET_TEXT = '''Automatico: El sistema identificara los impuestos
     y creara la retencion automaticamente,
@@ -204,21 +201,12 @@ class Invoice(models.Model):
         store=True, readonly=True,
         copy=False
     )
-    retention_ir = fields.Boolean(
+    has_retention = fields.Boolean(
         compute='_check_retention',
         string="Tiene Retención en IR",
         store=True,
-        readonly=True,
+        readonly=True
         )
-    retention_vat = fields.Boolean(
-        compute='_check_retention',
-        string='Tiene Retencion en IVA',
-        store=True,
-        readonly=True,
-        )
-    no_retention_ir = fields.Boolean(
-        string='No objeto de Retención',
-        store=True, readonly=True, compute='_check_retention')
     type = fields.Selection(
         [
             ('out_invoice', 'Customer Invoice'),
@@ -247,12 +235,12 @@ class Invoice(models.Model):
         string='Sustento del Comprobante'
     )
 
-    @api.multi
-    def onchange_journal_id(self, journal_id=False):
+    @api.onchange('journal_id')
+    def _onchange_journal_id(self):
         # Método redefinido para cargar la autorizacion de facturas de venta
-        if journal_id:
-            journal = self.env['account.journal'].browse(journal_id)
-
+        super(Invoice, self)._onchange_journal_id()
+        if self.journal_id:
+            journal = self.journal_id
             if self.type == 'out_invoice' and not journal.auth_id:
                 return {
                     'warning': {
@@ -267,7 +255,6 @@ class Invoice(models.Model):
                     'auth_inv_id': journal.auth_id.id
                 }
             }
-        return {}
 
     @api.multi
     def _check_invoice_number(self):
@@ -315,13 +302,13 @@ class Invoice(models.Model):
                     )
         return True
 
-    _constraints = [
-        (
-            _check_invoice_number,
-            u'Número fuera de rango de autorización activa.',
-            [u'Número Factura']
-        ),
-    ]
+#    _constraints = [
+#        (
+#            _check_invoice_number,
+#            u'Número fuera de rango de autorización activa.',
+#            [u'Número Factura']
+#        ),
+#    ]
 
     _sql_constraints = [
         (
@@ -335,8 +322,7 @@ class Invoice(models.Model):
     def action_cancel_draft(self):
         """
         Redefinicion de metodo para borrar la retencion asociada.
-        CHECK: saber si es correcto eliminar o hacer cache del
-        numero del documento.
+        TODO: reversar secuencia si fue auto ?
         """
         for inv in self:
             if inv.retention_id:
@@ -407,18 +393,11 @@ class Invoice(models.Model):
         return True
 
     @api.multi
-    def recreate_retention(self):
-        """Método que implementa la recreacion de la retención
-        TODO: recibir el numero de retención del campo manual
-        """
-        self._context.update({'recreate_retention': True})
-        for inv in self:
-            self.action_retention_cancel()
-            self.action_retention_create([inv.id])
-        return True
-
-    @api.multi
     def action_retention_cancel(self):
+        """
+        TODO: revisar si este metodo debe llamarse desde el cancelar
+        factura
+        """
         for inv in self:
             if inv.retention_id:
                 inv.retention_id.action_cancel()
@@ -428,115 +407,9 @@ class Invoice(models.Model):
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
-    @api.model
-    def move_line_get(self, invoice_id):
-        inv = self.env['account.invoice'].browse(invoice_id)
-        currency = inv.currency_id.with_context(date=inv.date_invoice)
-        company_currency = inv.company_id.currency_id
-
-        res = []
-        for line in inv.invoice_line_ids:
-            mres = self.move_line_get_item(line)
-            mres['invl_id'] = line.id
-            res.append(mres)
-            tax_code_found = False
-            taxes = line.invoice_line_tax_id.compute_all(
-                (line.price_unit * (1.0 - (line.discount or 0.0) / 100.0)),
-                line.quantity, line.product_id, inv.partner_id)['taxes']
-            for tax in taxes:
-                if inv.type in ('out_invoice', 'in_invoice', 'liq_purchase'):
-                    tax_code_id = tax['base_code_id']
-                    tax_amount = tax['price_unit'] * line.quantity * tax['base_sign']  # noqa
-                else:
-                    tax_code_id = tax['ref_base_code_id']
-                    tax_amount = tax['price_unit'] * line.quantity * tax['ref_base_sign']  # noqa
-
-                if tax_code_found:
-                    if not tax_code_id:
-                        continue
-                    res.append(self.move_line_get_item(line))
-                    res[-1]['price'] = 0.0
-                    res[-1]['account_analytic_id'] = False
-                elif not tax_code_id:
-                    continue
-                tax_code_found = True
-
-                res[-1]['tax_code_id'] = tax_code_id
-                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)  # noqa
-        return res
-
-    @api.multi
-    def product_id_change(self, product, uom_id, qty=0,
-                          name='', type='out_invoice',
-                          partner_id=False, fposition_id=False,
-                          price_unit=False, currency_id=False,
-                          company_id=None):
-        context = self._context
-        company_id = company_id if company_id is not None else context.get('company_id', False)  # noqa
-        self = self.with_context(company_id=company_id, force_company=company_id)  # noqa
-
-        if not partner_id:
-            raise except_orm(_('No Partner Defined!'), _("You must first select a partner!"))  # noqa
-        if not product:
-            if type in ('in_invoice', 'in_refund'):
-                return {'value': {}, 'domain': {'uos_id': []}}
-            else:
-                return {'value': {'price_unit': 0.0}, 'domain': {'uos_id': []}}
-
-        values = {}
-
-        part = self.env['res.partner'].browse(partner_id)
-        fpos = self.env['account.fiscal.position'].browse(fposition_id)
-
-        if part.lang:
-            self = self.with_context(lang=part.lang)
-        product = self.env['product.product'].browse(product)
-
-        values['name'] = product.partner_ref
-        if type in ['out_invoice', 'out_refund']:
-            account = product.property_account_income or product.categ_id.property_account_income_categ  # noqa
-        else:
-            account = product.property_account_expense or product.categ_id.property_account_expense_categ  # noqa
-        account = fpos.map_account(account)
-        if account:
-            values['account_id'] = account.id
-
-        if type in ('out_invoice', 'out_refund'):
-            taxes = product.taxes_id or account.tax_ids
-            if product.description_sale:
-                values['name'] += '\n' + product.description_sale
-        else:
-            taxes = product.supplier_taxes_id or account.tax_ids
-            if product.description_purchase:
-                values['name'] += '\n' + product.description_purchase
-
-        taxes = fpos.map_tax(taxes)
-        values['invoice_line_tax_id'] = taxes.ids
-
-        if type in ('in_invoice', 'in_refund'):
-            values['price_unit'] = price_unit or product.standard_price
-        else:
-            values['price_unit'] = product.list_price
-
-        values['uos_id'] = product.uom_id.id
-        if uom_id:
-            uom = self.env['product.uom'].browse(uom_id)
-            if product.uom_id.category_id.id == uom.category_id.id:
-                values['uos_id'] = uom_id
-
-        domain = {'uos_id': [('category_id', '=', product.uom_id.category_id.id)]}  # noqa
-
-        company = self.env['res.company'].browse(company_id)
-        currency = self.env['res.currency'].browse(currency_id)
-
-        if company and currency:
-            if company.currency_id != currency:
-                if type in ('in_invoice', 'in_refund'):
-                    values['price_unit'] = product.standard_price
-                values['price_unit'] = values['price_unit'] * currency.rate
-
-            if values['uos_id'] and values['uos_id'] != product.uom_id.id:
-                values['price_unit'] = self.env['product.uom']._compute_price(
-                    product.uom_id.id, values['price_unit'], values['uos_id'])
-
-        return {'value': values, 'domain': domain}
+    def _set_taxes(self):
+        """
+        Redefinicion para leer impuestos desde category_id
+        TODO: leer impuestos desde category_id
+        """
+        super(AccountInvoiceLine, self)._set_taxes()

@@ -30,5 +30,6 @@ class AccountTax(models.Model):
     _name = 'account.tax'
     _inherit = 'account.tax'
     _order = 'description ASC'
+    _rec_name = 'description'
 
     porcentaje = fields.Char('% para Reportes', size=4)

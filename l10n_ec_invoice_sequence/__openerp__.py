@@ -15,5 +15,5 @@
         'views/invoice_view.xml'
     ],
     'website': 'www.ayni.com.ec',
-    'installable': True,
+    'installable': False,
 }

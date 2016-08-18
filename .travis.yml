@@ -11,12 +11,15 @@ addons:
     packages:
       - expect-dev  # provides unbuffer utility
       - python-lxml  # because pip installation is slow
+      - python-simple-json
+      - python-serial
 
 env:
   global:
-  - VERSION="8.0" TESTS="0" LINT_CHECK="0" TRANSIFEX="0"
+  - VERSION="9.0" TESTS="0" LINT_CHECK="0" TRANSIFEX="0"
   - TRANSIFEX_USER='transbot@odoo-community.org'
-  - secure: GzvUeJ2NRqb1+zQFgBcWmKqa9i3GtwD0XJP05UTGVYIBQ1oCuieB20LF8YhbXE/yI5fbbsc6AEfp3BJ579eD1vkcPFT2jyKawbVEi9NIaoKt/0KBhJJMjcLWqdCookEjdZvzRjOPbQav2o45guVZQNuxVuyIuR2gBJb8kIQ24VM=
+  - secure: "XzZzWhiVWXHI+tmcdYH0rPjietxvr1nUXuCRiqnDY3fM0lq6RmtwOlpDDwYEiX+9fHAE8mDttlJ7H4J/YZ+0ugwZxeM10yuT7FwkJY9kPvBe6T59P9aD9R6mSC/da4JGVd+Th5QXDBuBGRBVdY/qBT2lagHuSzBZdKwvMMsaBtA="
+
 
   matrix:
   - LINT_CHECK="1"
@@ -28,7 +31,6 @@ virtualenv:
   system_site_packages: true
 
 install:
-  - pip install anybox.testing.openerp
   - git clone --depth=1 https://github.com/odoo-ecuador/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly

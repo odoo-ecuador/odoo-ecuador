@@ -20,4 +20,5 @@
     'description': '''
     This module allows generate Electronic Documents for Ecuador
     ''',
+    'installable': False
 }

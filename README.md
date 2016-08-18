@@ -7,12 +7,19 @@ Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
 empresa ecuatoriana.
 
-Por qué usamos aún la versión 8.0 ?
------------------------------------
 
-Consideramos que la versión 9.0 ha sido *capada* en varios features y hasta no tener un reemplazo total desde la comunidad seguiremos trabajando con la versión 8.0.
+Iniciamos la migración a 9.0
+----------------------------
 
-Ya existen iniciativas desde odoo-community.org en desarrollar lo que falta, sobre en el área financiera, como reportes de impuestos y reportes financieros.
+En analisis de objetos contables ha terminado y podemos resumir que la migración es viable y hemos iniciado el trabajo.
+
+Usaremos módulos de la comunidad para responder a los reportes financieros, existe un trabajo en progreso en el repositorio oca/account-financial-reporting que
+nos permitirá tener una solución completa.
+
+Estamos en pase alpha aún, esperamos a finales de Agosto 2016 terminar el trabajo.
+
+Referencias de Implementación
+-----------------------------
 
 Es importante también recalcar que este proyecto siempre esta activo, esta versión de localización esta en producción en muchos lugares. Te invitamos a incluir en la [Wiki](https://github.com/odoo-ecuador/odoo-ecuador/wiki/Referencia-de-clientes) de referencias a tus clientes en donde has implementado estos módulos, esto lo consideramos importante para dar valor al trabajo en conjunto que se realiza por la comunidad.
 
@@ -29,16 +36,16 @@ Estado de Módulos
 
 | MODULO                   | ESTADO    | OBSERVACIONES                           |
 |--------------------------|-----------|-----------------------------------------|
-| l10n_ec_advances         | NO USABLE | No migrado a la v 8.0                   |
-| l10n_ec_authorisation    | ESTABLE   |                                         |
-| l10n_ec_chart            | ESTABLE   |                                         |
-| l10n_ec_einvoice         | ESTABLE   |                                         |
-| l10n_ec_employee         | ESTABLE   |                                         |
-| l10n_ec_invoice_sequence | ESTABLE   |                                         |
-| l10n_ec_ote              | ESTABLE   |                                         |
+| l10n_ec_advances         | DESCARTADO | No migrado a la v 8.0                   |
+| l10n_ec_authorisation    | ESTABLE|                                         |
+| l10n_ec_chart            | NO MIGRADO   |                                         |
+| l10n_ec_einvoice         | NO MIGRADO   |                                         |
+| l10n_ec_employee         | NO MIGRADO   |                                         |
+| l10n_ec_invoice_sequence | NO MIGRADO   |                                         |
+| l10n_ec_ote              | NO MIGRADO   |                                         |
 | l10n_ec_partner          | ESTABLE   |                                         |
-| l10n_ec_pos              | ESTABLE |  |
-| l10n_ec_withdrawing      | ESTABLE   |                                         |
+| l10n_ec_pos              | NO MIGRADO |  |
+| l10n_ec_withdrawing      | EN MIGRACION   |                                         |
 
 
 Objetivos principales
