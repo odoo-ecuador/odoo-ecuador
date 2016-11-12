@@ -3,12 +3,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import (
-    models,
+    api,
     fields,
-    api
+    models
 )
 from openerp.exceptions import (
-    except_orm,
     Warning as UserError
     )
 import openerp.addons.decimal_precision as dp
@@ -16,16 +15,6 @@ import openerp.addons.decimal_precision as dp
 
 class AccountWithdrawing(models.Model):
     """ Implementacion de documento de retencion """
-
-    @api.multi
-    def name_get(self):
-        """
-        TODO
-        """
-        result = []
-        for withdrawing in self:
-            result.append((withdrawing.id, withdrawing.name))
-        return result
 
     @api.one
     @api.depends('tax_ids.amount')
@@ -54,7 +43,7 @@ class AccountWithdrawing(models.Model):
 
     _name = 'account.retention'
     _description = 'Withdrawing Documents'
-    _order = 'date ASC'
+    _order = 'name ASC'
 
     name = fields.Char(
         'Número',
@@ -190,7 +179,7 @@ class AccountWithdrawing(models.Model):
 
     @api.onchange('name')
     def onchange_name(self):
-        if self.name:
+        if self.name and self.type == 'in_invoice':
             self.name = self.name.zfill(9)
 
     @api.onchange('to_cancel')
@@ -206,6 +195,37 @@ class AccountWithdrawing(models.Model):
         self.type = self.invoice_id.type
 
     @api.multi
+    def action_number(self, number):
+        for wd in self:
+            if wd.to_cancel:
+                raise UserError('El documento fue marcado para anular.')
+            if self.type == 'out_invoice':
+                if not len(self.name) == 15:
+                    raise UserError('El número para retenciones de clientes es de 15 dígitos.')  # noqa
+                return True
+
+            sequence = wd.invoice_id.journal_id.auth_ret_id.sequence_id
+            if wd.internal_number and not number:
+                wd_number = wd.internal_number[6:]
+            elif number is None:
+                wd_number = self.env['ir.sequence'].get_id(sequence.id)
+            else:
+                wd_number = str(number).zfill(sequence.padding)
+            number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
+                                        wd.auth_id.serie_emision,
+                                        wd_number)
+
+        return True
+
+    @api.multi
+    def action_validate(self, number=None):
+        """
+        @number: Número para usar en el documento
+        """
+        self.action_number(number)
+        return self.write({'state': 'done'})
+
+    @api.multi
     def button_validate(self):
         """
         Botón de validación de Retención que se usa cuando
@@ -213,13 +233,12 @@ class AccountWithdrawing(models.Model):
         con la factura seleccionada.
         """
         for ret in self:
+            if not ret.tax_ids:
+                raise UserError('No ha aplicado impuestos.')
+            self.action_validate()
             if ret.manual:
-                self.action_validate(ret.name)
-                invoice = self.env['account.invoice'].browse(ret.invoice_id.id)
-                invoice.write({'retention_id': ret.id})
-            else:
-                self.action_validate()
-            self.create_move()
+                ret.invoice_id.write({'retention_id': ret.id})
+                self.create_move()
         return True
 
     @api.multi
@@ -227,9 +246,7 @@ class AccountWithdrawing(models.Model):
         """
         Generacion de asiento contable para aplicar como
         pago a factura relacionada
-        FIXME
         """
-        aml = self.env['account.move.line']
         for ret in self:
             inv = ret.invoice_id
             move_data = {
@@ -261,37 +278,12 @@ class AccountWithdrawing(models.Model):
             }))
             move_data.update({'line_ids': lines})
             move = self.env['account.move'].create(move_data)
-            payments = inv.move_id.line_ids
-            acc2rec = payments.filtered(lambda l: not l.debit > 0)  # noqa
-            acc2rec += move.line_ids.filtered(lambda l: l.account_id == inv.account_id)
-            acc2rec.reconcile_partial()
+            acctype = self.type == 'in_invoice' and 'payable' or 'receivable'
+            inv_lines = inv.move_id.line_ids
+            acc2rec = inv_lines.filtered(lambda l: l.account_id.internal_type == acctype)  # noqa
+            acc2rec += move.line_ids.filtered(lambda l: l.account_id.internal_type == acctype)  # noqa
+            acc2rec.auto_reconcile_lines()
             ret.write({'move_ret_id': move.id})
-        return True
-
-    @api.multi
-    def action_validate(self, number=None):
-        """
-        number: Número posible para usar en el documento
-
-        Método que valida el documento, su principal
-        accion es numerar el documento segun el parametro number
-        """
-        for wd in self:
-            if wd.to_cancel:
-                raise UserError('El documento fue marcado para anular.')
-            sequence = wd.invoice_id.journal_id.auth_ret_id.sequence_id
-            if wd.internal_number and not number:
-                wd_number = wd.internal_number[6:]
-            elif number is None:
-                wd_number = self.env['ir.sequence'].get_id(sequence.id)
-            else:
-                wd_number = str(number).zfill(sequence.padding)
-            number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
-                                        wd.auth_id.serie_emision,
-                                        wd_number)
-            wd.write({'state': 'done',
-                      'name': number,
-                      'internal_number': number})
         return True
 
     @api.multi
@@ -305,11 +297,12 @@ class AccountWithdrawing(models.Model):
                 raise UserError('Retención conciliada con la factura, no se puede anular.')  # noqa
             data = {'state': 'cancel'}
             if ret.to_cancel:
+                # FIXME
                 if len(ret.name) == 9 and auth_obj.is_valid_number(ret.auth_id.id, int(ret.name)):  # noqa
                     number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name  # noqa
                     data.update({'name': number})
                 else:
-                    raise except_orm(
+                    raise UserError(
                         'Error',
                         u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.'  # noqa
                     )

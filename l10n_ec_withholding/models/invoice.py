@@ -89,7 +89,10 @@ class Invoice(models.Model):
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'currency_id', 'company_id')  # noqa
     def _compute_amount(self):
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line_ids)  # noqa
+        amount_manual = 0
         for line in self.tax_line_ids:
+            if line.manual:
+                amount_manual += line.amount
             if line.tax_id.tax_group_id.code == 'vat':
                 self.amount_vat += line.base
                 self.amount_tax += line.amount
@@ -115,14 +118,14 @@ class Invoice(models.Model):
         if self.amount_vat == 0 and self.amount_vat_cero == 0:
             # base vat not defined, amount_vat by default
             self.amount_vat_cero = self.amount_untaxed
-        self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention  # noqa
+        self.amount_total = self.amount_untaxed + self.amount_tax + self.amount_tax_retention + amount_manual  # noqa
         self.amount_pay = self.amount_tax + self.amount_untaxed
         # continue odoo code for *signed fields
         amount_total_company_signed = self.amount_total
         amount_untaxed_signed = self.amount_untaxed
         if self.currency_id and self.currency_id != self.company_id.currency_id:  # noqa
             amount_total_company_signed = self.currency_id.compute(self.amount_total, self.company_id.currency_id)  # noqa
-            amount_untaxed_signed = self.currency_id.compute(self.amount_untaxed, self.company_id.currency_id) # noqa
+            amount_untaxed_signed = self.currency_id.compute(self.amount_untaxed, self.company_id.currency_id)  # noqa
         sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
         self.amount_total_company_signed = amount_total_company_signed * sign
         self.amount_total_signed = self.amount_total * sign
@@ -234,6 +237,7 @@ class Invoice(models.Model):
         states={'draft': [('readonly', False)]},
         default='auto'
     )
+    reference = fields.Char(copy=False)
 
     @api.onchange('auth_inv_id')
     def _onchange_auth(self):
@@ -359,6 +363,7 @@ class Invoice(models.Model):
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
                 'num_document': self.invoice_number,
+                'manual': False
             }
 
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
