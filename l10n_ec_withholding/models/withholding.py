@@ -261,10 +261,11 @@ class AccountWithdrawing(models.Model):
             }))
             move_data.update({'line_ids': lines})
             move = self.env['account.move'].create(move_data)
-            payments = inv.move_id.line_ids
-            acc2rec = payments.filtered(lambda l: not l.debit > 0)  # noqa
-            acc2rec += move.line_ids.filtered(lambda l: l.account_id == inv.account_id)
-            acc2rec.reconcile_partial()
+            acctype = self.type == 'in_invoice' and 'payable' or 'receivable'
+            inv_lines = inv.move_id.line_ids
+            acc2rec = inv_lines.filtered(lambda l: l.account_id.internal_type == acctype)  # noqa
+            acc2rec += move.line_ids.filtered(lambda l: l.account_id.internal_type == acctype)  # noqa
+            acc2rec.auto_reconcile_lines()
             ret.write({'move_ret_id': move.id})
         return True
 

@@ -215,7 +215,7 @@
 	                </group>
 	                <notebook>
 	                    <page string="Impuestos">
-		                <field name="tax_ids" widget="many2many" nolabel="1" context="{'default_invoice_id': invoice_id}"
+		                <field name="tax_ids" nolabel="1" context="{'default_invoice_id': invoice_id}"
                                        domain="[('invoice_id','=',invoice_id),('group_id.code','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
                                     <tree string="Impuestos Aplicados" edit="false">
                                         <field name="invoice_id" invisible="0"/>
