@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
-    <!-- Contingency Key Tree -->
+      <!-- Contingency Key Tree -->
+
+      <record id="view_account_epayment_tree" model="ir.ui.view">
+      <field name="name">view.account.epayment.tree</field>
+      <field name="model">account.epayment</field>
+      <field name="arch" type="xml">
+        <tree string="Claves de Contingencia" editable="top">
+          <field name="code"/>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
     <record id="view_contingency_key_tree" model="ir.ui.view">
       <field name="name">res.company.contingency.key.tree</field>
       <field name="model">res.company.contingency.key</field>
@@ -35,8 +47,30 @@
       <field name="view_mode">tree,form</field>
     </record>
     <!-- Contingency Key MenuItem -->
-    <menuitem action="action_contingency_key" id="menu_action_contingency_key" parent="account.menu_journals"/>
-    <!-- eInvoice Form -->
+
+
+    <record id="view_account_epayment_form" model="ir.ui.view">
+        <field name="name">account.einvoice.epayment.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_invoice']" position="after">
+                <field name="epayment_id" widget="selection" required="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_einvoice_filter" model="ir.ui.view">
+        <field name="name">account.einvoice.filter</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='unpaid']" position="after">
+                <filter name="einvoiced" string="Electrónicas" domain="[('autorizado_sri','=',True)]" help="Facturas electrónicas"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_account_einvoice_form" model="ir.ui.view">
         <field name="name">account.einvoice.form</field>
         <field name="model">account.invoice</field>
@@ -45,9 +79,9 @@
             <xpath expr="//button[@name='action_invoice_sent']" position="replace"/>
             <xpath expr="//button[@name='action_invoice_sent']" position="replace">
                 <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('sent','=',True),('state','!=','open')]}"
-                        string="Generar Fact. Electrónica" class="oe_highlight"/>
+                        string="Generar Doc. Electrónica" class="oe_highlight"/>
             </xpath>
-            <xpath expr="//field[@name='move_id']" position="after">
+            <xpath expr="//field[@name='date_due']" position="after">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
@@ -61,15 +95,19 @@
     <record id="view_account_eretention_form" model="ir.ui.view">
         <field name="name">account.eretention.form</field>
         <field name="model">account.retention</field>
-        <field name="inherit_id" ref="l10n_ec_withdrawing.view_account_retention_form"/>
+        <field name="inherit_id" ref="l10n_ec_withholding.view_account_retention_form"/>
         <field name="arch" type="xml">
+          <xpath expr="//field[@name='name']" position="after">
+              <button name="retention_print" string="Imprimir" type="object" icon="fa-print" class="oe_inline oe_stat_button oe_right" states="done" attrs="{'invisible': [('in_type','=','ret_out_invoice')]}"/>
+          </xpath>
+
             <xpath expr="//field[@name='move_id']" position="after">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
                 <field name="estado_autorizacion"/>
-	        <field name="ambiente"/>
-	        <field name="autorizado_sri"/>
+      	        <field name="ambiente"/>
+      	        <field name="autorizado_sri"/>
             </xpath>
 
         </field>

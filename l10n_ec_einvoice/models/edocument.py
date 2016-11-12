@@ -6,9 +6,18 @@ from datetime import datetime
 
 from openerp import models, fields, api
 from openerp.exceptions import Warning
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+
 
 from . import utils
-from .xades.sri import SriService
+from ..xades.sri import SriService
+
+
+class AccountEpayment(models.Model):
+    _name = 'account.epayment'
+
+    code = fields.Char('Código')
+    name = fields.Char('Forma de Pago')
 
 
 class Edocument(models.AbstractModel):
@@ -45,8 +54,10 @@ class Edocument(models.AbstractModel):
         readonly=True
     )
     autorizado_sri = fields.Boolean('¿Autorizado SRI?', readonly=True)
-    security_code = fields.Char('Código de Seguridad', size=8)
-    emission_code = fields.Char('Tipo de Emisión', size=1)
+    security_code = fields.Char('Código de Seguridad', size=8, readonly=True)
+    emission_code = fields.Char('Tipo de Emisión', size=1, readonly=True)
+    epayment_id = fields.Many2one('account.epayment', 'Forma de Pago')
+    sent = fields.Boolean('Enviado?')
 
     def get_auth(self, document):
         if document._name == 'account.invoice':
@@ -162,12 +173,12 @@ class Edocument(models.AbstractModel):
 
     @api.multi
     def update_document(self, auth, codes):
-        DATE_SRI = "%d/%m/%Y %H:%M:%S"
+        fecha = auth.fechaAutorizacion.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         self.write({
             'numero_autorizacion': auth.numeroAutorizacion,
             'estado_autorizacion': auth.estado,
             'ambiente': auth.ambiente,
-            'fecha_autorizacion': auth.fechaAutorizacion.strftime(DATE_SRI),
+            'fecha_autorizacion': fecha,  # noqa
             'autorizado_sri': True,
             'clave_acceso': codes[0],
             'emission_code': codes[1]
@@ -179,7 +190,7 @@ class Edocument(models.AbstractModel):
         buf.write(xml_element.encode('utf-8'))
         document = base64.encodestring(buf.getvalue())
         buf.close()
-        attach_id = self.env['ir.attachment'].create(  # noqa
+        attach = self.env['ir.attachment'].create(
             {
                 'name': '{0}.xml'.format(self.clave_acceso),
                 'datas': document,
@@ -189,6 +200,20 @@ class Edocument(models.AbstractModel):
                 'type': 'binary'
             },
         )
+        return attach
+
+    @api.one
+    def send_document(self, attachments=[], tmpl=False):
+        self._logger.info('Enviando documento electronico por correo')
+        tmpl = self.env.ref(tmpl)
+        self.pool.get('email.template').send_mail(
+            self.env.cr,
+            self.env.user.id,
+            tmpl.id,
+            self.id,
+            context={'attachment_ids': attachments}
+        )
+        self.sent = True
         return True
 
     def render_document(self, document, access_key, emission_code):

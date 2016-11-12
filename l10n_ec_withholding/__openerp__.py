@@ -9,7 +9,8 @@
     'license': 'AGPL-3',
     'depends': [
         'l10n_ec_authorisation',
-        'l10n_ec_tax'
+        'l10n_ec_tax',
+        'web_action_conditionable'
     ],
     'author': 'Cristian Salamea.',
     'website': 'http://www.ayni.com.ec',
@@ -18,8 +19,7 @@
         'security/ir.model.access.csv',
         'views/invoice_workflow.xml',
         'views/report_account_move.xml',
-        'views/withholding_view.xml',
-        'report/withholding_report.xml'
+        'views/withholding_view.xml'
     ],
     'installable': True,
 }

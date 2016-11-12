@@ -53,10 +53,10 @@
 
      div.customer {
        clear: both;
+       height: 80px;
        padding-top: 10px;
        width: 745px;
        border: 1px solid gray;
-       font-size: 10px !important;
      }
 
      div.details {
@@ -132,8 +132,6 @@
 	    <div>
 	    </div>
 	    <div class="info">
-	      <td>
-	      </td>
 	    </div>
 	    <div class="info">
 	      <td>
@@ -153,14 +151,10 @@
 	    </div>
 	    <div class="info" style="text-align: center;">
 	      <div style="text-align: center;">
-                % if o.type == 'out_invoice':
-		<b>FACTURA</b>
-                % else:
-                <b>NOTA DE CREDITO</b>
-                % endif
+		<b>RETENCION</b>
 	      </div>
 	      <div>
-		No. ${ o.invoice_number[:3] }-${ o.invoice_number[3:6] }-${ o.invoice_number[-9:] }
+		No. ${ o.name[:3] }-${ o.name[3:6] }-${ o.name[-9:] }
 	      </div>
 	    </div>
 	    <div class="info" style="text-align: center;">
@@ -197,7 +191,7 @@
 	  <table style="border: none !important;">
 	    <tr>
 	      <td style="width: 15%; font-size:14px;">
-		<b>CLIENTE:</b>
+		<b>PROVEEDOR:</b>
 	      </td>
 	      <td style="width: 40%;font-size:14px;">
 		${ o.partner_id.name.upper() }
@@ -214,233 +208,91 @@
 		<b>FECHA DE EMISION:</b>
 	      </td>
 	      <td>
-		${ o.date_invoice }
-	      </td>
-              %if o.type == 'out_refund':
-              <td><b>COMPROBANTE QUE SE MODIFICA: FACTURA</b></td>
-              <td>${ get_num_modified(o) }</td>
-              %else:
-	      <td style="font-size:14px;">
-		<b>GUIA DE REMISION:</b>
+		${ o.date }
 	      </td>
 	      <td>
-                ${ o.comment }
 	      </td>
-              %endif
 	    </tr>
-            %if o.type == 'out_refund':
-            <tr>
-            </tr>
-            <tr>
-              <td><b>FECHA EMISION DOC MODIFICADO: </b></td>
-              <td>${ get_date_modified(o) }</td>
-              <td><b>AUT. DOC. MODIFICADO</b></td>
-              <td>${ get_auth_modified(o) }</td>
-            </tr>
-            %endif
 	  </table>
 	</div>
 	<div class="details">
 	  <table class="content">
 	    <tr>
+	      <th style="width: 10%">
+		COMPROBANTE
+	      </th>
+	      <th style="width: 20%">
+		NUMERO
+	      </th>
 	      <th style="width: 15%">
-		CODIGO
-	      </th>
-	      <th style="width: 50%">
-		DESCRIPCION
-	      </th>
-	      <th style="width: 5%">
-		CANTIDAD
+		FECHA EMISION
 	      </th>
 	      <th style="width: 10%">
-		PRECIO
+		EJER. FISCAL
 	      </th>
 	      <th style="width: 10%">
-		DESCUENTO
+		BASE IMPONIBLE
 	      </th>
 	      <th style="width: 10%">
-		TOTAL
+		IMPUESTO
+	      </th>
+	      <th style="width: 10%">
+		PORCENTAJE
+	      </th>
+	      <th style="width: 10%">
+		VALOR RETENIDO
 	      </th>
 	    </tr>
-	    %for line in o.invoice_line:
+	    %for line in o.tax_ids:
 	    <tr>
 	      <td>
-		${ line.product_id.default_code or '**' }
+                ${ line.invoice_id.type in ['out_invoice','in_invoice'] and 'FACTURA' or 'LIQ. COMPRA' }
 	      </td>
 	      <td>
-		${ line.name }
+                ${ line.invoice_id.invoice_number }
 	      </td>
 	      <td>
-		${ '%.2f'%line.quantity }
+                ${ line.invoice_id.date_invoice }
 	      </td>
 	      <td>
-		${ '%.2f'%line.price_unit }
+                ${ line.fiscal_year }
 	      </td>
 	      <td>
-		${ '%.2f'%line.discount }
+		${ line.base  }
 	      </td>
 	      <td>
-		${ '%.2f'%line.price_subtotal }
+                ${ line.tax_group in ['ret_vat_srv','ret_vat_b'] and 'IVA' or 'RENTA' }
+	      </td>
+	      <td>
+                ${ line.percent } ${ '%' }
+	      </td>
+	      <td>
+                ${ line.amount * -1 }
 	      </td>
 	    </tr>
 	    %endfor
 	  </table>
 	</div>
-        <div id="tres">
-	  <div class="fot1">
-	    <div style="padding: 5px;">
-	      <table style="width: 100%">
-                %if o.type == 'out_invoice':
-                <tr>
-                  <td>
-                    FORMA DE PAGO:
-                  </td>
-                  <td>${ o.epayment_id.name }</td>
-                </tr>
-                %endif
-                <tr>
-                  <td>INFORMACION ADICIONAL:</td>
-                </tr>
-                <tr>
-                  <td>DIRECCION:</td>
-                  <td>${ o.partner_id.street } </td>
-                </tr>
-                <tr>
-                  <td>EMAIL:</td>
-                  <td>${ o.partner_id.email }</td>
-                </tr>
-                <tr>
-                  <td>TELEF:</td>
-                  <td>${ o.partner_id.phone }</td>
-                </tr>
-                <tr>
-                  <td>
-                    OBESRVACIONES:
-                  </td>
-                  <td>
-                    ${ o.comment }
-                  </td>
-                </tr>
-                %if o.type == 'out_invoice':
-	        <tr>
-		  <td class="label">
-		    REMITIR RETENCION AL EMAIL:
-		  </td>
-		  <td class="label">
-		    cartera@lacolina.com.ec
-		  </td>
-	        </tr>
-	      	<tr>
-		  <td class="label" colspan="2">
-		    DURANTE LOS 5 DIAS HABILES ESTIPULADOS POR LA LEY.
-		  </td>
-	        </tr>
-                <tr>
-		  <td class="label">
-		    CREDITO :
-		  </td>
-		  <td class="label">
-		    ${ o.partner_id.property_payment_term.name }
-		  </td>
-	        </tr>
-	      	<tr>
-		  <td class="label">
-		    FECHA VENCIMIENTO/PAGO:
-		  </td>
-		  <td class="label">
-		    ${ o.date_due }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label" colspan="2">
-		    EL CLIENTE PAGARA INCONDICIONALMENTE Y SIN PROTESTO EL TOTAL
-		    DE  ESTA  FACTURA, EN  CASO  DE  MORA  PAGARE LA TASA MAXIMA
-		    AUTORIZADA POR EL EMISOR.
-		  </td>
-	        </tr>
-                %endif
-	      </table>
-	    </div>
-	  </div>
-	  <div class="fot2">
-	    <div>
-	      <table style="width: 100%">
-	        <tr>
-		  <td class="label">
-		    SUBTOTAL 14%
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_vat }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    SUBTOTAL 0%
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_vat_cero }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    SUBTOTAL no sujeto IVA
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_novat }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    SUBTOTAL SIN IMPUESTOS
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_untaxed }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    DESCUENTOS
-		  </td>
-		  <td class="amount">
-		    0.00
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    ICE
-		  </td>
-		  <td class="amount">
-		    0.00
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    IVA 14%
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_tax }
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    PROPINA
-		  </td>
-		  <td class="amount">
-		    0.00
-		  </td>
-	        </tr>
-	        <tr>
-		  <td class="label">
-		    VALOR TOTAL
-		  </td>
-		  <td class="amount">
-		    ${ '%.2f'% o.amount_pay }
-		  </td>
-	        </tr>
-	      </table>
-	    </div>
-          </div>
-	</div>
+        <br>
+        <div id="extrainfo">
+          <table>
+            <tr>
+              <td>INFORMACION ADICIONAL</td>
+            </tr>
+            <tr>
+              <td>DIRECCION:</td>
+              <td>${ o.partner_id.street } </td>
+            </tr>
+            <tr>
+              <td>EMAIL:</td>
+              <td>${ o.partner_id.email }</td>
+            </tr>
+            <tr>
+              <td>TELEF:</td>
+              <td>${ o.partner_id.phone }</td>
+            </tr>
+          </table>
+        </div>
       </div>
   </body>
   %endfor

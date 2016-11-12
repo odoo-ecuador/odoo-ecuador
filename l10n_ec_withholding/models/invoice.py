@@ -2,6 +2,8 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+
+import time
 import logging
 
 from openerp import (
@@ -22,6 +24,7 @@ TYPE2JOURNAL = {
     'in_invoice': 'purchase',
     'out_refund': 'sale_refund',
     'in_refund': 'purchase_refund',
+    'liq_purchase': 'purchase'
 }
 
 
@@ -30,17 +33,18 @@ class Invoice(models.Model):
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
 
-    @api.multi
-    def print_invoice(self):
-        # Método para imprimir reporte de liquidacion de compra
-        datas = {'ids': [self.id], 'model': 'account.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'invoice_report',
-            'model': 'account.invoice',
-            'datas': datas,
-            'nodestroy': True,
-            }
+    @api.model
+    def _default_journal(self):
+        if self._context.get('default_journal_id', False):
+            return self.env['account.journal'].browse(self._context.get('default_journal_id'))
+        inv_type = self._context.get('type', 'out_invoice')
+        inv_types = inv_type if isinstance(inv_type, list) else [inv_type]
+        company_id = self._context.get('company_id', self.env.user.company_id.id)
+        domain = [
+            ('type', 'in', filter(None, map(TYPE2JOURNAL.get, inv_types))),
+            ('company_id', '=', company_id),
+        ]
+        return self.env['account.journal'].search(domain, limit=1)
 
     @api.multi
     def print_move(self):
@@ -72,7 +76,7 @@ class Invoice(models.Model):
             'model': 'account.retention'
         }
         if not self.retention_id:
-            raise UserError('Aviso', u'No tiene retención')
+            raise UserError(u'No tiene retención')
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'account.retention',
@@ -128,7 +132,7 @@ class Invoice(models.Model):
     def name_get(self):
         result = []
         for inv in self:
-            result.append((inv.id, "%s %s" % (inv.reference, inv.name and inv.name or '*')))  # noqa
+            result.append((inv.id, "%s %s" % (inv.reference, inv.number and inv.number or '*')))  # noqa
         return result
 
     @api.one
@@ -230,31 +234,11 @@ class Invoice(models.Model):
         states={'draft': [('readonly', False)]},
         default='auto'
     )
-    sustento_id = fields.Many2one(
-        'account.ats.sustento',
-        string='Sustento del Comprobante'
-    )
 
-    @api.onchange('journal_id')
-    def _onchange_journal_id(self):
-        # Método redefinido para cargar la autorizacion de facturas de venta
-        super(Invoice, self)._onchange_journal_id()
-        if self.journal_id:
-            journal = self.journal_id
-            if self.type == 'out_invoice' and not journal.auth_id:
-                return {
-                    'warning': {
-                        'title': 'Error',
-                        'message': u'No se ha configurado una autorización en este diario.'  # noqa
-                        }
-                    }
-            return {
-                'value': {
-                    'currency_id': journal.currency.id or journal.company_id.currency_id.id,  # noqa
-                    'company_id': journal.company_id.id,
-                    'auth_inv_id': journal.auth_id.id
-                }
-            }
+    @api.onchange('auth_inv_id')
+    def _onchange_auth(self):
+        if self.auth_inv_id and not self.auth_inv_id.is_electronic:
+                self.auth_number = self.auth_inv_id.name
 
     @api.multi
     def _check_invoice_number(self):
@@ -302,14 +286,6 @@ class Invoice(models.Model):
                     )
         return True
 
-#    _constraints = [
-#        (
-#            _check_invoice_number,
-#            u'Número fuera de rango de autorización activa.',
-#            [u'Número Factura']
-#        ),
-#    ]
-
     _sql_constraints = [
         (
             'unique_inv_supplier',
@@ -321,12 +297,14 @@ class Invoice(models.Model):
     @api.multi
     def action_cancel_draft(self):
         """
+        Redefinicion de metodo para cancelar la retencion asociada.
+        En facturacion electronica NO se puede borrar el documento.
         Redefinicion de metodo para borrar la retencion asociada.
         TODO: reversar secuencia si fue auto ?
         """
         for inv in self:
             if inv.retention_id:
-                inv.retention_id.unlink()
+                inv.retention_id.action_draft()
         super(Invoice, self).action_cancel_draft()
         return True
 
@@ -341,12 +319,14 @@ class Invoice(models.Model):
         """
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
         for inv in self:
-
-            if not (inv.retention_ir or inv.retention_vat):
+            if not self.has_retention:
                 continue
 
-            if inv.create_retention_type == 'no_retention':
-                continue
+            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:  # noqa
+                raise except_orm(
+                    'Error',
+                    'No ha configurado la autorización de retenciones en el diario.'  # noqa
+                )
 
             wd_number = False
 
@@ -359,15 +339,16 @@ class Invoice(models.Model):
                                      u'El número de retención es incorrecto.')
                 wd_number = inv.withdrawing_number  # TODO: validate number
 
+            tids = [l.id for l in inv.tax_line_ids if l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]  # noqa
+            account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
+
             if inv.retention_id:
+                account_invoice_tax.write({
+                    'retention_id': inv.retention_id.id,
+                    'num_document': inv.invoice_number
+                })
                 inv.retention_id.action_validate(wd_number)
                 continue
-
-            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:  # noqa
-                raise except_orm(
-                    'Error',
-                    'No ha configurado la autorización de retenciones en el diario.'  # noqa
-                )
 
             withdrawing_data = {
                 'partner_id': inv.partner_id.id,
@@ -382,9 +363,7 @@ class Invoice(models.Model):
 
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
 
-            tids = [l.id for l in inv.tax_line_ids if l.tax_group in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]  # noqa
-            account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
-            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': inv.supplier_invoice_number})  # noqa
+            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
 
             if inv.type in TYPES_TO_VALIDATE:
                 withdrawing.action_validate(wd_number)
@@ -403,6 +382,13 @@ class Invoice(models.Model):
                 inv.retention_id.action_cancel()
         return True
 
+    @api.multi
+    @api.returns('self')
+    def refund(self, date_invoice=None, date=None, description=None, journal_id=None):  # noqa
+        new_invoices = super(Invoice, self).refund(date_invoice, date, description, journal_id)  # noqa
+        new_invoices._onchange_journal_id()
+        return new_invoices
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
@@ -413,3 +399,50 @@ class AccountInvoiceLine(models.Model):
         TODO: leer impuestos desde category_id
         """
         super(AccountInvoiceLine, self)._set_taxes()
+
+
+class AccountInvoiceTax(models.Model):
+
+    _inherit = 'account.invoice.tax'
+
+    fiscal_year = fields.Char(
+        'Ejercicio Fiscal',
+        size=4,
+        default=time.strftime('%Y')
+    )
+    group_id = fields.Many2one(
+        related='tax_id.tax_group_id',
+        store=True,
+        string='Grupo'
+    )
+    percent = fields.Char(related='tax_id.porcentaje', string='% Aplicado')
+    code = fields.Char(related='tax_id.description', string='Código')
+    retention_id = fields.Many2one(
+        'account.retention',
+        'Retención',
+        select=True
+    )
+
+    @api.onchange('tax_id')
+    def _onchange_tax(self):
+        if not self.tax_id:
+            return
+        self.name = self.tax_id.description
+        self.account_id = self.tax_id.account_id and self.tax_id.account_id.id
+        self.amount = self.tax_id.compute_all(self.invoice_id.amount_untaxed)['taxes'][0]['amount']  # noqa
+
+
+class AccountInvoiceRefund(models.TransientModel):
+
+    _inherit = 'account.invoice.refund'
+
+    @api.model
+    def _get_reason(self):
+        context = dict(self._context or {})
+        active_id = context.get('active_id', False)
+        if not active_id:
+            return ''
+        inv = self.env['account.invoice'].browse(active_id)
+        return inv.invoice_number
+
+    description = fields.Char(default=_get_reason)

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
   <data>
-    <record id="email_template_einvoice" model="email.template">
+    <record id="email_template_einvoice" model="mail.template">
       <field name="name">Send eInvoice</field>
       <field name="email_from">${('noresponder@forma.edu.ec')|safe}</field>
       <field name="subject"> FACTURA ELECTRONICA ${object.company_id.name})</field>
@@ -15,6 +15,6 @@
       Adjunto la factura electronica
       ]]>
       </field>
-    </record>      
+    </record>
   </data>
 </openerp>

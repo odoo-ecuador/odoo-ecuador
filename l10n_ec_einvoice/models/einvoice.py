@@ -11,8 +11,8 @@ from openerp import models, api
 from openerp.exceptions import Warning
 
 from . import utils
-from .xades.sri import DocumentXML
-from .xades.xades import Xades
+from ..xades.sri import DocumentXML
+from ..xades.xades import Xades
 
 
 class AccountInvoice(models.Model):
@@ -20,16 +20,23 @@ class AccountInvoice(models.Model):
     _name = 'account.invoice'
     _inherit = ['account.invoice', 'account.edocument']
     _logger = logging.getLogger('account.edocument')
+    TEMPLATES = {
+        'out_invoice': 'out_invoice.xml',
+        'out_refund': 'out_refund.xml'
+    }
 
     def _info_factura(self, invoice):
         """
         """
+        def fix_date(date):
+            d = time.strftime('%d/%m/%Y',
+                              time.strptime(date, '%Y-%m-%d'))
+            return d
+
         company = invoice.company_id
         partner = invoice.partner_id
         infoFactura = {
-            'fechaEmision': time.strftime('%d/%m/%Y',
-                                          time.strptime(invoice.date_invoice,
-                                                        '%Y-%m-%d')),
+            'fechaEmision': fix_date(invoice.date_invoice),
             'dirEstablecimiento': company.street2,
             'obligadoContabilidad': 'SI',
             'tipoIdentificacionComprador': utils.tipoIdentificacion[partner.type_ced_ruc],  # noqa
@@ -39,7 +46,10 @@ class AccountInvoice(models.Model):
             'totalDescuento': '0.00',
             'propina': '0.00',
             'importeTotal': '{:.2f}'.format(invoice.amount_pay),
-            'moneda': 'DOLAR'
+            'moneda': 'DOLAR',
+            'formaPago': invoice.epayment_id.code,
+            'valorRetIva': '{:.2f}'.format(invoice.taxed_ret_vatsrv+invoice.taxed_ret_vatb),  # noqa
+            'valorRetRenta': '{:.2f}'.format(invoice.amount_tax_ret_ir)
         }
         if company.company_registry:
             infoFactura.update({'contribuyenteEspecial':
@@ -47,7 +57,7 @@ class AccountInvoice(models.Model):
 
         totalConImpuestos = []
         for tax in invoice.tax_line:
-            if tax.tax_group in ['vat', 'vat0', 'ice', 'other']:
+            if tax.tax_group in ['vat', 'vat0', 'ice']:
                 totalImpuesto = {
                     'codigo': utils.tabla17[tax.tax_group],
                     'codigoPorcentaje': utils.tabla18[tax.percent],
@@ -58,6 +68,18 @@ class AccountInvoice(models.Model):
                 totalConImpuestos.append(totalImpuesto)
 
         infoFactura.update({'totalConImpuestos': totalConImpuestos})
+
+        if self.type == 'out_refund':
+            inv = self.search([('number', '=', self.origin)], limit=1)
+            inv_number = '{0}-{1}-{2}'.format(inv.invoice_number[:3], inv.invoice_number[3:6], inv.invoice_number[6:])  # noqa
+            notacredito = {
+                'codDocModificado': inv.auth_inv_id.type_id.code,
+                'numDocModificado': inv_number,
+                'motivo': self.name,
+                'fechaEmisionDocSustento': fix_date(inv.date_invoice),
+                'valorModificacion': self.amount_total
+            }
+            infoFactura.update(notacredito)
         return infoFactura
 
     def _detalles(self, invoice):
@@ -79,12 +101,14 @@ class AccountInvoice(models.Model):
             codigoPrincipal = line.product_id and \
                 line.product_id.default_code and \
                 fix_chars(line.product_id.default_code) or '001'
+            priced = line.price_unit * (1 - (line.discount or 0.00) / 100.0)
+            discount = (line.price_unit - priced) * line.quantity
             detalle = {
                 'codigoPrincipal': codigoPrincipal,
                 'descripcion': fix_chars(line.name.strip()),
                 'cantidad': '%.6f' % (line.quantity),
                 'precioUnitario': '%.6f' % (line.price_unit),
-                'descuento': '0.00',
+                'descuento': '%.2f' % discount,
                 'precioTotalSinImpuesto': '%.2f' % (line.price_subtotal)
             }
             impuestos = []
@@ -103,14 +127,20 @@ class AccountInvoice(models.Model):
             detalles.append(detalle)
         return {'detalles': detalles}
 
+    def _compute_discount(self, detalles):
+        total = sum([float(det['descuento']) for det in detalles['detalles']])
+        return {'totalDescuento': total}
+
     def render_document(self, invoice, access_key, emission_code):
         tmpl_path = os.path.join(os.path.dirname(__file__), 'templates')
         env = Environment(loader=FileSystemLoader(tmpl_path))
-        einvoice_tmpl = env.get_template('einvoice.xml')
+        einvoice_tmpl = env.get_template(self.TEMPLATES[self.type])
         data = {}
         data.update(self._info_tributaria(invoice, access_key, emission_code))
         data.update(self._info_factura(invoice))
-        data.update(self._detalles(invoice))
+        detalles = self._detalles(invoice)
+        data.update(detalles)
+        data.update(self._compute_discount(detalles))
         einvoice = einvoice_tmpl.render(data)
         return einvoice
 
@@ -140,50 +170,28 @@ class AccountInvoice(models.Model):
                 continue
             self.check_date(obj.date_invoice)
             self.check_before_sent()
-            access_key, emission_code = self._get_codes(name='account.invoice')  # noqa
-            if obj.type == 'out_invoice':
-                einvoice = self.render_document(obj, access_key, emission_code)
-                inv_xml = DocumentXML(einvoice, 'out_invoice')
-                inv_xml.validate_xml()
-                xades = Xades()
-                file_pk12 = obj.company_id.electronic_signature
-                password = obj.company_id.password_electronic_signature
-                signed_document = xades.sign(einvoice, file_pk12, password)
-                ok, errores = inv_xml.send_receipt(signed_document)
-                if not ok:
-                    raise Warning('Errores', errores)
-                auth, m = inv_xml.request_authorization(access_key)
-                if not auth:
-                    msg = ' '.join(list(itertools.chain(*m)))
-                    raise Warning('Error', msg)
-                auth_einvoice = self.render_authorized_einvoice(auth)
-                self.update_document(auth, [access_key, emission_code])
-                self.add_attachment(auth_einvoice, auth)
-                self.send_einvoice()
-            else:
-                # Revisar codigo que corre aca
-                if not obj.origin:
-                    raise Warning('Error de Datos',
-                                  u'Sin motivo de la devolución')
-                inv_ids = self.search([('number', '=', obj.name)])
-                factura_origen = self.browse(inv_ids)
-                # XML del comprobante electrónico: factura
-                factura = self._generate_xml_refund(obj, factura_origen, access_key, emission_code)  # noqa
-                # envío del correo electrónico de nota de crédito al cliente
-                self.send_mail_refund(obj, access_key)
-
-    @api.one
-    def send_einvoice(self):
-        self._logger.info('Enviando documento electronico por correo')
-        tmpl = self.env.ref('l10n_ec_einvoice.email_template_einvoice')
-        self.pool.get('email.template').send_mail(
-            self.env.cr,
-            self.env.user.id,
-            tmpl.id,
-            self.id
-        )
-        self.sent = True
-        return True
+            access_key, emission_code = self._get_codes(name='account.invoice')
+            einvoice = self.render_document(obj, access_key, emission_code)
+            inv_xml = DocumentXML(einvoice, obj.type)
+            inv_xml.validate_xml()
+            xades = Xades()
+            file_pk12 = obj.company_id.electronic_signature
+            password = obj.company_id.password_electronic_signature
+            signed_document = xades.sign(einvoice, file_pk12, password)
+            ok, errores = inv_xml.send_receipt(signed_document)
+            if not ok:
+                raise Warning('Errores', errores)
+            auth, m = inv_xml.request_authorization(access_key)
+            if not auth:
+                msg = ' '.join(list(itertools.chain(*m)))
+                raise Warning('Error', msg)
+            auth_einvoice = self.render_authorized_einvoice(auth)
+            self.update_document(auth, [access_key, emission_code])
+            attach = self.add_attachment(auth_einvoice, auth)
+            self.send_document(
+                attachments=[a.id for a in attach],
+                tmpl='l10n_ec_einvoice.email_template_einvoice'
+            )
 
     def invoice_print(self, cr, uid, ids, context=None):
         datas = {'ids': ids, 'model': 'account.invoice'}

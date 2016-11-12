@@ -2,8 +2,6 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import time
-
 from openerp import (
     models,
     fields,
@@ -45,17 +43,9 @@ class AccountWithdrawing(models.Model):
         return result
 
     @api.multi
-    def _get_type(self):
-        context = self._context
-        if 'type' in context and context['type'] in ['in_invoice', 'out_invoice']:  # noqa
-            return 'in_invoice'
-        else:
-            return 'liq_purchase'
-
-    @api.multi
     def _get_in_type(self):
         context = self._context
-        if 'type' in context and context['type'] in ['in_invoice', 'liq_purchase']:  # noqa
+        if context.get('ret_in_invoice'):
             return 'ret_in_invoice'
         else:
             return 'ret_out_invoice'
@@ -95,7 +85,6 @@ class AccountWithdrawing(models.Model):
     auth_id = fields.Many2one(
         'account.authorisation',
         'Autorizacion',
-        required=True,
         readonly=True,
         states=STATES_VALUE,
         domain=[('in_type', '=', 'interno')]
@@ -112,7 +101,6 @@ class AccountWithdrawing(models.Model):
             ('ret_out_invoice', u'Retención de Cliente')
         ],
         string='Tipo',
-        states=STATES_VALUE,
         readonly=True,
         default=_get_in_type
         )
@@ -148,10 +136,14 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         store=True
         )
+    move_ret_id = fields.Many2one(
+        'account.move',
+        string='Asiento Retención',
+        readonly=True,
+        )
     state = fields.Selection(
         [
             ('draft', 'Borrador'),
-            ('early', 'Anticipado'),
             ('done', 'Validado'),
             ('cancel', 'Anulado')
         ],
@@ -227,6 +219,53 @@ class AccountWithdrawing(models.Model):
                 invoice.write({'retention_id': ret.id})
             else:
                 self.action_validate()
+            self.create_move()
+        return True
+
+    @api.multi
+    def create_move(self):
+        """
+        Generacion de asiento contable para aplicar como
+        pago a factura relacionada
+        FIXME
+        """
+        aml = self.env['account.move.line']
+        for ret in self:
+            inv = ret.invoice_id
+            move_data = {
+                'journal_id': inv.journal_id.id,
+                'ref': ret.name,
+                'date': ret.date
+            }
+            total_counter = 0
+            lines = []
+            for line in ret.tax_ids:
+                if not line.manual:
+                    continue
+                lines.append((0, 0, {
+                    'partner_id': ret.partner_id.id,
+                    'account_id': line.account_id.id,
+                    'name': ret.name,
+                    'debit': abs(line.amount),
+                    'credit': 0.00
+                }))
+
+                total_counter += abs(line.amount)
+
+            lines.append((0, 0, {
+                'partner_id': ret.partner_id.id,
+                'account_id': inv.account_id.id,
+                'name': ret.name,
+                'debit': 0.00,
+                'credit': total_counter
+            }))
+            move_data.update({'line_ids': lines})
+            move = self.env['account.move'].create(move_data)
+            payments = inv.move_id.line_ids
+            acc2rec = payments.filtered(lambda l: not l.debit > 0)  # noqa
+            acc2rec += move.line_ids.filtered(lambda l: l.account_id == inv.account_id)
+            acc2rec.reconcile_partial()
+            ret.write({'move_ret_id': move.id})
         return True
 
     @api.multi
@@ -262,6 +301,8 @@ class AccountWithdrawing(models.Model):
         """
         auth_obj = self.env['account.authorisation']
         for ret in self:
+            if ret.move_ret_id:
+                raise UserError('Retención conciliada con la factura, no se puede anular.')  # noqa
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 if len(ret.name) == 9 and auth_obj.is_valid_number(ret.auth_id.id, int(ret.name)):  # noqa
@@ -281,141 +322,9 @@ class AccountWithdrawing(models.Model):
         return True
 
     @api.multi
-    def action_early(self):
-        # Método para cambiar de estado a cancelado el documento
-        self.write({'state': 'early'})
-        return True
-
-    @api.multi
     def action_print(self):
-        report_name = 'l10n_ec_withdrawing.account_withdrawing'
-        datas = {'ids': [self.id], 'model': 'account.retention'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': report_name,
-            'model': 'account.retention',
-            'datas': datas,
-            'nodestroy': True,
-            }
-
-
-class AccountInvoiceTax(models.Model):
-
-    _inherit = 'account.invoice.tax'
-
-    fiscal_year = fields.Char('Ejercicio Fiscal', size=4)
-    tax_group = fields.Selection(
-        [
-            ('vat', 'IVA Diferente de 0%'),
-            ('vat0', 'IVA 0%'),
-            ('novat', 'No objeto de IVA'),
-            ('ret_vat_b', 'Retención de IVA (Bienes)'),
-            ('ret_vat_srv', 'Retención de IVA (Servicios)'),
-            ('ret_ir', 'Ret. Imp. Renta'),
-            ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'),
-            ('imp_ad', 'Imps. Aduanas'),
-            ('ice', 'ICE'),
-            ('other', 'Other')
-        ],
-        'Grupo',
-        required=True,
-        default='vat'
-    )
-    percent = fields.Char('Porcentaje', size=20)
-    retention_id = fields.Many2one(
-        'account.retention',
-        'Retención',
-        select=True
-    )
-
-    @api.v8
-    def compute(self, invoice):
-        tax_grouped = {}
-        currency = invoice.currency_id.with_context(date=invoice.date_invoice or fields.Date.context_today(invoice))  # noqa
-        company_currency = invoice.company_id.currency_id
-        for line in invoice.invoice_line_ids:
-            taxes = line.invoice_line_tax_id.compute_all(
-                (line.price_unit * (1 - (line.discount or 0.0) / 100.0)),
-                line.quantity, line.product_id, invoice.partner_id)['taxes']
-            for tax in taxes:
-                val = {
-                    'invoice_id': invoice.id,
-                    'name': tax['name'],
-                    'amount': tax['amount'],
-                    'manual': False,
-                    'sequence': tax['sequence'],
-                    'base': currency.round(tax['price_unit'] * line['quantity']),  # noqa
-                    'tax_group': tax['tax_group'],
-                    'percent': tax['porcentaje'],
-                }
-                # Hack to EC
-                if tax['tax_group'] in ['ret_vat_b', 'ret_vat_srv']:
-                    ret = float(str(tax['porcentaje'])) / 100
-                    bi = tax['price_unit'] * line['quantity']
-                    imp = (abs(tax['amount']) / (ret * bi)) * 100
-                    val['base'] = (tax['price_unit'] * line['quantity']) * imp / 100  # noqa
-                else:
-                    val['base'] = tax['price_unit'] * line['quantity']
-
-                if invoice.type in ['out_invoice', 'in_invoice']:
-                    val['base_code_id'] = tax['base_code_id']
-                    val['tax_code_id'] = tax['tax_code_id']
-                    val['base_amount'] = currency.compute(val['base'] * tax['base_sign'], company_currency, round=False)  # noqa
-                    val['tax_amount'] = currency.compute(val['amount'] * tax['tax_sign'], company_currency, round=False)  # noqa
-                    val['account_id'] = tax['account_collected_id'] or line.account_id.id  # noqa
-                    val['account_analytic_id'] = tax['account_analytic_collected_id']  # noqa
-                else:
-                    val['base_code_id'] = tax['ref_base_code_id']
-                    val['tax_code_id'] = tax['ref_tax_code_id']
-                    val['base_amount'] = currency.compute(val['base'] * tax['ref_base_sign'], company_currency, round=False)  # noqa
-                    val['tax_amount'] = currency.compute(val['amount'] * tax['ref_tax_sign'], company_currency, round=False)  # noqa
-                    val['account_id'] = tax['account_paid_id'] or line.account_id.id  # noqa
-                    val['account_analytic_id'] = tax['account_analytic_paid_id']  # noqa
-
-                # If the taxes generate moves on the same financial account as the invoice line  # noqa
-                # and no default analytic account is defined at the tax level, propagate the  # noqa
-                # analytic account from the invoice line to the tax line. This is necessary  # noqa
-                # in situations were (part of) the taxes cannot be reclaimed,
-                # to ensure the tax move is allocated to the proper analytic account.  # noqa
-                if not val.get('account_analytic_id') and line.account_analytic_id and val['account_id'] == line.account_id.id:  # noqa
-                    val['account_analytic_id'] = line.account_analytic_id.id
-
-                key = (val['tax_code_id'], val['base_code_id'], val['account_id'])  # noqa
-                if key not in tax_grouped:
-                    tax_grouped[key] = val
-                else:
-                    tax_grouped[key]['amount'] += val['amount']
-                    tax_grouped[key]['base'] += val['base']
-                    tax_grouped[key]['base_amount'] += val['base_amount']
-                    tax_grouped[key]['tax_amount'] += val['tax_amount']
-
-        for t in tax_grouped.values():
-            t['base'] = currency.round(t['base'])
-            t['amount'] = currency.round(t['amount'])
-            t['base_amount'] = currency.round(t['base_amount'])
-            t['tax_amount'] = currency.round(t['tax_amount'])
-        return tax_grouped
-
-    _defaults = {
-        'fiscal_year': time.strftime('%Y'),
-    }
-
-
-class AccountInvoiceRefund(models.Model):
-
-    _inherit = 'account.invoice.refund'
-
-    @api.model
-    def _get_description(self):
-        number = '/'
-        active_id = self._context.get('active_id', False)
-        if not active_id:
-            return number
-        invoice = self.env['account.invoice'].browse(active_id)
-        if invoice.type == 'out_invoice':
-            number = invoice.number
-        else:
-            number = invoice.supplier_invoice_number
-        return number
-
-    description = fields.Char(default=_get_description)
+        # Método para imprimir comprobante contable
+        return self.env['report'].get_action(
+            self.move_id,
+            'l10n_ec_withholding.account_withholding'
+        )

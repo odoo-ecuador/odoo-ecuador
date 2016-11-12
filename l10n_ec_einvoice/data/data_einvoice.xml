@@ -2,10 +2,6 @@
 <openerp>
   <data>
 
-    <record id="sequence_edocuments_code" model="ir.sequence.type">
-      <field name="name">documentos Electronicos SRI</field>
-      <field name="code">edocuments.code</field>
-    </record>
     <record id="sequence_edocuments_code_security" model="ir.sequence">
       <field name="name">Secuencia de Facturas Electronicas</field>
       <field eval="8" name="padding"/>

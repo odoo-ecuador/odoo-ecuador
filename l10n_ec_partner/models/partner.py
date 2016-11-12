@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields
+from openerp import api, fields, models
 
 from stdnum import ec
 
@@ -8,6 +8,17 @@ from stdnum import ec
 class ResPartner(models.Model):
 
     _inherit = 'res.partner'
+
+    @api.multi
+    def name_get(self):
+        data = []
+        for partner in self:
+            display_val = u'{0} {1}'.format(
+                partner.ced_ruc,
+                partner.name
+            )
+            data.append((partner.id, display_val))
+        return data
 
     def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):  # noqa
         if not args:
@@ -80,3 +91,4 @@ class ResCompany(models.Model):
 
     ruc_contador = fields.Char('Ruc del Contador', size=13)
     cedula_rl = fields.Char('Cédula Representante Legal', size=10)
+    sri_id = fields.Many2one('res.partner', 'Servicio de Rentas Internas')

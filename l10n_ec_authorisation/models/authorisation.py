@@ -53,7 +53,7 @@ class AccountAuthorisation(models.Model):
         res = []
         for record in self.browse(cursor, uid, ids, context=context):
             name = u'%s (%s-%s)' % (
-                record.type_id.name,
+                record.type_id.code,
                 record.num_start,
                 record.num_end
             )
@@ -87,20 +87,12 @@ class AccountAuthorisation(models.Model):
         partner_id = self.env.user.company_id.partner_id.id
         if values.get('partner_id', False) and values['partner_id'] == partner_id:  # noqa
             name_type = '{0}_{1}'.format(values['name'], values['type_id'])
-            code_obj = self.env['ir.sequence.type']
-            seq_obj = self.env['ir.sequence']
-            code_data = {
-                'code': '%s.%s.%s' % (name_type, values['serie_entidad'], values['serie_emision']),  # noqa
-                'name': name_type
-                }
-            code = code_obj.create(code_data)
             sequence_data = {
                 'name': name_type,
                 'padding': 9,
                 'number_next': values['num_start'],
-                'code': code.code
                 }
-            seq = seq_obj.create(sequence_data)
+            seq = self.env['ir.sequence'].create(sequence_data)
             values.update({'sequence_id': seq.id})
         return super(AccountAuthorisation, self).create(values)
 
@@ -118,10 +110,10 @@ class AccountAuthorisation(models.Model):
     name = fields.Char('Num. de Autorización', size=128)
     serie_entidad = fields.Char('Serie Entidad', size=3, required=True)
     serie_emision = fields.Char('Serie Emision', size=3, required=True)
-    num_start = fields.Integer('Desde', required=True)
-    num_end = fields.Integer('Hasta', required=True)
+    num_start = fields.Integer('Desde')
+    num_end = fields.Integer('Hasta')
     is_electronic = fields.Boolean('Documento Electrónico ?')
-    expiration_date = fields.Date('Fecha de Vencimiento', required=True)
+    expiration_date = fields.Date('Fecha de Vencimiento')
     active = fields.Boolean(
         compute='_check_active',
         string='Activo',
@@ -207,22 +199,11 @@ class AccountInvoice(models.Model):
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
-        types = {
-            'in_invoice': '01'
-        }
-        if self.type not in ['in_invoice', 'liq_purchase']:
-            return
-
         super(AccountInvoice, self)._onchange_partner_id()
-        res = self.env['account.authorisation'].search(
-            [
-                ('partner_id', '=', self.partner_id.id),
-                ('in_type', '=', 'externo'),
-                ('type_id.code', '=', types.get(self.type))
-            ],
-            limit=1
-        )
-        self.auth_inv_id = res
+        if self.type in ['out_invoice']:
+            self.auth_inv_id = self.journal_id.auth_id and self.journal_id.auth_id.id or False  # noqa
+        elif self.type in ['in_invoice', 'liq_purchase']:
+            self.auth_inv_id = self.journal_id.auth_ret_id and self.journal_id.auth_ret_id.id or False  # noqa
 
     auth_inv_id = fields.Many2one(
         'account.authorisation',
@@ -233,6 +214,15 @@ class AccountInvoice(models.Model):
         copy=False
     )
     auth_number = fields.Char('Autorización')
+    sustento_id = fields.Many2one(
+        'account.ats.sustento',
+        string='Sustento del Comprobante'
+    )
+
+    @api.onchange('reference')
+    def _onchange_ref(self):
+        if self.reference:
+            self.reference = self.reference.zfill(9)
 
     @api.constrains('auth_number')
     def check_reference(self):
@@ -248,25 +238,3 @@ class AccountInvoice(models.Model):
             raise UserError(
                 u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
             )
-
-    @api.constrains('reference')
-    def check_reference(self):
-        LEN_NUMBER = 15
-        if not len(self.reference) == LEN_NUMBER:
-            raise UserError(
-                u'El número de factura es incorrecto.'
-            )
-
-    def check_invoice_number(self):
-        if self.supplier_invoice_number:
-            res = self.auth_inv_id.is_valid_number(self.supplier_invoice_number)  # noqa
-            if res:
-                self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
-            else:
-                self.supplier_invoice_number = ''
-                return {
-                    'warning': {
-                        'title': 'Error',
-                        'message': u'El número {0} no es válido'.format(self.supplier_invoice_number)  # noqa
-                    }
-                }

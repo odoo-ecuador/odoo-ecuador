@@ -3,8 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'SRI Authorisation Documents',
-    'version': '0.1.0',
+    'name': 'Establecimientos y autorizaciones del SRI',
+    'version': '0.1.0.0.0',
     'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',

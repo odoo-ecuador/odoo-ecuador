@@ -95,6 +95,6 @@ def check_service(env='prueba'):
         try:
             res = requests.head(URL, timeout=3)
             flag = True
-        except requests.exceptions.RequestException, e:
-            raise e
+        except requests.exceptions.RequestException:
+            return flag, False
     return flag, res

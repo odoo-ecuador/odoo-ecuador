@@ -2,7 +2,7 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp import models, fields
+from openerp import models, fields, api
 
 
 class AccountTaxGroup(models.Model):
@@ -33,3 +33,14 @@ class AccountTax(models.Model):
     _rec_name = 'description'
 
     porcentaje = fields.Char('% para Reportes', size=4)
+
+    @api.v8
+    def compute_all(self, price_unit, currency=None,
+                    quantity=1.0, product=None, partner=None):
+        """
+        Redefinicion para revisar si necesitamos incluir el group
+        en el return
+        """
+        return super(AccountTax, self).compute_all(
+            price_unit, currency,
+            quantity, product, partner)

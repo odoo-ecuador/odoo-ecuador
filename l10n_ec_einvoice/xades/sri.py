@@ -13,7 +13,7 @@ try:
 except ImportError:
     raise ImportError('Instalar Libreria suds: pip install suds-jurko')
 
-from openerp.addons.l10n_ec_einvoice import utils
+from openerp.addons.l10n_ec_einvoice.models import utils
 from .xades import CheckDigit
 
 SCHEMAS = {

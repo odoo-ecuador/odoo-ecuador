@@ -21,7 +21,7 @@
     <razonSocialComprador>{{ razonSocialComprador }}</razonSocialComprador>
     <identificacionComprador>{{ identificacionComprador }}</identificacionComprador>
     <totalSinImpuestos>{{ totalSinImpuestos }}</totalSinImpuestos>
-    <totalDescuento>0.00</totalDescuento>
+    <totalDescuento>{{ totalDescuento }}</totalDescuento>
     <totalConImpuestos>
       {% for item in totalConImpuestos %}
       <totalImpuesto>
@@ -36,6 +36,14 @@
     <propina>0.00</propina>
     <importeTotal>{{ importeTotal }}</importeTotal>
     <moneda>DOLAR</moneda>
+    <pagos>
+        <pago>
+            <formaPago>{{ formaPago }}</formaPago>
+            <total>{{ importeTotal }}</total>
+        </pago>
+    </pagos>
+    <valorRetIva>{{ valorRetIva }}</valorRetIva>
+    <valorRetRenta>{{ valorRetRenta }}</valorRetRenta>
   </infoFactura>
   <detalles>
     {% for item in detalles %}
@@ -44,7 +52,7 @@
       <descripcion>{{ item['descripcion'] }}</descripcion>
       <cantidad>{{ item['cantidad'] }}</cantidad>
       <precioUnitario>{{ item['precioUnitario'] }}</precioUnitario>
-      <descuento>0.00</descuento>
+      <descuento>{{ item['descuento'] }}</descuento>
       <precioTotalSinImpuesto>{{ item['precioTotalSinImpuesto'] }}</precioTotalSinImpuesto>
       <impuestos>
 	{% for tax in item['impuestos'] %}

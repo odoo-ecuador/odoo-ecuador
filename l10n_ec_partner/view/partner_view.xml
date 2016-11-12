@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <!--
             Partner
         -->
-
         <record id="view_partner2_select" model="ir.ui.view">
             <field name="name">view.partner.select2</field>
             <field name="model">res.partner</field>
@@ -48,7 +46,6 @@
             </field>
         </record>
 
-
         <!-- Compania -->
 
         <record id="view_res_company_ec_form" model="ir.ui.view">
@@ -59,6 +56,7 @@
                 <field name="partner_id" position="after">
                     <field name="ruc_contador"/>
                     <field name="cedula_rl"/>
+                    <field name="sri_id"/>
                 </field>
             </field>
         </record>
