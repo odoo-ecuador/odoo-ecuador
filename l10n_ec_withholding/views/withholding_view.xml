@@ -99,6 +99,7 @@
             <field name="model">account.retention</field>
             <field name="arch" type="xml">
                 <tree string="Retenciones" decoration-info="state == 'draft'">
+                    <field name="name"/>
                     <field name="partner_id"/>
                     <field name="date"/>
                     <field name="num_document"/>
@@ -132,7 +133,8 @@
                         <group>
                             <group>
                                 <field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-                                <field name="invoice_id" domain="[('partner_id','=',partner_id)]"
+                                <field name="invoice_id"
+                                       domain="[('partner_id','=',partner_id),('type','=','in_invoice'),('retention_id','=',False)]"
                                        options="{'no_create': True, 'no_create_edit': True}"
                                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
                                 <field name="date" select="1"/>
@@ -200,7 +202,8 @@
                             <group>
                                 <field name="partner_id" options="{'no_create': True, 'no_create_edit': True}"
                                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-                                <field name="invoice_id" domain="[('partner_id','=',partner_id)]"
+                                <field name="invoice_id"
+                                       domain="[('partner_id','=',partner_id),('type','=','out_invoice'),('retention_id','=',False)]"
                                        options="{'no_create': True, 'no_create_edit': True}"
                                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
                                 <field name="date" select="1"/>
