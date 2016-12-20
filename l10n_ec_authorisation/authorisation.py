@@ -60,6 +60,27 @@ class AccountAuthorisation(models.Model):
             res.append((record.id, name))
         return res
 
+    @api.constrains('name')
+    def check_name(self):
+        """
+        Metodo que verifica la longitud de la autorizacion
+        10: documento fisico
+        37: factura electronica modo online
+        49: factura electronica modo offline
+        """
+        if self.is_electronic:
+            if self.name and len(self.name) not in [37, 49]:
+                raise Warning(
+                    'Error',
+                    u'Debe ingresar 37 o 49 dígitos en documentos electrónicos.'
+                )
+        if not self.is_electronic:
+            if self.name and len(self.name) not in [10]:
+                raise Warning(
+                    'Error',
+                    u'Debe ingresar 10 dígitos en documentos físicos.'
+                )
+
     @api.one
     def _check_active(self):
         """

@@ -813,20 +813,6 @@ class Invoice(models.Model):
         if self.supplier_invoice_number and len(self.supplier_invoice_number) != 9:  # noqa
             self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
 
-    @api.constrains('reference')
-    def check_reference(self):
-        """
-        Metodo que verifica la longitud de la autorizacion
-        10: documento fisico
-        35: factura electronica modo online
-        49: factura electronica modo offline
-        """
-        if self.reference and len(self.reference) not in [10, 35, 49]:
-            raise Warning(
-                'Error',
-                u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
-            )
-
     @api.multi
     def onchange_partner_id(self, type, partner_id, date_invoice=False,
                             payment_term=False, partner_bank_id=False,
