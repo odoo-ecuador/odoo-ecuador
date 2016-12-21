@@ -1,47 +1,48 @@
-id,description,account_id/id,refund_account_id/id,name,type_tax_use,tax_group_id/id,porcentaje,amount_type,amount
-account_tax302,302,,,RET. EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGR,purchase,l10n_ec_tax.ret_ir,,percent,0
-account_tax303,303,,,RET. HONORARIOS PROFESIONALES ,purchase,l10n_ec_tax.ret_ir,10,percent,-1
-account_tax304,304,,,RET. PREDOMINA EL INTELECTO,purchase,l10n_ec_tax.ret_ir,8,percent,-8
-account_tax307,307,,,RET. PREDOMINA MANO DE OBRA,purchase,l10n_ec_tax.ret_ir,2,percent,-2
-account_tax308,308,,,RET. SERVICIOS UTILIZACIÓN O APROVECHAMIENTO DE LA IMAGEN O RENOMBRE,purchase,l10n_ec_tax.ret_ir,10,percent,-1
-account_tax309,309,,,RET. PUBLICIDAD Y COMUNICACIÓN,purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_tax310,310,,,RET. TRANS. PRIVADO DE PASAJEROS O SERV. PÚBLICO O PRIVADO DE CA,purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_tax312,312,,,RET. TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL,purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_tax320,320,,,RET. ARRENDAMIENTO BIENES INMUEBLES,purchase,l10n_ec_tax.ret_ir,8,percent,-8
-account_tax322,322,,,RET. SEGUROS Y REASEGUROS (PRIMAS Y CESIONES),purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_tax332,332,,,RET. PAGOS DE BIENES O SERVICIOS NO SUJETOS A RETENCIÓN,purchase,l10n_ec_tax.no_ret_ir,0,percent,0
-account_tax343,343,,,RET. APLICABLES EL 1%,purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_tax344,344,,,RET. APLICABLES EL 2%,purchase,l10n_ec_tax.ret_ir,2,percent,-2
-account_tax345,345,,,RET. APLICABLES EL 8%,purchase,l10n_ec_tax.ret_ir,8,percent,-8
-account_tax346,346,,,RET. APLICABLES OTROS PORCENTAJES,purchase,l10n_ec_tax.ret_ir,0,percent,0
-account_taxr1,1% IR,,,RETENCIONES A FAVOR DEL IMPUESTO A LA RENTA,purchase,l10n_ec_tax.ret_ir,1,percent,-1
-account_taxr2,2% IS,,,RETENCIONES A FAVOR SERVICIOS,purchase,l10n_ec_tax.ret_ir,2,percent,-2
-account_tax401,401,,,VENTAS LOCALES (EXC ACT FIJOS) GRAVADAS TARIFA 14%,sale,vat,12,percent,0.12
-account_tax402,402,,,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 14%,sale,vat,12,percent,0.12
-account_tax403,403,,,VENTAS LOCALES (EXC ACT FIJOS) GRAV TARIFA 0% SIN CT,sale,vat0,0,percent,0
-account_tax404,404,,,VENTAS DE ACT FIJOS GRAVADAS TARIFA 0% SIN CT,sale,vat0,0,percent,0
-account_tax405,405,,,VENTAS LOCALES (EXC ACT FIJOS) GRAVADAS TARIFA 0% CON CT,sale,vat0,0,percent,0
-account_tax406,406,,,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% QUE DAN CT,sale,vat0,0,percent,0
-account_tax407,407,,,EXPORTACION DE BIENES,sale,vat,0,percent,0
-account_tax408,408,,,EXPORTACION DE SERVICIOS,sale,vat,0,percent,0
-account_tax500,500,,,ADQUISICIONES Y PAGOS (EXC ACT FIJOS) TARIFA 12 CON CT,purchase,vat,12,percent,0.12
-account_tax501,501,,,ADQUISICIONES LOCALES DE ACT FIJOS GRAVADOS TARIFA 14% (CON CT),purchase,vat,12,percent,0.12
-account_tax502,502,,,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 14% (SIN CT),purchase,vat,12,percent,0.12
-account_tax503,503,,,IMPORTACIONES DE SERVICIOS GRAVADOS TARIFA 14%,purchase,vat,12,percent,0.12
-account_tax504,504,,,IMPORTACIONES DE BIENES (EXC ACT FIJOS) GRAVADOS TARIFA 14%,purchase,vat,12,percent,0.12
-account_tax505,505,,,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 14%,purchase,vat,12,percent,0.12
-account_tax506,506,,,IMPORTACIONES DE BIENES (INCLUYE ACT FIJOS) GRAVADOS TARIFA 0%,purchase,vat0,0,percent,0
-account_tax507,507,,,ADQUISICIONES Y PAGOS (INCLUYE ACT FIJOS) GRAVADOS TARIFA 0%,purchase,vat0,0,percent,0
-account_tax508,508,,,ADQUISICIONES REALIZADAS A CONTRIBUYENTES RISE,purchase,vat,0,percent,0
-account_tax531,531,,,ADQUISICIONES NO OBJETO DE IVA,purchase,novat,0,percent,0
-account_tax532,532,,,ADQUISICIONES EXENTAS DEL PAGO DE IVA,purchase,novat,0,percent,0
-account_tax6091,609-10,,,RETENCIONES A LA EMPRESA DEL 10%,sale,ret_vat_srv,10,percent,-0.012
-account_tax6092,609-20,,,RETENCIONES A LA EMPRESA DEL 20%,sale,ret_vat_b,20,percent,-0.024
-account_tax6093,609-30,,,RETENCIONES A LA EMPRESA DEL 30%,sale,ret_vat_srv,30,percent,-0.036
-account_tax6094,609-70,,,RETENCIONES A LA EMPRESA DEL 70%,sale,ret_vat_srv,70,percent,-0.084
-account_tax6095,609-100,,,RETENCIONES A LA EMPRESA DEL 100%,sale,ret_vat_b,100,percent,-0.12
-account_tax721,721,,,RETENCIONES DEL 10%,purchase,ret_vat_srv,10,percent,-0.012
-account_tax723,723,,,RETENCIONES DEL 20%,purchase,ret_vat_b,20,percent,-0.024
-account_tax725,725,,,RETENCIONES DEL 30%,purchase,ret_vat_srv,30,percent,-0.036
-account_tax727,727,,,RETENCIONES DEL 70%,purchase,ret_vat_srv,70,percent,-0.084
-account_tax729,729,,,RETENCIONES DEL 100%,purchase,ret_vat_b,100,percent,-0.12
+id,description,account_id/id,refund_account_id/id,name,type_tax_use,tax_group_id/id,amount_type,amount
+account_tax302,302,,,RET. EN RELACIÓN DE DEPENDENCIA QUE SUPERA O NO LA BASE DESGR,purchase,l10n_ec_tax.ret_ir,percent,0
+account_tax303,303,,,RET. HONORARIOS PROFESIONALES ,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax304,304,,,RET. PREDOMINA EL INTELECTO,purchase,l10n_ec_tax.ret_ir,percent,-8
+account_tax307,307,,,RET. PREDOMINA MANO DE OBRA,purchase,l10n_ec_tax.ret_ir,percent,-2
+account_tax308,308,,,RET. SERVICIOS UTILIZACIÓN O APROVECHAMIENTO DE LA IMAGEN O RENOMBRE,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax309,309,,,RET. PUBLICIDAD Y COMUNICACIÓN,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax310,310,,,RET. TRANS. PRIVADO DE PASAJEROS O SERV. PÚBLICO O PRIVADO DE CA,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax312,312,,,RET. TRANSFERENCIA DE BIENES MUEBLES DE NATURALEZA CORPORAL,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax320,320,,,RET. ARRENDAMIENTO BIENES INMUEBLES,purchase,l10n_ec_tax.ret_ir,percent,-8
+account_tax322,322,,,RET. SEGUROS Y REASEGUROS (PRIMAS Y CESIONES),purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax332,332,,,RET. PAGOS DE BIENES O SERVICIOS NO SUJETOS A RETENCIÓN,purchase,l10n_ec_tax.no_ret_ir,percent,0
+account_tax343,343,,,RET. APLICABLES EL 1%,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_tax344,344,,,RET. APLICABLES EL 2%,purchase,l10n_ec_tax.ret_ir,percent,-2
+account_tax345,345,,,RET. APLICABLES EL 8%,purchase,l10n_ec_tax.ret_ir,percent,-8
+account_tax346,346,,,RET. APLICABLES OTROS PORCENTAJES,purchase,l10n_ec_tax.ret_ir,percent,0
+account_taxr1,1% IR,,,RETENCIONES A FAVOR DEL IMPUESTO A LA RENTA,purchase,l10n_ec_tax.ret_ir,percent,-1
+account_taxr2,2% IS,,,RETENCIONES A FAVOR SERVICIOS,purchase,l10n_ec_tax.ret_ir,percent,-2
+account_tax401,401,,,VENTAS LOCALES (EXC ACT FIJOS) GRAVADAS TARIFA 14%,sale,vat,percent,14
+account_tax402,402,,,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 14%,sale,vat,percent,14
+account_tax403,403,,,VENTAS LOCALES (EXC ACT FIJOS) GRAV TARIFA 0% SIN CT,sale,vat0,percent,0
+account_tax404,404,,,VENTAS DE ACT FIJOS GRAVADAS TARIFA 0% SIN CT,sale,vat0,percent,0
+account_tax405,405,,,VENTAS LOCALES (EXC ACT FIJOS) GRAVADAS TARIFA 0% CON CT,sale,vat0,percent,0
+account_tax406,406,,,VENTAS DE ACTIVOS FIJOS GRAVADAS TARIFA 0% QUE DAN CT,sale,vat0,percent,0
+account_tax407,407,,,EXPORTACION DE BIENES,sale,vat,percent,0
+account_tax408,408,,,EXPORTACION DE SERVICIOS,sale,vat,percent,0
+account_tax500,500,,,ADQUISICIONES Y PAGOS (EXC ACT FIJOS) TARIFA 12 CON CT,purchase,vat,percent,14
+account_tax501,501,,,ADQUISICIONES LOCALES DE ACT FIJOS GRAVADOS TARIFA 14% (CON CT),purchase,vat,percent,14
+account_tax502,502,,,OTRAS ADQUISICIONES Y PAGOS GRAVADOS TARIFA 14% (SIN CT),purchase,vat,percent,14
+account_tax503,503,,,IMPORTACIONES DE SERVICIOS GRAVADOS TARIFA 14%,purchase,vat,percent,14
+account_tax504,504,,,IMPORTACIONES DE BIENES (EXC ACT FIJOS) GRAVADOS TARIFA 14%,purchase,vat,percent,14
+account_tax505,505,,,IMPORTACIONES DE ACTIVOS FIJOS GRAVADOS TARIFA 14%,purchase,vat,percent,14
+account_tax506,506,,,IMPORTACIONES DE BIENES (INCLUYE ACT FIJOS) GRAVADOS TARIFA 0%,purchase,vat0,percent,0
+account_tax507,507,,,ADQUISICIONES Y PAGOS (INCLUYE ACT FIJOS) GRAVADOS TARIFA 0%,purchase,vat0,percent,0
+account_tax508,508,,,ADQUISICIONES REALIZADAS A CONTRIBUYENTES RISE,purchase,vat,percent,0
+account_tax531,531,,,ADQUISICIONES NO OBJETO DE IVA,purchase,novat,percent,0
+account_tax532,532,,,ADQUISICIONES EXENTAS DEL PAGO DE IVA,purchase,novat,percent,0
+account_tax6091,609-10,,,RETENCIONES A LA EMPRESA DEL 10%,sale,ret_vat_srv,percent,-1.4
+account_tax6092,609-20,,,RETENCIONES A LA EMPRESA DEL 20%,sale,ret_vat_b,percent,-2.8
+account_tax6093,609-30,,,RETENCIONES A LA EMPRESA DEL 30%,sale,ret_vat_srv,percent,-4.2
+account_tax6094,609-70,,,RETENCIONES A LA EMPRESA DEL 70%,sale,ret_vat_srv,percent,-9.8
+account_tax6095,609-100,,,RETENCIONES A LA EMPRESA DEL 100%,sale,ret_vat_b,percent,-14
+account_tax721,721,,,RETENCIONES DEL 10%,purchase,ret_vat_srv,percent,-1.4
+account_tax723,723,,,RETENCIONES DEL 20%,purchase,ret_vat_b,percent,-2.8
+account_tax725,725,,,RETENCIONES DEL 30%,purchase,ret_vat_srv,percent,-4.2
+account_tax726,726,,,RETENCIONES DEL 50%,purchase,ret_vat_srv,percent,-7
+,727,,,RETENCIONES DEL 70%,purchase,ret_vat_srv,percent,-9.8
+account_tax729,729,,,RETENCIONES DEL 100%,purchase,ret_vat_b,percent,-14

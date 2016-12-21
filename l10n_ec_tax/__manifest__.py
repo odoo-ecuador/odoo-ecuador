@@ -4,7 +4,7 @@
 
 {
     'name': 'Ecuador - Taxes',
-    'version': '9.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'Accounting',
     'author': 'Cristian Salamea',
     'website': 'http://www.ayni.com.ec',
@@ -16,6 +16,5 @@
         'data/account.tax.group.csv',
         'data/account.tax.csv',
         'data/account.fiscal.position.csv'
-    ],
-    'installable': False,
+    ]
 }
