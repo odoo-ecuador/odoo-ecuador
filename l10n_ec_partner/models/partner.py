@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, fields, models
+from odoo import api, fields, models
 
 from stdnum import ec
 
@@ -10,44 +10,44 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     @api.multi
+    @api.depends('identifier', 'name')
     def name_get(self):
         data = []
         for partner in self:
             display_val = u'{0} {1}'.format(
-                partner.ced_ruc,
+                partner.identifier or '*',
                 partner.name
             )
             data.append((partner.id, display_val))
         return data
 
-    def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):  # noqa
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=80):
         if not args:
             args = []
-        if not context:
-            context = {}
         if name:
-            ids = self.search(cr, uid, [('ced_ruc', operator, name)] + args, limit=limit, context=context)  # noqa
-            if not ids:
-                ids = self.search(cr, uid, [('name', operator, name)] + args, limit=limit, context=context)  # noqa
+            partners = self.search([('identifier', operator, name)] + args, limit=limit)
+            if not partners:
+                partners = self.search([('name', operator, name)] + args, limit=limit)
         else:
-            ids = self.search(cr, uid, args, limit=limit, context=context)
-        return self.name_get(cr, uid, ids, context)
+            partners = self.search(args, limit=limit)
+        return partners.name_get()
 
-    def _check_ced_ruc(self, cr, uid, ids):
+    def _check_identifier(self, cr, uid, ids):
         for partner in self.browse(cr, uid, ids):
-            if partner.type_ced_ruc == 'cedula':
-                return ec.ci.is_valid(partner.ced_ruc)
-            elif partner.type_ced_ruc == 'ruc':
-                return ec.ruc.is_valid(partner.ced_ruc)
+            if partner.type_identifier == 'cedula':
+                return ec.ci.is_valid(partner.identifier)
+            elif partner.type_identifier == 'ruc':
+                return ec.ruc.is_valid(partner.identifier)
             else:
                 return True
 
-    ced_ruc = fields.Char(
+    identifier = fields.Char(
         'Cedula/ RUC',
         size=13,
         required=True,
         help='Identificación o Registro Unico de Contribuyentes')
-    type_ced_ruc = fields.Selection(
+    type_identifier = fields.Selection(
         [
             ('cedula', 'CEDULA'),
             ('ruc', 'RUC'),
@@ -69,12 +69,12 @@ class ResPartner(models.Model):
     company_type = fields.Selection(default='company')
 
     _constraints = [
-        (_check_ced_ruc, 'Error en su Cedula/RUC/Pasaporte', ['ced_ruc'])
+        (_check_identifier, 'Error en su Cedula/RUC/Pasaporte', ['identifier'])
         ]
 
     _sql_constraints = [
         ('partner_unique',
-         'unique(ced_ruc,type_ced_ruc,tipo_persona,company_id)',
+         'unique(identifier,type_identifier,tipo_persona,company_id)',
          u'El identificador es único.'),
         ]
 
@@ -89,6 +89,6 @@ class ResPartner(models.Model):
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    ruc_contador = fields.Char('Ruc del Contador', size=13)
-    cedula_rl = fields.Char('Cédula Representante Legal', size=10)
+    accountant_id = fields.Many2one('res.partner', 'Contador')
     sri_id = fields.Many2one('res.partner', 'Servicio de Rentas Internas')
+    cedula_rl = fields.Char('Cédula Representante Legal', size=10)

@@ -21,5 +21,5 @@
         'views/report_account_move.xml',
         'views/withholding_view.xml'
     ],
-    'installable': True,
+    'installable': False,
 }

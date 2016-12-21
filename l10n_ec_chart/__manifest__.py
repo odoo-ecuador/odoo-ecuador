@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
-# © <2016> <Alcides Rivera VIRTUALSAMI CIA LTDA>
+# © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     'name': 'Ecuador - Chart of Accounts',
-    'version': '9.0.1.1.0',
+    'version': '10.0.0.0.0',
     'category': 'Localisation/Account Charts',
-    'author': 'Alcides Rivera, Cristian Salamea',
+    'author': 'Cristian Salamea',
+    'website': 'http://www.ayni.com.ec',
     'license': 'AGPL-3',
     'depends': [
         'account',
     ],
     'data': [
-        'account_chart.xml',
-
+        'data/account_chart.xml',
         'l10n_chart_ec_wizard.xml',
-    ],
-    'installable': True,
+    ]
 }

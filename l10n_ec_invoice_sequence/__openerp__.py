@@ -16,5 +16,6 @@
     ''',
     'data': [
         'views/invoice_view.xml'
-    ]
+    ],
+    'installable': False
 }
