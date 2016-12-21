@@ -21,14 +21,11 @@ class AccountAtsSustento(models.Model):
     _name = 'account.ats.sustento'
     _description = 'Sustento del Comprobante'
 
-    def name_get(self, cursor, uid, ids, context=None):
-        if context is None:
-            context = {}
-        if not ids:
-            return []
+    @api.multi
+    @api.depends('code', 'type')
+    def name_get(self):
         res = []
-        reads = self.browse(cursor, uid, ids, context=context)
-        for record in reads:
+        for record in self:
             name = '%s - %s' % (record.code, record.type)
             res.append((record.id, name))
         return res
@@ -42,16 +39,12 @@ class AccountAtsSustento(models.Model):
 class AccountAuthorisation(models.Model):
 
     _name = 'account.authorisation'
-    _description = 'Authorisation for Accounting Documents'
     _order = 'expiration_date desc'
 
-    def name_get(self, cursor, uid, ids, context=None):
-        if context is None:
-            context = {}
-        if not ids:
-            return []
-        res = []
-        for record in self.browse(cursor, uid, ids, context=context):
+    @api.multi
+    @api.depends('type_id', 'num_start', 'num_end')
+    def name_get(self):
+        for record in self:
             name = u'%s (%s-%s)' % (
                 record.type_id.code,
                 record.num_start,
@@ -146,16 +139,13 @@ class AccountAuthorisation(models.Model):
         ondelete='cascade'
         )
 
-    def set_authorisation(cr, uid, ids, context):
-        return True
-
     _sql_constraints = [
         ('number_unique',
          'unique(name,partner_id,serie_entidad,serie_emision,type_id)',
          u'La relación de autorización, serie entidad, serie emisor y tipo, debe ser única.'),  # noqa
         ]
 
-    def is_valid_number(self, cursor, uid, id, number):
+    def is_valid_number(self, number):
         """
         Metodo que verifica si @number esta en el rango
         de [@num_start,@num_end]

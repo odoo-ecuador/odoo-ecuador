@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
     <data>
 
         <record id="view_invoice_reference_customer_form" model="ir.ui.view">
@@ -77,13 +77,13 @@
         </field>
     </record>
 
-    <record id="view_account_auth_tree" model="ir.ui.view">
+    <record id="view_account_authorisation_tree" model="ir.ui.view">
         <field name="name">account.auth.tree</field>
         <field name="model">account.authorisation</field>
         <field name="arch" type="xml">
 	    <tree string="Autorizaciones del SRI">
                 <field name="type_id"/>
-                <field name="is_electronic"/>x
+                <field name="is_electronic"/>
                 <field name="partner_id"/>
                 <field name="serie_entidad"/>
                 <field name="serie_emision"/>
@@ -94,7 +94,6 @@
     <record id="view_account_auth_form" model="ir.ui.view">
         <field name="name">account.auth.form</field>
         <field name="model">account.authorisation</field>
-        <field name="type">form</field>
         <field name="arch" type="xml">
 	    <form string="Autorizaciones SRI">
 	        <sheet>
@@ -118,7 +117,7 @@
 		            <label string="Establecimiento" for="serie_entidad"/>
 		            <div>
 		                <field name="serie_entidad" class="oe_inline" placeholder="001"/> -
-		                <field name="serie_emision" class="oe_inline" placeholder="001"/>
+		                <field name="serie_emision" placeholder="001"/>
 		            </div>
                         </group>
                         <group>
@@ -140,10 +139,9 @@
     <record id="view_account_auth_filter" model="ir.ui.view">
         <field name="name">account.authorisation.select</field>
         <field name="model">account.authorisation</field>
-        <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="Buscar Autorizaciones">
-                <group col="10" colspan="4">
+                <group>
                     <filter icon="terp-camera_test" string="Activos" domain="[('active','=',True)]" help="Autorizaciones Activas"/>
                     <separator orientation="vertical"/>
                     <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('active','=',False)]" help="Autorizaciones Inactivas"/>
@@ -161,8 +159,9 @@
             </search>
         </field>
     </record>
+
     <record id="action_account_auth_tree" model="ir.actions.act_window">
-        <field name="name">Autorizaciones SRI</field>
+        <field name="name">Establecimientos</field>
         <field name="res_model">account.authorisation</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
@@ -171,7 +170,7 @@
         <field name="domain">[('in_type', '=', 'externo')]</field>
     </record>
 
-    <menuitem action="action_account_auth_tree" id="menu_action_authorisation" parent="account.menu_finance_payables"/>
+    <menuitem action="action_account_auth_tree" id="menu_action_authorisation_out" parent="account.menu_finance_payables"/>
 
     <record id="action_account_authin_tree" model="ir.actions.act_window">
         <field name="name">Establecimientos</field>
@@ -257,4 +256,4 @@
     <menuitem action="action_account_ats_sustent" id="menu_action_account_ats_sustento" parent="account.account_account_menu"/>
 
 </data>
-</openerp>
+</odoo>

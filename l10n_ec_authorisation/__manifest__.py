@@ -17,6 +17,5 @@
     'depends': [
         'l10n_ec_partner',
         'account'
-    ],
-    'installable': False,
+    ]
 }
