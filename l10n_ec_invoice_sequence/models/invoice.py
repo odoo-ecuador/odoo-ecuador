@@ -13,33 +13,6 @@ class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
 
-    @api.onchange('journal_id')
-    def _onchange_journal_id(self):
-        doc_code = {
-            'out_invoice': '18',
-            'in_invoice': '07',
-            'liq_purchase': '03',
-            'out_refund': '04'
-        }
-        super(AccountInvoice, self)._onchange_journal_id()
-        if self.journal_id:
-            inv_type = self.type
-            auth = self.env['account.authorisation'].search([('type_id.code', '=', doc_code[inv_type])], limit=1)  # noqa
-            # TODO: cargar num de retencion
-            if inv_type in ['out_invoice', 'liq_purchase', 'out_refund']:
-                if auth is None:
-                    return {
-                        'warning': {
-                            'title': 'Error',
-                            'message': u'No se ha configurado una autorización.'  # noqa
-                        }
-                    }
-                number = '{0}'.format(
-                    str(auth.sequence_id.number_next_actual).zfill(9)
-                )
-                self.auth_inv_id = auth.id
-                self.reference = number
-
     @api.one
     @api.depends(
         'state',

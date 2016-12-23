@@ -191,10 +191,22 @@ class AccountInvoice(models.Model):
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
         super(AccountInvoice, self)._onchange_partner_id()
-        if self.type in ['out_invoice']:
+        if self.type in ['out_invoice', 'out_refund']:
             self.auth_inv_id = self.journal_id.auth_id and self.journal_id.auth_id.id or False  # noqa
         elif self.type in ['in_invoice', 'liq_purchase']:
             self.auth_inv_id = self.journal_id.auth_ret_id and self.journal_id.auth_ret_id.id or False  # noqa
+        if self.type in ['out_invoice', 'liq_purchase', 'out_refund']:
+            if self.auth_inv_id is None:
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'No se ha configurado una autorización.'  # noqa
+                    }
+                }
+            number = '{0}'.format(
+                str(self.auth_inv_id.sequence_id.number_next_actual).zfill(9)
+            )
+            self.reference = number
 
     auth_inv_id = fields.Many2one(
         'account.authorisation',
