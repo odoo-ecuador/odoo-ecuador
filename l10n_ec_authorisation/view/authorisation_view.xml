@@ -22,7 +22,9 @@
             <field name="arch" type="xml">
                 <field name="reference" position="after">
                     <field name="auth_number" required="1"/>
-                    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" />
+                </field>
+                <field name="date_due" position="after">
+                    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
                 </field>
 	        <field name="reference" position="attributes">
 	            <attribute name="required">True</attribute>
