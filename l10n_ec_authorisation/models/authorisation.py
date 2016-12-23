@@ -44,6 +44,7 @@ class AccountAuthorisation(models.Model):
     @api.multi
     @api.depends('type_id', 'num_start', 'num_end')
     def name_get(self):
+        res = []
         for record in self:
             name = u'%s (%s-%s)' % (
                 record.type_id.code,
