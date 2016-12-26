@@ -151,8 +151,7 @@ class AccountAuthorisation(models.Model):
         Metodo que verifica si @number esta en el rango
         de [@num_start,@num_end]
         """
-        obj = self.browse(cursor, uid, id)
-        if obj.num_start <= number <= obj.num_end:
+        if self.num_start <= number <= self.num_end:
             return True
         return False
 
