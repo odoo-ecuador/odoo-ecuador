@@ -234,6 +234,10 @@ class AccountInvoice(models.Model):
         copy=False
     )
 
+    @api.onchange('auth_inv_id')
+    def onchange_auth_inv_id(self):
+        self.reference = self.auth_inv_id and self.auth_inv_id.name or ""
+
     @api.onchange(
         'supplier_invoice_number',
         'auth_inv_id'
