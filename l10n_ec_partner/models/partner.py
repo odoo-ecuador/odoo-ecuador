@@ -26,21 +26,22 @@ class ResPartner(models.Model):
         if not args:
             args = []
         if name:
-            partners = self.search([('identifier', operator, name)] + args, limit=limit)
+            partners = self.search([('identifier', operator, name)] + args, limit=limit)  # noqa
             if not partners:
-                partners = self.search([('name', operator, name)] + args, limit=limit)
+                partners = self.search([('name', operator, name)] + args, limit=limit)  # noqa
         else:
             partners = self.search(args, limit=limit)
         return partners.name_get()
 
-    def _check_identifier(self, cr, uid, ids):
-        for partner in self.browse(cr, uid, ids):
-            if partner.type_identifier == 'cedula':
-                return ec.ci.is_valid(partner.identifier)
-            elif partner.type_identifier == 'ruc':
-                return ec.ruc.is_valid(partner.identifier)
-            else:
-                return True
+    @api.one
+    @api.constrains('identifier')
+    def _check_identifier(self):
+        if self.type_identifier == 'cedula':
+            return ec.ci.is_valid(self.identifier)
+        elif self.type_identifier == 'ruc':
+            return ec.ruc.is_valid(self.identifier)
+        else:
+            return True
 
     identifier = fields.Char(
         'Cedula/ RUC',
@@ -67,10 +68,6 @@ class ResPartner(models.Model):
         default='9'
     )
     company_type = fields.Selection(default='company')
-
-    _constraints = [
-        (_check_identifier, 'Error en su Cedula/RUC/Pasaporte', ['identifier'])
-        ]
 
     _sql_constraints = [
         ('partner_unique',
