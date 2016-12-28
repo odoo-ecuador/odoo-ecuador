@@ -15,7 +15,7 @@
         'account',
         'account_chart',
     ],
-    'update_xml': [
+    'data': [
         'account_chart.xml',
         'l10n_chart_ec_wizard.xml',
     ],
