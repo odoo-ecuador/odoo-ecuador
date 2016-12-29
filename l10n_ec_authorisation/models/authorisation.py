@@ -207,6 +207,32 @@ class AccountInvoice(models.Model):
             )
             self.reference = number
 
+    @api.one
+    @api.depends(
+        'state',
+        'reference'
+    )
+    def _get_invoice_number(self):
+        """
+        Calcula el numero de factura segun el
+        establecimiento seleccionado
+        """
+        if self.reference:
+            self.invoice_number = '{0}{1}{2}'.format(
+                self.auth_inv_id.serie_entidad,
+                self.auth_inv_id.serie_emision,
+                self.reference
+            )
+        else:
+            self.invoice_number = '*'
+
+    invoice_number = fields.Char(
+        compute='_get_invoice_number',
+        store=True,
+        readonly=True,
+        copy=False
+    )
+    internal_inv_number = fields.Char('Numero Interno', copy=False)
     auth_inv_id = fields.Many2one(
         'account.authorisation',
         string='Establecimiento',
@@ -223,6 +249,7 @@ class AccountInvoice(models.Model):
 
     @api.onchange('reference')
     def _onchange_ref(self):
+        # TODO: agregar validacion numerica a reference
         if self.reference:
             self.reference = self.reference.zfill(9)
 
@@ -240,3 +267,15 @@ class AccountInvoice(models.Model):
             raise UserError(
                 u'Debe ingresar 10, 35 o 49 dígitos según el documento.'
             )
+
+    @api.multi
+    def action_number(self):
+        # TODO: ver donde incluir el metodo de numeracion
+        self.ensure_one()
+        if self.type not in ['out_invoice', 'liq_purchase']:
+            return
+        number = self.internal_inv_number
+        if not number:
+            sequence = self.journal_id.auth_id.sequence_id
+            number = sequence.next_by_id()
+        self.write({'reference': number, 'internal_inv_number': number})

@@ -12,6 +12,12 @@
                            required="1" options="{'no_create':True, 'no_create_edit': True}"/>
                     <field name="reference" string="Número de Factura"/>
 	        </field>
+	        <field name="number" position="before">
+	            <field name="invoice_number" class="oe_inline"/>
+	        </field>
+	        <field name="reference" position="after">
+	            <field name="auth_number" readonly="1"/>
+	        </field>
             </field>
         </record>
 
@@ -20,6 +26,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+	        <field name="number" position="before">
+	            <field name="invoice_number" class="oe_inline"/>
+	        </field>
                 <field name="reference" position="after">
                     <field name="auth_number" required="1"/>
                 </field>
