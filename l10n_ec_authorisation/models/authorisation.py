@@ -85,6 +85,13 @@ class AccountAuthorisation(models.Model):
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, values):
+        res = self.search([('partner_id', '=', values['partner_id']),
+                           ('type_id', '=', values['type_id']),
+                           ('active', '=', True)])
+        if res:
+            MSG = u'Ya existe una autorización activa para %s' % self.type_id.name  # noqa
+            raise ValidationError(MSG)
+
         partner_id = self.env.user.company_id.partner_id.id
         if values['partner_id'] == partner_id:
             name_type = '{0}_{1}'.format(values['name'], values['type_id'])
@@ -160,15 +167,6 @@ class AccountAuthorisation(models.Model):
         if self.num_start <= number <= self.num_end:
             return True
         return False
-
-    @api.constrains('expiration_date')
-    def _check_type_active(self):
-        res = self.search([('partner_id', '=', self.partner_id.id),
-                           ('type_id', '=', self.type_id.id),
-                           ('active', '=', True)])
-        if res:
-            MSG = u'Ya existe una autorización activa para %s' % self.type_id.name  # noqa
-            raise ValidationError(MSG)
 
 
 class ResPartner(models.Model):
