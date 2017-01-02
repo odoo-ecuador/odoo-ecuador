@@ -4,7 +4,7 @@
 
 {
     'name': 'Establecimientos y autorizaciones del SRI',
-    'version': '0.1.0.0.0',
+    'version': '10.0.0.0.0',
     'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
@@ -12,7 +12,8 @@
     'data': [
         'view/authorisation_view.xml',
         'data/account.ats.doc.csv',
-        'data/account.ats.sustento.csv'
+        'data/account.ats.sustento.csv',
+        'security/ir.model.access.csv'
     ],
     'depends': [
         'l10n_ec_partner',

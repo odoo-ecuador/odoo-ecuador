@@ -60,7 +60,7 @@ class AccountAuthorisation(models.Model):
 
     @api.one
     @api.depends('expiration_date')
-    def _check_active(self):
+    def _compute_active(self):
         """
         Check the due_date to give the value active field
         """
@@ -115,7 +115,7 @@ class AccountAuthorisation(models.Model):
     is_electronic = fields.Boolean('Documento Electrónico ?')
     expiration_date = fields.Date('Fecha de Vencimiento')
     active = fields.Boolean(
-        compute='_check_active',
+        compute='_compute_active',
         string='Activo',
         store=True,
         default=True
@@ -231,7 +231,7 @@ class AccountInvoice(models.Model):
         'state',
         'reference'
     )
-    def _get_invoice_number(self):
+    def _compute_invoice_number(self):
         """
         Calcula el numero de factura segun el
         establecimiento seleccionado
@@ -246,7 +246,7 @@ class AccountInvoice(models.Model):
             self.invoice_number = '*'
 
     invoice_number = fields.Char(
-        compute='_get_invoice_number',
+        compute='_compute_invoice_number',
         store=True,
         readonly=True,
         copy=False
