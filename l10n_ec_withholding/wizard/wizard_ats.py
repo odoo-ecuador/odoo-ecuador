@@ -12,9 +12,8 @@ from lxml.etree import DocumentInvalid
 from jinja2 import Environment, FileSystemLoader
 
 from openerp import fields, models, api
-from openerp.exceptions import Warning as UserError
 
-from .utils import convertir_fecha, get_date_value, XSD_MSG
+from .utils import convertir_fecha, get_date_value
 
 tpIdProv = {
     'ruc': '01',
@@ -82,8 +81,8 @@ class WizardAts(models.TransientModel):
                         'valRetAir': 0
                     }
                 temp[line.base_code_id.code]['baseImpAir'] += line.base_amount
-                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code
-                temp[line.base_code_id.code]['porcentajeAir'] = line.percent and int(line.percent) or 0
+                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code  # noqa
+                temp[line.base_code_id.code]['porcentajeAir'] = int(line.tax_id.amount)  # noqa
                 temp[line.base_code_id.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
@@ -142,7 +141,6 @@ class WizardAts(models.TransientModel):
             ('number', '=', invoice.origin)
         ])
         if refund:
-            #raise UserError('El origen del documento no fue encontrado.')
             auth = refund.auth_inv_id
             return {
                 'docModificado': '01',
@@ -216,7 +214,7 @@ class WizardAts(models.TransientModel):
                 })
                 if inv.retention_id:
                     detallecompras.update({'retencion': True})
-                    detallecompras.update(self.get_withholding(inv.retention_id))
+                    detallecompras.update(self.get_withholding(inv.retention_id))  # noqa
                 if inv.type in ['out_refund', 'in_refund']:
                     detallecompras.update(self.get_refund(inv))
                 compras.append(detallecompras)
@@ -245,7 +243,7 @@ class WizardAts(models.TransientModel):
                 'baseImpGrav': inv.amount_vat,
                 'montoIva': inv.amount_tax,
                 'montoIce': '0.00',
-                'valorRetIva': (abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)),
+                'valorRetIva': (abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)),  # noqa
                 'valorRetRenta': abs(inv.taxed_ret_ir),
                 'formasDePago': {
                     'formaPago': inv.epayment_id.code
