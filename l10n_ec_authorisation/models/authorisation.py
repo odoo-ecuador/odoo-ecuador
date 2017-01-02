@@ -7,7 +7,6 @@ from datetime import datetime
 
 from odoo import api, fields, models
 from odoo.exceptions import (
-    RedirectWarning,
     ValidationError,
     Warning as UserError
 )

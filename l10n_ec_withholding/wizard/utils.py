@@ -5,11 +5,6 @@ import datetime
 
 STD_FORMAT = '%Y-%m-%d'
 
-XSD_MSG = 'El XML generado no se validó' \
-            '\nEerrores mas comunes son:\n' \
-            '* RUC,Cédula o Pasaporte contiene caracteres no válidos.' \
-            'DETALLE DE ERROR %s'
-
 
 def convertir_fecha(fecha):
     """
