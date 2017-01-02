@@ -25,9 +25,9 @@ class TestAuthorisation(TransactionCase):
 
         partner_id = self.Partner.create(
             {
-                'ced_ruc': '0103893962',
+                'identifier': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
-                'type_ced_ruc': 'cedula',
+                'type_identifier': 'cedula',
                 'tipo_persona': '6'
             }
         )
@@ -46,4 +46,4 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        self.assertNotEquals(auth_id, 0)
+        self.assertEquals(auth_id.name, '0123456789')
