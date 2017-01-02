@@ -50,18 +50,6 @@
     <!--
        Account Authorisation
     -->
-    <record id="view_journal_auth_form" model="ir.ui.view">
-        <field name="name">account.journal.auth.form</field>
-        <field name="model">account.journal</field>
-        <field name="inherit_id" ref="account.view_account_journal_form"/>
-        <field name="arch" type="xml">
-	    <field name="sequence_id" position="after">
-	        <field name="auth_id" context="{'default_in_type': 'interno'}"/>
-	        <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>
-	    </field>
-        </field>
-    </record>
-
     <record id="view_partner_auth_form" model="ir.ui.view">
         <field name="name">account.partner.auth.form</field>
         <field name="model">res.partner</field>
@@ -94,6 +82,7 @@
                 <field name="type_id"/>
                 <field name="is_electronic"/>
                 <field name="partner_id"/>
+		<field name="expiration_date"/>
                 <field name="serie_entidad"/>
                 <field name="serie_emision"/>
 	    </tree>
@@ -201,7 +190,7 @@
         <field name="model">account.ats.doc</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-	    <tree string="Tipos de Comprobantes Autorizados" editable="top">
+	    <tree string="Comprobantes Autorizados" editable="top">
                 <field name="code" select="1"/>
 	        <field name="name"/>
 	    </tree>
@@ -223,7 +212,7 @@
     </record>
 
     <record id="action_account_ats_doc" model="ir.actions.act_window">
-        <field name="name">Tipos de Comprobantes Autorizados</field>
+        <field name="name">Comprobantes Autorizados</field>
         <field name="res_model">account.ats.doc</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
