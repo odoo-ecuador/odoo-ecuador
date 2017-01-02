@@ -2,57 +2,54 @@
 <odoo>
     <data>
 
-        <record id="view_invoice_reference_customer_form" model="ir.ui.view">
+	<record id="view_invoice_reference_customer_form" model="ir.ui.view">
             <field name="name">account.invoice.reference.cust.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
-	        <field name="fiscal_position_id" position="after">
+		<field name="fiscal_position_id" position="after">
 	            <field name="auth_inv_id" domain="[('in_type','=','interno')]"
-                           required="1" options="{'no_create':True, 'no_create_edit': True}"/>
-                    <field name="reference" string="Número de Factura"/>
-	        </field>
-            </field>
-        </record>
+			   required="1" options="{'no_create':True, 'no_create_edit': True}"/>
+		    <field name="reference" string="Número de Factura"/>
+		</field>
+		<field name="number" position="before">
+		    <field name="invoice_number" class="oe_inline"/>
+		</field>
+		<field name="reference" position="after">
+		    <field name="auth_number" readonly="1"/>
+		</field>
+	    </field>
+	</record>
 
-        <record id="view_account_invoice_authoris_form" model="ir.ui.view">
-            <field name="name">account.invoice.authoris.form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_supplier_form"/>
-            <field name="arch" type="xml">
-                <field name="reference" position="after">
-                    <field name="auth_number" required="1"/>
-                </field>
-                <field name="date_due" position="after">
-                    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
-                </field>
-	        <field name="reference" position="attributes">
-	            <attribute name="required">True</attribute>
-	            <attribute name="string">Num. Factura</attribute>
-	            <attribute name="placeholder">000004597</attribute>
-	        </field>
-                <xpath expr="//field[@name='journal_id']" position="after">
-                    <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
-                           context="{'default_partner_id': partner_id}"/>
-                </xpath>
-            </field>
-        </record>
+	<record id="view_account_invoice_authoris_form" model="ir.ui.view">
+	    <field name="name">account.invoice.authoris.form</field>
+	    <field name="model">account.invoice</field>
+	    <field name="inherit_id" ref="account.invoice_supplier_form"/>
+	    <field name="arch" type="xml">
+		<field name="number" position="before">
+		    <field name="invoice_number" class="oe_inline"/>
+		</field>
+		<field name="reference" position="after">
+		    <field name="auth_number" required="1"/>
+		</field>
+		<field name="date_due" position="after">
+		    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+		</field>
+		<field name="reference" position="attributes">
+		    <attribute name="required">True</attribute>
+		    <attribute name="string">Num. Factura</attribute>
+		    <attribute name="placeholder">000004597</attribute>
+		</field>
+		<xpath expr="//field[@name='journal_id']" position="after">
+		    <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
+			   context="{'default_partner_id': partner_id}"/>
+		</xpath>
+	    </field>
+	</record>
 
     <!--
        Account Authorisation
     -->
-    <record id="view_journal_auth_form" model="ir.ui.view">
-        <field name="name">account.journal.auth.form</field>
-        <field name="model">account.journal</field>
-        <field name="inherit_id" ref="account.view_account_journal_form"/>
-        <field name="arch" type="xml">
-	    <field name="sequence_id" position="after">
-	        <field name="auth_id" context="{'default_in_type': 'interno'}"/>
-	        <field name="auth_ret_id" context="{'default_in_type': 'interno'}"/>
-	    </field>
-        </field>
-    </record>
-
     <record id="view_partner_auth_form" model="ir.ui.view">
         <field name="name">account.partner.auth.form</field>
         <field name="model">res.partner</field>
@@ -85,6 +82,7 @@
                 <field name="type_id"/>
                 <field name="is_electronic"/>
                 <field name="partner_id"/>
+		<field name="expiration_date"/>
                 <field name="serie_entidad"/>
                 <field name="serie_emision"/>
 	    </tree>
@@ -192,7 +190,7 @@
         <field name="model">account.ats.doc</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-	    <tree string="Tipos de Comprobantes Autorizados" editable="top">
+	    <tree string="Comprobantes Autorizados" editable="top">
                 <field name="code" select="1"/>
 	        <field name="name"/>
 	    </tree>
@@ -214,7 +212,7 @@
     </record>
 
     <record id="action_account_ats_doc" model="ir.actions.act_window">
-        <field name="name">Tipos de Comprobantes Autorizados</field>
+        <field name="name">Comprobantes Autorizados</field>
         <field name="res_model">account.ats.doc</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
