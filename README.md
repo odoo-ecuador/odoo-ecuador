@@ -1,7 +1,9 @@
-![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg) [![Build Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=10.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador) [![Coverage Status](https://coveralls.io/repos/github/ovnicraft/odoo-ecuador/badge.svg?branch=10.0)](https://coveralls.io/github/ovnicraft/odoo-ecuador?branch=10.0)
+![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg) 
+[![Travis Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=10.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador) 
+[![Codecov Status](https://codecov.io/gh/odoo-ecuador/odoo-ecuador/branch/10.0/graph/badge.svg)](https://codecov.io/gh/odoo-ecuador/odoo-ecuador/branch/10.0)
 
-Localizacion de OpenERP para Ecuador
-====================================
+Localización de Odoo para Ecuador
+=================================
 
 Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
