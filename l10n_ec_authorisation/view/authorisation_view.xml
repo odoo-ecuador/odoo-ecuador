@@ -2,50 +2,50 @@
 <odoo>
     <data>
 
-	<record id="view_invoice_reference_customer_form" model="ir.ui.view">
+        <record id="view_invoice_reference_customer_form" model="ir.ui.view">
             <field name="name">account.invoice.reference.cust.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
-		<field name="fiscal_position_id" position="after">
-	            <field name="auth_inv_id" domain="[('in_type','=','interno')]"
-			   required="1" options="{'no_create':True, 'no_create_edit': True}"/>
-		    <field name="reference" string="Número de Factura"/>
-		</field>
-		<field name="number" position="before">
-		    <field name="invoice_number" class="oe_inline"/>
-		</field>
-		<field name="reference" position="after">
-		    <field name="auth_number" readonly="1"/>
-		</field>
-	    </field>
-	</record>
+                <field name="fiscal_position_id" position="after">
+                    <field name="auth_inv_id" domain="[('in_type','=','interno')]"
+                           required="1" options="{'no_create':True, 'no_create_edit': True}"/>
+                    <field name="reference" string="Número de Factura"/>
+                </field>
+                <field name="number" position="before">
+                    <field name="invoice_number" class="oe_inline"/>
+                </field>
+                <field name="reference" position="after">
+                    <field name="auth_number" readonly="1"/>
+                </field>
+            </field>
+        </record>
 
-	<record id="view_account_invoice_authoris_form" model="ir.ui.view">
-	    <field name="name">account.invoice.authoris.form</field>
-	    <field name="model">account.invoice</field>
-	    <field name="inherit_id" ref="account.invoice_supplier_form"/>
-	    <field name="arch" type="xml">
-		<field name="number" position="before">
-		    <field name="invoice_number" class="oe_inline"/>
-		</field>
-		<field name="reference" position="after">
-		    <field name="auth_number" required="1"/>
-		</field>
-		<field name="date_due" position="after">
-		    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
-		</field>
-		<field name="reference" position="attributes">
-		    <attribute name="required">True</attribute>
-		    <attribute name="string">Num. Factura</attribute>
-		    <attribute name="placeholder">000004597</attribute>
-		</field>
-		<xpath expr="//field[@name='journal_id']" position="after">
-		    <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
-			   context="{'default_partner_id': partner_id}"/>
-		</xpath>
-	    </field>
-	</record>
+        <record id="view_account_invoice_authoris_form" model="ir.ui.view">
+            <field name="name">account.invoice.authoris.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="number" position="before">
+                    <field name="invoice_number" class="oe_inline"/>
+                </field>
+                <field name="reference" position="after">
+                    <field name="auth_number" required="1"/>
+                </field>
+                <field name="date_due" position="after">
+                    <field name="sustento_id" required="1" class="oe_inline oe_edit_only" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                </field>
+                <field name="reference" position="attributes">
+                    <attribute name="required">True</attribute>
+                    <attribute name="string">Num. Factura</attribute>
+                    <attribute name="placeholder">000004597</attribute>
+                </field>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="auth_inv_id" required="1" domain="[('partner_id','=',partner_id)]" options='{"no_open":True}'
+                           context="{'default_partner_id': partner_id}"/>
+                </xpath>
+            </field>
+        </record>
 
     <!--
        Account Authorisation
@@ -55,22 +55,22 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-	    <notebook position="inside">
-	        <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
-	            <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
+            <notebook position="inside">
+                <page string="Autorizaciones" attrs="{'invisible': [('supplier','!=',True)]}">
+                    <field name="authorisation_ids" nolabel="1" context="{'in_type':'externo', 'default_partner_id': active_id}">
                         <tree string="Autorizaciones" editable="top">
-			    <field name="is_electronic"/>
-		            <field name="type_id"/>
-		            <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            <field name="serie_emision"/>
-		            <field name="serie_entidad"/>
-		            <field name="num_start" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            <field name="num_end" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            <field name="expiration_date" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+                            <field name="is_electronic"/>
+                            <field name="type_id"/>
+                            <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+                            <field name="serie_emision"/>
+                            <field name="serie_entidad"/>
+                            <field name="num_start" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+                            <field name="num_end" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+                            <field name="expiration_date" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
                         </tree>
-	            </field>
-	        </page>
-	    </notebook>
+                    </field>
+                </page>
+            </notebook>
         </field>
     </record>
 
@@ -78,14 +78,14 @@
         <field name="name">account.auth.tree</field>
         <field name="model">account.authorisation</field>
         <field name="arch" type="xml">
-	    <tree string="Autorizaciones del SRI">
+            <tree string="Autorizaciones del SRI">
                 <field name="type_id"/>
                 <field name="is_electronic"/>
                 <field name="partner_id"/>
-		<field name="expiration_date"/>
+                <field name="expiration_date"/>
                 <field name="serie_entidad"/>
                 <field name="serie_emision"/>
-	    </tree>
+            </tree>
         </field>
     </record>
 
@@ -93,44 +93,44 @@
         <field name="name">account.auth.form</field>
         <field name="model">account.authorisation</field>
         <field name="arch" type="xml">
-	    <form string="Autorizaciones SRI">
-	        <sheet>
+            <form string="Autorizaciones SRI">
+                <sheet>
                     <group>
-	                <group>
-		            <field name="is_electronic"/>
-		            <field name="type_id" widget="selection"/>
-		            <field name="in_type"/>
-		            <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
-		            <field name="sequence_id" invisible="1"/>
-	                </group>
-	                <group>
-		            <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            <field name="expiration_date"
+                        <group>
+                            <field name="is_electronic"/>
+                            <field name="type_id" widget="selection"/>
+                            <field name="in_type"/>
+                            <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
+                            <field name="sequence_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
+                            <field name="expiration_date"
                                    attrs="{'required': [('is_electronic','!=',True)], 'invisible': [('is_electronic','=',True)]}"/>
-		            <field name="active"/>
-	                </group>
+                            <field name="active"/>
+                        </group>
                     </group>
                     <group>
                         <group>
-		            <label string="Establecimiento" for="serie_entidad"/>
-		            <div>
-		                <field name="serie_entidad" class="oe_inline" placeholder="001"/> -
-		                <field name="serie_emision" placeholder="001"/>
-		            </div>
+                            <label string="Establecimiento" for="serie_entidad"/>
+                            <div>
+                                <field name="serie_entidad" class="oe_inline" placeholder="001"/> -
+                                <field name="serie_emision" placeholder="001"/>
+                            </div>
                         </group>
                         <group>
-		            <label string="Secuencia de Comprobante" for="num_start"
+                            <label string="Secuencia de Comprobante" for="num_start"
                                    attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            <div>
-		                <field name="num_start" class="oe_inline"
+                            <div>
+                                <field name="num_start" class="oe_inline"
                                        attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/> -
-		                <field name="num_end" class="oe_inline"
+                                <field name="num_end" class="oe_inline"
                                        attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
-		            </div>
+                            </div>
                         </group>
                     </group>
-	        </sheet>
-	    </form>
+                </sheet>
+            </form>
         </field>
     </record>
 
@@ -152,7 +152,7 @@
                 <group expand="0" string="Agrupar por...">
                     <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
                     <separator orientation="vertical"/>
-	            <filter string="Tipo" domain="[]" context="{'group_by': 'type_id'}"/>
+                    <filter string="Tipo" domain="[]" context="{'group_by': 'type_id'}"/>
                 </group>
             </search>
         </field>
@@ -190,10 +190,10 @@
         <field name="model">account.ats.doc</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-	    <tree string="Comprobantes Autorizados" editable="top">
+            <tree string="Comprobantes Autorizados" editable="top">
                 <field name="code" select="1"/>
-	        <field name="name"/>
-	    </tree>
+                <field name="name"/>
+            </tree>
         </field>
     </record>
 
@@ -202,12 +202,12 @@
         <field name="model">account.ats.doc</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-	    <form string="Tipo de Comprobante Autorizado">
+            <form string="Tipo de Comprobante Autorizado">
                 <group col="4" colspan="4">
                     <field name="code" required="1"/>
-	            <field name="name"/>
+                    <field name="name"/>
                 </group>
-	    </form>
+            </form>
         </field>
     </record>
 
@@ -224,10 +224,10 @@
         <field name="model">account.ats.sustento</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-	    <tree string="Sustento del Comprobante" editable="top">
+            <tree string="Sustento del Comprobante" editable="top">
                 <field name="code" select="1"/>
-	        <field name="type"/>
-	    </tree>
+                <field name="type"/>
+            </tree>
         </field>
     </record>
 
@@ -236,12 +236,12 @@
         <field name="model">account.ats.sustento</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-	    <form string="Sustento del Comprobante">
+            <form string="Sustento del Comprobante">
                 <group col="4" colspan="4">
                     <field name="code" required="1"/>
-	            <field name="type"/>
+                    <field name="type"/>
                 </group>
-	    </form>
+            </form>
         </field>
     </record>
 

@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import time
 import base64
 import StringIO
+import os
+import logging
+from itertools import groupby
+from operator import itemgetter
+
 from lxml import etree
 from lxml.etree import DocumentInvalid
-import os
-import datetime
-import logging
+from jinja2 import Environment, FileSystemLoader
 
-from openerp.osv import osv, orm, fields
+from openerp import fields, models, api
+from openerp.exceptions import Warning as UserError
+
+from .utils import convertir_fecha, get_date_value, XSD_MSG
 
 tpIdProv = {
     'ruc': '01',
@@ -24,27 +29,45 @@ tpIdCliente = {
     }
 
 
-class wizard_ats(orm.TransientModel):
+class AccountAts(dict):
+    """
+    representacion del ATS
+    >>> ats.campo = 'valor'
+    >>> ats['campo']
+    'valor'
+    """
+
+    def __getattr__(self, item):
+        try:
+            return self.__getitem__(item)
+        except KeyError:
+            raise AttributeError(item)
+
+    def __setattr__(self, item, value):
+        if item in self.__dict__:
+            dict.__setattr__(self, item, value)
+        else:
+            self.__setitem__(item, value)
+
+
+class WizardAts(models.TransientModel):
 
     _name = 'wizard.ats'
     _description = 'Anexo Transaccional Simplificado'
     __logger = logging.getLogger(_name)
 
-    def _get_period(self, cr, uid, context):
-        periods = self.pool.get('account.period').find(cr, uid)
-        if periods:
-            return periods[0]
-        else:
-            return False
+    @api.multi
+    def _get_period(self):
+        return self.env['account.period'].find()
 
-    def _get_company(self, cr, uid, context):
-        user = self.pool.get('res.users').browse(cr, uid, uid)
-        return user.company_id.id
+    @api.multi
+    def _get_company(self):
+        return self.env.user.company_id.id
 
-    def act_cancel(self, cr, uid, ids, context):
+    def act_cancel(self):
         return {'type': 'ir.actions.act_window_close'}
 
-    def process_lines(self, cr, uid, lines):
+    def process_lines(self, lines):
         """
         @temp: {'332': {baseImpAir: 0,}}
         @data_air: [{baseImpAir: 0, ...}]
@@ -59,36 +82,25 @@ class wizard_ats(orm.TransientModel):
                         'valRetAir': 0
                     }
                 temp[line.base_code_id.code]['baseImpAir'] += line.base_amount
-                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code  # noqa
-                temp[line.base_code_id.code]['porcentajeAir'] = line.percent and float(line.percent) or 0.00  # noqa
+                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code
+                temp[line.base_code_id.code]['porcentajeAir'] = line.percent and int(line.percent) or 0
                 temp[line.base_code_id.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
         return data_air
 
-    def convertir_fecha(self, fecha):
-        """
-        fecha: '2012-12-15'
-        return: '15/12/2012'
-        """
-        f = fecha.split('-')
-        date = datetime.date(int(f[0]), int(f[1]), int(f[2]))
-        return date.strftime('%d/%m/%Y')
-
-    def _get_ventas(self, cr, period_id, journal_id=False):
+    @api.model
+    def _get_ventas(self, period_id):
         sql_ventas = "SELECT type, sum(amount_vat+amount_vat_cero+amount_novat) AS base \
                       FROM account_invoice \
                       WHERE type IN ('out_invoice', 'out_refund') \
                       AND state IN ('open','paid') \
                       AND period_id = %s" % period_id
-        if journal_id:
-            where = " AND journal_id=%s" % journal_id
-            sql_ventas += where
         sql_ventas += " GROUP BY type"
-        cr.execute(sql_ventas)
-        res = cr.fetchall()
+        self.env.cr.execute(sql_ventas)
+        res = self.env.cr.fetchall()
         resultado = sum(map(lambda x: x[0] == 'out_refund' and x[1] * -1 or x[1], res))  # noqa
-        return '%.2f' % resultado
+        return resultado
 
     def _get_ret_iva(self, invoice):
         """
@@ -116,280 +128,319 @@ class wizard_ats(orm.TransientModel):
                     retServ += abs(tax.tax_amount)
         return retBien10, retServ20, retBien, retServ, retServ100
 
-    def act_export_ats(self, cr, uid, ids, context):
-        inv_obj = self.pool.get('account.invoice')
-        wiz = self.browse(cr, uid, ids)[0]
-        period_id = wiz.period_id.id
-        ruc = wiz.company_id.partner_id.ced_ruc
-        ats = etree.Element('iva')
-        etree.SubElement(ats, 'TipoIDInformante').text = 'R'
-        etree.SubElement(ats, 'IdInformante').text = str(ruc)
-        etree.SubElement(ats, 'razonSocial').text = wiz.company_id.name
-        period = self.pool.get('account.period').browse(cr, uid, [period_id])[0]  # noqa
-        etree.SubElement(ats, 'Anio').text = time.strftime('%Y', time.strptime(period.date_start, '%Y-%m-%d'))  # noqa
-        etree.SubElement(ats, 'Mes'). text = time.strftime('%m', time.strptime(period.date_start, '%Y-%m-%d'))  # noqa
-        etree.SubElement(ats, 'numEstabRuc').text = wiz.num_estab_ruc.zfill(3)
-        total_ventas = self._get_ventas(cr, period_id)
-        etree.SubElement(ats, 'totalVentas').text = total_ventas
-        etree.SubElement(ats, 'codigoOperativo').text = 'IVA'
-        compras = etree.Element('compras')
-        # Facturas de Compra con retenciones
-        inv_ids = inv_obj.search(cr, uid, [('state', 'in', ['open', 'paid']),
-                                           ('period_id', '=', period_id),
-                                           ('type', 'in', ['in_invoice', 'liq_purchase']),  # noqa
-                                           ('company_id', '=', wiz.company_id.id)])  # noqa
-        self.__logger.info("Compras registradas: %s" % len(inv_ids))
-        for inv in inv_obj.browse(cr, uid, inv_ids):
-            detallecompras = etree.Element('detalleCompras')
-            etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code  # noqa
-            if not inv.partner_id.ced_ruc:
-                raise osv.except_osv('Datos incompletos', 'No ha ingresado toda los datos de %s' % inv.partner_id.name)  # noqa
-            etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_ced_ruc]  # noqa
-            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.ced_ruc  # noqa
-            if inv.auth_inv_id:
-                tcomp = inv.auth_inv_id.type_id.code
-            else:
-                tcomp = '03'
-            etree.SubElement(detallecompras, 'tipoComprobante').text = tcomp
-            etree.SubElement(detallecompras, 'fechaRegistro').text = self.convertir_fecha(inv.date_invoice)  # noqa
-            if inv.type == 'in_invoice':
-                se = inv.auth_inv_id.serie_entidad
-                pe = inv.auth_inv_id.serie_emision
-                sec = '%09d' % int(inv.reference)
-                auth = inv.auth_inv_id.name
-            elif inv.type == 'liq_purchase':
-                se = inv.journal_id.auth_id.serie_entidad
-                pe = inv.journal_id.auth_id.serie_emision
-                sec = inv.number[8:]
-                auth = inv.journal_id.auth_id.name
-            etree.SubElement(detallecompras, 'establecimiento').text = se
-            etree.SubElement(detallecompras, 'puntoEmision').text = pe
-            etree.SubElement(detallecompras, 'secuencial').text = sec
-            etree.SubElement(detallecompras, 'fechaEmision').text = self.convertir_fecha(inv.date_invoice)  # noqa
-            etree.SubElement(detallecompras, 'autorizacion').text = auth
-            etree.SubElement(detallecompras, 'baseNoGraIva').text = inv.amount_novat == 0 and '0.00' or '%.2f' % inv.amount_novat  # noqa
-            etree.SubElement(detallecompras, 'baseImponible').text = '%.2f' % inv.amount_vat_cero  # noqa
-            etree.SubElement(detallecompras, 'baseImpGrav').text = '%.2f' % inv.amount_vat  # noqa
-            etree.SubElement(detallecompras, 'baseImpExe').text = '0.00'
-            etree.SubElement(detallecompras, 'montoIce').text = '0.00'
-            etree.SubElement(detallecompras, 'montoIva').text = '%.2f' % inv.amount_tax  # noqa
-            valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valorRetServ100 = self._get_ret_iva(inv)  # noqa
-            etree.SubElement(detallecompras, 'valRetBien10').text = '%.2f' % valRetBien10  # noqa
-            etree.SubElement(detallecompras, 'valRetServ20').text = '%.2f' % valRetServ20  # noqa
-            etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f' % valorRetBienes  # noqa
-            # etree.SubElement(detallecompras, 'valorRetBienes').text = '%.2f'%abs(inv.taxed_ret_vatb)  # noqa
-            etree.SubElement(detallecompras, 'valorRetServicios').text = '%.2f' % valorRetServicios  # noqa
-            etree.SubElement(detallecompras, 'valRetServ100').text = '%.2f' % valorRetServ100  # noqa
-            etree.SubElement(detallecompras, 'totbasesImpReemb').text = '0.00'
-            pagoExterior = etree.Element('pagoExterior')
-            etree.SubElement(pagoExterior, 'pagoLocExt').text = '01'
-            etree.SubElement(pagoExterior, 'paisEfecPago').text = 'NA'
-            etree.SubElement(pagoExterior, 'aplicConvDobTrib').text = 'NA'
-            etree.SubElement(pagoExterior, 'pagExtSujRetNorLeg').text = 'NA'
-            detallecompras.append(pagoExterior)
-            if inv.amount_pay >= wiz.pay_limit:
-                formasDePago = etree.Element('formasDePago')
-                etree.SubElement(formasDePago, 'formaPago').text = '02'
-                detallecompras.append(formasDePago)
-            if inv.retention_ir or inv.no_retention_ir:
-                air = etree.Element('air')
-                data_air = self.process_lines(cr, uid, inv.tax_line)
-                for da in data_air:
-                    detalleAir = etree.Element('detalleAir')
-                    etree.SubElement(detalleAir, 'codRetAir').text = da['codRetAir']  # noqa
-                    etree.SubElement(detalleAir, 'baseImpAir').text = '%.2f' % da['baseImpAir']  # noqa
-                    etree.SubElement(detalleAir, 'porcentajeAir').text = '%.2f' % da['porcentajeAir']  # noqa
-                    etree.SubElement(detalleAir, 'valRetAir').text = '%.2f' % da['valRetAir']  # noqa
-                    air.append(detalleAir)
-                detallecompras.append(air)
-            flag = False
-            if inv.retention_id and (inv.retention_ir or inv.retention_vat):
-                flag = True
-                etree.SubElement(detallecompras, 'estabRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_entidad or '000'  # noqa
-                etree.SubElement(detallecompras, 'ptoEmiRetencion1').text = flag and inv.journal_id.auth_ret_id.serie_emision or '000'  # noqa
-                etree.SubElement(detallecompras, 'secRetencion1').text = flag and inv.retention_id.num_document[6:] or '%09d' % 0  # noqa
-                etree.SubElement(detallecompras, 'autRetencion1').text = flag and inv.journal_id.auth_ret_id.name or '%010d' % 0  # noqa
-                etree.SubElement(detallecompras, 'fechaEmiRet1').text = flag and self.convertir_fecha(inv.retention_id.date)  # noqa
-            compras.append(detallecompras)
-        ats.append(compras)
-        if float(total_ventas) > 0:
-            # VENTAS DECLARADAS
-            ventas = etree.Element('ventas')
-            inv_ids = inv_obj.search(cr, uid, [
-                ('state', 'in', ['open', 'paid']),
-                ('period_id', '=', period_id),
-                ('type', 'in', ['out_invoice', 'out_refund']),
-                ('company_id', '=', wiz.company_id.id)])
-            pdata = {}
-            self.__logger.info("Ventas registradas: %s" % len(inv_ids))
-            for inv in inv_obj.browse(cr, uid, inv_ids):
-                part_id = inv.partner_id.id
-                tipoComprobante = inv.journal_id.auth_id.type_id.code
-                keyp = '%s-%s' % (part_id, tipoComprobante)
-                partner_data = {
-                    keyp: {
-                        'tpIdCliente': inv.partner_id.type_ced_ruc,
-                        'idCliente': inv.partner_id.ced_ruc,
-                        'numeroComprobantes': 0,
-                        'basenoGraIva': 0,
-                        'baseImponible': 0,
-                        'baseImpGrav': 0,
-                        'montoIva': 0,
-                        'valorRetRenta': 0,
-                        'tipoComprobante': tipoComprobante,
-                        'valorRetIva': 0
-                    }
-                }
-                if not pdata.get(keyp, False):
-                    pdata.update(partner_data)
-                elif pdata[keyp]['tipoComprobante'] == tipoComprobante:
-                    pdata[keyp]['numeroComprobantes'] += 1
-                else:
-                    pdata.update(partner_data)
-                pdata[keyp]['basenoGraIva'] += inv.amount_novat
-                pdata[keyp]['baseImponible'] += inv.amount_vat_cero
-                pdata[keyp]['baseImpGrav'] += inv.amount_vat
-                pdata[keyp]['montoIva'] += inv.amount_tax
-                if inv.retention_ir:
-                    data_air = self.process_lines(cr, uid, inv.tax_line)
-                    for dt in data_air:
-                        pdata[keyp]['valorRetRenta'] += dt['valRetAir']
-                pdata[keyp]['valorRetIva'] += abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)  # noqa
+    def get_withholding(self, wh):
+        return {
+            'estabRetencion1': wh.auth_id.serie_entidad,
+            'ptoEmiRetencion1': wh.auth_id.serie_emision,
+            'secRetencion1': wh.name[6:15],
+            'autRetencion1': wh.auth_id.name,
+            'fechaEmiRet1': convertir_fecha(wh.date)
+        }
 
-            for k, v in pdata.items():
-                detalleVentas = etree.Element('detalleVentas')
-                etree.SubElement(detalleVentas, 'tpIdCliente').text = tpIdCliente[v['tpIdCliente']]  # noqa
-                etree.SubElement(detalleVentas, 'idCliente').text = v['idCliente']  # noqa
-                etree.SubElement(detalleVentas, 'parteRelVtas').text = 'NO'
-                etree.SubElement(detalleVentas, 'tipoComprobante').text = v['tipoComprobante']  # noqa
-                etree.SubElement(detalleVentas, 'numeroComprobantes').text = str(v['numeroComprobantes'])  # noqa
-                etree.SubElement(detalleVentas, 'baseNoGraIva').text = '%.2f' % v['basenoGraIva']  # noqa
-                etree.SubElement(detalleVentas, 'baseImponible').text = '%.2f' % v['baseImponible']  # noqa
-                etree.SubElement(detalleVentas, 'baseImpGrav').text = '%.2f' % v['baseImpGrav']  # noqa
-                etree.SubElement(detalleVentas, 'montoIva').text = '%.2f' % v['montoIva']  # noqa
-                etree.SubElement(detalleVentas, 'valorRetIva').text = '%.2f' % v['valorRetIva']  # noqa
-                etree.SubElement(detalleVentas, 'valorRetRenta').text = '%.2f' % v['valorRetRenta']  # noqa
-                ventas.append(detalleVentas)
-            ats.append(ventas)
-        # Ventas establecimiento
-        ventasEstablecimiento = etree.Element('ventasEstablecimiento')
-        ventaEst = etree.Element('ventaEst')
-        etree.SubElement(ventaEst, 'codEstab').text = inv.journal_id.auth_id.serie_emision  # noqa
-        etree.SubElement(ventaEst, 'ventasEstab').text = self._get_ventas(cr, period_id)  # noqa
-        ventasEstablecimiento.append(ventaEst)
-        ats.append(ventasEstablecimiento)
-        # Documentos Anulados
-        anulados = etree.Element('anulados')
-        inv_ids = inv_obj.search(cr, uid, [('state', '=', 'cancel'),
-                                           ('period_id', '=', period_id),
-                                           ('type', '=', 'out_invoice'),
-                                           ('company_id', '=', wiz.company_id.id)])  # noqa
-        self.__logger.info("Ventas Anuladas: %s" % len(inv_ids))
-        for inv in inv_obj.browse(cr, uid, inv_ids):
-            detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code  # noqa
-            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad  # noqa
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name  # noqa
-            anulados.append(detalleAnulados)
-        # Liquidaciones de compra
-        liq_ids = inv_obj.search(cr, uid, [('state', '=', 'cancel'),
-                                           ('period_id', '=', period_id),
-                                           ('type', '=', 'liq_purchase'),
-                                           ('company_id', '=', wiz.company_id.id)])  # noqa
-        for inv in inv_obj.browse(cr, uid, liq_ids):
-            detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = inv.journal_id.auth_id.type_id.code  # noqa
-            etree.SubElement(detalleAnulados, 'establecimiento').text = inv.journal_id.auth_id.serie_entidad  # noqa
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = inv.journal_id.auth_id.serie_emision  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(inv.number[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(inv.number[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'autorizacion').text = inv.journal_id.auth_id.name  # noqa
-            anulados.append(detalleAnulados)
-        retention_obj = self.pool.get('account.retention')
-        ret_ids = retention_obj.search(cr, uid, [('state', '=', 'cancel'),
-                                                 ('in_type', '=', 'ret_out_invoice'),  # noqa
-                                                 ('date', '>=', wiz.period_id.date_start),  # noqa
-                                                 ('date', '<=', wiz.period_id.date_stop)])  # noqa
-        for ret in retention_obj.browse(cr, uid, ret_ids):
-            detalleAnulados = etree.Element('detalleAnulados')
-            etree.SubElement(detalleAnulados, 'tipoComprobante').text = ret.auth_id.type_id.code  # noqa
-            etree.SubElement(detalleAnulados, 'establecimiento').text = ret.auth_id.serie_entidad  # noqa
-            etree.SubElement(detalleAnulados, 'puntoEmision').text = ret.auth_id.serie_emision  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialInicio').text = str(int(ret.num_document[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'secuencialFin').text = str(int(ret.num_document[8:]))  # noqa
-            etree.SubElement(detalleAnulados, 'autorizacion').text = ret.auth_id.name  # noqa
-            anulados.append(detalleAnulados)
-        ats.append(anulados)
+    def get_refund(self, invoice):
+        refund = self.env['account.invoice'].search([
+            ('number', '=', invoice.origin)
+        ])
+        if refund:
+            #raise UserError('El origen del documento no fue encontrado.')
+            auth = refund.auth_inv_id
+            return {
+                'docModificado': '01',
+                'estabModificado': refund.invoice_number[0:3],
+                'ptoEmiModificado': refund.invoice_number[3:6],
+                'secModificado': refund.supplier_invoice_number,
+                'autModificado': refund.reference,
+            }
+        else:
+            auth = refund.auth_inv_id
+            return {
+                'docModificado': auth.type_id.code,
+                'estabModificado': auth.serie_entidad,
+                'ptoEmiModificado': auth.serie_emision,
+                'secModificado': refund.invoice_number[6:15],
+                'autModificado': refund.reference
+            }
+
+    def read_compras(self, period):
+        """
+        Procesa:
+          * facturas de proveedor
+          * liquidaciones de compra
+        """
+        inv_obj = self.env['account.invoice']
+        dmn_purchase = [
+            ('state', 'in', ['open', 'paid']),
+            ('period_id', '=', period.id),
+            ('type', 'in', ['in_invoice', 'liq_purchase', 'in_refund'])  # noqa
+        ]
+        compras = []
+        for inv in inv_obj.search(dmn_purchase):
+            if not inv.partner_id.type_ced_ruc == 'pasaporte':
+                detallecompras = {}
+                auth = inv.auth_inv_id
+                valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valRetServ100 = self._get_ret_iva(inv)  # noqa
+                detallecompras.update({
+                    'codSustento': inv.sustento_id.code,
+                    'tpIdProv': tpIdProv[inv.partner_id.type_ced_ruc],
+                    'idProv': inv.partner_id.ced_ruc,
+                    'tipoComprobante': inv.type == 'liq_purchase' and '03' or auth.type_id.code,  # noqa
+                    'parteRel': 'NO',
+                    'fechaRegistro': convertir_fecha(inv.date_invoice),
+                    'establecimiento': inv.invoice_number[:3],
+                    'puntoEmision': inv.invoice_number[3:6],
+                    'secuencial': inv.invoice_number[6:15],
+                    'fechaEmision': convertir_fecha(inv.date_invoice),
+                    'autorizacion': inv.reference,
+                    'baseNoGraIva': '%.2f' % inv.amount_novat,
+                    'baseImponible': '%.2f' % inv.amount_vat_cero,
+                    'baseImpGrav': '%.2f' % inv.amount_vat,
+                    'baseImpExe': '0.00',
+                    'total': inv.amount_pay,
+                    'montoIce': '0.00',
+                    'montoIva': '%.2f' % inv.amount_tax,
+                    'valRetBien10': '%.2f' % valRetBien10,
+                    'valRetServ20': '%.2f' % valRetServ20,
+                    'valorRetBienes': '%.2f' % valorRetBienes,
+                    'valRetServ50': '0.00',
+                    'valorRetServicios': '%.2f' % valorRetServicios,
+                    'valRetServ100': '%.2f' % valRetServ100,
+                    'totbasesImpReemb': '0.00',
+                    'pagoExterior': {
+                        'pagoLocExt': '01',
+                        'paisEfecPago': 'NA',
+                        'aplicConvDobTrib': 'NA',
+                        'pagoExtSujRetNorLeg': 'NA'
+                    },
+                    'formaPago': inv.epayment_id.code,
+                    'detalleAir': self.process_lines(inv.tax_line)
+                })
+                if inv.retention_id:
+                    detallecompras.update({'retencion': True})
+                    detallecompras.update(self.get_withholding(inv.retention_id))
+                if inv.type in ['out_refund', 'in_refund']:
+                    detallecompras.update(self.get_refund(inv))
+                compras.append(detallecompras)
+        return compras
+
+    @api.multi
+    def read_ventas(self, period):
+        dmn = [
+            ('state', 'in', ['open', 'paid']),
+            ('period_id', '=', period.id),
+            ('type', '=', 'out_invoice')
+        ]
+        ventas = []
+        for inv in self.env['account.invoice'].search(dmn):
+            detalleventas = {
+                'tpIdCliente': tpIdCliente[inv.partner_id.type_ced_ruc],
+                'idCliente': inv.partner_id.ced_ruc,
+                'parteRelVtas': 'NO',
+                'partner': inv.partner_id,
+                'auth': inv.auth_inv_id,
+                'tipoComprobante': inv.auth_inv_id.type_id.code,
+                'tipoEmision': inv.auth_inv_id.is_electronic and 'E' or 'F',
+                'numeroComprobantes': 1,
+                'baseNoGraIva': inv.amount_novat,
+                'baseImponible': inv.amount_vat_cero,
+                'baseImpGrav': inv.amount_vat,
+                'montoIva': inv.amount_tax,
+                'montoIce': '0.00',
+                'valorRetIva': (abs(inv.taxed_ret_vatb) + abs(inv.taxed_ret_vatsrv)),
+                'valorRetRenta': abs(inv.taxed_ret_ir),
+                'formasDePago': {
+                    'formaPago': inv.epayment_id.code
+                }
+            }
+            ventas.append(detalleventas)
+        ventas = sorted(ventas, key=itemgetter('idCliente'))
+        ventas_end = []
+        for ruc, grupo in groupby(ventas, key=itemgetter('idCliente')):
+            baseimp = 0
+            nograviva = 0
+            montoiva = 0
+            retiva = 0
+            impgrav = 0
+            retrenta = 0
+            numComp = 0
+            partner_temp = False
+            auth_temp = False
+            for i in grupo:
+                nograviva += i['baseNoGraIva']
+                baseimp += i['baseImponible']
+                impgrav += i['baseImpGrav']
+                montoiva += i['montoIva']
+                retiva += i['valorRetIva']
+                retrenta += i['valorRetRenta']
+                numComp += 1
+                partner_temp = i['partner']
+                auth_temp = i['auth']
+            detalle = {
+                'tpIdCliente': tpIdCliente[partner_temp.type_ced_ruc],
+                'idCliente': ruc,
+                'parteRelVtas': 'NO',
+                'tipoComprobante': auth_temp.type_id.code,
+                'tipoEmision': auth_temp.is_electronic and 'E' or 'F',
+                'numeroComprobantes': numComp,
+                'baseNoGraIva': '%.2f' % nograviva,
+                'baseImponible': '%.2f' % baseimp,
+                'baseImpGrav': '%.2f' % impgrav,
+                'montoIva': '%.2f' % montoiva,
+                'montoIce': '0.00',
+                'valorRetIva': '%.2f' % retiva,
+                'valorRetRenta': '%.2f' % retrenta,
+                'formasDePago': {
+                    'formaPago': '20'
+                }
+            }
+            ventas_end.append(detalle)
+        return ventas_end
+
+    @api.multi
+    def read_anulados(self, period):
+        dmn = [
+            ('state', '=', 'cancel'),
+            ('period_id', '=', period.id),
+            ('type', 'in', ['out_invoice', 'liq_purchase'])
+        ]
+        anulados = []
+        for inv in self.env['account.invoice'].search(dmn):
+            auth = inv.auth_inv_id
+            aut = auth.is_electronic and inv.numero_autorizacion or auth.name
+            detalleanulados = {
+                'tipoComprobante': auth.type_id.code,
+                'establecimiento': auth.serie_entidad,
+                'ptoEmision': auth.serie_emision,
+                'secuencialInicio': inv.invoice_number[6:9],
+                'secuencialFin': inv.invoice_number[6:9],
+                'autorizacion': aut
+            }
+            anulados.append(detalleanulados)
+
+        dmn_ret = [
+            ('state', '=', 'cancel'),
+            ('period_id', '=', period.id),
+            ('in_type', '=', 'ret_in_invoice')
+        ]
+        for ret in self.env['account.retention'].search(dmn_ret):
+            auth = ret.auth_id
+            aut = auth.is_electronic and inv.numero_autorizacion or auth.name
+            detalleanulados = {
+                'tipoComprobante': auth.type_id.code,
+                'establecimiento': auth.serie_entidad,
+                'ptoEmision': auth.serie_emision,
+                'secuencialInicio': ret.name[6:9],
+                'secuencialFin': ret.name[6:9],
+                'autorizacion': aut
+            }
+            anulados.append(detalleanulados)
+        return anulados
+
+    @api.multi
+    def render_xml(self, ats):
+        tmpl_path = os.path.join(os.path.dirname(__file__), 'templates')
+        env = Environment(loader=FileSystemLoader(tmpl_path))
+        ats_tmpl = env.get_template('ats.xml')
+        return ats_tmpl.render(ats)
+
+    @api.multi
+    def validate_document(self, ats, error_log=False):
         file_path = os.path.join(os.path.dirname(__file__), 'XSD/ats.xsd')
         schema_file = open(file_path)
-        file_ats = etree.tostring(ats,
-                                  pretty_print=True,
-                                  encoding='iso-8859-1')
-        # validata schema
         xmlschema_doc = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xmlschema_doc)
-        if not wiz.no_validate:
+        root = etree.fromstring(ats)
+        ok = True
+        if not self.no_validate:
             try:
-                xmlschema.assertValid(ats)
-            except DocumentInvalid as e:
-                raise osv.except_osv(
-                    'Error de Datos',
-                    u"""El sistema generó el XML pero los datos no pasan la validación XSD del SRI.
-                    \nLos errores mas comunes son:\n
-                    * RUC,Cédula o Pasaporte contiene caracteres no válidos.
-                    \n* Números de documentos están duplicados.\n\n
-                    El siguiente error contiene el identificador o número de documento en conflicto:\n\n %s""" % str(e))  # noqa
+                xmlschema.assertValid(root)
+            except DocumentInvalid:
+                ok = False
+        return ok, xmlschema
+
+    @api.multi
+    def act_export_ats(self):
+        ats = AccountAts()
+        period = self.period_id
+        ruc = self.company_id.partner_id.ced_ruc
+        ats.TipoIDInformante = 'R'
+        ats.IdInformante = ruc
+        ats.razonSocial = self.company_id.name.upper()
+        ats.Anio = get_date_value(period.date_start, '%Y')
+        ats.Mes = get_date_value(period.date_start, '%m')
+        ats.numEstabRuc = self.num_estab_ruc.zfill(3)
+        ats.AtstotalVentas = '%.2f' % self._get_ventas(period.id)
+        ats.totalVentas = '%.2f' % self._get_ventas(period.id)
+        ats.codigoOperativo = 'IVA'
+        ats.compras = self.read_compras(period)
+        ats.ventas = self.read_ventas(period)
+        ats.codEstab = self.num_estab_ruc
+        ats.ventasEstab = '%.2f' % self._get_ventas(period.id)
+        ats.ivaComp = '0.00'
+        ats.anulados = self.read_anulados(period)
+        ats_rendered = self.render_xml(ats)
+        ok, schema = self.validate_document(ats_rendered)
         buf = StringIO.StringIO()
-        buf.write(file_ats)
+        buf.write(ats_rendered)
         out = base64.encodestring(buf.getvalue())
         buf.close()
+        buf_erro = StringIO.StringIO()
+        buf_erro.write(schema.error_log)
+        out_erro = base64.encodestring(buf_erro.getvalue())
+        buf_erro.close()
         name = "%s%s%s.XML" % (
             "AT",
-            wiz.period_id.name[:2],
-            wiz.period_id.name[3:8]
+            period.name[:2],
+            period.name[3:8]
         )
-        self.write(cr, uid, ids, {
-            'state': 'export',
+        data2save = {
+            'state': ok and 'export' or 'export_error',
             'data': out,
             'fcname': name
-        })
+        }
+        if not ok:
+            data2save.update({
+                'error_data': out_erro,
+                'fcname_errores': 'ERRORES.txt'
+            })
+        self.write(data2save)
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'wizard.ats',
             'view_mode': ' form',
             'view_type': ' form',
-            'res_id': wiz.id,
+            'res_id': self.id,
             'views': [(False, 'form')],
             'target': 'new',
         }
 
-    _columns = {
-        'fcname': fields.char('Nombre de Archivo', size=50, readonly=True),
-        'period_id': fields.many2one('account.period', 'Periodo'),
-        'company_id': fields.many2one('res.company', 'Compania'),
-        'num_estab_ruc': fields.char(
-            'Num. de Establecimientos',
-            size=3,
-            required=True
+    fcname = fields.Char('Nombre de Archivo', size=50, readonly=True)
+    fcname_errores = fields.Char('Archivo Errores', size=50, readonly=True)
+    period_id = fields.Many2one(
+        'account.period',
+        'Periodo',
+        default=_get_period
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        'Compania',
+        default=_get_company
+    )
+    num_estab_ruc = fields.Char(
+        'Num. de Establecimientos',
+        size=3,
+        required=True,
+        default='001'
+    )
+    pay_limit = fields.Float('Limite de Pago', default=1000)
+    data = fields.Binary('Archivo XML')
+    error_data = fields.Binary('Archivo de Errores')
+    no_validate = fields.Boolean('No Validar')
+    state = fields.Selection(
+        (
+            ('choose', 'Elegir'),
+            ('export', 'Generado'),
+            ('export_error', 'Error')
         ),
-        'pay_limit': fields.float('Limite de Pago'),
-        'data': fields.binary('Archivo XML'),
-        'no_validate': fields.boolean('No Validar'),
-        'state': fields.selection(
-            (
-                ('choose', 'choose'),
-                ('export', 'export')
-            )
-        ),
-        }
-
-    _defaults = {
-        'state': 'choose',
-        'period_id': _get_period,
-        'company_id': _get_company,
-        'pay_limit': 1000.00,
-        'num_estab_ruc': '001'
-    }
+        string='Estado',
+        default='choose'
+    )
