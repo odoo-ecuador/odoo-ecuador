@@ -1,4 +1,4 @@
-![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg) [![Build Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=9.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador) [![Coverage Status](https://coveralls.io/repos/github/ovnicraft/odoo-ecuador/badge.svg?branch=9.0)](https://coveralls.io/github/ovnicraft/odoo-ecuador?branch=9.0)
+![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg) [![Build Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=10.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador) [![Coverage Status](https://coveralls.io/repos/github/ovnicraft/odoo-ecuador/badge.svg?branch=10.0)](https://coveralls.io/github/ovnicraft/odoo-ecuador?branch=10.0)
 
 Localizacion de OpenERP para Ecuador
 ====================================
@@ -6,17 +6,6 @@ Localizacion de OpenERP para Ecuador
 Este proyecto intenta implementar todas las funcionalidades
 requeridas para que OpenERP pueda implementarse en cualquier
 empresa ecuatoriana.
-
-
-Iniciamos la migración a 9.0
-----------------------------
-
-En analisis de objetos contables ha terminado y podemos resumir que la migración es viable y hemos iniciado el trabajo.
-
-Usaremos módulos de la comunidad para responder a los reportes financieros, existe un trabajo en progreso en el repositorio oca/account-financial-reporting que
-nos permitirá tener una solución completa.
-
-Estamos en pase alpha aún, esperamos a finales de Agosto 2016 terminar el trabajo.
 
 Referencias de Implementación
 -----------------------------
@@ -36,21 +25,21 @@ Estado de Módulos
 
 | MODULO                   | ESTADO    | OBSERVACIONES                           |
 |--------------------------|-----------|-----------------------------------------|
-| l10n_ec_advances         | DESCARTADO | No migrado a la v 8.0                   |
 | l10n_ec_authorisation    | ESTABLE|                                         |
-| l10n_ec_chart            | NO MIGRADO   |                                         |
+| l10n_ec_chart            | ESTABLE   |                                         |
 | l10n_ec_einvoice         | NO MIGRADO   |                                         |
 | l10n_ec_employee         | NO MIGRADO   |                                         |
-| l10n_ec_invoice_sequence | NO MIGRADO   |                                         |
+| l10n_ec_invoice_sequence | ELIMINADO   |                                         |
 | l10n_ec_ote              | NO MIGRADO   |                                         |
 | l10n_ec_partner          | ESTABLE   |                                         |
 | l10n_ec_pos              | NO MIGRADO |  |
-| l10n_ec_withdrawing      | EN MIGRACION   |                                         |
+| l10n_ec_withholding      | NO MIGRADO   |                                         |
 
 
 Objetivos principales
 ---------------------
 
+- Facturación electrónica
 - Plan de cuentas para diferentes tipos de empresas, sitio de ref: http://www.supercias.gob.ec
 - Documentos contables: Retenciones, liquidaciones de compra, etc.
 - Reportes tributarios, sitio de ref: http://www.sri.gob.ec
@@ -65,7 +54,7 @@ Para la instalación y uso::
 
 Ahora ejecutar odoo agregando al path de módulos::
 
-     $ ./openerp-server --addons-path=addons,../odoo-ecuador
+     $ ./odoo-bin --addons-path=addons,../odoo-ecuador
 
 El comando anterior asume que odoo y odoo-ecuador estan al mismo nivel.
 
