@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-  # pylint: disable=C0111
 
-import time
-
 from odoo.tests.common import TransactionCase
 
 
@@ -39,7 +37,7 @@ class TestAuthorisation(TransactionCase):
                 'serie_emision': '001',
                 'num_start': 1000,
                 'num_end': 3000,
-                'expiration_date': time.strftime('%Y-%m-%d'),
+                'expiration_date': '2018-12-31',
                 'in_type': 'interno',
                 'type_id': type_doc.id,
                 'partner_id': partner.id
