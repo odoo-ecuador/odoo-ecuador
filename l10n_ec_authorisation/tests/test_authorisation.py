@@ -16,14 +16,14 @@ class TestAuthorisation(TransactionCase):
         self.AtsDoc = self.env['account.ats.doc']
 
     def test_create(self):
-        type_id = self.AtsDoc.create(
+        type_doc = self.AtsDoc.create(
             {
                 'code': '01',
                 'name': 'FACTURA'
             }
         )
 
-        partner_id = self.Partner.create(
+        partner = self.Partner.create(
             {
                 'identifier': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
@@ -32,7 +32,7 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        auth_id = self.Authorisation.create(
+        auth = self.Authorisation.create(
             {
                 'name': '0123456789',
                 'serie_entidad': '001',
@@ -41,9 +41,9 @@ class TestAuthorisation(TransactionCase):
                 'num_end': 3000,
                 'expiration_date': time.strftime('%Y-%m-%d'),
                 'in_type': 'interno',
-                'type_id': type_id,
-                'partner_id': partner_id
+                'type_id': type_doc.id,
+                'partner_id': partner.id
             }
         )
 
-        self.assertEquals(auth_id.name, '0123456789')
+        self.assertEquals(auth.name, '0123456789')
