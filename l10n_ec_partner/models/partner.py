@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from odoo import api, fields, models
 
-from stdnum import ec
+_logger = logging.getLogger(__name__)
+try:
+    from stdnum import ec
+except ImportError as err:
+    _logger.debug('Cannot import stdnum')
 
 
 class ResPartner(models.Model):
