@@ -1,5 +1,5 @@
-![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg) 
-[![Travis Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=10.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador) 
+![Licence](https://img.shields.io/badge/licence-AGPL--3-blue.svg)
+[![Travis Status](https://travis-ci.org/odoo-ecuador/odoo-ecuador.svg?branch=10.0)](https://travis-ci.org/odoo-ecuador/odoo-ecuador)
 [![Codecov Status](https://codecov.io/gh/odoo-ecuador/odoo-ecuador/branch/10.0/graph/badge.svg)](https://codecov.io/gh/odoo-ecuador/odoo-ecuador/branch/10.0)
 
 Localización de Odoo para Ecuador

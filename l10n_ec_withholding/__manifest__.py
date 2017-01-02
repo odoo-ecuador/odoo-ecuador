@@ -4,22 +4,19 @@
 
 {
     'name': 'Retenciones para Ecuador',
-    'version': '9.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'Generic Modules/Accounting',
     'license': 'AGPL-3',
     'depends': [
         'l10n_ec_authorisation',
         'l10n_ec_tax',
-        'web_action_conditionable'
     ],
-    'author': 'Cristian Salamea.',
+    'author': 'Cristian Salamea <cristian.salamea@ayni.com.ec>',
     'website': 'http://www.ayni.com.ec',
     'data': [
-        'data/account.fiscal.position.csv',
         'security/ir.model.access.csv',
-        'views/invoice_workflow.xml',
+        'data/account.fiscal.position.csv',
         'views/report_account_move.xml',
         'views/withholding_view.xml'
-    ],
-    'installable': False,
+    ]
 }

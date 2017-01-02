@@ -7,7 +7,6 @@ from datetime import datetime
 
 from odoo import api, fields, models
 from odoo.exceptions import (
-    RedirectWarning,
     ValidationError,
     Warning as UserError
 )
@@ -192,12 +191,7 @@ class ResPartner(models.Model):
         for a in self.authorisation_ids:
             if a.active and a.type_id.code == code:
                 return a
-        MSG = 'No ha configurado una autorización para este tipo de documento.'
-        act_ex = 'l10n_ec_authorisation.action_account_auth_tree'
-        act_in = 'l10n_ec_authorisation.action_account_authin_tree'
-        act_to = code in ['18', '04', '03'] and act_in or act_ex
-        act = self.env.ref(act_to)
-        raise RedirectWarning(MSG, act.id, 'Ir a configurar autorizaciones')
+        return False
 
 
 class AccountInvoice(models.Model):
@@ -264,6 +258,19 @@ class AccountInvoice(models.Model):
         string='Sustento del Comprobante'
     )
 
+    _sql_constraints = [
+        (
+            'unique_invoice_number',
+            'unique(reference,type,partner_id)',
+            u'El número de factura es único.'
+        )
+    ]
+
+    @api.onchange('auth_inv_id')
+    def _onchange_auth(self):
+        if self.auth_inv_id and not self.auth_inv_id.is_electronic:
+            self.auth_number = self.auth_inv_id.name
+
     @api.onchange('reference')
     def _onchange_ref(self):
         # TODO: agregar validacion numerica a reference
@@ -293,6 +300,6 @@ class AccountInvoice(models.Model):
             return
         number = self.internal_inv_number
         if not number:
-            sequence = self.journal_id.auth_id.sequence_id
+            sequence = self.auth_inv_id.sequence_id
             number = sequence.next_by_id()
         self.write({'reference': number, 'internal_inv_number': number})

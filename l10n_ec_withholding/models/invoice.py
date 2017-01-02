@@ -7,13 +7,11 @@ import time
 import logging
 
 from openerp import (
-    models,
-    fields,
     api,
-    _
+    fields,
+    models
 )
 from openerp.exceptions import (
-    except_orm,
     Warning as UserError
 )
 import openerp.addons.decimal_precision as dp
@@ -36,10 +34,10 @@ class Invoice(models.Model):
     @api.model
     def _default_journal(self):
         if self._context.get('default_journal_id', False):
-            return self.env['account.journal'].browse(self._context.get('default_journal_id'))
+            return self.env['account.journal'].browse(self._context.get('default_journal_id'))  # noqa
         inv_type = self._context.get('type', 'out_invoice')
         inv_types = inv_type if isinstance(inv_type, list) else [inv_type]
-        company_id = self._context.get('company_id', self.env.user.company_id.id)
+        company_id = self._context.get('company_id', self.env.user.company_id.id)  # noqa
         domain = [
             ('type', 'in', filter(None, map(TYPE2JOURNAL.get, inv_types))),
             ('company_id', '=', company_id),
@@ -57,33 +55,20 @@ class Invoice(models.Model):
     @api.multi
     def print_liq_purchase(self):
         # Método para imprimir reporte de liquidacion de compra
-        datas = {'ids': [self.id], 'model': 'account.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'report_liq_purchase',
-            'model': 'account.invoice',
-            'datas': datas,
-            'nodestroy': True,
-            }
+        return self.env['report'].get_action(
+            self.move_id,
+            'l10n_ec_withholding.account_liq_purchase_report'
+        )
 
     @api.multi
     def print_retention(self):
         """
         Método para imprimir reporte de retencion
         """
-        datas = {
-            'ids': [self.retention_id.id],
-            'model': 'account.retention'
-        }
-        if not self.retention_id:
-            raise UserError(u'No tiene retención')
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'account.retention',
-            'model': 'account.retention',
-            'datas': datas,
-            'nodestroy': True,
-        }
+        return self.env['report'].get_action(
+            self.move_id,
+            'l10n_ec_withholding.account_withholding_report'
+        )
 
     @api.one
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'currency_id', 'company_id')  # noqa
@@ -146,61 +131,55 @@ class Invoice(models.Model):
             if tax.tax_id.tax_group_id.code in TAXES:
                 self.has_retention = True
 
-    HELP_RET_TEXT = '''Automatico: El sistema identificara los impuestos
-    y creara la retencion automaticamente,
-    Manual: El usuario ingresara el numero de retencion
-    Agrupar: Podra usar la opcion para agrupar facturas
-    del sistema en una sola retencion.'''
-
     PRECISION_DP = dp.get_precision('Account')
 
     amount_ice = fields.Float(
-        string='ICE', digits_compute=PRECISION_DP,
+        string='ICE', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_vat = fields.Float(
-        string='Base 12 %', digits_compute=PRECISION_DP,
+        string='Base 12 %', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_untaxed = fields.Float(
-        string='Untaxed', digits_compute=PRECISION_DP,
+        string='Untaxed', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax = fields.Float(
-        string='Tax', digits_compute=PRECISION_DP,
+        string='Tax', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_total = fields.Float(
-        string='Total a Pagar', digits_compute=PRECISION_DP,
+        string='Total a Pagar', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_pay = fields.Float(
-        string='Total', digits_compute=PRECISION_DP,
+        string='Total', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_noret_ir = fields.Float(
-        string='Monto no sujeto a IR', digits_compute=PRECISION_DP,
+        string='Monto no sujeto a IR', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax_retention = fields.Float(
-        string='Total Retenciones', digits_compute=PRECISION_DP,
+        string='Total Retenciones', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax_ret_ir = fields.Float(
-        string='Base IR', digits_compute=PRECISION_DP,
+        string='Base IR', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     taxed_ret_ir = fields.Float(
-        string='Impuesto IR', digits_compute=PRECISION_DP,
+        string='Impuesto IR', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax_ret_vatb = fields.Float(
-        string='Base Ret. IVA', digits_compute=PRECISION_DP,
+        string='Base Ret. IVA', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     taxed_ret_vatb = fields.Float(
-        string='Retencion en IVA', digits_compute=PRECISION_DP,
+        string='Retencion en IVA', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_tax_ret_vatsrv = fields.Float(
-        string='Base Ret. IVA', digits_compute=PRECISION_DP,
+        string='Base Ret. IVA', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     taxed_ret_vatsrv = fields.Float(
-        string='Retencion en IVA', digits_compute=PRECISION_DP,
+        string='Retencion en IVA', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_vat_cero = fields.Float(
-        string='Base IVA 0%', digits_compute=PRECISION_DP,
+        string='Base IVA 0%', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     amount_novat = fields.Float(
-        string='Base No IVA', digits_compute=PRECISION_DP,
+        string='Base No IVA', digits=PRECISION_DP,
         store=True, readonly=True, compute='_compute_amount')
     retention_id = fields.Many2one(
         'account.retention',
@@ -221,7 +200,7 @@ class Invoice(models.Model):
             ('out_refund', 'Customer Refund'),
             ('in_refund', 'Supplier Refund'),
             ('liq_purchase', 'Liquidacion de Compra')
-        ], 'Type', readonly=True, select=True, change_default=True)
+        ], 'Type', readonly=True, index=True, change_default=True)
     withholding_number = fields.Integer(
         'Num. Retención',
         readonly=True,
@@ -239,14 +218,12 @@ class Invoice(models.Model):
     )
     reference = fields.Char(copy=False)
 
-    @api.onchange('auth_inv_id')
-    def _onchange_auth(self):
-        if self.auth_inv_id and not self.auth_inv_id.is_electronic:
-                self.auth_number = self.auth_inv_id.name
-
     @api.multi
     def _check_invoice_number(self):
-        """Método de validacion de numero de factura y numero de
+        """
+        TODO: revisar pertinencia de validacion
+
+        Método de validacion de numero de factura y numero de
         retencion
 
         número de factura: suppplier_invoice_number
@@ -267,8 +244,7 @@ class Invoice(models.Model):
             inv_number = obj.supplier_invoice_number
 
             if not auth:
-                raise except_orm(
-                    'Error!',
+                raise UserError(
                     u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'  # noqa
                 )
 
@@ -278,31 +254,44 @@ class Invoice(models.Model):
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
-                    raise except_orm(
-                        'Error!',
+                    raise UserError(
                         u'No ha configurado una autorización de retenciones.'
                     )
 
                 if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):  # noqa
-                    raise except_orm(
-                        'Error!',
+                    raise UserError(
                         u'El número de retención no es válido.'
                     )
         return True
 
-    _sql_constraints = [
-        (
-            'unique_inv_supplier',
-            'unique(reference,type,partner_id)',
-            u'El número de factura es único.'
-        )
-    ]
+    @api.multi
+    def action_invoice_open(self):
+        # lots of duplicate calls to action_invoice_open,
+        # so we remove those already open
+        # redefined to create withholding and numbering
+        to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
+        if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):  # noqa
+            raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))  # noqa
+        to_open_invoices.action_date_assign()
+        to_open_invoices.action_move_create()
+        to_open_invoices.action_number()
+        to_open_invoices.action_withholding_create()
+        return to_open_invoices.invoice_validate()
+
+    @api.multi
+    def action_invoice_cancel(self):
+        """
+        Primero intenta cancelar la retencion
+        """
+        if self.retention_id:
+            self.retention_id.action_cancel()
+        super(Invoice, self).action_invoice_cancel()
 
     @api.multi
     def action_cancel_draft(self):
         """
         Redefinicion de metodo para cancelar la retencion asociada.
-        En facturacion electronica NO se puede borrar el documento.
+        En facturacion electronica NO se permite regresar a cancelado.
         Redefinicion de metodo para borrar la retencion asociada.
         TODO: reversar secuencia si fue auto ?
         """
@@ -313,7 +302,7 @@ class Invoice(models.Model):
         return True
 
     @api.multi
-    def action_retention_create(self):
+    def action_withholding_create(self):
         """
         Este método genera el documento de retencion en varios escenarios
         considera casos de:
@@ -326,39 +315,35 @@ class Invoice(models.Model):
             if not self.has_retention:
                 continue
 
-            if inv.type in ['in_invoice', 'liq_purchase'] and not inv.journal_id.auth_ret_id:  # noqa
-                raise except_orm(
-                    'Error',
-                    'No ha configurado la autorización de retenciones en el diario.'  # noqa
+            # Autorizacion para Retenciones de la Empresa
+            partner = self.company_id.partner_id
+            auth_ret = partner.get_authorisation('ret_in_invoice')
+            if inv.type in ['in_invoice', 'liq_purchase'] and not auth_ret:
+                raise UserError(
+                    u'No ha configurado la autorización de retenciones.'
                 )
 
-            wd_number = False
+            wd_number = inv.withholding_number
 
-            if inv.create_retention_type == 'auto':
-                sequence = inv.journal_id.auth_ret_id.sequence_id
-                wd_number = self.env['ir.sequence'].get(sequence.code)
-            else:
-                if inv.withdrawing_number <= 0:
-                    raise except_orm(_('Error!'),
-                                     u'El número de retención es incorrecto.')
-                wd_number = inv.withdrawing_number  # TODO: validate number
+            if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
+                raise UserError(u'El número de retención es incorrecto.')
+                # TODO: validate number, read next number
 
-            tids = [l.id for l in inv.tax_line_ids if l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']]  # noqa
-            account_invoice_tax = self.env['account.invoice.tax'].browse(tids)
+            ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
             if inv.retention_id:
-                account_invoice_tax.write({
+                ret_taxes.write({
                     'retention_id': inv.retention_id.id,
                     'num_document': inv.invoice_number
                 })
                 inv.retention_id.action_validate(wd_number)
-                continue
+                return True
 
             withdrawing_data = {
                 'partner_id': inv.partner_id.id,
                 'name': wd_number,
                 'invoice_id': inv.id,
-                'auth_id': inv.journal_id.auth_ret_id.id,
+                'auth_id': auth_ret.id,
                 'type': inv.type,
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
@@ -368,7 +353,7 @@ class Invoice(models.Model):
 
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
 
-            account_invoice_tax.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
+            ret_taxes.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
 
             if inv.type in TYPES_TO_VALIDATE:
                 withdrawing.action_validate(wd_number)
@@ -420,12 +405,12 @@ class AccountInvoiceTax(models.Model):
         store=True,
         string='Grupo'
     )
-    percent = fields.Char(related='tax_id.porcentaje', string='% Aplicado')
     code = fields.Char(related='tax_id.description', string='Código')
+    percent_report = fields.Char(related='tax_id.percent_report')
     retention_id = fields.Many2one(
         'account.retention',
         'Retención',
-        select=True
+        index=True
     )
 
     @api.onchange('tax_id')
