@@ -18,7 +18,7 @@ class AccountWithdrawing(models.Model):
 
     @api.one
     @api.depends('tax_ids.amount')
-    def _amount_total(self):
+    def _compute_total(self):
         """
         TODO
         """
@@ -55,9 +55,7 @@ class AccountWithdrawing(models.Model):
     internal_number = fields.Char(
         'Número Interno',
         size=64,
-        readonly=True,
-        required=True,
-        default='/'
+        readonly=True
         )
     manual = fields.Boolean(
         'Numeración Manual',
@@ -141,10 +139,10 @@ class AccountWithdrawing(models.Model):
         default='draft'
         )
     amount_total = fields.Float(
-        compute='_amount_total',
+        compute='_compute_total',
         string='Total',
         store=True,
-        digits_compute=dp.get_precision('Account')
+        digits=dp.get_precision('Account')
         )
     to_cancel = fields.Boolean(
         string='Para anulación',
@@ -204,17 +202,17 @@ class AccountWithdrawing(models.Model):
                     raise UserError('El número para retenciones de clientes es de 15 dígitos.')  # noqa
                 return True
 
-            sequence = wd.invoice_id.journal_id.auth_ret_id.sequence_id
-            if wd.internal_number and not number:
-                wd_number = wd.internal_number[6:]
-            elif number is None:
-                wd_number = self.env['ir.sequence'].get_id(sequence.id)
+            sequence = wd.auth_id.sequence_id
+            if number.isdigit():
+                wd_number = number[6:].zfill(sequence.padding)
+            elif wd.internal_number:
+                wd_number = wd.internal_number
             else:
-                wd_number = str(number).zfill(sequence.padding)
+                wd_number = self.env['ir.sequence'].get_id(sequence.id)
             number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
                                         wd.auth_id.serie_emision,
                                         wd_number)
-
+            wd.write({'name': number, 'internal_number': number})
         return True
 
     @api.multi
@@ -294,7 +292,9 @@ class AccountWithdrawing(models.Model):
         auth_obj = self.env['account.authorisation']
         for ret in self:
             if ret.move_ret_id:
-                raise UserError('Retención conciliada con la factura, no se puede anular.')  # noqa
+                raise UserError(u'Retención conciliada con la factura, no se puede anular.')  # noqa
+            elif ret.auth_id.is_electronic:
+                raise UserError(u'No puede anular un documento electrónico.')
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 # FIXME

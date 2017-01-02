@@ -23,3 +23,10 @@ class AccountTaxGroup(models.Model):
     """
 
     code = fields.Char('Código')
+
+
+class AccountTax(models.Model):
+
+    _inherit = 'account.tax'
+
+    percent_report = fields.Char('% para Reportes')
