@@ -1,23 +1,21 @@
-from openerp.tests.common import TransactionCase
+# -*- coding: utf-8 -*-
+
+from odoo.tests.common import TransactionCase
 
 
 class PartnerTest(TransactionCase):
 
     def setUp(self):
         super(PartnerTest, self).setUp()
-        self.Partner = self.registry('res.partner')
+        self.Partner = self.env['res.partner']
 
     def test_create(self):
-        cursor = self.cr
-        user_id = self.uid
-        partner_id = self.Partner.create(
-            cursor,
-            user_id,
+        partner = self.Partner.create(
             {
-                'ced_ruc': '0103893962',
+                'identifier': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
-                'type_ced_ruc': 'cedula',
+                'type_identifier': 'cedula',
                 'tipo_persona': '6'
             }
         )
-        self.assertNotEquals(partner_id, 0)
+        self.assertEquals(partner.identifier, '0103893962')

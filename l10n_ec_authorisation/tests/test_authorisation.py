@@ -1,36 +1,29 @@
 # -*- coding: utf-8 -*-  # pylint: disable=C0111
 
-from openerp.tests.common import TransactionCase  # pylint: disable=F0401
-
 import time
 
+from odoo.tests.common import TransactionCase
 
-class TestAuthorisation(TransactionCase):  # pylint: disable=W0232
+
+class TestAuthorisation(TransactionCase):
     """
     Prueba de documentos de autorizacion
     """
     def setUp(self):
         super(TestAuthorisation, self).setUp()
-        self.Authorisation = self.registry('account.authorisation')
-        self.Partner = self.registry('res.partner')
-        self.AtsDoc = self.registry('account.ats.doc')
+        self.Authorisation = self.env['account.authorisation']
+        self.Partner = self.env['res.partner']
+        self.AtsDoc = self.env['account.ats.doc']
 
     def test_create(self):
-        cursor = self.cr
-        user_id = self.uid
-
         type_id = self.AtsDoc.create(
-            cursor,
-            user_id,
             {
-                'code': '06',
+                'code': '01',
                 'name': 'FACTURA'
             }
         )
 
         partner_id = self.Partner.create(
-            cursor,
-            user_id,
             {
                 'ced_ruc': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
@@ -40,8 +33,6 @@ class TestAuthorisation(TransactionCase):  # pylint: disable=W0232
         )
 
         auth_id = self.Authorisation.create(
-            cursor,
-            user_id,
             {
                 'name': '0123456789',
                 'serie_entidad': '001',
