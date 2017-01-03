@@ -1,160 +1,233 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
 
-    <t t-extend="ClientDetailsEdit">
-        <t t-jquery=".client-details.edit" t-operation="replace">
-            <section class='client-details edit'>
-                <div class='client-picture'>
-                    <t t-if='!partner.id'>
-                        <i class='fa fa-camera'></i>
-                    </t>
-                    <t t-if='partner.id'>
-                        <img t-att-src='widget.partner_icon_url(partner.id)' />
-                    </t>
-                    <input type='file' class='image-uploader'></input>
-                </div>
-                <input class='detail client-name' name='name' t-att-value='partner.name' placeholder='Name'></input>
-                <div class='edit-buttons'>
-                    <div class='button undo'><i class='fa fa-undo' /></div>
-                    <div class='button save'><i class='fa fa-floppy-o' /></div>
-                </div>
-                <div class='client-details-box clearfix'>
-                    <div class='client-details-left'>
-                        <div class='client-detail'>
-                            <span class='label'>Cedula / Ruc</span>
-                            <input class='detail client-address-street' name='ced_ruc' t-att-value='partner.ced_ruc' placeholder='Cedula / RUC'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Street</span>
-                            <input class='detail client-address-street' name='street'       t-att-value='partner.street' placeholder='Street'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>City</span>
-                            <input class='detail client-address-city'   name='city'         t-att-value='partner.city' placeholder='City'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Postcode</span>
-                            <input class='detail client-address-zip'    name='zip'          t-att-value='partner.zip' placeholder='ZIP'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Country</span>
-                            <select class='detail client-address-country' name='country_id'>
-                                <option value=''>None</option>
-                                <t t-foreach='widget.pos.countries' t-as='country'>
-                                    <option t-att-value='country.id' t-att-selected="partner_country_id ? ((country.id === partner.country_id[0]) ? true : undefined) : undefined">
-                                        <t t-esc='country.name'/>
-                                    </option>
-                                </t>
-                            </select>
-                        </div>
-                    </div>
-                    <div class='client-details-right'>
-                        <div class='client-detail'>
-                            <span class='label'>Email</span>
-                            <input class='detail client-email'  name='email'    type='email'    t-att-value='partner.email || ""'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Phone</span>
-                            <input class='detail client-phone'  name='phone'    type='tel'      t-att-value='partner.phone || ""'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Barcode</span>
-                            <input class='detail barcode'       name='ean13'    t-att-value='partner.ean13 || ""'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Tax ID</span>
-                            <input class='detail vat'           name='vat'     t-att-value='partner.vat || ""'></input>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </t>
+  <t t-extend="ClientDetailsEdit">
+    <t t-jquery=".client-details.edit" t-operation="replace">
+      <section class='client-details edit'>
+        <div class='client-picture'>
+          <t t-if='!partner.id'>
+            <i class='fa fa-camera'></i>
+          </t>
+          <t t-if='partner.id'>
+            <img t-att-src='widget.partner_icon_url(partner.id)' />
+          </t>
+          <input type='file' class='image-uploader'></input>
+        </div>
+        <input class='detail client-name' name='name' t-att-value='partner.name' placeholder='Name'></input>
+        <div class='edit-buttons'>
+          <div class='button undo'><i class='fa fa-undo' /></div>
+          <div class='button save'><i class='fa fa-floppy-o' /></div>
+        </div>
+        <div class='client-details-box clearfix'>
+          <div class='client-details-left'>
+            <div class='client-detail'>
+              <span class='label'>Tipo ID</span>
+              <select class='detail client-address-country' name='type_ced_ruc'>
+                <option value='cedula' t-att-selected="partner.type_ced_ruc ? (('cedula' === partner.type_ced_ruc) ? true : undefined) : undefined">CÉDULA</option>
+                <option value='ruc' t-att-selected="partner.type_ced_ruc ? (('ruc' === partner.type_ced_ruc) ? true : undefined) : undefined">RUC</option>
+                <option value='pasaporte' t-att-selected="partner.type_ced_ruc ? (('pasaporte' === partner.type_ced_ruc) ? true : undefined) : undefined">PASAPORTE</option>
+              </select>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>RUC</span>
+              <input class='detail client-address-street' name='ced_ruc' t-att-value='partner.ced_ruc' placeholder='Cedula / RUC'></input>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>Dirección</span>
+              <input class='detail client-address-street' name='street'  t-att-value='partner.street'  placeholder='Direccion'></input>
+            </div>
+          </div>
+          <div class='client-details-right'>
+            <div class='client-detail'>
+              <span class='label'>Correo Electrónico</span>
+              <input class='detail client-email' name='email' type='email' t-att-value='partner.email || ""'></input>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>Teléfono</span>
+              <input class='detail client-phone' name='phone' type='tel' t-att-value='partner.phone || ""'></input>
+            </div>
+          </div>
+        </div>
+      </section>
     </t>
+  </t>
 
-    <t t-extend="ClientLine">
-        <t t-jquery=".client-line" t-operation="replace">
-            <tr class='client-line' t-att-data-id='partner.id'>
-	            <td><t t-esc='partner.ced_ruc' /></td>
-                <td><t t-esc='partner.name' /></td>
-                <td><t t-esc='partner.address' /></td>
-                <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
-            </tr>
-        </t>
+  <t t-extend="ClientLine">
+    <t t-jquery=".client-line" t-operation="replace">
+      <tr class='client-line' t-att-data-id='partner.id'>
+        <td><t t-esc='partner.ced_ruc' /></td>
+        <td><t t-esc='partner.name' /></td>
+        <td><t t-esc='partner.address' /></td>
+        <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
+      </tr>
     </t>
+  </t>
 
-    <t t-extend="ClientListScreenWidget">
-        <t t-jquery=".client-list" t-operation="replace">
-            <table class='client-list'>
-                <thead>
-                    <tr>
-	                    <th>Cedula / Ruc</th>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                    </tr>
-                </thead>
-                <tbody class='client-list-contents'>
-                </tbody>
-            </table>
-        </t>
+  <t t-extend="ClientListScreenWidget">
+    <t t-jquery=".client-list" t-operation="replace">
+      <table class='client-list'>
+        <thead>
+          <tr>
+            <th>RUC</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody class='client-list-contents'>
+        </tbody>
+      </table>
     </t>
+  </t>
 
-    <t t-extend="ClientDetails">
-        <t t-jquery=".client-details" t-operation="replace">
-            <section class='client-details'>
-                <div class='client-picture'>
-                    <img t-att-src='widget.partner_icon_url(partner.id)' />
-                </div>
-                <div class='client-name'><t t-esc='partner.name' /></div>
-                <div class='edit-buttons'>
-                    <div class='button edit'><i class='fa fa-pencil-square' /></div>
-                </div>
-                <div class='client-details-box clearfix'>
-                    <div class='client-details-left'>
-                        <div class='client-detail'>
-                            <span class='label'>Cedula / Ruc</span>
-                            <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Address</span>
-                            <span class='detail client-address'><t t-esc='partner.address' /></span>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Email</span>
-                            <span class='detail client-email'><t t-esc='partner.email' /></span>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Phone</span>
-                            <t t-if='partner.phone'>
-                                <span class='detail client-phone'><t t-esc='partner.phone' /></span>
-                            </t>
-                            <t t-if='!partner.phone'>
-                                <span class='detail client-phone empty'>N/A</span>
-                            </t>
-                        </div>
-                    </div>
-                    <div class='client-details-right'>
-                        <div class='client-detail'>
-                            <span class='label'>Barcode</span>
-                            <t t-if='partner.ean13'>
-                                <span class='detail client-id'><t t-esc='partner.ean13'/></span>
-                            </t>
-                            <t t-if='!partner.ean13'>
-                                <span class='detail client-id empty'>N/A</span>
-                            </t>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Tax ID</span>
-                            <t t-if='partner.vat'>
-                                <span class='detail vat'><t t-esc='partner.vat'/></span>
-                            </t>
-                            <t t-if='!partner.vat'>
-                                <span class='detail vat empty'>N/A</span>
-                            </t>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </t>
+  <t t-extend="ClientDetails">
+    <t t-jquery=".client-details" t-operation="replace">
+      <section class='client-details'>
+        <div class='client-picture'>
+          <img t-att-src='widget.partner_icon_url(partner.id)' />
+        </div>
+        <div class='client-name'><t t-esc='partner.name' /></div>
+        <div class='edit-buttons'>
+          <div class='button edit'><i class='fa fa-pencil-square' /></div>
+        </div>
+        <div class='client-details-box clearfix'>
+          <div class='client-details-left'>
+            <div class='client-detail'>
+              <span class='label'>Tipo ID</span>
+              <t t-if="partner.type_ced_ruc == 'cedula'">
+                <span class='detail client-address'>CÉDULA</span>
+              </t>
+              <t t-if="partner.type_ced_ruc == 'ruc'">
+                <span class='detail client-address'>RUC</span>
+              </t>
+              <t t-if="partner.type_ced_ruc == 'pasaporte'">
+                <span class='detail client-address'>PASAPORTE</span>
+              </t>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>RUC</span>
+              <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>Dirección</span>
+              <span class='detail client-address'><t t-esc='partner.address' /></span>
+            </div>
+          </div>
+          <div class='client-details-right'>
+            <div class='client-detail'>
+              <span class='label'>Correo Electrónico</span>
+              <t t-if='partner.email'>
+                <span class='detail client-email'><t t-esc='partner.email' /></span>
+              </t>
+              <t t-if='!partner.email'>
+                <span class='detail client-email empty'>N/A</span>
+              </t>
+            </div>
+            <div class='client-detail'>
+              <span class='label'>Teléfono</span>
+              <t t-if='partner.phone'>
+                <span class='detail client-phone'><t t-esc='partner.phone' /></span>
+              </t>
+              <t t-if='!partner.phone'>
+                <span class='detail client-phone empty'>N/A</span>
+              </t>
+            </div>
+          </div>
+        </div>
+      </section>
     </t>
+  </t>
+    
+  <t t-extend="PosTicket">
+    <t t-jquery=".pos-sale-ticket" t-operation="replace">
+      <div class="pos-sale-ticket">
+        <div class="pos-center-align"><t t-esc="order.get('name')"/></div>
+        <t t-if="order.get_client()">
+          <span><t t-esc="order.get_client_name()"/></span><br />
+          <span><t t-esc="order.get_client().ced_ruc"/></span><br />
+          <span><t t-esc="order.get_client().street"/></span><br />
+        </t>
+        <t t-esc="new Date().toString(Date.CultureInfo.formatPatterns.shortDate)"/><br />
+        <br />
+        <t t-if="widget.pos.config.receipt_header">
+          <div style='text-align:center'>
+            <t t-esc="widget.pos.config.receipt_header" />
+          </div>
+          <br />
+        </t>
+        <table>
+          <colgroup>
+            <col width='15%' />
+            <col width='35%' />
+            <col width='25%' />
+            <col width='25%' />
+          </colgroup>
+          <tr>
+            <td class="pos-right-center">CANT</td>
+            <td>PRODUCTO</td>
+            <td class="pos-right-align">V.UNIT.</td>
+            <td class="pos-right-align">V.TOTAL</td>
+          </tr>
+          <tr t-foreach="orderlines" t-as="orderline">
+            <t t-if="orderline.price != 0">
+              <td class="pos-right-center"><t t-esc="orderline.get_quantity()"/></td>              
+              <td><div style="height: 15px; overflow: hidden;"><t t-esc="orderline.get_product().display_name"/></div></td>
+              <td class="pos-right-align"><t t-esc="widget.format_currency(orderline.price.toFixed(2))"/></td>
+              <td class="pos-right-align"><t t-esc="widget.format_currency(orderline.get_display_price().toFixed(2))"/></td>
+            </t>
+          </tr>
+        </table>
+        <br />
+        <table>
+          <tr>
+            <td>Subtotal 14%:</td>
+            <td class="pos-right-align"><t t-esc="widget.format_currency(((order.getTotalTaxIncluded() - order.getSubtotal()) / 0.14).toFixed(2))"/></td>
+          </tr>
+          <tr>
+            <td>Subtotal 0%:</td>
+            <td class="pos-right-align"><t t-esc="widget.format_currency((order.getSubtotal() - ((order.getTotalTaxIncluded() - order.getSubtotal()) / 0.14)).toFixed(2))"/></td>
+          </tr>
+          <tr>
+            <td>Subtotal:</td>
+            <td class="pos-right-align"><t t-esc="widget.format_currency(order.getSubtotal().toFixed(2))"/></td>
+          </tr>
+          <tr>
+            <td>IVA 14%</td>
+            <td class="pos-right-align"><t t-esc="widget.format_currency((order.getTotalTaxIncluded() - order.getSubtotal()).toFixed(2))" /></td>
+          </tr>
+          <tr class="emph">
+            <td>Total:</td>
+            <td class="pos-right-align"><t t-esc="widget.format_currency(order.getTotalTaxIncluded().toFixed(2))"/></td>
+          </tr>
+        </table>
+        <br />
+        <table>
+          <tr t-foreach="paymentlines" t-as="line">
+            <td>
+              <t t-esc="line.name"/>
+            </td>
+            <td class="pos-right-align">
+              <t t-esc="widget.format_currency(line.get_amount().toFixed(2))"/>
+            </td>
+          </tr>
+        </table>
+        <br />
+        <table>
+          <tr>
+              <td>Change:</td>
+              <td class="pos-right-align">
+                <t t-esc="widget.format_currency(order.getChange().toFixed(2))"/>
+              </td>
+          </tr>
+        </table>
+        <t t-if="widget.pos.config.receipt_footer">
+          <br />
+          <div style='text-align:center'>
+            <t t-esc="widget.pos.config.receipt_footer" />
+          </div>
+        </t>
+      </div>
+    </t>
+  </t>
 </templates>
+
