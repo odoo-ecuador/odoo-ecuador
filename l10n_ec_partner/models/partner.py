@@ -73,7 +73,6 @@ class ResPartner(models.Model):
         required=True,
         default='9'
     )
-    company_type = fields.Selection(default='company')
 
     _sql_constraints = [
         ('partner_unique',

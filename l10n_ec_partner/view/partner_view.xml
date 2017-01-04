@@ -3,6 +3,10 @@
         <!--
             Partner
         -->
+        <function  id="res_partner_type_set"
+                   model="ir.values" name="set_default"
+                   eval="('res.partner', 'company_type', 'company')"/>
+
         <record id="view_partner2_select" model="ir.ui.view">
             <field name="name">view.partner.select2</field>
             <field name="model">res.partner</field>
