@@ -6,9 +6,9 @@ from openerp.report import report_sxw
 from openerp.osv import osv
 
 
-class reporte_comprobante(report_sxw.rml_parse):
+class ReporteComprobante(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
-        super(reporte_comprobante, self).__init__(
+        super(ReporteComprobante, self).__init__(
             cr, uid, name, context=context
         )
         self.localcontext.update({
@@ -32,9 +32,9 @@ class reporte_comprobante(report_sxw.rml_parse):
         return glines
 
 
-class reporte_move(osv.AbstractModel):
+class ReporteMove(osv.AbstractModel):
 
     _name = "report.l10n_ec_withholding.account_move_report"
     _inherit = "report.abstract_report"
     _template = "l10n_ec_withholding.account_move_report"
-    _wrapped_report_class = reporte_comprobante
+    _wrapped_report_class = ReporteComprobante

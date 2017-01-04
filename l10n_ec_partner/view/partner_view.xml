@@ -40,8 +40,8 @@
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <div>
-	                <field name="type_identifier" placeholder="Tipo de Identificador" class="oe_inline"/>
-	                <field name="identifier" placeholder="Cédula / RUC" class="oe_inline"/>
+                        <field name="type_identifier" placeholder="Tipo de Identificador" class="oe_inline"/>
+                        <field name="identifier" placeholder="Cédula / RUC" class="oe_inline"/>
                     </div>
                     <field name="tipo_persona" placeholder="Tipo de Persona"/>
                     <newline/>

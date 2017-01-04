@@ -16,7 +16,7 @@ import openerp.addons.decimal_precision as dp
 class AccountWithdrawing(models.Model):
     """ Implementacion de documento de retencion """
 
-    @api.one
+    @api.multi
     @api.depends('tax_ids.amount')
     def _compute_total(self):
         """
@@ -50,6 +50,7 @@ class AccountWithdrawing(models.Model):
         size=64,
         readonly=True,
         required=True,
+        default='/',
         states=STATES_VALUE
         )
     internal_number = fields.Char(
@@ -197,7 +198,7 @@ class AccountWithdrawing(models.Model):
         for wd in self:
             if wd.to_cancel:
                 raise UserError('El documento fue marcado para anular.')
-            if self.type == 'out_invoice':
+            if wd.type == 'out_invoice':
                 if not len(self.name) == 15:
                     raise UserError('El número para retenciones de clientes es de 15 dígitos.')  # noqa
                 return True

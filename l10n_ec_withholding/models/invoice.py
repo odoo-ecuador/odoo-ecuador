@@ -323,12 +323,11 @@ class Invoice(models.Model):
                     u'No ha configurado la autorización de retenciones.'
                 )
 
-            wd_number = '*'
+            wd_number = inv.withholding_number
 
             if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
                 raise UserError(u'El número de retención es incorrecto.')
                 # TODO: validate number, read next number
-                wd_number = inv.withholding_number
 
             ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
