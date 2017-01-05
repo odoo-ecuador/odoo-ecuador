@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templates>
+<templates xml:space="preserve">
 
     <t t-extend="ClientDetailsEdit">
         <t t-jquery=".client-details.edit" t-operation="replace">
@@ -22,7 +22,7 @@
                     <div class='client-details-left'>
                         <div class='client-detail'>
                             <span class='label'>Cedula / Ruc</span>
-                            <input class='detail client-address-street' name='ced_ruc' t-att-value='partner.ced_ruc' placeholder='Cedula / RUC'></input>
+                            <input class='detail client-address-street' name='identifier' t-att-value='partner.identifier' placeholder='Cedula / RUC'></input>
                         </div>
                         <div class='client-detail'>
                             <span class='label'>Street</span>
@@ -74,7 +74,7 @@
     <t t-extend="ClientLine">
         <t t-jquery=".client-line" t-operation="replace">
             <tr class='client-line' t-att-data-id='partner.id'>
-	            <td><t t-esc='partner.ced_ruc' /></td>
+	            <td><t t-esc='partner.identifier' /></td>
                 <td><t t-esc='partner.name' /></td>
                 <td><t t-esc='partner.address' /></td>
                 <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
@@ -113,7 +113,7 @@
                     <div class='client-details-left'>
                         <div class='client-detail'>
                             <span class='label'>Cedula / Ruc</span>
-                            <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
+                            <span class='detail client-address'><t t-esc='partner.identifier' /></span>
                         </div>
                         <div class='client-detail'>
                             <span class='label'>Address</span>

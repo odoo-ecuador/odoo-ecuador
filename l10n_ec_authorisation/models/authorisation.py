@@ -299,6 +299,9 @@ class AccountInvoice(models.Model):
         if self.type not in ['out_invoice', 'liq_purchase']:
             return
         number = self.internal_inv_number
+        if not self.auth_inv_id:
+            # asegura la autorizacion en el objeto
+            self._onchange_partner_id()
         if not number:
             sequence = self.auth_inv_id.sequence_id
             number = sequence.next_by_id()

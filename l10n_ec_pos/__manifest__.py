@@ -10,16 +10,15 @@
     'author': "Cristian Salamea",
     'website': "http://www.ayni.com.ec",
     'category': 'POS',
-    'version': '0.1',
+    'version': '10.0.0.0.0',
     'depends': [
-        'l10n_ec_partner',
-        'point_of_sale'
+        'point_of_sale',
+        'l10n_ec_partner'
     ],
     'data': [
         'views.xml'
     ],
     'qweb': [
-        'static/src/xml/pos.xml'
-        ],
-    'installable': False
+        'static/src/xml/l10n_ec_pos.xml'
+    ]
 }
