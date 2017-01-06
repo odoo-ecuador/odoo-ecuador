@@ -21,7 +21,7 @@
                 <div class='client-details-box clearfix'>
                     <div class='client-details-left'>
                         <div class='client-detail'>
-                            <span class='label'>Cedula / Ruc</span>
+                            <span class='label'>Ced/RUC</span>
                             <input class='detail client-address-street' name='identifier' t-att-value='partner.identifier' placeholder='Cedula / RUC'></input>
                         </div>
                         <div class='client-detail'>
@@ -31,10 +31,6 @@
                         <div class='client-detail'>
                             <span class='label'>City</span>
                             <input class='detail client-address-city'   name='city'         t-att-value='partner.city' placeholder='City'></input>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Postcode</span>
-                            <input class='detail client-address-zip'    name='zip'          t-att-value='partner.zip' placeholder='ZIP'></input>
                         </div>
                         <div class='client-detail'>
                             <span class='label'>Country</span>
@@ -61,10 +57,6 @@
                             <span class='label'>Barcode</span>
                             <input class='detail barcode'       name='ean13'    t-att-value='partner.ean13 || ""'></input>
                         </div>
-                        <div class='client-detail'>
-                            <span class='label'>Tax ID</span>
-                            <input class='detail vat'           name='vat'     t-att-value='partner.vat || ""'></input>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -74,7 +66,7 @@
     <t t-extend="ClientLine">
         <t t-jquery=".client-line" t-operation="replace">
             <tr class='client-line' t-att-data-id='partner.id'>
-	            <td><t t-esc='partner.identifier' /></td>
+	        <td><t t-esc='partner.identifier' /></td>
                 <td><t t-esc='partner.name' /></td>
                 <td><t t-esc='partner.address' /></td>
                 <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
@@ -87,7 +79,7 @@
             <table class='client-list'>
                 <thead>
                     <tr>
-	                    <th>Cedula / Ruc</th>
+	                <th>Cedula / Ruc</th>
                         <th>Name</th>
                         <th>Address</th>
                         <th>Phone</th>
@@ -112,7 +104,7 @@
                 <div class='client-details-box clearfix'>
                     <div class='client-details-left'>
                         <div class='client-detail'>
-                            <span class='label'>Cedula / Ruc</span>
+                            <span class='label'>Ced/RUC</span>
                             <span class='detail client-address'><t t-esc='partner.identifier' /></span>
                         </div>
                         <div class='client-detail'>
@@ -141,15 +133,6 @@
                             </t>
                             <t t-if='!partner.ean13'>
                                 <span class='detail client-id empty'>N/A</span>
-                            </t>
-                        </div>
-                        <div class='client-detail'>
-                            <span class='label'>Tax ID</span>
-                            <t t-if='partner.vat'>
-                                <span class='detail vat'><t t-esc='partner.vat'/></span>
-                            </t>
-                            <t t-if='!partner.vat'>
-                                <span class='detail vat empty'>N/A</span>
                             </t>
                         </div>
                     </div>

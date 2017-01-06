@@ -11,12 +11,10 @@
     'license': 'AGPL-3',
     'data': [
         'view/partner_view.xml',
+        'data/partner.xml'
     ],
     'depends': [
         'base'
-    ],
-    'data': [
-        'data/partner.xml'
     ],
     'external_dependencies': {
         'python': ['stdnum']

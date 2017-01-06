@@ -6,6 +6,7 @@
             <field name="name">CONSUMIDOR FINAL</field>
             <field name="type_identifier">pasaporte</field>
             <field name="tipo_persona">6</field>
+            <field name="customer">1</field>
         </record>
     </data>
 </odoo>
