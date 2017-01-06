@@ -21,6 +21,14 @@
                 <div class='client-details-box clearfix'>
                     <div class='client-details-left'>
                         <div class='client-detail'>
+                            <span class='label'>Tipo</span>
+                            <select class="detail client-address-street" name="type_identifier">
+                                <option value='cedula' t-att-selected="partner.type_identifier ? (('cedula' === partner.type_identifier) ? true : undefined) : undefined">CÉDULA</option>
+                                <option value='ruc' t-att-selected="partner.type_identifier ? (('ruc' === partner.type_identifier) ? true : undefined) : undefined">RUC</option>
+                                <option value='pasaporte' t-att-selected="partner.type_identifier ? (('pasaporte' === partner.type_identifier) ? true : undefined) : undefined">PASAPORTE</option>
+                            </select>
+                        </div>
+                        <div class='client-detail'>
                             <span class='label'>Ced/RUC</span>
                             <input class='detail client-address-street' name='identifier' t-att-value='partner.identifier' placeholder='Cedula / RUC'></input>
                         </div>
