@@ -5,7 +5,7 @@
     Cambios en el POS para Ecuador
     """,
     'description': """
-        Agregar campos del partner requeridos en el POS
+        Agregar campos del partner requeridos en el POS e Impuestos Ecuador
     """,
     'author': "Cristian Salamea",
     'website': "http://www.ayni.com.ec",
@@ -16,9 +16,8 @@
         'point_of_sale'
     ],
     'data': [
-        'views.xml'
+        'point_of_sale_view.xml',
+        'views/point_of_sale.xml',
     ],
-    'qweb': [
-        'static/src/xml/pos.xml'
-        ],
+    'qweb': ['static/src/xml/pos.xml'],
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    <!--     POS ORDERS     -->
+    <record model="ir.ui.view" id="view_pos_pos_form">
+      <field name="name">pos.order.form.view.inherit</field>
+      <field name="model">pos.order</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"></field>
+      <field name="arch" type="xml">
+        <xpath expr="//group[@name='order_total']" position="replace">
+          <group class="oe_subtotal_footer oe_right" colspan="2" name="order_total">
+            <field name="amount_vat" widget="monetary"/>
+            <field name="amount_vat_cero" widget="monetary"/>
+            <field name="amount_tax" widget="monetary"/>
+                        
+            <div class="oe_subtotal_footer_separator oe_inline">
+              <label for="amount_total" />
+              <button name="button_dummy"
+                      states="draft" string="(update)" class="oe_edit_only oe_link"/>
+            </div>
+            <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+          </group>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</openerp>
