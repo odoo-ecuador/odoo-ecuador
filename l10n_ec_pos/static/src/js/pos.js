@@ -1,10 +1,11 @@
-odoo.define('l10n_ec_pos.l10n_ec_pos', function(require) {
-    "user strict";
+odoo.define('l10n_ec_pos', function(require) {
+    "use strict";
 
+    var PosDB = require('point_of_sale.DB');
     var models = require('point_of_sale.models');
 
 
-    PosDB = PosDB.extend({
+    PosDB.include({
 
         _partner_search_string: function(partner){
             var str =  partner.name;
@@ -32,6 +33,7 @@ odoo.define('l10n_ec_pos.l10n_ec_pos', function(require) {
 
     });
 
+    var PosModelSuper = models.PosModel;
     models.PosModel = models.PosModel.extend({
 
         models: [

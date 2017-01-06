@@ -3,7 +3,7 @@
 
     <template id="assets" name="l10n_ec_pos assets" inherit_id="point_of_sale.assets_backend">
         <xpath expr="." position="inside">
-	    <script type="text/javascript" src="/l10n_ec_pos/static/src/js/l10n_ec_pos.js"></script>
+	    <script type="text/javascript" src="/l10n_ec_pos/static/src/js/pos.js"></script>
         </xpath>
     </template>
 
