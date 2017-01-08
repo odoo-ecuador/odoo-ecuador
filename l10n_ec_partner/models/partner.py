@@ -49,6 +49,18 @@ class ResPartner(models.Model):
         else:
             return True
 
+    @api.one
+    @api.depends('identifier')
+    def _compute_tipo_persona(self):
+        if not self.identifier:
+            self.tipo_persona = '0'
+        elif int(self.identifier[2]) <= 6:
+            self.tipo_persona = '6'
+        elif int(self.identifier) in [6, 9]:
+            self.tipo_persona = '9'
+        else:
+            self.tipo_persona = '0'
+
     identifier = fields.Char(
         'Cedula/ RUC',
         size=13,
@@ -65,15 +77,16 @@ class ResPartner(models.Model):
         default='pasaporte'
     )
     tipo_persona = fields.Selection(
-        [
+        compute='_compute_tipo_persona',
+        selection=[
             ('6', 'Persona Natural'),
-            ('9', 'Persona Juridica')
+            ('9', 'Persona Juridica'),
+            ('0', 'Otro')
         ],
         string='Persona',
-        required=True,
-        default='9'
+        store=True
     )
-    company_type = fields.Selection(default='company')
+    is_company = fields.Boolean(default=True)
 
     _sql_constraints = [
         ('partner_unique',
