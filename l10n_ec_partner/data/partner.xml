@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="partner_consumidor_final" model="res.partner">
+            <field name="identifier">9999999999</field>
+            <field name="name">CONSUMIDOR FINAL</field>
+            <field name="type_identifier">pasaporte</field>
+            <field name="tipo_persona">6</field>
+            <field name="customer">1</field>
+        </record>
+    </data>
+</odoo>
