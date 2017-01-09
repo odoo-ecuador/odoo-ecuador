@@ -16,6 +16,7 @@
         'l10n_ec_partner'
     ],
     'data': [
+        'data/pos.xml',
         'views.xml'
     ],
     'qweb': [

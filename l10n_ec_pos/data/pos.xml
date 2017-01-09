@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- consumidor final por defecto -->
+    <function  id="partner_consumidor_final_default_set"
+               model="ir.values" name="set_default"
+               eval="('pos.order', 'partner_id', ref('l10n_ec_partner.partner_consumidor_final'))"/>
+</odoo>
