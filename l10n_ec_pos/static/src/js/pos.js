@@ -55,5 +55,9 @@ odoo.define('l10n_ec_pos', function(require) {
         if (model.model === 'res.partner') {
             model.fields.push('identifier', 'type_identifier', 'tipo_persona');
         }
+
+	if (model.model === 'res.company') {
+	    model.fields.push('street')
+	}
     }
 });
