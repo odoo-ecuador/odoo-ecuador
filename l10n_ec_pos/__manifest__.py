@@ -20,6 +20,7 @@
         'views.xml'
     ],
     'qweb': [
-        'static/src/xml/l10n_ec_pos.xml'
+        'static/src/xml/l10n_ec_pos.xml',
+        'static/src/xml/pos.xml'
     ]
 }
