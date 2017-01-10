@@ -208,6 +208,7 @@ class AccountInvoice(models.Model):
         """
         DOCUMENTOS_EMISION = ['out_invoice', 'liq_purchase', 'out_refund']
         super(AccountInvoice, self)._onchange_partner_id()
+        self.company_id = not self.company_id and self.env['res.company']._company_default_get('account.invoice')  # noqa
         partner = self.type in DOCUMENTOS_EMISION and self.company_id.partner_id or self.partner_id  # noqa
         if not partner:
             return
@@ -261,7 +262,7 @@ class AccountInvoice(models.Model):
     _sql_constraints = [
         (
             'unique_invoice_number',
-            'unique(reference,type,partner_id)',
+            'unique(reference,type,partner_id,state)',
             u'El número de factura es único.'
         )
     ]
