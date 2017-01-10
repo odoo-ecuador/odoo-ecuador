@@ -6,4 +6,7 @@
 Partner Ecuador en POS
 ======================
 
-Este módulo permite ingresar CI/RUC en POS
+Este módulo permite:
+
+  * ingresar CI/RUC en POS
+  * Configurar un partner por defecto

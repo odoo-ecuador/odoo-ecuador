@@ -34,10 +34,7 @@ class AccountWithdrawing(models.Model):
     @api.multi
     def _get_in_type(self):
         context = self._context
-        if context.get('ret_in_invoice'):
-            return 'ret_in_invoice'
-        else:
-            return 'ret_out_invoice'
+        return context.get('in_type', 'ret_out_invoice')
 
     STATES_VALUE = {'draft': [('readonly', False)]}
 
@@ -50,7 +47,6 @@ class AccountWithdrawing(models.Model):
         size=64,
         readonly=True,
         required=True,
-        default='/',
         states=STATES_VALUE
         )
     internal_number = fields.Char(
@@ -168,6 +164,13 @@ class AccountWithdrawing(models.Model):
         )
     ]
 
+    @api.onchange('name')
+    def _onchange_name(self):
+        if len(self.name) > 9 or not self.name.isdigit():
+            raise UserError(u'Valor para número incorrecto.')
+        if self.name:
+            self.name = self.name.zfill(9)
+
     @api.multi
     def unlink(self):
         for obj in self:
@@ -184,7 +187,8 @@ class AccountWithdrawing(models.Model):
     @api.onchange('to_cancel')
     def onchange_tocancel(self):
         if self.to_cancel:
-            self.partner_id = self.company_id.partner_id.id
+            company = self.env['res.company']._company_default_get('account.invoice')
+            self.partner_id = company.partner_id.id
 
     @api.onchange('invoice_id')
     def onchange_invoice(self):
@@ -290,7 +294,6 @@ class AccountWithdrawing(models.Model):
         """
         Método para cambiar de estado a cancelado el documento
         """
-        auth_obj = self.env['account.authorisation']
         for ret in self:
             if ret.move_ret_id:
                 raise UserError(u'Retención conciliada con la factura, no se puede anular.')  # noqa
@@ -299,12 +302,11 @@ class AccountWithdrawing(models.Model):
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 # FIXME
-                if len(ret.name) == 9 and auth_obj.is_valid_number(ret.auth_id.id, int(ret.name)):  # noqa
+                if len(ret.name) == 9 and ret.auth_id.is_valid_number(int(ret.name)):  # noqa
                     number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name  # noqa
                     data.update({'name': number})
                 else:
                     raise UserError(
-                        'Error',
                         u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.'  # noqa
                     )
             self.write({'state': 'cancel'})
