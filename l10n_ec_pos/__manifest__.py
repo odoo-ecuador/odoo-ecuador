@@ -13,7 +13,7 @@
     'version': '10.0.0.0.0',
     'depends': [
         'point_of_sale',
-        'l10n_ec_partner'
+        'l10n_ec_authorisation'
     ],
     'data': [
         'data/pos.xml',

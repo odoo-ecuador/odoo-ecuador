@@ -187,7 +187,7 @@ class AccountWithdrawing(models.Model):
     @api.onchange('to_cancel')
     def onchange_tocancel(self):
         if self.to_cancel:
-            company = self.env['res.company']._company_default_get('account.invoice')
+            company = self.env['res.company']._company_default_get('account.invoice')  # noqa
             self.partner_id = company.partner_id.id
 
     @api.onchange('invoice_id')

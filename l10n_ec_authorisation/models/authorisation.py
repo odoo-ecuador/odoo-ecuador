@@ -307,3 +307,16 @@ class AccountInvoice(models.Model):
             sequence = self.auth_inv_id.sequence_id
             number = sequence.next_by_id()
         self.write({'reference': number, 'internal_inv_number': number})
+
+    @api.multi
+    def action_invoice_open(self):
+        # lots of duplicate calls to action_invoice_open,
+        # so we remove those already open
+        # redefined for numbering document
+        to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
+        if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):  # noqa
+            raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))  # noqa
+        to_open_invoices.action_date_assign()
+        to_open_invoices.action_move_create()
+        to_open_invoices.action_number()
+        return to_open_invoices.invoice_validate()

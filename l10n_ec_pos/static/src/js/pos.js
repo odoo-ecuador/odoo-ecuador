@@ -57,7 +57,7 @@ odoo.define('l10n_ec_pos', function(require) {
         }
 
 	if (model.model === 'res.company') {
-	    model.fields.push('street')
+	    model.fields.push('street');
 	}
     }
 });
