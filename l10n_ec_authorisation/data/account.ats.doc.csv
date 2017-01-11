@@ -1,12 +1,12 @@
 id,code,name
-01,1,Factura 
-02,2,Nota o boleta de venta 
-03,3,Liquidación de compra de Bienes o Prestación de servicios 
-04,4,Nota de crédito
-05,5,Nota de débito
-06,7,Comprobante de Retención
-07,8,Boletos o entradas a espectáculos públicos
-08,9,Tiquetes o vales emitidos por máquinas registradoras
+01,01,Factura 
+02,02,Nota o boleta de venta 
+03,03,Liquidación de compra de Bienes o Prestación de servicios 
+04,04,Nota de crédito
+05,05,Nota de débito
+06,07,Comprobante de Retención
+07,08,Boletos o entradas a espectáculos públicos
+08,09,Tiquetes o vales emitidos por máquinas registradoras
 09,11,Pasajes expedidos por empresas de aviación
 10,12,Documentos emitidos por instituciones financieras
 11,15,Comprobante de venta emitido en el Exterior
