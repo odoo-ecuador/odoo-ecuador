@@ -3,6 +3,7 @@
 import logging
 
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 try:
@@ -14,6 +15,23 @@ except ImportError as err:
 class ResPartner(models.Model):
 
     _inherit = 'res.partner'
+
+    @api.model
+    def update_identifiers(self):
+        res = self.search([('identifier', '=', False)])
+        for e in res:
+            e.write({'identifier': '9999999999'})
+
+    @api.model_cr_context
+    def init(self):
+        super(ResPartner, self).init()
+        self.update_identifiers()
+        sql_index = """
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        unique_company_partner_identifier_type on res_partner
+        (company_id, type_identifier, identifier)
+        WHERE type_identifier <> 'pasaporte'"""
+        self._cr.execute(sql_index)
 
     @api.multi
     @api.depends('identifier', 'name')
@@ -42,12 +60,15 @@ class ResPartner(models.Model):
     @api.one
     @api.constrains('identifier')
     def _check_identifier(self):
+        res = False
         if self.type_identifier == 'cedula':
-            return ec.ci.is_valid(self.identifier)
+            res = ec.ci.is_valid(self.identifier)
         elif self.type_identifier == 'ruc':
-            return ec.ruc.is_valid(self.identifier)
+            res = ec.ruc.is_valid(self.identifier)
         else:
             return True
+        if not res:
+            raise ValidationError('Error en el identificador.')
 
     @api.one
     @api.depends('identifier')
@@ -56,7 +77,7 @@ class ResPartner(models.Model):
             self.tipo_persona = '0'
         elif int(self.identifier[2]) <= 6:
             self.tipo_persona = '6'
-        elif int(self.identifier) in [6, 9]:
+        elif int(self.identifier[2]) in [6, 9]:
             self.tipo_persona = '9'
         else:
             self.tipo_persona = '0'
@@ -87,12 +108,6 @@ class ResPartner(models.Model):
         store=True
     )
     is_company = fields.Boolean(default=True)
-
-    _sql_constraints = [
-        ('partner_unique',
-         'unique(identifier,type_identifier,tipo_persona,company_id)',
-         u'El identificador es único.'),
-        ]
 
     def validate_from_sri(self):
         """
