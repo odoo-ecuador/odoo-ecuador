@@ -2,15 +2,17 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from datetime import datetime
+
 from openerp import (
     api,
     fields,
     models
 )
 from openerp.exceptions import (
-    Warning as UserError
-    )
-import openerp.addons.decimal_precision as dp
+    Warning as UserError,
+    ValidationError
+)
 
 
 class AccountWithdrawing(models.Model):
@@ -36,6 +38,18 @@ class AccountWithdrawing(models.Model):
         context = self._context
         return context.get('in_type', 'ret_out_invoice')
 
+    @api.model
+    def _default_currency(self):
+        company = self.env['res.company']._company_default_get('account.invoice')  # noqa
+        return company.currency_id
+
+    @api.model
+    def _default_authorisation(self):
+        if self.env.context.get('in_type') == 'ret_in_invoice':
+            company = self.env['res.company']._company_default_get('account.invoice')  # noqa
+            auth_ret = company.partner_id.get_authorisation('ret_in_invoice')
+            return auth_ret
+
     STATES_VALUE = {'draft': [('readonly', False)]}
 
     _name = 'account.retention'
@@ -47,12 +61,14 @@ class AccountWithdrawing(models.Model):
         size=64,
         readonly=True,
         required=True,
-        states=STATES_VALUE
+        states=STATES_VALUE,
+        copy=False
         )
     internal_number = fields.Char(
         'Número Interno',
         size=64,
-        readonly=True
+        readonly=True,
+        copy=False
         )
     manual = fields.Boolean(
         'Numeración Manual',
@@ -64,14 +80,16 @@ class AccountWithdrawing(models.Model):
         'Num. Comprobante',
         size=50,
         readonly=True,
-        states=STATES_VALUE
+        states=STATES_VALUE,
+        copy=False
         )
     auth_id = fields.Many2one(
         'account.authorisation',
         'Autorizacion',
         readonly=True,
         states=STATES_VALUE,
-        domain=[('in_type', '=', 'interno')]
+        domain=[('in_type', '=', 'interno')],
+        default=_default_authorisation
         )
     type = fields.Selection(
         related='invoice_id.type',
@@ -91,13 +109,15 @@ class AccountWithdrawing(models.Model):
     date = fields.Date(
         'Fecha Emision',
         readonly=True,
-        states={'draft': [('readonly', False)]}, required=True)
+        states={'draft': [('readonly', False)]}, required=True
+    )
     tax_ids = fields.One2many(
         'account.invoice.tax',
         'retention_id',
         'Detalle de Impuestos',
         readonly=True,
-        states=STATES_VALUE
+        states=STATES_VALUE,
+        copy=False
         )
     invoice_id = fields.Many2one(
         'account.invoice',
@@ -105,7 +125,8 @@ class AccountWithdrawing(models.Model):
         required=False,
         readonly=True,
         states=STATES_VALUE,
-        domain=[('state', '=', 'open')]
+        domain=[('state', '=', 'open')],
+        copy=False
         )
     partner_id = fields.Many2one(
         'res.partner',
@@ -118,12 +139,14 @@ class AccountWithdrawing(models.Model):
         related='invoice_id.move_id',
         string='Asiento Contable',
         readonly=True,
-        store=True
+        store=True,
+        copy=False
         )
     move_ret_id = fields.Many2one(
         'account.move',
         string='Asiento Retención',
         readonly=True,
+        copy=False
         )
     state = fields.Selection(
         [
@@ -135,11 +158,18 @@ class AccountWithdrawing(models.Model):
         string='Estado',
         default='draft'
         )
-    amount_total = fields.Float(
+    currency_id = fields.Many2one(
+        'res.currency', string='Currency',
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        default=_default_currency
+    )
+    amount_total = fields.Monetary(
         compute='_compute_total',
         string='Total',
         store=True,
-        digits=dp.get_precision('Account')
+        readonly=True
         )
     to_cancel = fields.Boolean(
         string='Para anulación',
@@ -158,16 +188,39 @@ class AccountWithdrawing(models.Model):
 
     _sql_constraints = [
         (
-            'unique_number_partner',
-            'unique(name,partner_id,type)',
+            'unique_number_type',
+            'unique(name,type)',
             u'El número de retención es único.'
         )
     ]
 
+    @api.onchange('date')
+    @api.constrains('date')
+    def _check_date(self):
+        if self.date and self.invoice_id:
+            inv_date = datetime.strptime(self.invoice_id.date_invoice, '%Y-%m-%d')  # noqa
+            ret_date = datetime.strptime(self.date, '%Y-%m-%d')  # noqa
+            days = ret_date - inv_date
+            if days.days < 0 or days.days > 5:
+                raise ValidationError('Error en fecha de retención.')  # noqa
+
     @api.onchange('name')
     def _onchange_name(self):
+        if not self.name:
+            return
         if len(self.name) > 9 or not self.name.isdigit():
             raise UserError(u'Valor para número incorrecto.')
+        if self.auth_id:
+            if not self.auth_id.is_valid_number(int(self.name)):
+                return {
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'Número inválido.'
+                    },
+                    'value': {
+                        'name': ''
+                    }
+                }
         if self.name:
             self.name = self.name.zfill(9)
 

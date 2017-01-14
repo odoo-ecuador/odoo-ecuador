@@ -93,8 +93,10 @@ class AccountAuthorisation(models.Model):
 
         partner_id = self.env.user.company_id.partner_id.id
         if values['partner_id'] == partner_id:
+            typ = self.env['account.ats.doc'].browse(values['type_id'])
             name_type = '{0}_{1}'.format(values['name'], values['type_id'])
             sequence_data = {
+                'code': typ.code == '07' and 'account.retention' or 'account.invoice',  # noqa
                 'name': name_type,
                 'padding': 9,
                 'number_next': values['num_start'],
@@ -277,6 +279,16 @@ class AccountInvoice(models.Model):
         # TODO: agregar validacion numerica a reference
         if self.reference:
             self.reference = self.reference.zfill(9)
+            if not self.auth_inv_id.is_valid_number(int(self.reference)):
+                return {
+                    'value': {
+                        'reference': ''
+                    },
+                    'warning': {
+                        'title': 'Error',
+                        'message': u'Número no coincide con la autorización ingresada.'  # noqa
+                    }
+                }
 
     @api.constrains('auth_number')
     def check_reference(self):
