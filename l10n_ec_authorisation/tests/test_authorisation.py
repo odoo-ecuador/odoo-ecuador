@@ -30,7 +30,7 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        auth = self.Authorisation.create(
+        self.auth = self.Authorisation.create(
             {
                 'name': '0123456789',
                 'serie_entidad': '001',
@@ -44,4 +44,14 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        self.assertEquals(auth.name, '0123456789')
+        self.assertEquals(self.auth.name, '0123456789')
+
+    def test_is_valid(self):
+        res = self.auth.is_valid_number(1500)
+        self.assertEquals(res, True)
+        res = self.auth.is_valid_number(4500)
+        self.assertEquals(res, False)
+
+    def test_unlink(self):
+        res = self.auth.unlink()
+        self.assertEquals(res, True)
