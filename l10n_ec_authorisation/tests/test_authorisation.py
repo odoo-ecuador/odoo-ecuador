@@ -30,7 +30,7 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        self.auth = self.Authorisation.create(
+        auth = self.Authorisation.create(
             {
                 'name': '0123456789',
                 'serie_entidad': '001',
@@ -44,14 +44,70 @@ class TestAuthorisation(TransactionCase):
             }
         )
 
-        self.assertEquals(self.auth.name, '0123456789')
+        self.assertEquals(auth.name, '0123456789')
 
     def test_is_valid(self):
-        res = self.auth.is_valid_number(1500)
+        type_doc = self.AtsDoc.create(
+            {
+                'code': '01',
+                'name': 'FACTURA'
+            }
+        )
+
+        partner = self.Partner.create(
+            {
+                'identifier': '2490005261001',
+                'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
+                'type_identifier': 'ruc',
+                'tipo_persona': '6'
+            }
+        )
+        auth = self.Authorisation.create(
+            {
+                'name': '0123456781',
+                'serie_entidad': '001',
+                'serie_emision': '001',
+                'num_start': 1000,
+                'num_end': 3000,
+                'expiration_date': '2018-12-31',
+                'in_type': 'externo',
+                'type_id': type_doc.id,
+                'partner_id': partner.id
+            }
+        )
+        res = auth.is_valid_number(1500)
         self.assertEquals(res, True)
         res = self.auth.is_valid_number(4500)
         self.assertEquals(res, False)
 
     def test_unlink(self):
-        res = self.auth.unlink()
+        type_doc = self.AtsDoc.create(
+            {
+                'code': '01',
+                'name': 'FACTURA'
+            }
+        )
+
+        partner = self.Partner.create(
+            {
+                'identifier': '1803433729',
+                'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
+                'type_identifier': 'cedula',
+                'tipo_persona': '6'
+            }
+        )
+        auth = self.Authorisation.create(
+            {
+                'name': '0123456871',
+                'serie_entidad': '001',
+                'serie_emision': '001',
+                'num_start': 1000,
+                'num_end': 3000,
+                'expiration_date': '2018-12-31',
+                'in_type': 'externo',
+                'type_id': type_doc.id,
+                'partner_id': partner.id
+            }
+        )
+        res = auth.unlink()
         self.assertEquals(res, True)
