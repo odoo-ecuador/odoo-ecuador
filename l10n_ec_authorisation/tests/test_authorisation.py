@@ -77,7 +77,7 @@ class TestAuthorisation(TransactionCase):
         )
         res = auth.is_valid_number(1500)
         self.assertEquals(res, True)
-        res = self.auth.is_valid_number(4500)
+        res = auth.is_valid_number(4500)
         self.assertEquals(res, False)
 
     def test_unlink(self):
