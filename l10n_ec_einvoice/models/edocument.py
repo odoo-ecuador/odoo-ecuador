@@ -4,8 +4,8 @@ import base64
 import StringIO
 from datetime import datetime
 
-from openerp import models, fields, api
-from openerp.exceptions import Warning
+from openerp import api, fields, models
+from openerp.exceptions import Warning as UserError
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
@@ -24,7 +24,7 @@ class Edocument(models.AbstractModel):
 
     _name = 'account.edocument'
     _FIELDS = {
-        'account.invoice': 'supplier_invoice_number',
+        'account.invoice': 'invoice_number',
         'account.retention': 'name'
     }
     SriServiceObj = SriService()
@@ -60,13 +60,14 @@ class Edocument(models.AbstractModel):
     sent = fields.Boolean('Enviado?')
 
     def get_auth(self, document):
+        partner = document.company_id.partner_id
         if document._name == 'account.invoice':
-            return document.journal_id.auth_id
+            return partner.get_authorisation('out_invoice')
         elif document._name == 'account.retention':
-            return document.invoice_id.journal_id.auth_ret_id
+            return partner.get_authorisation('ret_in_invoice')
 
     def get_secuencial(self):
-        return getattr(self, self._FIELDS[self._name])
+        return getattr(self, self._FIELDS[self._name])[6:]
 
     def _info_tributaria(self, document, access_key, emission_code):
         """
@@ -78,7 +79,7 @@ class Edocument(models.AbstractModel):
             'tipoEmision': emission_code,
             'razonSocial': company.name,
             'nombreComercial': company.name,
-            'ruc': company.partner_id.ced_ruc,
+            'ruc': company.partner_id.identifier,
             'claveAcceso':  access_key,
             'codDoc': utils.tipoDocumento[auth.type_id.code],
             'estab': auth.serie_entidad,
@@ -89,31 +90,28 @@ class Edocument(models.AbstractModel):
         return infoTributaria
 
     def get_code(self):
-        code = self.env['ir.sequence'].get('edocuments.code')
+        code = self.env['ir.sequence'].next_by_code('edocuments.code')
         return code
 
     def get_access_key(self, name):
         if name == 'account.invoice':
-            auth = self.journal_id.auth_id
+            auth = self.company_id.partner_id.get_authorisation('out_invoice')
             ld = self.date_invoice.split('-')
-            field = 'supplier_invoice_number'
-            numero = getattr(self, field)
+            numero = getattr(self, 'invoice_number')
         elif name == 'account.retention':
-            auth = self.invoice_id.journal_id.auth_ret_id
+            auth = self.company_id.partner_id.get_authorisation('ret_in_invoice')  # noqa
             ld = self.date.split('-')
-            field = 'name'
-            numero = getattr(self, field)
+            numero = getattr(self, 'name')
             numero = numero[6:15]
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
-        ruc = self.company_id.partner_id.ced_ruc
-        serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
+        ruc = self.company_id.partner_id.identifier
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
         access_key = (
             [fecha, tcomp, ruc],
-            [serie, numero, codigo_numero, tipo_emision]
+            [numero, codigo_numero, tipo_emision]
             )
         return access_key
 
@@ -129,21 +127,20 @@ class Edocument(models.AbstractModel):
     def check_before_sent(self):
         """
         """
-        NOT_SENT = u'No se puede enviar el comprobante electrónico al SRI'
         MESSAGE_SEQUENCIAL = ' '.join([
             u'Los comprobantes electrónicos deberán ser',
             u'enviados al SRI para su autorización en orden cronológico',
             'y secuencial. Por favor enviar primero el',
             ' comprobante inmediatamente anterior.'])
         FIELD = {
-            'account.invoice': 'supplier_invoice_number',
+            'account.invoice': 'invoice_number',
             'account.retention': 'name'
         }
         number = getattr(self, FIELD[self._name])
         sql = ' '.join([
             "SELECT autorizado_sri, %s FROM %s" % (FIELD[self._name], self._table),  # noqa
             "WHERE state='open' AND %s < '%s'" % (FIELD[self._name], number),  # noqa
-            self._name == 'account.invoice' and "AND type = 'out_invoice'" or '',
+            self._name == 'account.invoice' and "AND type = 'out_invoice'" or '',  # noqa
             "ORDER BY %s DESC LIMIT 1" % FIELD[self._name]
         ])
         self.env.cr.execute(sql)
@@ -152,7 +149,7 @@ class Edocument(models.AbstractModel):
             return True
         auth, number = res
         if auth is None and number:
-            raise Warning(NOT_SENT, MESSAGE_SEQUENCIAL)
+            raise UserError(MESSAGE_SEQUENCIAL)
         return True
 
     def check_date(self, date_invoice):
@@ -169,7 +166,7 @@ class Edocument(models.AbstractModel):
         dt = datetime.strptime(date_invoice, '%Y-%m-%d')
         days = (datetime.now() - dt).days
         if days > LIMIT_TO_SEND:
-            raise Warning(NOT_SENT, MESSAGE_TIME_LIMIT)
+            raise UserError(NOT_SENT, MESSAGE_TIME_LIMIT)
 
     @api.multi
     def update_document(self, auth, codes):
@@ -202,16 +199,13 @@ class Edocument(models.AbstractModel):
         )
         return attach
 
-    @api.one
-    def send_document(self, attachments=[], tmpl=False):
+    @api.multi
+    def send_document(self, attachments=None, tmpl=False):
+        self.ensure_one()
         self._logger.info('Enviando documento electronico por correo')
         tmpl = self.env.ref(tmpl)
-        self.pool.get('email.template').send_mail(
-            self.env.cr,
-            self.env.user.id,
-            tmpl.id,
+        tmpl.with_context({'attachment_ids': attachments}).send_mail(  # noqa
             self.id,
-            context={'attachment_ids': attachments}
         )
         self.sent = True
         return True

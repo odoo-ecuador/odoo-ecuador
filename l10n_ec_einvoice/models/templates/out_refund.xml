@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notaCredito id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>{{ ambiente }}</ambiente>
+    <tipoEmision>{{ tipoEmision }}</tipoEmision>
+    <razonSocial>{{ razonSocial }}</razonSocial>
+    <nombreComercial>{{ razonSocial }}</nombreComercial>
+    <ruc>{{ ruc }}</ruc>
+    <claveAcceso>{{ claveAcceso }}</claveAcceso>
+    <codDoc>{{ codDoc }}</codDoc>
+    <estab>{{ estab }}</estab>
+    <ptoEmi>{{ ptoEmi }}</ptoEmi>
+    <secuencial>{{ secuencial }}</secuencial>
+    <dirMatriz>{{ dirMatriz }}</dirMatriz>
+  </infoTributaria>
+  <infoNotaCredito>
+    <fechaEmision>{{ fechaEmision }}</fechaEmision> {# dd/mm/aaaa #}
+    <tipoIdentificacionComprador>{{ tipoIdentificacionComprador }}</tipoIdentificacionComprador>
+    <razonSocialComprador>{{ razonSocialComprador }}</razonSocialComprador>
+    <identificacionComprador>{{ identificacionComprador }}</identificacionComprador>
+    <obligadoContabilidad>{{ obligadoContabilidad }}</obligadoContabilidad>
+    <codDocModificado>{{ codDocModificado }}</codDocModificado>
+    <numDocModificado>{{ numDocModificado }}</numDocModificado>
+    <fechaEmisionDocSustento>{{ fechaEmisionDocSustento }}</fechaEmisionDocSustento>
+    <totalSinImpuestos>{{ totalSinImpuestos }}</totalSinImpuestos>
+    <valorModificacion>{{ valorModificacion }}</valorModificacion>
+    <moneda>DOLAR</moneda>
+    <totalConImpuestos>
+      {% for item in totalConImpuestos %}
+      <totalImpuesto>
+        <codigo>{{ item['codigo'] }}</codigo>
+        <codigoPorcentaje>{{ item['codigoPorcentaje'] }}</codigoPorcentaje>
+        <baseImponible>{{ item['baseImponible'] }}</baseImponible>
+        <valor>{{ item['valor'] }}</valor>
+      </totalImpuesto>
+      {% endfor %}
+    </totalConImpuestos>
+    <motivo>{{ motivo }}</motivo>
+  </infoNotaCredito>
+  <detalles>
+    {% for item in detalles %}
+    <detalle>
+      <codigoInterno>{{ item['codigoPrincipal'] }}</codigoInterno>
+      <descripcion>{{ item['descripcion'] }}</descripcion>
+      <cantidad>{{ item['cantidad'] }}</cantidad>
+      <precioUnitario>{{ item['precioUnitario'] }}</precioUnitario>
+      <descuento>{{ item['descuento'] }}</descuento>
+      <precioTotalSinImpuesto>{{ item['precioTotalSinImpuesto'] }}</precioTotalSinImpuesto>
+      <impuestos>
+	{% for tax in item['impuestos'] %}
+        <impuesto>
+          <codigo>{{ tax['codigo'] }}</codigo>
+          <codigoPorcentaje>{{ tax['codigoPorcentaje'] }}</codigoPorcentaje>
+          <tarifa>{{ tax['tarifa'] }}</tarifa>
+          <baseImponible>{{ tax['baseImponible'] }}</baseImponible>
+          <valor>{{ tax['valor'] }}</valor>
+        </impuesto>
+	{% endfor %}
+      </impuestos>
+    </detalle>
+    {% endfor %}
+  </detalles>
+  <infoAdicional>
+      <campoAdicional nombre="EMAIL">a.suin@lacolina.com.ec</campoAdicional>
+  </infoAdicional>
+</notaCredito>

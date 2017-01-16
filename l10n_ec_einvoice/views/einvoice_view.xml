@@ -34,7 +34,7 @@
           <group>
             <field name="key" required="1"/>
             <field name="used"/>
-	    <field name="company_id"/>
+            <field name="company_id"/>
           </group>
         </form>
       </field>
@@ -78,7 +78,7 @@
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_invoice_sent']" position="replace"/>
             <xpath expr="//button[@name='action_invoice_sent']" position="replace">
-                <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('sent','=',True),('state','!=','open')]}"
+                <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('autorizado_sri','=',True),('state','!=','open')]}"
                         string="Generar Doc. Electrónica" class="oe_highlight"/>
             </xpath>
             <xpath expr="//field[@name='date_due']" position="after">
@@ -86,8 +86,8 @@
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
                 <field name="estado_autorizacion"/>
-	        <field name="ambiente"/>
-	        <field name="autorizado_sri"/>
+                <field name="ambiente"/>
+                <field name="autorizado_sri"/>
             </xpath>
         </field>
     </record>
@@ -106,8 +106,8 @@
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
                 <field name="estado_autorizacion"/>
-      	        <field name="ambiente"/>
-      	        <field name="autorizado_sri"/>
+                <field name="ambiente"/>
+                <field name="autorizado_sri"/>
             </xpath>
 
         </field>

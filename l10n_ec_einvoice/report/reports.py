@@ -36,6 +36,7 @@ class ReportAccountInvoice(report_sxw.rml_parse):
         inv = self.pool.get('account.invoice').browse(self.cr, self.uid, res)  # noqa
         return inv.numero_autorizacion
 
+
 webkit_report.WebKitParser(
     'report.account_einvoice',
     'account.invoice',

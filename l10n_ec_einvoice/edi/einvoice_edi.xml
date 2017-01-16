@@ -3,8 +3,8 @@
   <data>
     <record id="email_template_einvoice" model="mail.template">
       <field name="name">Send eInvoice</field>
-      <field name="email_from">${('noresponder@forma.edu.ec')|safe}</field>
-      <field name="subject"> FACTURA ELECTRONICA ${object.company_id.name})</field>
+      <field name="email_from">${('noresponder@sample.com')|safe}</field>
+      <field name="subject">FACTURA ELECTRONICA ${object.company_id.name})</field>
       <field name="email_recipients">${object.partner_id.id}</field>
       <field name="model_id" ref="account.model_account_invoice"/>
       <field name="auto_delete" eval="True"/>
@@ -12,7 +12,11 @@
       <field name="report_name">FACTURA_${(object.number or '').replace('/','_')}</field>
       <field name="lang">${object.partner_id.lang}</field>
       <field name="body_html"><![CDATA[
-      Adjunto la factura electronica
+      Estimad@ ${ object.partner_id.name },
+
+      adjunto encontrará su factura electrónica número ${ object.invoice_number }, con fecha
+      de emisión ${ object.date_invoice } por un total de ${ object.amount_total }.
+
       ]]>
       </field>
     </record>

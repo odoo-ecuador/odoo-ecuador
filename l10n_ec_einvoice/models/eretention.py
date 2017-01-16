@@ -8,7 +8,7 @@ import itertools
 from jinja2 import Environment, FileSystemLoader
 
 from openerp import models, api
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 from . import utils
 from ..xades.sri import DocumentXML
@@ -112,11 +112,11 @@ class AccountWithdrawing(models.Model):
             signed_document = xades.sign(ewithdrawing, file_pk12, password)
             ok, errores = inv_xml.send_receipt(signed_document)
             if not ok:
-                raise Warning('Errores', errores)
+                raise UserError(errores)
             auth, m = inv_xml.request_authorization(access_key)
             if not auth:
                 msg = ' '.join(list(itertools.chain(*m)))
-                raise Warning('Error', msg)
+                raise UserError(msg)
             auth_document = self.render_authorized_document(auth)
             self.update_document(auth, [access_key, emission_code])
             attach = self.add_attachment(auth_document, auth)
@@ -126,25 +126,23 @@ class AccountWithdrawing(models.Model):
             )
             return True
 
-    def retention_print(self, cr, uid, ids, context=None):
-        datas = {'ids': ids, 'model': '.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'account_eretention',
-            'model': 'account.retention',
-            'datas': datas,
-            'nodestroy': True,
-            }
+    @api.multi
+    def retention_print(self):
+        return self.env['report'].get_action(
+            self,
+            'l10n_ec_einvoice.report_eretention'
+        )
 
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.one
+    @api.multi
     def action_generate_eretention(self):
-        if not self.journal_id.auth_ret_id.is_electronic:
-            return True
-        self.retention_id.action_generate_document()
+        for obj in self:
+            if not obj.journal_id.auth_ret_id.is_electronic:
+                return True
+            obj.retention_id.action_generate_document()
 
     @api.multi
     def action_retention_create(self):

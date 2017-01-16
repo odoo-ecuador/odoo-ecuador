@@ -1,158 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <template id="report_electronic_invoice_layout">
-            <t t-if="o and 'company_id' in o">
-                <t t-set="company" t-value="o.company_id"></t>
-            </t>
-            <t t-if="not o or not 'company_id' in o">
-                <t t-set="company" t-value="res_company"></t>
-            </t>
-
-            <t>
-
-      body {
-      font-family:helvetica, helvetica bold, Arial Bold;
-      font-size:12;
-      }
-
-      div.container {
-      margin: 15px;
-      }
-
-      div.left, div.right {
-      float: left;
-      }
-
-      div.left {
-      padding-right: 21px;
-      }
-      div.right {
-      border: 1px solid gray;
-      }
-
-      div.logo {
-      height: 130px;
-      width: 500px;
-      padding-top: 10px;
-      padding-botton: 10px;
-      border: 1px solid gray;
-      text-align: center;
-      }
-
-      div.companyinfo {
-      height: 170px;
-      width: 500px;
-      border: 1px solid gray;
-      }
-
-      div.invoiceinfo {
-      height: 320px;
-      width: 400px;
-      border: 1px solid gray;
-      font-size: 18px;
-      }
-
-      div.customer {
-      clear: both;
-      height: 80px;
-      padding-top: 10px;
-      width: 925px;
-      border: 1px solid gray;
-      }
-
-      div.details {
-      width: 925px;
-      padding-top: 10px;
-      border: 1px solid gray;
-      }
-
-      table.content {
-      text-align: center;
-      }
-
-      div.footer {
-      margin: 15px;
-      width: 900px;
-      }
-
-      div.fot1, div.fot2 {
-      float: left;
-      }
-
-      div.fot1 {
-      width: 400px;
-      float: left;
-      }
-
-      div.fot2 {
-      width: 525px;
-      float: left;
-      border: 1px solid gray;
-      }
-
-      .label {
-      text-align: left;
-      padding: 4px;
-      }
-
-      .amount {
-      text-align: right;
-      padding: 4px;
-      }
-
-      td {
-      padding: 5px;
-      }
-
-      div.info {
-      padding: 5px;
-      }
-            </t>
-            <t t-raw="0" />
-        </template>
 
         <template id="report_einvoice">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="l10n_ec_einvoice.report_electronic_einvoice_layout">
+                    <t t-call="l10n_ec_einvoice.einvoice_layout">
                         <div class="page">
-                            <div id="container">
-                                <div id="left" class="left">
+                            <div class="row">
+                                <div class="col-xs-5">
                                     <div class="logo">
-                                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"/>
+                                        <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+                                    </div><br/>
+                                    <h4><span t-esc="res_company.name"/></h4>
+                                    <span><strong>DIRECCION: </strong></span><strong></strong><span t-esc="res_company.street"/><br/>
+                                    <span><strong>Contribuyente Especial Nro.: </strong></span>
+                                    <span t-esc="res_company.company_registry or '000' "/><br/>
+                                    <span><strong>Obligado a Llevar contabilidad: </strong> SI</span>
+                                </div>
+                                <div class="col-xs-7">
+                                    <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
+                                    <span><h4 style="text-align: center;">FACTURA</h4></span><br/>
+                                    <span><strong>NUMERO</strong> </span><span t-esc="o.invoice_number"/><br/>
+                                    <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
+                                    <span t-esc="o.numero_autorizacion"/><br/>
+                                    <span><strong>FECHA Y HORA DE AUTORIZACION: </strong></span><span t-esc="o.fecha_autorizacion"/><br/>
+                                    <span><strong>AMBIENTE: </strong></span><span t-esc="res_company.env_service == '1' and 'PRUEBAS' or 'PRODUCCION'"/><br/>
+                                    <span><strong>EMISION: </strong><span t-esc="res_company.emission_code == '1' and 'NORMAL' or 'INDISPONIBILIDAD'"/></span><br/>
+                                    <span><strong>CLAVE DE ACCESO</strong></span><br/>
+                                    <div class="text-align: left;">
+                                        <img style="text-align: left;" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1' % ('Code128', o.clave_acceso, 450, 60)"/>
+                                    </div><br/>
+                                </div>
+                            </div>
+                            <div class="row" style="background-color: silver;">
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <span><strong>RAZON SOCIAL</strong></span>
+                                </div>
+                                <div class="col-xs-5" style="padding-left: 0px;">
+                                    <span t-esc="o.partner_id.name.upper()"/>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px; padding-right: 0px;">
+                                    <span><strong>IDENTIFICACION</strong></span>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span t-esc="o.partner_id.identifier"/>
+                                </div>
+                            </div>
+                            <div class="row" style="background-color: silver; margin-bottom: 10px;">
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <span><strong>FECHA DE EMISION</strong></span>
+                                </div>
+                                <div class="col-xs-5" style="padding-left: 0px;">
+                                    <span t-esc="o.date_invoice"/>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span><strong>GUIA REMISION</strong></span>
+                                </div>
+                                <div class="col-xs-2">
+                                    <br/>
+                                </div>
+                            </div>
+                            <div class="row" style="background-color: silver; text-align: center; margin-bottom: 10px;">
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span><strong>CODIGO</strong></span>
+                                </div>
+                                <div class="col-xs-4" style="padding-left: 0px;">
+                                    <span><strong>DESCRIPCION</strong></span>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span><strong>P. UNIT.</strong></span>
+                                </div>
+                                <div class="col-xs-1" style="padding-left: 0px;">
+                                    <span><strong>CANT.</strong></span>
+                                </div>
+                                <div class="col-xs-1" style="padding-left: 0px;">
+                                    <span><strong>DESC.</strong></span>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span><strong>TOTAL</strong></span>
+                                </div>
+                            </div>
+                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                <div class="row" style="margin-bottom: 10px; border-bottom: 1px solid darkgray;">
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.product_id.default_code"/>
+                                    </div>
+                                    <div class="col-xs-4" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="line.name"/>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="'%.2f' % line.price_unit"/>
+                                    </div>
+                                    <div class="col-xs-1" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="'%.2f' % line.quantity"/>
+                                    </div>
+                                    <div class="col-xs-1" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="'%.2f' % line.discount"/>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: right;">
+                                        <span t-field="line.price_subtotal"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                     </div>
                                 </div>
-	                        <div class="companyinfo">
-	                            <div class="info">
-	                                <td>
-		                            <strong t-field="company.name.upper()"></strong>
-	                                </td>
-	                            </div>
-	                            <div class="info">
-	                                <td>
-		                            <strong>DIRECCION</strong> <p t-field="company_id.street"/> <p t-field="company.street2"/>
-	                                </td>
-	                            </div>
-	                            <div>
-	                                <br></br>
-	                                <br></br>
-	                                <br></br>
-	                            </div>
-	                            <div class="info">
-	                                <td>
-		                            Constribuyente Especial Nro: <p t-field="company.company_registry"/>
-	                                </td>
-	                            </div>
-	                            <div class="info">
-	                                <td>
-		                            Obligado a llevar contabilidad:
-	                                </td>
-	                                <td>
-		                            SI
-	                                </td>
-	                            </div>
-	                        </div>
+                            </t>
+                            <div class="row">
+                                <div class="col-xs-7" style="background-color: silver;">
+                                    <span><strong>Información Adicional</strong></span><br/><br/>
+                                    <span><strong>Dirección: </strong></span><span t-esc="o.partner_id.street or '**'"/><br/>
+                                    <span><strong>Teléfono: </strong></span><span t-esc="o.partner_id.phone or '**'"/><br/>
+                                    <span><strong>Email: </strong></span><span t-esc="o.partner_id.email"/><br/>
+                                </div>
+                                <div class="col-xs-5">
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <span><strong>Subtotal diferente de 0%</strong></span>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                        <span t-field="o.amount_vat"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <span><strong>Subtotal 0%</strong></span>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                        <span t-field="o.amount_vat_cero"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <span><strong>Subtotal No obj. de IVA</strong></span>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                        <span t-field="o.amount_novat"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <span><strong>Subtotal</strong></span>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                        <span t-field="o.amount_untaxed"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <span><strong>Total Descuento</strong></span>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                        <span t-esc="o.amount_novat"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                    <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
+                                        <div class="row" style="text-align: right;">
+                                            <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                                <strong><span t-esc="amount_by_group[0]"/></strong>
+                                            </div>
+                                            <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                                <span t-esc="amount_by_group[1]"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-xs-7" style="border-bottom: 1px solid darkgray; padding-left: 0px;">
+                                            <strong><span>TOTAL</span></strong>
+                                        </div>
+                                        <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
+                                            <span t-field="o.amount_pay"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </t>
