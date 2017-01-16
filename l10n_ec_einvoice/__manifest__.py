@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Electronic Documents for Ecuador',
-    'version': '0.1.0',
+    'version': '10.0.0.0.0',
     'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
