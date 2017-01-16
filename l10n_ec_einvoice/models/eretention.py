@@ -8,7 +8,7 @@ import itertools
 from jinja2 import Environment, FileSystemLoader
 
 from openerp import models, api
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning as UserError
 
 from . import utils
 from ..xades.sri import DocumentXML
@@ -112,11 +112,11 @@ class AccountWithdrawing(models.Model):
             signed_document = xades.sign(ewithdrawing, file_pk12, password)
             ok, errores = inv_xml.send_receipt(signed_document)
             if not ok:
-                raise Warning('Errores', errores)
+                raise UserError(errores)
             auth, m = inv_xml.request_authorization(access_key)
             if not auth:
                 msg = ' '.join(list(itertools.chain(*m)))
-                raise Warning('Error', msg)
+                raise UserError(msg)
             auth_document = self.render_authorized_document(auth)
             self.update_document(auth, [access_key, emission_code])
             attach = self.add_attachment(auth_document, auth)
