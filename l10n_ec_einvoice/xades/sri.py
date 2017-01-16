@@ -11,9 +11,9 @@ from lxml.etree import fromstring, DocumentInvalid
 try:
     from suds.client import Client
 except ImportError:
-    raise ImportError('Instalar Libreria suds: pip install suds-jurko')
+    logging.getLogger('xades.sri').info('Instalar libreria suds-jurko')
 
-from openerp.addons.l10n_ec_einvoice.models import utils
+from ..models import utils
 from .xades import CheckDigit
 
 SCHEMAS = {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="account_move_report"
+            string="Comprobante Contable"
+            model="account.move"
+            report_type="qweb-pdf"
+            name="l10n_ec_withholding.reporte_move"
+            file="l10n_ec_withholding.reporte_move"/>
+    </data>
+</odoo>

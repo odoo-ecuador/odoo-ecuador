@@ -7,8 +7,8 @@ import itertools
 
 from jinja2 import Environment, FileSystemLoader
 
-from openerp import models, api
-from openerp.exceptions import Warning
+from openerp import api, models
+from openerp.exceptions import Warning as UserError
 
 from . import utils
 from ..xades.sri import DocumentXML
@@ -39,9 +39,9 @@ class AccountInvoice(models.Model):
             'fechaEmision': fix_date(invoice.date_invoice),
             'dirEstablecimiento': company.street2,
             'obligadoContabilidad': 'SI',
-            'tipoIdentificacionComprador': utils.tipoIdentificacion[partner.type_ced_ruc],  # noqa
+            'tipoIdentificacionComprador': utils.tipoIdentificacion[partner.type_identifier],  # noqa
             'razonSocialComprador': partner.name,
-            'identificacionComprador': partner.ced_ruc,
+            'identificacionComprador': partner.identifier,
             'totalSinImpuestos': '%.2f' % (invoice.amount_untaxed),
             'totalDescuento': '0.00',
             'propina': '0.00',
@@ -54,16 +54,18 @@ class AccountInvoice(models.Model):
         if company.company_registry:
             infoFactura.update({'contribuyenteEspecial':
                                 company.company_registry})
+        else:
+            raise UserError('No ha determinado si es contribuyente especial.')
 
         totalConImpuestos = []
-        for tax in invoice.tax_line:
-            if tax.tax_group in ['vat', 'vat0', 'ice']:
+        for tax in invoice.tax_line_ids:
+            if tax.group_id.code in ['vat', 'vat0', 'ice']:
                 totalImpuesto = {
-                    'codigo': utils.tabla17[tax.tax_group],
-                    'codigoPorcentaje': utils.tabla18[tax.percent],
-                    'baseImponible': '{:.2f}'.format(tax.base_amount),
-                    'tarifa': tax.percent,
-                    'valor': '{:.2f}'.format(tax.tax_amount)
+                    'codigo': utils.tabla17[tax.group_id.code],
+                    'codigoPorcentaje': utils.tabla18[tax.percent_report],
+                    'baseImponible': '{:.2f}'.format(tax.base),
+                    'tarifa': tax.percent_report,
+                    'valor': '{:.2f}'.format(tax.amount)
                     }
                 totalConImpuestos.append(totalImpuesto)
 
@@ -97,7 +99,7 @@ class AccountInvoice(models.Model):
             return code
 
         detalles = []
-        for line in invoice.invoice_line:
+        for line in invoice.invoice_line_ids:
             codigoPrincipal = line.product_id and \
                 line.product_id.default_code and \
                 fix_chars(line.product_id.default_code) or '001'
@@ -112,12 +114,12 @@ class AccountInvoice(models.Model):
                 'precioTotalSinImpuesto': '%.2f' % (line.price_subtotal)
             }
             impuestos = []
-            for tax_line in line.invoice_line_tax_id:
-                if tax_line.tax_group in ['vat', 'vat0', 'ice']:
+            for tax_line in line.invoice_line_tax_ids:
+                if tax_line.tax_group_id.code in ['vat', 'vat0', 'ice']:
                     impuesto = {
-                        'codigo': utils.tabla17[tax_line.tax_group],
-                        'codigoPorcentaje': utils.tabla18[tax_line.porcentaje],  # noqa
-                        'tarifa': tax_line.porcentaje,
+                        'codigo': utils.tabla17[tax_line.tax_group_id.code],
+                        'codigoPorcentaje': utils.tabla18[tax_line.percent_report],  # noqa
+                        'tarifa': tax_line.percent_report,
                         'baseImponible': '{:.2f}'.format(line.price_subtotal),
                         'valor': '{:.2f}'.format(line.price_subtotal *
                                                  tax_line.amount)
@@ -180,25 +182,37 @@ class AccountInvoice(models.Model):
             signed_document = xades.sign(einvoice, file_pk12, password)
             ok, errores = inv_xml.send_receipt(signed_document)
             if not ok:
-                raise Warning('Errores', errores)
+                raise UserError(errores)
             auth, m = inv_xml.request_authorization(access_key)
             if not auth:
                 msg = ' '.join(list(itertools.chain(*m)))
-                raise Warning('Error', msg)
+                raise UserError(msg)
             auth_einvoice = self.render_authorized_einvoice(auth)
             self.update_document(auth, [access_key, emission_code])
             attach = self.add_attachment(auth_einvoice, auth)
+            message = """
+            DOCUMENTO ELECTRONICO GENERADO <br><br>
+            CLAVE DE ACCESO: %s <br>
+            NUMERO DE AUTORIZACION %s <br>
+            FECHA AUTORIZACION: %s <br>
+            ESTADO DE AUTORIZACION: %s <br>
+            AMBIENTE: %s <br>
+            """ % (
+                self.clave_acceso,
+                self.numero_autorizacion,
+                self.fecha_autorizacion,
+                self.estado_autorizacion,
+                self.ambiente
+            )
+            self.message_post(body=message)
             self.send_document(
                 attachments=[a.id for a in attach],
                 tmpl='l10n_ec_einvoice.email_template_einvoice'
             )
 
-    def invoice_print(self, cr, uid, ids, context=None):
-        datas = {'ids': ids, 'model': 'account.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'account_einvoice',
-            'model': 'account.invoice',
-            'datas': datas,
-            'nodestroy': True,
-            }
+    @api.multi
+    def invoice_print(self):
+        return self.env['report'].get_action(
+            self,
+            'l10n_ec_einvoice.report_einvoice'
+        )

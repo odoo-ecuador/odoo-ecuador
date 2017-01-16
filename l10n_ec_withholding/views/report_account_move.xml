@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-<template id="account_move_report" name="Reporte Comprobante de Movimiento">
+<template id="reporte_move" name="Reporte Comprobante de Movimiento">
     <t t-call="report.html_container">
         <t t-foreach="docs" t-as="o">
             <t t-call="report.internal_layout">
@@ -38,7 +38,7 @@
                         <tbody style="font-size: 8pt">
                             <t t-set="total_debit" t-value="0"/>
                             <t t-set="total_credit" t-value="0"/>
-                            <t t-foreach="groupby(o.line_id.sorted(key=lambda r: r.credit))" t-as="move">
+                            <t t-foreach="groupby(o.line_ids.sorted(key=lambda r: r.credit))" t-as="move">
                                     <tr>
                                         <td style="text-align: left; width: 131.033px;"><t t-esc="move['code']"></t></td>
                                         <td style="text-align: left; width: 799.25px; padding-left: 40px;">
@@ -75,13 +75,23 @@
                                 <td style="text-align: center;"></td>
                                 <td style="text-align: center;"><br></br></td>
                             </tr>
-                            <tr>
-                                <td style="text-align: left">Realizado por:<span t-field="o.create_uid.name" ></span></td>
-                                <td style="text-align: center">Revisado Por:</td>
-                                <td style="text-align: center" colspan="2">Autorizado por:</td>
-                            </tr>
                         </tfoot>
                     </table>
+                    <br/><br/><br/>
+                    <div class="row" style="text-align: center; font-size: 9px;">
+                        <div class="col-xs-4">
+                            <hr> </hr>
+                            <span><strong>REALIZADO POR</strong></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <hr> </hr>
+                            <span><strong>REVISADO POR</strong></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <hr> </hr>
+                            <span><strong>AUTORIZADO POR</strong></span>
+                        </div>
+                    </div>
                 </div>
             </t>
         </t>

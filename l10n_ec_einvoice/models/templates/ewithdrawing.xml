@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<comprobanteRetencion id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>{{ ambiente }}</ambiente>
+    <tipoEmision>{{ tipoEmision }}</tipoEmision>
+    <razonSocial>{{ razonSocial }}</razonSocial>
+    <nombreComercial>{{ nombreComercial }}</nombreComercial>
+    <ruc>{{ ruc }}</ruc>
+    <claveAcceso>{{ claveAcceso }}</claveAcceso>
+    <codDoc>{{ codDoc }}</codDoc>
+    <estab>{{ estab }}</estab>
+    <ptoEmi>{{ ptoEmi }}</ptoEmi>
+    <secuencial>{{ secuencial }}</secuencial>
+    <dirMatriz>{{ dirMatriz }}</dirMatriz>
+  </infoTributaria>
+  <infoCompRetencion>
+    <fechaEmision>{{ fechaEmision }}</fechaEmision>
+    <dirEstablecimiento>{{ dirEstablecimiento }}</dirEstablecimiento>
+    <contribuyenteEspecial>{{ contribuyenteEspecial }}</contribuyenteEspecial>
+    <obligadoContabilidad>{{ obligadoContabilidad }}</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>{{ tipoIdentificacionSujetoRetenido }}</tipoIdentificacionSujetoRetenido>
+    <razonSocialSujetoRetenido>{{ razonSocialSujetoRetenido }}</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>{{ identificacionSujetoRetenido }}</identificacionSujetoRetenido>
+    <periodoFiscal>{{ periodoFiscal }}</periodoFiscal>
+  </infoCompRetencion>
+  <impuestos>
+    {% for tax in impuestos: %}
+    <impuesto>
+      <codigo>{{ tax.codigo }}</codigo>
+      <codigoRetencion>{{ tax.codigoRetencion }}</codigoRetencion>
+      <baseImponible>{{ tax.baseImponible }}</baseImponible>
+      <porcentajeRetener>{{ tax.porcentajeRetener }}</porcentajeRetener>
+      <valorRetenido>{{ tax.valorRetenido }}</valorRetenido>
+      <codDocSustento>{{ tax.codDocSustento }}</codDocSustento>
+      <numDocSustento>{{ estab }}{{ ptoEmi }}{{ tax.numDocSustento }}</numDocSustento>{# factura proveedor #}
+      <fechaEmisionDocSustento>{{ tax.fechaEmisionDocSustento }}</fechaEmisionDocSustento>
+    </impuesto>
+    {% endfor %}
+  </impuestos>
+</comprobanteRetencion>

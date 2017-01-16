@@ -8,6 +8,7 @@
     'author': 'Cristian Salamea',
     'category': 'Localization',
     'complexity': 'normal',
+    'license': 'AGPL-3',
     'website': 'http://www.ayni.com.ec',
     'data': [
         'view/authorisation_view.xml',
