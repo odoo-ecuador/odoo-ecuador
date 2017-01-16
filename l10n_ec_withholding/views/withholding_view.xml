@@ -123,7 +123,7 @@
                         </div>
                         <group>
                             <group>
-                                <field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)]}"/>
+                                <field name="partner_id" select="1" domain="[('supplier', '=', True)]" attrs="{'required':[('to_cancel','=',False)]}"/>
                                 <field name="invoice_id"
                                        domain="[('partner_id','=',partner_id),('type','=','in_invoice'),('retention_id','=',False)]"
                                        options="{'no_create': True, 'no_create_edit': True}"
@@ -137,13 +137,12 @@
                                 <field name="manual" invisible="1"/>
                                 <field name="to_cancel"/>
                             </group>
+                            <field name="currency_id" invisible="1"/>
                         </group>
                         <notebook colspan="4">
                             <page string="Impuestos">
-                                <field name="tax_ids" nolabel="1" context="{'default_invoice_id': invoice_id}"
-                                       domain="[('invoice_id','=',invoice_id),('group_id.code','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
-                                    <tree string="Impuestos Aplicados" edit="false">
-                                        <field name="invoice_id" invisible="0"/>
+                                <field name="tax_ids" nolabel="1">
+                                    <tree string="Impuestos Aplicados">
                                         <field name="fiscal_year"/>
                                         <field name="group_id"/>
                                         <field name="code"/>
@@ -203,10 +202,11 @@
                                 <label string="Comprobante" for="type"/>
                                 <field name="type" invisible="1"/>
                             </group>
+                            <field name="currency_id" invisible="1"/>
                         </group>
                         <notebook>
                             <page string="Impuestos">
-                                <field name="tax_ids" nolabel="1" context="{'default_invoice_id': invoice_id}"
+                                <field name="tax_ids" nolabel="1"
                                        domain="[('invoice_id','=',invoice_id),('group_id.code','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
                                     <tree string="Impuestos Aplicados" edit="false">
                                         <field name="invoice_id" invisible="0"/>
@@ -528,15 +528,30 @@
             </field>
         </record>
 
-        <record id="view_invoice_tax_form" model="ir.ui.view">
-            <field name="name">view.account.invoice.tax.ec.form</field>
+        <record id="account.view_invoice_tax_form" model="ir.ui.view">
+            <field name="name">account.invoice.tax.form</field>
             <field name="model">account.invoice.tax</field>
-            <field name="inherit_id" ref="account.view_invoice_tax_form"/>
             <field name="arch" type="xml">
-                <field name="name" position="before">
-                    <field name="invoice_id" invisible="1"/>
-                    <field name="tax_id" required="1" options="{'no_create': True, 'no_create_edit': True}"/>
-                </field>
+                <form string="Manual Invoice Taxes">
+                    <group>
+                        <group>
+                            <field name="tax_id" required="1" domain="[('tax_group_id.code','in',['ret_ir','ret_vat_b','ret_vat_srv'])]"
+                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="account_id" groups="account.group_account_user"/>
+                            <field name="account_analytic_id" domain="[('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+                        </group>
+                        <group>
+                            <field name="group_id"/>
+                            <field name="fiscal_year" readonly="1"/>
+                            <field name="manual"/>
+                            <field name="amount"/>
+                            <field name="base"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </form>
             </field>
         </record>
 

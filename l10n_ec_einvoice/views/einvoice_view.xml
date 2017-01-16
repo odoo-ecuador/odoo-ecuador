@@ -78,7 +78,7 @@
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_invoice_sent']" position="replace"/>
             <xpath expr="//button[@name='action_invoice_sent']" position="replace">
-                <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('sent','=',True),('state','!=','open')]}"
+                <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('autorizado_sri','=',True),('state','!=','open')]}"
                         string="Generar Doc. Electrónica" class="oe_highlight"/>
             </xpath>
             <xpath expr="//field[@name='date_due']" position="after">

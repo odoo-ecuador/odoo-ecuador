@@ -2,20 +2,20 @@
 <openerp>
   <data>
 
-      <!-- report
+      <report
           id="account.account_invoices"
           model="account.invoice"
           string="Factura Electronica"
-          report_type="qweb-pdf"
+          report_type="qweb-html"
           name="l10n_ec_einvoice.report_einvoice"
           file="l10n_ec_einvoice.report_einvoice"
           attachment_use="True"
           attachment="('FACTURA_'+(object.invoice_number or '').replace('/','')+'.pdf')"
-          / -->
+          />
 
-    <report auto="False" id="account.account_invoices" model="account.invoice"
+    <!-- report auto="False" id="account.account_invoices" model="account.invoice"
             name="account_einvoice" rml="l10n_ec_einvoice/views/report_einvoice.mako"
-            usage="default" string="Factura" header="False" report_type="webkit"/>
+            usage="default" string="Factura" header="False" report_type="webkit"/ -->
 
   </data>
 </openerp>

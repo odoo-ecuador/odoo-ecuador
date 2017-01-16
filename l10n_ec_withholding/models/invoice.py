@@ -49,7 +49,7 @@ class Invoice(models.Model):
         # Método para imprimir comprobante contable
         return self.env['report'].get_action(
             self.move_id,
-            'l10n_ec_withholding.account_move_report'
+            'l10n_ec_withholding.reporte_move'
         )
 
     @api.multi
@@ -133,54 +133,102 @@ class Invoice(models.Model):
 
     PRECISION_DP = dp.get_precision('Account')
 
-    amount_ice = fields.Float(
-        string='ICE', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_vat = fields.Float(
-        string='Base 12 %', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_untaxed = fields.Float(
-        string='Untaxed', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_tax = fields.Float(
-        string='Tax', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_total = fields.Float(
-        string='Total a Pagar', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_pay = fields.Float(
-        string='Total', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_noret_ir = fields.Float(
-        string='Monto no sujeto a IR', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_tax_retention = fields.Float(
-        string='Total Retenciones', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_ir = fields.Float(
-        string='Base IR', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_ir = fields.Float(
-        string='Impuesto IR', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_vatb = fields.Float(
-        string='Base Ret. IVA', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_vatb = fields.Float(
-        string='Retencion en IVA', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_tax_ret_vatsrv = fields.Float(
-        string='Base Ret. IVA', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    taxed_ret_vatsrv = fields.Float(
-        string='Retencion en IVA', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_vat_cero = fields.Float(
-        string='Base IVA 0%', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
-    amount_novat = fields.Float(
-        string='Base No IVA', digits=PRECISION_DP,
-        store=True, readonly=True, compute='_compute_amount')
+    amount_ice = fields.Monetary(
+        string='ICE',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_vat = fields.Monetary(
+        string='Base 12 %',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_untaxed = fields.Monetary(
+        string='Untaxed',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_tax = fields.Monetary(
+        string='Tax',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_total = fields.Monetary(
+        string='Total a Pagar',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_pay = fields.Monetary(
+        string='Total',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_noret_ir = fields.Monetary(
+        string='Monto no sujeto a IR',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_tax_retention = fields.Monetary(
+        string='Total Retenciones',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_tax_ret_ir = fields.Monetary(
+        string='Base IR',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    taxed_ret_ir = fields.Monetary(
+        string='Impuesto IR',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_tax_ret_vatb = fields.Monetary(
+        string='Base Ret. IVA',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    taxed_ret_vatb = fields.Monetary(
+        string='Retencion en IVA',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_tax_ret_vatsrv = fields.Monetary(
+        string='Base Ret. IVA',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    taxed_ret_vatsrv = fields.Monetary(
+        string='Retencion en IVA',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_vat_cero = fields.Monetary(
+        string='Base IVA 0%',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
+    amount_novat = fields.Monetary(
+        string='Base No IVA',
+        store=True,
+        readonly=True,
+        compute='_compute_amount'
+    )
     retention_id = fields.Many2one(
         'account.retention',
         string='Retención de Impuestos',
@@ -201,15 +249,17 @@ class Invoice(models.Model):
             ('in_refund', 'Supplier Refund'),
             ('liq_purchase', 'Liquidacion de Compra')
         ], 'Type', readonly=True, index=True, change_default=True)
-    withholding_number = fields.Integer(
+    withholding_number = fields.Char(
         'Num. Retención',
         readonly=True,
         states={'draft': [('readonly', False)]},
         copy=False
     )
     create_retention_type = fields.Selection(
-        [('auto', 'Electrónico'),
-         ('manual', 'Manual')],
+        [
+            ('auto', 'Automatico'),
+            ('manual', 'Manual')
+        ],
         string='Numerar Retención',
         required=True,
         readonly=True,
@@ -217,6 +267,15 @@ class Invoice(models.Model):
         default='auto'
     )
     reference = fields.Char(copy=False)
+
+    @api.onchange('withholding_number')
+    def _onchange_withholding(self):
+        if self.create_retention_type == 'manual' and self.withholding_number:
+            partner = self.company_id.partner_id
+            auth_ret = partner.get_authorisation('ret_in_invoice')
+            if not auth_ret.is_valid_number(int(self.withholding_number)):
+                raise UserError('El número de retención no pertenece a una secuencia activa en la empresa.')  # noqa
+            self.withholding_number = self.withholding_number.zfill(9)
 
     @api.multi
     def _check_invoice_number(self):
@@ -288,7 +347,7 @@ class Invoice(models.Model):
         super(Invoice, self).action_invoice_cancel()
 
     @api.multi
-    def action_cancel_draft(self):
+    def action_invoice_draft(self):
         """
         Redefinicion de metodo para cancelar la retencion asociada.
         En facturacion electronica NO se permite regresar a cancelado.
@@ -297,8 +356,8 @@ class Invoice(models.Model):
         """
         for inv in self:
             if inv.retention_id:
-                inv.retention_id.action_draft()
-        super(Invoice, self).action_cancel_draft()
+                inv.retention_id.unlink()
+        super(Invoice, self).action_invoice_draft()
         return True
 
     @api.multi
@@ -323,11 +382,16 @@ class Invoice(models.Model):
                     u'No ha configurado la autorización de retenciones.'
                 )
 
-            wd_number = inv.withholding_number
+            seq = auth_ret.sequence_id
+            if self.create_retention_type == 'manual':
+                wd_number = inv.withholding_number
+            else:
+                wd_number = str(seq.number_next_actual).zfill(seq.padding)
 
+            # move to constrains ?
             if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
                 raise UserError(u'El número de retención es incorrecto.')
-                # TODO: validate number, read next number
+                # TODO: read next number
 
             ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
@@ -419,6 +483,7 @@ class AccountInvoiceTax(models.Model):
             return
         self.name = self.tax_id.description
         self.account_id = self.tax_id.account_id and self.tax_id.account_id.id
+        self.base = self.invoice_id.amount_untaxed
         self.amount = self.tax_id.compute_all(self.invoice_id.amount_untaxed)['taxes'][0]['amount']  # noqa
 
 
