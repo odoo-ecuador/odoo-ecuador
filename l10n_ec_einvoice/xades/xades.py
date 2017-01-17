@@ -3,6 +3,7 @@
 import base64
 import os
 import subprocess
+import logging
 
 
 class CheckDigit(object):
@@ -66,9 +67,13 @@ class Xades(object):
             base64.b64encode(password)
         ]
         try:
+            logging.info('Probando comando de firma digital')
             subprocess.check_output(command)
         except subprocess.CalledProcessError as e:
-            raise e.returncode
+            returncode = e.returncode
+            output = e.output
+            logging.error('Llamada a proceso JAVA codigo: %s' % returncode)
+            logging.error('Error: %s' % output)
 
         p = subprocess.Popen(
             command,

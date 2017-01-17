@@ -30,3 +30,18 @@ class AccountTax(models.Model):
     _inherit = 'account.tax'
 
     percent_report = fields.Char('% para Reportes')
+
+
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
+
+    def compute_compensaciones(self):
+        res = []
+        for line in self.tax_line_ids:
+            if line.group_id.code == 'comp':
+                res.append({
+                    'codigo': line.tax_id.description,
+                    'tarifa': line.tax_id.percent_report,
+                    'valor': abs(line.amount)
+                })
+        return res or False
