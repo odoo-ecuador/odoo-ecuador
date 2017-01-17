@@ -62,7 +62,7 @@ class Edocument(models.AbstractModel):
     def get_auth(self, document):
         partner = document.company_id.partner_id
         if document._name == 'account.invoice':
-            return partner.get_authorisation('out_invoice')
+            return document.auth_inv_id
         elif document._name == 'account.retention':
             return partner.get_authorisation('ret_in_invoice')
 

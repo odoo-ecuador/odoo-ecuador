@@ -86,6 +86,8 @@ class AccountAuthorisation(models.Model):
     def create(self, values):
         res = self.search([('partner_id', '=', values['partner_id']),
                            ('type_id', '=', values['type_id']),
+                           ('serie_entidad', '=', values['serie_entidad']),
+                           ('serie_emision', '=', values['serie_emision']),
                            ('active', '=', True)])
         if res:
             MSG = u'Ya existe una autorización activa para %s' % self.type_id.name  # noqa
