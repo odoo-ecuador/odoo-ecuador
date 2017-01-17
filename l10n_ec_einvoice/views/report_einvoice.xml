@@ -9,7 +9,7 @@
                         <div class="page">
                             <div class="row">
                                 <div class="col-xs-5">
-                                    <div class="logo">
+                                    <div class="logo" style="width: 330px; height: 180px;">
                                         <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
                                     </div><br/>
                                     <h4><span t-esc="res_company.name"/></h4>

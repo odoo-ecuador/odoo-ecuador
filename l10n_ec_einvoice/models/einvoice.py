@@ -71,6 +71,15 @@ class AccountInvoice(models.Model):
 
         infoFactura.update({'totalConImpuestos': totalConImpuestos})
 
+        compensaciones = False
+        comp = self.compute_compensaciones()
+        if comp:
+            compensaciones = True
+            infoFactura.update({
+                'compensaciones': compensaciones,
+                'comp': comp
+            })
+
         if self.type == 'out_refund':
             inv = self.search([('number', '=', self.origin)], limit=1)
             inv_number = '{0}-{1}-{2}'.format(inv.invoice_number[:3], inv.invoice_number[3:6], inv.invoice_number[6:])  # noqa

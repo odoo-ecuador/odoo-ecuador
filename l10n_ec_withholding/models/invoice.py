@@ -87,7 +87,7 @@ class Invoice(models.Model):
                 self.amount_novat += line.base
             elif line.tax_id.tax_group_id.code == 'no_ret_ir':
                 self.amount_noret_ir += line.base
-            elif line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:  # noqa
+            elif line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir', 'comp']:  # noqa
                 self.amount_tax_retention += line.amount
                 if line.tax_id.tax_group_id.code == 'ret_vat_b':
                     self.amount_tax_ret_vatb += line.base

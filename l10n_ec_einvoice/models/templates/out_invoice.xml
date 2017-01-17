@@ -33,6 +33,17 @@
       </totalImpuesto>
       {% endfor %}
     </totalConImpuestos>
+    {% if compensaciones %}
+    <compensaciones>
+        {% for c in comp %}
+        <compensacion>
+            <codigo>{{ c['codigo'] }}</codigo>
+            <tarifa>{{ c['tarifa'] }}</tarifa>
+            <valor>{{ c['valor'] }}</valor>
+        </compensacion>
+        {% endfor %}
+    </compensaciones>
+    {% endif %}
     <propina>0.00</propina>
     <importeTotal>{{ importeTotal }}</importeTotal>
     <moneda>DOLAR</moneda>

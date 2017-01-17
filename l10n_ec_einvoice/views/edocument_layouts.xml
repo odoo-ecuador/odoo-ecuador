@@ -23,7 +23,7 @@
           id="account.account_invoices"
           model="account.invoice"
           string="Factura Electronica"
-          report_type="qweb-html"
+          report_type="qweb-pdf"
           name="l10n_ec_einvoice.report_einvoice"
           file="l10n_ec_einvoice.report_einvoice"
           attachment_use="True"
