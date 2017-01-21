@@ -271,57 +271,10 @@ class Invoice(models.Model):
     @api.onchange('withholding_number')
     def _onchange_withholding(self):
         if self.create_retention_type == 'manual' and self.withholding_number:
-            partner = self.company_id.partner_id
-            auth_ret = partner.get_authorisation('ret_in_invoice')
+            auth_ret = self.journal_id.auth_retention_id
             if not auth_ret.is_valid_number(int(self.withholding_number)):
                 raise UserError('El número de retención no pertenece a una secuencia activa en la empresa.')  # noqa
             self.withholding_number = self.withholding_number.zfill(9)
-
-    @api.multi
-    def _check_invoice_number(self):
-        """
-        TODO: revisar pertinencia de validacion
-
-        Método de validacion de numero de factura y numero de
-        retencion
-
-        número de factura: suppplier_invoice_number
-        número de retención: withdrawing_number
-        """
-        INV_LIMIT = 9  # CHECK: mover a compañia ?
-
-        for obj in self:
-            if obj.state in ['open', 'paid', 'cancel']:
-                return True
-            if obj.type == 'out_invoice':
-                return True
-            if not len(obj.supplier_invoice_number) == INV_LIMIT:
-                raise UserError('Error', u'Son %s dígitos en el núm. de Factura.' % INV_LIMIT)  # noqa
-
-            auth = obj.auth_inv_id
-
-            inv_number = obj.supplier_invoice_number
-
-            if not auth:
-                raise UserError(
-                    u'No se ha configurado una autorización de documentos, revisar Partner y Diario Contable.'  # noqa
-                )
-
-            if not self.env['account.authorisation'].is_valid_number(auth.id, int(inv_number)):  # noqa
-                raise UserError('Error!', u'Número de factura fuera de rango.')
-
-            # validacion de numero de retencion para facturas de proveedor
-            if obj.type == 'in_invoice':
-                if not obj.journal_id.auth_ret_id:
-                    raise UserError(
-                        u'No ha configurado una autorización de retenciones.'
-                    )
-
-                if not self.env['account.authorisation'].is_valid_number(obj.journal_id.auth_ret_id.id, int(obj.withdrawing_number)):  # noqa
-                    raise UserError(
-                        u'El número de retención no es válido.'
-                    )
-        return True
 
     @api.multi
     def action_invoice_open(self):
@@ -375,8 +328,7 @@ class Invoice(models.Model):
                 continue
 
             # Autorizacion para Retenciones de la Empresa
-            partner = self.company_id.partner_id
-            auth_ret = partner.get_authorisation('ret_in_invoice')
+            auth_ret = inv.journal_id.auth_retention_id
             if inv.type in ['in_invoice', 'liq_purchase'] and not auth_ret:
                 raise UserError(
                     u'No ha configurado la autorización de retenciones.'
@@ -477,14 +429,18 @@ class AccountInvoiceTax(models.Model):
         index=True
     )
 
+    @api.multi
+    def get_invoice(self, number):
+        return self.env['account.invoice'].search([('number', '=', number)])
+
     @api.onchange('tax_id')
     def _onchange_tax(self):
         if not self.tax_id:
             return
         self.name = self.tax_id.description
         self.account_id = self.tax_id.account_id and self.tax_id.account_id.id
-        self.base = self.invoice_id.amount_untaxed
-        self.amount = self.tax_id.compute_all(self.invoice_id.amount_untaxed)['taxes'][0]['amount']  # noqa
+        self.base = self.retention_id.invoice_id.amount_untaxed
+        self.amount = self.tax_id.compute_all(self.retention_id.invoice_id.amount_untaxed)['taxes'][0]['amount']  # noqa
 
 
 class AccountInvoiceRefund(models.TransientModel):

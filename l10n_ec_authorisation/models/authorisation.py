@@ -198,8 +198,34 @@ class ResPartner(models.Model):
         return False
 
 
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    auth_out_invoice_id = fields.Many2one(
+        'account.authorisation',
+        'Punto de Emisión'
+    )
+    auth_retention_id = fields.Many2one(
+        'account.authorisation',
+        'Para Retenciones'
+    )
+
+
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
+
+    _DOCUMENTOS_EMISION = ['out_invoice', 'liq_purchase', 'out_refund']
+
+    @api.onchange('journal_id')
+    def _onchange_journal_id(self):
+        super(AccountInvoice, self)._onchange_journal_id()
+        if self.journal_id and self.type in self._DOCUMENTOS_EMISION:
+            self.auth_inv_id = self.journal_id.auth_out_invoice_id
+            self.auth_number = not self.auth_inv_id.is_electronic and self.auth_inv_id.name  # noqa
+            number = '{0}'.format(
+                str(self.auth_inv_id.sequence_id.number_next_actual).zfill(9)
+            )
+            self.reference = number
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
@@ -210,18 +236,9 @@ class AccountInvoice(models.Model):
         El campo auth_inv_id representa la autorizacion para
         emitir el documento.
         """
-        DOCUMENTOS_EMISION = ['out_invoice', 'liq_purchase', 'out_refund']
         super(AccountInvoice, self)._onchange_partner_id()
-        self.company_id = not self.company_id and self.env['res.company']._company_default_get('account.invoice')  # noqa
-        partner = self.type in DOCUMENTOS_EMISION and self.company_id.partner_id or self.partner_id  # noqa
-        if not partner:
-            return
-        self.auth_inv_id = partner.get_authorisation(self.type)
-        self.auth_number = self.auth_inv_id.name
-        number = '{0}'.format(
-            str(self.auth_inv_id.sequence_id.number_next_actual).zfill(9)
-        )
-        self.reference = number
+        if self.type not in self._DOCUMENTOS_EMISION:
+            self.auth_inv_id = self.partner_id.get_authorisation(self.type)
 
     @api.one
     @api.depends(

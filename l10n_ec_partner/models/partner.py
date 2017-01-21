@@ -16,16 +16,16 @@ class ResPartner(models.Model):
 
     _inherit = 'res.partner'
 
-    @api.model
+    @api.multi
     def update_identifiers(self):
-        res = self.search([('identifier', '=', False)])
-        for e in res:
-            e.write({'identifier': '9999999999'})
+        sql = """UPDATE res_partner SET identifier='9999999999'
+        WHERE identifier is NULL"""
+        self.env.cr.execute(sql)
 
     @api.model_cr_context
     def init(self):
-        super(ResPartner, self).init()
         self.update_identifiers()
+        super(ResPartner, self).init()
         sql_index = """
         CREATE UNIQUE INDEX IF NOT EXISTS
         unique_company_partner_identifier_type on res_partner

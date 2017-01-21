@@ -76,13 +76,6 @@ class AccountWithdrawing(models.Model):
         states=STATES_VALUE,
         default=True
         )
-    num_document = fields.Char(
-        'Num. Comprobante',
-        size=50,
-        readonly=True,
-        states=STATES_VALUE,
-        copy=False
-        )
     auth_id = fields.Many2one(
         'account.authorisation',
         'Autorizacion',
@@ -205,24 +198,20 @@ class AccountWithdrawing(models.Model):
                 raise ValidationError('Error en fecha de retención.')  # noqa
 
     @api.onchange('name')
+    @api.constrains('name')
     def _onchange_name(self):
+        length = {
+            'in_invoice': 9,
+            'liq_purchase': 9,
+            'out_invoice': 15
+        }
         if not self.name:
             return
-        if len(self.name) > 9 or not self.name.isdigit():
-            raise UserError(u'Valor para número incorrecto.')
-        if self.auth_id:
+        if not len(self.name) == length[self.type] or not self.name.isdigit():
+            raise UserError(u'Nro incorrecto. Debe ser de 15 dígitos.')
+        if self.type == 'ret_in_invoice':
             if not self.auth_id.is_valid_number(int(self.name)):
-                return {
-                    'warning': {
-                        'title': 'Error',
-                        'message': u'Número inválido.'
-                    },
-                    'value': {
-                        'name': ''
-                    }
-                }
-        if self.name:
-            self.name = self.name.zfill(9)
+                raise UserError('Nro no pertenece a la secuencia.')
 
     @api.multi
     def unlink(self):
@@ -231,11 +220,6 @@ class AccountWithdrawing(models.Model):
                 raise UserError('No se permite borrar retenciones validadas.')
         res = super(AccountWithdrawing, self).unlink()
         return res
-
-    @api.onchange('name')
-    def onchange_name(self):
-        if self.name and self.type == 'in_invoice':
-            self.name = self.name.zfill(9)
 
     @api.onchange('to_cancel')
     def onchange_tocancel(self):
@@ -247,7 +231,6 @@ class AccountWithdrawing(models.Model):
     def onchange_invoice(self):
         if not self.invoice_id:
             return
-        self.num_document = self.invoice_id.invoice_number
         self.type = self.invoice_id.type
 
     @api.multi
@@ -255,21 +238,19 @@ class AccountWithdrawing(models.Model):
         for wd in self:
             if wd.to_cancel:
                 raise UserError('El documento fue marcado para anular.')
-            if wd.type == 'out_invoice':
-                if not len(self.name) == 15:
-                    raise UserError('El número para retenciones de clientes es de 15 dígitos.')  # noqa
-                return True
 
             sequence = wd.auth_id.sequence_id
-            if number.isdigit():
-                wd_number = number[6:].zfill(sequence.padding)
-            elif wd.internal_number:
-                wd_number = wd.internal_number
+            if self.type != 'out_invoice':
+                if wd.internal_number:
+                    wd_number = wd.internal_number
+                    number = wd_number
+                else:
+                    wd_number = self.env['ir.sequence'].get_id(sequence.id)
+                    number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
+                                                wd.auth_id.serie_emision,
+                                                wd_number)
             else:
-                wd_number = self.env['ir.sequence'].get_id(sequence.id)
-            number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
-                                        wd.auth_id.serie_emision,
-                                        wd_number)
+                number = self.name
             wd.write({'name': number, 'internal_number': number})
         return True
 
@@ -340,6 +321,7 @@ class AccountWithdrawing(models.Model):
             acc2rec += move.line_ids.filtered(lambda l: l.account_id.internal_type == acctype)  # noqa
             acc2rec.auto_reconcile_lines()
             ret.write({'move_ret_id': move.id})
+            move.post()
         return True
 
     @api.multi
@@ -362,6 +344,7 @@ class AccountWithdrawing(models.Model):
                     raise UserError(
                         u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.'  # noqa
                     )
+            self.tax_ids.write({'invoice_id': False})
             self.write({'state': 'cancel'})
         return True
 
