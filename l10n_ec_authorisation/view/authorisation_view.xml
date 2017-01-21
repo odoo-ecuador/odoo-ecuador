@@ -2,6 +2,20 @@
 <odoo>
     <data>
 
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+	    <field name="arch" type="xml">
+		<field name="sequence_id" position="after">
+		    <field name="auth_out_invoice_id" domain="[('in_type','=','interno')]"
+			   attrs="{'invisible': [('type','!=','sale')], 'required': [('type','=','sale')]}"/>
+		    <field name="auth_retention_id" domain="[('in_type','=','interno')]"
+			   attrs="{'invisible': [('type','!=','purchase')], 'required': [('type','=','purchase')]}"/>
+		</field>
+	    </field>
+	</record>
+
         <record id="view_invoice_reference_customer_form" model="ir.ui.view">
             <field name="name">account.invoice.reference.cust.form</field>
             <field name="model">account.invoice</field>
