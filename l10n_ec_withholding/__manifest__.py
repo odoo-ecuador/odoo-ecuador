@@ -16,6 +16,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/account.fiscal.position.csv',
+        'data/partner.xml',
         'views/report_account_move.xml',
         'views/reports.xml',
         'views/withholding_view.xml'
