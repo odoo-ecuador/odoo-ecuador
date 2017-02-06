@@ -216,7 +216,7 @@ class AccountInvoice(models.Model):
 
     _DOCUMENTOS_EMISION = ['out_invoice', 'liq_purchase', 'out_refund']
 
-    @api.onchange('journal_id')
+    @api.onchange('journal_id', 'auth_inv_id')
     def _onchange_journal_id(self):
         super(AccountInvoice, self)._onchange_journal_id()
         if self.journal_id and self.type in self._DOCUMENTOS_EMISION:
