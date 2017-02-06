@@ -5,9 +5,11 @@
 Localización de Odoo para Ecuador
 =================================
 
-Este proyecto intenta implementar todas las funcionalidades
-requeridas para que OpenERP pueda implementarse en cualquier
+Este proyecto implementa o casi todas todas las funcionalidades
+requeridas para que Odoo pueda implementarse en cualquier
 empresa ecuatoriana.
+
+Si requieres soporte comercial para la implementación envía un mail a cristian.salamea@ayni.com.ec
 
 Referencias de Implementación
 -----------------------------
@@ -27,15 +29,16 @@ Estado de Módulos
 
 | MODULO                   | ESTADO    | OBSERVACIONES                           |
 |--------------------------|-----------|-----------------------------------------|
-| l10n_ec_authorisation    | ESTABLE|                                         |
-| l10n_ec_chart            | ESTABLE   |                                         |
-| l10n_ec_einvoice         | NO MIGRADO   |                                         |
+| l10n_ec_authorisation    | ESTABLE 10.0|                                         |
+| l10n_ec_chart            | ESTABLE 10.0|                                         |
+| l10n_ec_einvoice         | ESTABLE 10.0| Pendiente las retenciones electrónicas  |
 | l10n_ec_employee         | NO MIGRADO   |                                         |
 | l10n_ec_invoice_sequence | ELIMINADO   |                                         |
 | l10n_ec_ote              | NO MIGRADO   |                                         |
-| l10n_ec_partner          | ESTABLE   |                                         |
-| l10n_ec_pos              | NO MIGRADO |  |
-| l10n_ec_withholding      | NO MIGRADO   |                                         |
+| l10n_ec_partner          | ESTABLE 10.0  |                                         |
+| l10n_ec_pos              | ESTABLE 10.0 |  |
+| l10n_ec_withholding      | ESTABLE 10.0   |                                         |
+|l10n_ec_picking_invoice|ESTABLE 10.0||
 
 
 Objetivos principales
