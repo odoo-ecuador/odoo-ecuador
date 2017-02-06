@@ -158,7 +158,6 @@ class Edocument(models.AbstractModel):
         se realice dentro de las 24 horas posteriores a su emisión
         """
         LIMIT_TO_SEND = 5
-        NOT_SENT = u'Error de Envío'
         MESSAGE_TIME_LIMIT = u' '.join([
             u'Los comprobantes electrónicos deben',
             u'enviarse con máximo 24h desde su emisión.']
@@ -166,7 +165,7 @@ class Edocument(models.AbstractModel):
         dt = datetime.strptime(date_invoice, '%Y-%m-%d')
         days = (datetime.now() - dt).days
         if days > LIMIT_TO_SEND:
-            raise UserError(NOT_SENT, MESSAGE_TIME_LIMIT)
+            raise UserError(MESSAGE_TIME_LIMIT)
 
     @api.multi
     def update_document(self, auth, codes):
