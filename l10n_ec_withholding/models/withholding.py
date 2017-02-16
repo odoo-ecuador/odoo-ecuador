@@ -269,7 +269,7 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             if not ret.tax_ids:
                 raise UserError('No ha aplicado impuestos.')
-            self.action_validate()
+            self.action_validate(self.name)
             if ret.manual:
                 ret.invoice_id.write({'retention_id': ret.id})
                 self.create_move()
