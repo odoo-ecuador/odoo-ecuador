@@ -188,11 +188,11 @@
                                 <field name="partner_id" domain="[('customer','=',True)]"
 				       options="{'no_create': True, 'no_create_edit': True}"
                                        attrs="{'required':[('to_cancel','=',False)]}"/>
-                                <field name="name"/>
                                 <field name="invoice_id"
                                        domain="[('partner_id','=',partner_id),('type','=','out_invoice'),('retention_id','=',False)]"
                                        options="{'no_create': True, 'no_create_edit': True}"
                                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
+                                <field name="name"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -261,7 +261,7 @@
             <field name="res_model">account.retention</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{'in_type': 'ret_in_invoice'}</field>
+            <field name="context">{'in_type': 'ret_in_invoice', 'type': 'in_invoice'}</field>
             <field name="domain">[('in_type','=','ret_in_invoice')]</field>
         </record>
         <record id="action_retention_supplier_form" model="ir.actions.act_window.view">
@@ -283,7 +283,7 @@
             <field name="res_model">account.retention</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{'in_type': 'ret_out_invoice'}</field>
+            <field name="context">{'in_type': 'ret_out_invoice', 'type': 'out_invoice'}</field>
             <field name="domain">[('in_type','=','ret_out_invoice')]</field>
         </record>
 
