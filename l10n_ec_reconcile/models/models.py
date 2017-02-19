@@ -34,34 +34,52 @@ class AccountBankReconcile(models.Model):
         first = self.search([], limit=1)
         return first.balance_stop
 
-    name = fields.Char('Codigo', required=True, default='/')
+    name = fields.Char(
+        'Codigo',
+        required=True,
+        default='/',
+        readonly=True,
+        states={'draft': [('readonly', False)]}
+    )
     journal_id = fields.Many2one(
         'account.journal',
         'Banco',
-        required=True
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
     )
     date_start = fields.Date(
         'Desde',
         required=True,
-        default=_default_date_start
+        default=_default_date_start,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
     )
     date_stop = fields.Date(
         'Hasta',
         required=True,
-        default=_default_date_stop
+        default=_default_date_stop,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
     )
     balance_start = fields.Monetary(
         'Balance Inicial',
-        default=_default_balance
+        default=_default_balance,
+        readonly=True,
+        states={'draft': [('readonly', False)]}
     )
-    balance_stop = fields.Monetary('Balance Final')
+    balance_stop = fields.Monetary(
+        'Balance Final',
+        readonly=True,
+        states={'draft': [('readonly', False)]}
+    )
     currency_id = fields.Many2one(
         'res.currency',
         'Moneda'
     )
     line_ids = fields.One2many(
-        'account.bank.reconcile.line',
-        'reconcile_id',
+        'account.move.line',
+        'concile_id',
         'Detalle'
     )
     state = fields.Selection(
@@ -75,20 +93,6 @@ class AccountBankReconcile(models.Model):
     )
 
     @api.multi
-    def process_lines(self, move_lines):
-        for line in move_lines:
-            data = {
-                'reconcile_id': self.id,
-                'ref': line.ref or '/',
-                'date': line.date,
-                'account_id': line.account_id.id,
-                'partner_id': line.partner_id.id,
-                'debit': line.debit,
-                'credit': line.credit
-            }
-            self.env['account.bank.reconcile.line'].create(data)
-
-    @api.multi
     def action_load_entries(self):
         for obj in self:
             obj.line_ids.unlink()
@@ -96,53 +100,44 @@ class AccountBankReconcile(models.Model):
                 ('journal_id', '=', self.journal_id.id),
                 ('date', '>=', self.date_start),
                 ('date', '<=', self.date_stop),
-                ('account_id', '=', self.journal_id.default_debit_account_id.id)  # noqa
+                ('account_id', '=', self.journal_id.default_debit_account_id.id),  # noqa
+                ('conciled', '=', False)
             ]
             lines = self.env['account.move.line'].search(domain)
-            obj.process_lines(lines)
+            not_conciled = self.env['account.move.line'].search([
+                ('journal_id', '=', self.journal_id.id),
+                ('account_id', '=', self.journal_id.default_debit_account_id.id),  # noqa
+                ('conciled', '=', False)
+            ])
+            lines.write({'concile_id': obj.id})
+            not_conciled.write({'concile_id': obj.id})
         return True
 
     @api.multi
     def action_done(self):
         for obj in self:
-            debits = sum([l.debit for l in obj.line_ids.filtered(lambda r: r.done)])  # noqa
-            credits = sum([l.credit for l in obj.line_ids.filtered(lambda r: r.done)])  # noqa
+            debits = sum([l.debit for l in obj.line_ids.filtered(lambda r: r.conciled)])  # noqa
+            credits = sum([l.credit for l in obj.line_ids.filtered(lambda r: r.conciled)])  # noqa
             computed = self.balance_start + debits - credits
             if not obj.balance_stop == computed:
-                raise UserError('El saldo final es incorrecto')
+                raise UserError('El saldo final es incorrecto.')
             obj.write({'state': 'done'})
         return True
 
+    @api.multi
+    def action_print(self):
+        pass
 
-class AccountBankReconcileLine(models.Model):
 
-    _name = 'account.bank.reconcile.line'
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
 
     @api.multi
     def action_done(self):
-        self.write({'done': not self.done})
+        self.write({'conciled': not self.conciled})
 
-    reconcile_id = fields.Many2one(
+    conciled = fields.Boolean('Conciliado ?')
+    concile_id = fields.Many2one(
         'account.bank.reconcile',
-        'Sheet',
-        ondelete='cascade'
+        'Hoja de Conciliacion'
     )
-    ref = fields.Char('Ref', required=True)
-    partner_id = fields.Many2one(
-        'res.partner',
-        'Empresa',
-        required=True
-    )
-    account_id = fields.Many2one(
-        'account.account',
-        'Cuenta'
-    )
-    date = fields.Date('Fecha')
-    debit = fields.Monetary('Debito')
-    credit = fields.Monetary('Credito')
-    done = fields.Boolean('Depositado / Cobrado ?')
-    currency_id = fields.Many2one(
-        'res.currency',
-        'Moneda'
-    )
-    # TODO: decidir por tipo o por debit/credit

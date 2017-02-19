@@ -5,7 +5,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_done" string="Confirmar" confirm="Seguro de confirmar ?" type="object"/>
+                    <button name="action_print" string="Imprimir" states="done" type="object" icon="fa-print"/>
+                    <button name="action_done" string="Confirmar" states="draft" confirm="Seguro de confirmar ?" type="object"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -20,18 +21,18 @@
                             <field name="balance_start"/>
                             <field name="balance_stop"/>
                         </group>
-                        <button name="action_load_entries" string="Cargar Movimientos" class="oe_stat_button oe_right" icon="fa-bars" type="object"/>
+                        <button name="action_load_entries" states="draft" string="Cargar Movimientos" class="oe_stat_button oe_right" icon="fa-bars" type="object"/>
                     </group>
                     <group>
                         <field name="line_ids" nolabel="1">
-                            <tree delete="false" create="false" edit="true" editable="top">
+                            <tree delete="false" create="false" edit="true" editable="top" default_order="date">
                                 <field name="ref"/>
                                 <field name="partner_id"/>
                                 <field name="account_id"/>
                                 <field name="date"/>
                                 <field name="debit" sum="Total"/>
                                 <field name="credit" sum="Total"/>
-                                <field name="done"/>
+                                <field name="conciled"/>
                                 <button name="action_done" class="oe_stat_button" icon="fa-check" type="object" help="Realizado"/>
                             </tree>
                         </field>
@@ -45,7 +46,7 @@
         <field name="name">view.account.bank.reconcile</field>
         <field name="model">account.bank.reconcile</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-info="state=='draft' ">
                 <field name="name"/>
                 <field name="journal_id"/>
                 <field name="date_start"/>
