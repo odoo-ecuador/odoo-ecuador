@@ -8,9 +8,11 @@
             <field name="inherit_id" ref="account.view_account_journal_form"/>
 	    <field name="arch" type="xml">
 		<field name="sequence_id" position="after">
-		    <field name="auth_out_invoice_id" domain="[('in_type','=','interno')]"
+		    <field name="auth_out_invoice_id" domain="[('in_type','=','interno')]" context="{'default_in_type': 'interno'}"
 			   attrs="{'invisible': [('type','!=','sale')], 'required': [('type','=','sale')]}"/>
-		    <field name="auth_retention_id" domain="[('in_type','=','interno')]"
+		    <field name="auth_out_refund_id" domain="[('in_type','=','interno')]" context="{'default_in_type': 'interno'}"
+			   attrs="{'invisible': [('type','!=','sale')], 'required': [('type','=','sale')]}"/>
+		    <field name="auth_retention_id" domain="[('in_type','=','interno')]" context="{'default_in_type': 'interno'}"
 			   attrs="{'invisible': [('type','!=','purchase')], 'required': [('type','=','purchase')]}"/>
 		</field>
 	    </field>

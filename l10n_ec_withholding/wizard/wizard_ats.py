@@ -159,6 +159,29 @@ class WizardAts(models.TransientModel):
                 'autModificado': refund.reference
             }
 
+    def get_reembolsos(self, invoice):
+        if not invoice.auth_inv_id.type_id.code == '41':
+            return False
+        res = []
+        for r in invoice.refund_ids:
+            res.append({
+                'tipoComprobanteReemb': r.doc_id.code,
+                'tpIdProvReemb': tpIdProv[r.partner_id.type_ced_ruc],
+                'idProvReemb': r.partner_id.ced_ruc,
+                'establecimientoReemb': r.auth_id.serie_entidad,
+                'puntoEmisionReemb': r.auth_id.serie_emision,
+                'secuencialReemb': r.secuencial,
+                'fechaEmisionReemb': convertir_fecha(r.date),
+                'autorizacionReemb': r.auth_id.name,
+                'baseImponibleReemb': '0.00',
+                'baseImpGravReemb': '0.00',
+                'baseNoGravReemb': '%.2f' % r.amount,
+                'baseImpExeReemb': '0.00',
+                'montoIceRemb': '0.00',
+                'montoIvaRemb': '%.2f' % r.tax
+            })
+        return res
+
     def read_compras(self, period):
         """
         Procesa:
@@ -177,6 +200,21 @@ class WizardAts(models.TransientModel):
                 detallecompras = {}
                 auth = inv.auth_inv_id
                 valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valRetServ100 = self._get_ret_iva(inv)  # noqa
+                ref=''
+                if inv.type == 'liq_purchase':
+                    ref = inv.auth_inv_id.name
+                else:
+                    ref = inv.reference
+                ret = ''
+                t_reeb = 0.0
+                if not inv.auth_inv_id.type_id.code == '41':
+                    ret = self.process_lines(inv.tax_line)
+                    t_reeb = 0.00
+                else:
+                    if inv.type == 'liq_purchase':
+                        t_reeb = 0.0
+                    else:
+                        t_reeb = inv.amount_untaxed
                 detallecompras.update({
                     'codSustento': inv.sustento_id.code,
                     'tpIdProv': tpIdProv[inv.partner_id.type_ced_ruc],
@@ -202,7 +240,7 @@ class WizardAts(models.TransientModel):
                     'valRetServ50': '0.00',
                     'valorRetServicios': '%.2f' % valorRetServicios,
                     'valRetServ100': '%.2f' % valRetServ100,
-                    'totbasesImpReemb': '0.00',
+                    'totbasesImpReemb': '%.2f' % t_reeb,
                     'pagoExterior': {
                         'pagoLocExt': '01',
                         'paisEfecPago': 'NA',
@@ -216,7 +254,13 @@ class WizardAts(models.TransientModel):
                     detallecompras.update({'retencion': True})
                     detallecompras.update(self.get_withholding(inv.retention_id))  # noqa
                 if inv.type in ['out_refund', 'in_refund']:
-                    detallecompras.update(self.get_refund(inv))
+                    refund = self.get_refund(inv)
+                    if refund:
+                        detallecompras.update({'es_nc': True})
+                        detallecompras.update(refund)
+                detallecompras.update({
+                    'reembolsos': self.get_reembolsos(inv)
+                })
                 compras.append(detallecompras)
         return compras
 
@@ -225,7 +269,8 @@ class WizardAts(models.TransientModel):
         dmn = [
             ('state', 'in', ['open', 'paid']),
             ('period_id', '=', period.id),
-            ('type', '=', 'out_invoice')
+            ('type', '=', 'out_invoice'),
+            ('auth_inv_id.is_electronic', '!=', True)
         ]
         ventas = []
         for inv in self.env['account.invoice'].search(dmn):
