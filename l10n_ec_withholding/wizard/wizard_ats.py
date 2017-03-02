@@ -200,15 +200,8 @@ class WizardAts(models.TransientModel):
                 detallecompras = {}
                 auth = inv.auth_inv_id
                 valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valRetServ100 = self._get_ret_iva(inv)  # noqa
-                ref=''
-                if inv.type == 'liq_purchase':
-                    ref = inv.auth_inv_id.name
-                else:
-                    ref = inv.reference
-                ret = ''
                 t_reeb = 0.0
                 if not inv.auth_inv_id.type_id.code == '41':
-                    ret = self.process_lines(inv.tax_line)
                     t_reeb = 0.00
                 else:
                     if inv.type == 'liq_purchase':

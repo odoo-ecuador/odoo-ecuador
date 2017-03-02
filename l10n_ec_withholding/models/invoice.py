@@ -335,7 +335,6 @@ class Invoice(models.Model):
                     u'No ha configurado la autorización de retenciones.'
                 )
 
-            seq = auth_ret.sequence_id
             if self.create_retention_type == 'manual':
                 wd_number = inv.withholding_number
 
