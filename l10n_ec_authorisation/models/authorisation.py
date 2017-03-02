@@ -203,7 +203,11 @@ class AccountJournal(models.Model):
 
     auth_out_invoice_id = fields.Many2one(
         'account.authorisation',
-        'Punto de Emisión'
+        'Secuencia Facturas'
+    )
+    auth_out_refund_id = fields.Many2one(
+        'account.authorisation',
+        'Secuencia Notas de Credito'
     )
     auth_retention_id = fields.Many2one(
         'account.authorisation',
@@ -216,11 +220,14 @@ class AccountInvoice(models.Model):
 
     _DOCUMENTOS_EMISION = ['out_invoice', 'liq_purchase', 'out_refund']
 
-    @api.onchange('journal_id')
+    @api.onchange('journal_id', 'auth_inv_id')
     def _onchange_journal_id(self):
         super(AccountInvoice, self)._onchange_journal_id()
         if self.journal_id and self.type in self._DOCUMENTOS_EMISION:
-            self.auth_inv_id = self.journal_id.auth_out_invoice_id
+            if self.type == 'out_invoice':
+                self.auth_inv_id = self.journal_id.auth_out_invoice_id
+            elif self.type == 'out_refund':
+                self.auth_inv_id = self.journal_id.auth_out_refund_id
             self.auth_number = not self.auth_inv_id.is_electronic and self.auth_inv_id.name  # noqa
             number = '{0}'.format(
                 str(self.auth_inv_id.sequence_id.number_next_actual).zfill(9)

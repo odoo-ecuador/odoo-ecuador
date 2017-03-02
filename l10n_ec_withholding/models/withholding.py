@@ -38,6 +38,11 @@ class AccountWithdrawing(models.Model):
         context = self._context
         return context.get('in_type', 'ret_out_invoice')
 
+    @api.multi
+    def _default_type(self):
+        context = self._context
+        return context.get('type', 'out_invoice')
+
     @api.model
     def _default_currency(self):
         company = self.env['res.company']._company_default_get('account.invoice')  # noqa
@@ -88,7 +93,8 @@ class AccountWithdrawing(models.Model):
         related='invoice_id.type',
         string='Tipo Comprobante',
         readonly=True,
-        store=True
+        store=True,
+        default=_default_type
         )
     in_type = fields.Selection(
         [
@@ -205,11 +211,11 @@ class AccountWithdrawing(models.Model):
             'liq_purchase': 9,
             'out_invoice': 15
         }
-        if not self.name:
+        if not self.name or not self.type:
             return
         if not len(self.name) == length[self.type] or not self.name.isdigit():
             raise UserError(u'Nro incorrecto. Debe ser de 15 dígitos.')
-        if self.type == 'ret_in_invoice':
+        if self.in_type == 'ret_in_invoice':
             if not self.auth_id.is_valid_number(int(self.name)):
                 raise UserError('Nro no pertenece a la secuencia.')
 
@@ -240,18 +246,9 @@ class AccountWithdrawing(models.Model):
                 raise UserError('El documento fue marcado para anular.')
 
             sequence = wd.auth_id.sequence_id
-            if self.type != 'out_invoice':
-                if wd.internal_number:
-                    wd_number = wd.internal_number
-                    number = wd_number
-                else:
-                    wd_number = self.env['ir.sequence'].get_id(sequence.id)
-                    number = '{0}{1}{2}'.format(wd.auth_id.serie_entidad,
-                                                wd.auth_id.serie_emision,
-                                                wd_number)
-            else:
-                number = self.name
-            wd.write({'name': number, 'internal_number': number})
+            if self.type != 'out_invoice' and not number:
+                number = self.env['ir.sequence'].next_by_id(sequence.id)
+            wd.write({'name': number})
         return True
 
     @api.multi
@@ -272,7 +269,7 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             if not ret.tax_ids:
                 raise UserError('No ha aplicado impuestos.')
-            self.action_validate()
+            self.action_validate(self.name)
             if ret.manual:
                 ret.invoice_id.write({'retention_id': ret.id})
                 self.create_move()

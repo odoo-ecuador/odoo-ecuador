@@ -323,6 +323,7 @@ class Invoice(models.Model):
         * Cancelar retencion generada
         """
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
+        wd_number = False
         for inv in self:
             if not self.has_retention:
                 continue
@@ -334,11 +335,8 @@ class Invoice(models.Model):
                     u'No ha configurado la autorización de retenciones.'
                 )
 
-            seq = auth_ret.sequence_id
             if self.create_retention_type == 'manual':
                 wd_number = inv.withholding_number
-            else:
-                wd_number = str(seq.number_next_actual).zfill(seq.padding)
 
             # move to constrains ?
             if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa

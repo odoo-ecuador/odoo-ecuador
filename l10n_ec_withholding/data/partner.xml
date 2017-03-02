@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <function  id="partner_account_position_default_set"
+                   model="ir.values" name="set_default"
+                   eval="('res.partner', 'property_account_position_id', ref('nat_nocont'))"/>
+    </data>
+</odoo>
