@@ -335,7 +335,7 @@ class AccountInvoice(models.Model):
     def action_number(self):
         # TODO: ver donde incluir el metodo de numeracion
         self.ensure_one()
-        if self.type not in ['out_invoice', 'liq_purchase']:
+        if self.type not in ['out_invoice', 'liq_purchase', 'out_refund']:
             return
         number = self.internal_inv_number
         if not self.auth_inv_id:
