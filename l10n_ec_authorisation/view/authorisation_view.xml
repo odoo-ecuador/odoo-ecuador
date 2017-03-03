@@ -117,7 +117,7 @@
                             <field name="type_id" widget="selection"/>
                             <field name="in_type"/>
                             <field name="partner_id" attrs="{'invisible': [('in_type','=','interno')]}" domain="[('supplier','=',True)]"/>
-                            <field name="sequence_id" invisible="1"/>
+                            <field name="sequence_id"/>
                         </group>
                         <group>
                             <field name="name" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>

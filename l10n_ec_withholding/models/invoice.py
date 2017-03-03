@@ -439,19 +439,3 @@ class AccountInvoiceTax(models.Model):
         self.account_id = self.tax_id.account_id and self.tax_id.account_id.id
         self.base = self.retention_id.invoice_id.amount_untaxed
         self.amount = self.tax_id.compute_all(self.retention_id.invoice_id.amount_untaxed)['taxes'][0]['amount']  # noqa
-
-
-class AccountInvoiceRefund(models.TransientModel):
-
-    _inherit = 'account.invoice.refund'
-
-    @api.model
-    def _get_reason(self):
-        context = dict(self._context or {})
-        active_id = context.get('active_id', False)
-        if not active_id:
-            return ''
-        inv = self.env['account.invoice'].browse(active_id)
-        return inv.invoice_number
-
-    description = fields.Char(default=_get_reason)
