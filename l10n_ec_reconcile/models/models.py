@@ -14,6 +14,14 @@ class AccountBankReconcile(models.Model):
     _name = 'account.bank.reconcile'
     _order = 'date_start DESC'
 
+    @api.multi
+    def unlink(self):
+        for ob in self:
+            if ob.state != 'draft':
+                raise UserError('No puede eliminar un documento validado.')
+        super(AccountBankReconcile, self).unlink()
+        return True
+
     @api.model
     def _default_date_start(self):
         today = datetime.date.today()
@@ -120,8 +128,9 @@ class AccountBankReconcile(models.Model):
             credits = sum([l.credit for l in obj.line_ids.filtered(lambda r: r.conciled)])  # noqa
             computed = self.balance_start + debits - credits
             if not obj.balance_stop == computed:
-                raise UserError('El saldo final es incorrecto.')
-            obj.write({'state': 'done'})
+                raise UserError('El balance final es incorrecto.')
+            code = self.env['ir.sequence'].next_by_code('bank.reconcile')
+            obj.write({'state': 'done', 'name': code})
         return True
 
     @api.multi
