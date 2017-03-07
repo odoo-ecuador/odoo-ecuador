@@ -268,6 +268,7 @@ class AccountInvoice(models.Model):
 
     invoice_number = fields.Char(
         compute='_compute_invoice_number',
+        string='Nro. Documento',
         store=True,
         readonly=True,
         copy=False

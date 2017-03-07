@@ -4,15 +4,16 @@
 
 from datetime import datetime
 
-from openerp import (
+from odoo import (
     api,
     fields,
     models
 )
-from openerp.exceptions import (
+from odoo.exceptions import (
     Warning as UserError,
     ValidationError
 )
+import utils
 
 
 class AccountWithdrawing(models.Model):
@@ -200,8 +201,8 @@ class AccountWithdrawing(models.Model):
             inv_date = datetime.strptime(self.invoice_id.date_invoice, '%Y-%m-%d')  # noqa
             ret_date = datetime.strptime(self.date, '%Y-%m-%d')  # noqa
             days = ret_date - inv_date
-            if days.days < 0 or days.days > 5:
-                raise ValidationError('Error en fecha de retención.')  # noqa
+            if days.days not in range(1, 6):
+                raise ValidationError(utils.CODE_701)  # noqa
 
     @api.onchange('name')
     @api.constrains('name')
@@ -328,7 +329,7 @@ class AccountWithdrawing(models.Model):
         """
         for ret in self:
             if ret.move_ret_id:
-                raise UserError(u'Retención conciliada con la factura, no se puede anular.')  # noqa
+                raise UserError(utils.CODE703)
             elif ret.auth_id.is_electronic:
                 raise UserError(u'No puede anular un documento electrónico.')
             data = {'state': 'cancel'}
@@ -338,9 +339,7 @@ class AccountWithdrawing(models.Model):
                     number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret.name  # noqa
                     data.update({'name': number})
                 else:
-                    raise UserError(
-                        u'El número no es de 9 dígitos y/o no pertenece a la autorización seleccionada.'  # noqa
-                    )
+                    raise UserError(utils.CODE702)
             self.tax_ids.write({'invoice_id': False})
             self.write({'state': 'cancel'})
         return True

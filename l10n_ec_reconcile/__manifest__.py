@@ -14,6 +14,7 @@
     'website': 'http://www.ayni.com.ec',
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml'
+        'views/views.xml',
+        'data/sequence.xml'
     ]
 }
