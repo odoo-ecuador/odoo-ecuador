@@ -13,7 +13,7 @@ from odoo.exceptions import (
     Warning as UserError,
     ValidationError
 )
-import utils
+from . import utils
 
 
 class AccountWithdrawing(models.Model):
@@ -60,13 +60,12 @@ class AccountWithdrawing(models.Model):
 
     _name = 'account.retention'
     _description = 'Withdrawing Documents'
-    _order = 'name ASC'
+    _order = 'date DESC'
 
     name = fields.Char(
         'Número',
         size=64,
         readonly=True,
-        required=True,
         states=STATES_VALUE,
         copy=False
         )
@@ -248,7 +247,7 @@ class AccountWithdrawing(models.Model):
 
             sequence = wd.auth_id.sequence_id
             if self.type != 'out_invoice' and not number:
-                number = self.env['ir.sequence'].next_by_id(sequence.id)
+                number = sequence.next_by_id()
             wd.write({'name': number})
         return True
 

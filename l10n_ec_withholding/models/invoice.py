@@ -361,7 +361,6 @@ class Invoice(models.Model):
                 'type': inv.type,
                 'in_type': 'ret_%s' % inv.type,
                 'date': inv.date_invoice,
-                'num_document': self.invoice_number,
                 'manual': False
             }
 

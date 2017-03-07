@@ -23,7 +23,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='move_id']" position="after">
-                    <field name="retention_id"/>
+                    <field name="retention_id" context="{'form_view_ref': 'l10n_ec_withholding.view_account_retention_form'}"/>
                 </xpath>
                 <xpath expr="//field[@name='fiscal_position_id']" position="attributes">
                     <attribute name="required">1</attribute>
@@ -117,7 +117,7 @@
                             <h1>
                                 <label string="Retención Borrador" attrs="{'invisible': [('state','!=','draft')]}"/>
                                 <label string="Retención Generada" attrs="{'invisible': [('state','=','draft')]}"/>
-                                <field name="name" class="oe_inline" />
+                                <field name="name" class="oe_inline" required="1"/>
                             </h1>
                         </div>
                         <group>
