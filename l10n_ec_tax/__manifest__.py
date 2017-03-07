@@ -15,6 +15,7 @@
     'data': [
         'data/account.tax.group.csv',
         'data/account.tax.csv',
-        'data/account.fiscal.position.csv'
+        'data/account.fiscal.position.csv',
+        'view/views.xml'
     ]
 }
