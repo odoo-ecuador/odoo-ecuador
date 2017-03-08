@@ -418,13 +418,18 @@ class AccountInvoiceTax(models.Model):
         store=True,
         string='Grupo'
     )
-    code = fields.Char(related='tax_id.description', string='Código')
+    code = fields.Char(
+        related='tax_id.description',
+        string='Código',
+        store=True
+    )
     percent_report = fields.Char(related='tax_id.percent_report')
     retention_id = fields.Many2one(
         'account.retention',
         'Retención',
         index=True
     )
+    base = fields.Monetary(store=True)
 
     @api.multi
     def get_invoice(self, number):

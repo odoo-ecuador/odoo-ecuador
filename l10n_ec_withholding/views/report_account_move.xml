@@ -45,11 +45,11 @@
                                             <t t-esc="move['name']"></t>
                                         </td>
                                         <td style="text-align: right; width: 168.717px;">
-                                            <span t-esc=" '%.2f' % move['debit']">
+                                            <span t-esc="move['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}">
                                             </span>
                                         </td>
                                         <td style="width: 168px; text-align: right;">
-                                            <span t-esc="'%.2f' % move['credit']" ></span>
+                                            <span t-esc="move['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"></span>
                                         </td>
                                         <t t-set="total_debit" t-value="total_debit+move['debit']"/>
                                         <t t-set="total_credit" t-value="total_credit+move['credit']"/>
@@ -61,12 +61,12 @@
                                 <td style="text-align: right;" colspan="2"><strong>Totales</strong></td>
                                 <td style="text-align: right;">
                                     <strong>
-                                        <span t-esc=" '%.2f' % total_debit "></span>
+                                        <span t-esc="total_debit " t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"></span>
                                     </strong>
                                 </td>
                                 <td style="text-align: right;">
                                     <strong>
-                                        <span t-esc=" '%.2f' % total_credit "></span>
+                                        <span t-esc="total_credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"></span>
                                     </strong>
                                 </td>
                             </tr>
