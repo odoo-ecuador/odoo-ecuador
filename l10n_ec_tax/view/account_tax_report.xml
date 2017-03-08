@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="reporte_account_tax_ec" name="Reporte de Impuestos">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.internal_layout">
+                        <div class="page">
+                            <div class="row text-center">
+                                <strong><span>INFORME DE IMPUESTOS </span><span t-esc="period(o)"/></strong>
+                            </div>
+                            <t t-foreach="get_taxes(o)" t-as="tax">
+                                <div class="row text-center">
+                                    <div class="col-xs-12" style="background-color: #B3B3B3;">
+                                        <strong><span t-esc="tax['title']"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row text-center" style="border-bottom: 1px solid black; font-size: 9px; font-weight: bold;">
+                                    <div class="col-xs-2">
+                                        <span>CODIGO</span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span>CONCEPTO</span>
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        <span>BASE IMPONIBLE</span>
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        <span>IMP. GENERADO</span>
+                                    </div>
+                                </div>
+                                <t t-foreach="tax['lines']" t-as="line">
+                                    <div class="row" style="font-size: 9px;">
+                                        <div class="col-xs-2">
+                                            <span t-esc="line[1]"/>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <span t-esc="line[2]"/>
+                                        </div>
+                                        <div class="col-xs-2 text-right">
+                                            <span t-esc="line[4]" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                        <div class="col-xs-2 text-right">
+                                            <span t-esc="line[5]" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                <div class="row" style="border-top: 1px solid black; font-size: 9px; font-">
+                                    <div class="col-xs-8">
+                                        <span></span>
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        <strong><span t-esc="tax['total_base']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></strong>
+                                    </div>
+                                    <div class="col-xs-2 text-right">
+                                        <strong><span t-esc="tax['total_tax']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></strong>
+                                    </div>
+                                </div>
+                            </t>
+                            <div class="row text-center" style="padding-top: 80px; font-size: 10px;">
+                                <div class="col-xs-2">
+                                    <span></span>
+                                </div>
+                                <div class="col-xs-3" style="border-top: 1px solid black">
+                                    <span>CONTADOR</span>
+                                </div>
+                                <div class="col-xs-2">
+                                    <span></span>
+                                </div>
+                                <div class="col-xs-3" style="border-top: 1px solid black">
+                                    <span>REPRESENTANTE LEGAL</span>
+                                </div>
+                                <div class="col-xs-2">
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <report
+            id="account_tax_report"
+            string="Reporte de Impuestos"
+            model="account.report.tax"
+            report_type="qweb-pdf"
+            name="l10n_ec_tax.reporte_account_tax_ec"
+            file="l10n_ec_tax.reporte_account_tax_ec"/>
+    </data>
+</openerp>
