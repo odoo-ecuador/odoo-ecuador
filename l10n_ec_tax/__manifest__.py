@@ -16,6 +16,8 @@
         'data/account.tax.group.csv',
         'data/account.tax.csv',
         'data/account.fiscal.position.csv',
-        'view/views.xml'
+        'security/ir.model.access.csv',
+        'view/views.xml',
+        'view/account_tax_report.xml'
     ]
 }

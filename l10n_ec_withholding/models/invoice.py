@@ -430,6 +430,7 @@ class AccountInvoiceTax(models.Model):
         'Retención',
         index=True
     )
+    base = fields.Monetary(store=True)
 
     @api.multi
     def get_invoice(self, number):
