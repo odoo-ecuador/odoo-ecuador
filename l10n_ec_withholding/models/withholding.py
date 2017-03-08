@@ -13,7 +13,7 @@ from odoo.exceptions import (
     Warning as UserError,
     ValidationError
 )
-import utils
+from . import utils
 
 
 class AccountWithdrawing(models.Model):
