@@ -2,11 +2,40 @@
 # © <2016> <Cristian Salamea>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import time
 import datetime
 import calendar
 
 from odoo import api, fields, models
 from odoo import tools
+
+
+class AccountInvoiceTax(models.Model):
+
+    _inherit = 'account.invoice.tax'
+
+    fiscal_year = fields.Char(
+        'Ejercicio Fiscal',
+        size=4,
+        default=time.strftime('%Y')
+    )
+    group_id = fields.Many2one(
+        related='tax_id.tax_group_id',
+        store=True,
+        string='Grupo'
+    )
+    base = fields.Monetary(store=True)
+    code = fields.Char(
+        related='tax_id.description',
+        string='Código',
+        store=True
+    )
+    percent_report = fields.Char(related='tax_id.percent_report')
+    retention_id = fields.Many2one(
+        'account.retention',
+        'Retención',
+        index=True
+    )
 
 
 class AccountTaxGroup(models.Model):
