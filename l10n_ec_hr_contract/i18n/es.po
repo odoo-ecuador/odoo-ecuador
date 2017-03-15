@@ -1,0 +1,529 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* l10n_ec_hr_contract
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-14 18:02+0000\n"
+"PO-Revision-Date: 2017-03-14 13:30-0500\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_anticipo_sueldo
+msgid "Anticipo Sueldo"
+msgstr "Anticipo Sueldo"
+
+#. module: l10n_ec_hr_contract
+#: model:hr.holidays.status,name:l10n_ec_hr_contract.holiday_status_enf
+msgid "Ausencias por Enfermedad"
+msgstr "Ausencias por Enfermedad"
+
+#. module: l10n_ec_hr_contract
+#: model:hr.holidays.status,name:l10n_ec_hr_contract.holiday_status_mat
+msgid "Ausencias por Maternidad"
+msgstr "Ausencias por Maternidad"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "B1"
+msgstr "B1"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "B2"
+msgstr "B2"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "B3"
+msgstr "B3"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_base_trial_days
+msgid "Base dias para pruebas"
+msgstr "Base dias para pruebas"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_bonus_tree
+msgid "Bonos"
+msgstr "Bonos"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.calendar.exception,state:0
+msgid "Borrador"
+msgstr "Borrador"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "C1"
+msgstr "C1"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "C2"
+msgstr "C2"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "C3"
+msgstr "C3"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_calendar_id
+msgid "Calendario"
+msgstr "Calendario"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_name
+msgid "Cargo"
+msgstr "Cargo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_code_search
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_code_tree
+msgid "Codigo Sectorial"
+msgstr "Codigo Sectorial"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_commision_search
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_commision_tree
+msgid "Comision Sectorial"
+msgstr "Comision Sectorial"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.submenu_hr_contract_commision
+msgid "Comisiones"
+msgstr "Comisiones"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_commision_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_name
+msgid "Comisión"
+msgstr "Comisión"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.action_hr_contract_commision
+msgid "Comisión Laboral"
+msgstr "Comisión Laboral"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.calendar.exception,state:0
+msgid "Confirmado"
+msgstr "Confirmado"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,name:l10n_ec_hr_contract.mt_alert_open
+msgid "Contract Open"
+msgstr "Contrato Abierto"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,name:l10n_ec_hr_contract.mt_alert_contract_ending
+msgid "Contract Period Ending"
+msgstr "Contratos por terminar"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,description:l10n_ec_hr_contract.mt_alert_contract_ending
+msgid "Contract Period is ending"
+msgstr "Contratos por finalizar"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,description:l10n_ec_hr_contract.mt_alert_open
+msgid "Contract is Open"
+msgstr "Contrato esta iniciado"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_contract_id
+msgid "Contracto"
+msgstr "Contracto"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.submenu_hr_contracts
+msgid "Contracts"
+msgstr "Contratos"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.open_draft_contracts
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.menu_draft_contracts
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_draft_contracts_tree
+msgid "Contracts to be Approved"
+msgstr "Por Aprobar"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_create_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_create_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_create_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_create_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_create_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_create_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_create_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_create_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_create_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_create_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_code
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_code
+msgid "Código"
+msgstr "Código"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_code
+msgid "Código IESS"
+msgstr "Código IESS"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_contract_id
+msgid "Código Sectorial"
+msgstr "Código Sectorial"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.action_hr_contract_code
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.submenu_hr_contract_code
+msgid "Códigos Laborales"
+msgstr "Códigos Laborales"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.submenu_hr_contract_codes
+msgid "Códigos Sectoriales"
+msgstr "Códigos Sectoriales"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "D1"
+msgstr "D1"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "D2"
+msgstr "D2"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,help:l10n_ec_hr_contract.action_resource_calendar_hr
+msgid "Define la jornada de trabajo para los empleados."
+msgstr "Define la jornada de trabajo para los empleados."
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_display_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_display_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_display_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_display_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_display_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_age_days
+msgid "Días de Contrato"
+msgstr "Días de Contrato"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "E1"
+msgstr "E1"
+
+#. module: l10n_ec_hr_contract
+#: selection:hr.contract.code,code_structure:0
+msgid "E2"
+msgstr "E2"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_contract
+msgid "Employee Contract"
+msgstr "Contrato de empleado"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.open_expiring_contracts
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.menu_expiring_contracts
+msgid "Ending Trials & Contracts"
+msgstr "Periodo de Pruebas y Contratos"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_resource_calendar_lunch_to
+msgid "Entrada Almuerzo"
+msgstr "Entrada Almuerzo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_state
+msgid "Estado"
+msgstr "Estado"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_code_structure
+msgid "Estructura Ocupacional"
+msgstr "Estructura Ocupacional"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_resource_calendar_exception_ids
+msgid "Excepciones"
+msgstr "Excepciones"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_expiring_contracts_tree
+msgid "Expiring Contracts"
+msgstr "Expiring Contracts"
+
+#. module: l10n_ec_hr_contract
+#: model:hr.holidays.status,name:l10n_ec_hr_contract.holiday_status_falta
+msgid "Faltas"
+msgstr "Faltas"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_date
+msgid "Fecha que aplica"
+msgstr "Fecha que aplica"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_id
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_id
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.open_hr_contract_bonus
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.menu_hr_contract_bonus
+msgid "Ingresos Extras"
+msgstr "Ingresos Extras"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_end_job_id
+msgid "Job Title"
+msgstr "Título del trabajo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.action_resource_calendar_hr
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.menu_resource_hr_ec
+msgid "Jornada de Trabajo"
+msgstr "Jornada de Trabajo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception___last_update
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings___last_update
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus___last_update
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch___last_update
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code___last_update
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_write_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_write_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_write_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_write_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_write_uid
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_write_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_write_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_write_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_write_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_write_date
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_commision_write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_resource_calendar_lunch_max
+msgid "Límite para Almuerzo (h)"
+msgstr "Límite para Almuerzo (h)"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_name
+msgid "Motivo"
+msgstr "Motivo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_default_base_trial_days
+msgid "Número de días para período de prueba"
+msgstr "Número de días para período de prueba"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_otros_descuentos
+msgid "Otros Descuentos"
+msgstr "Otros Descuentos"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_p_hipotecario
+msgid "Prestamo Hipotecario"
+msgstr "Prestamo Hipotecario"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_p_quirografario
+msgid "Prestamo Quirografario"
+msgstr "Prestamo Quirografario"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,help:l10n_ec_hr_contract.open_hr_contract_bonus
+msgid "Puede definir montos fijos como ingresos ingresos"
+msgstr "Puede definir montos fijos como ingresos ingresos"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_branch_name
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_code_rama_id
+msgid "Rama"
+msgstr "Rama"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,name:l10n_ec_hr_contract.action_hr_contract_branch
+msgid "Rama Laboral"
+msgstr "Rama Laboral"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_branch_search
+#: model:ir.ui.view,arch_db:l10n_ec_hr_contract.view_hr_contract_branch_tree
+msgid "Rama Sectorial"
+msgstr "Rama Sectorial"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.ui.menu,name:l10n_ec_hr_contract.submenu_hr_contract_branch
+msgid "Ramas"
+msgstr "Ramas"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_resource_calendar
+msgid "Resource Calendar"
+msgstr "Calendario recurso"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_wage_base_legal
+msgid "Salario Básico Unificado"
+msgstr "Salario Básico Unificado"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_config_settings_default_wage_base_legal
+msgid "Salario Básico Unificado Actual"
+msgstr "Salario Básico Unificado Actual"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_resource_calendar_lunch_from
+msgid "Salida Almuerzo"
+msgstr "Salida Almuerzo"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,help:l10n_ec_hr_contract.open_expiring_contracts
+msgid "There are currently no contracts or trial periods that are about to expire."
+msgstr "There are currently no contracts or trial periods that are about to expire."
+
+#. module: l10n_ec_hr_contract
+#: model:ir.actions.act_window,help:l10n_ec_hr_contract.open_draft_contracts
+msgid "There are currently no contracts that need to be approved."
+msgstr "No hay contratos a ser aprobados"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_name
+msgid "Tipo Ingreso"
+msgstr "Tipo Ingreso"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_resource_calendar_tolerance_in
+msgid "Tolerancia de Retraso en ingreso"
+msgstr "Tolerancia de Retraso en ingreso"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_hour_from
+msgid "Trabajar desde"
+msgstr "Trabajar desde"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_calendar_exception_hour_to
+msgid "Trabajar hasta"
+msgstr "Trabajar hasta"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,name:l10n_ec_hr_contract.mt_alert_trial_ending
+msgid "Trial Period Ending"
+msgstr "Terminando Periodo de Prueba"
+
+#. module: l10n_ec_hr_contract
+#: model:mail.message.subtype,description:l10n_ec_hr_contract.mt_alert_trial_ending
+msgid "Trial Period is ending"
+msgstr "Terminando periodo de prueba"
+
+#. module: l10n_ec_hr_contract
+#: model:hr.holidays.status,name:l10n_ec_hr_contract.hr_holidays_legal_ec
+msgid "VACACIONES PRIMER AÑO"
+msgstr "VACACIONES PRIMER AÑO"
+
+#. module: l10n_ec_hr_contract
+#: model:hr.holidays.status,name:l10n_ec_hr_contract.holiday_status_vac
+msgid "Vacaciones de Ley"
+msgstr "Vacaciones de Ley"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_amount
+msgid "Valor Bono"
+msgstr "Valor Bono"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,help:l10n_ec_hr_contract.field_hr_contract_anticipo_sueldo
+msgid "Valor Prestamo Anticipo de sueldo en la empresa"
+msgstr "Valor Prestamo Anticipo de sueldo en la empresa"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,help:l10n_ec_hr_contract.field_hr_contract_p_hipotecario
+msgid "Valor Prestamo Hipotecario IESS"
+msgstr "Valor Prestamo Hipotecario IESS"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,help:l10n_ec_hr_contract.field_hr_contract_p_quirografario
+msgid "Valor Prestamo Quirografario IESS"
+msgstr "Valor Prestamo Quirografario IESS"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_calendar_exception
+msgid "hr.calendar.exception"
+msgstr "hr.calendar.exception"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_config_settings
+msgid "hr.config.settings"
+msgstr "hr.config.settings"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_contract_bonus
+msgid "hr.contract.bonus"
+msgstr "hr.contract.bonus"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_contract_branch
+msgid "hr.contract.branch"
+msgstr "hr.contract.branch"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_contract_code
+msgid "hr.contract.code"
+msgstr "hr.contract.code"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model,name:l10n_ec_hr_contract.model_hr_contract_commision
+msgid "hr.contract.commision"
+msgstr "hr.contract.commision"
+
+#. module: l10n_ec_hr_contract
+#: model:ir.model.fields,field_description:l10n_ec_hr_contract.field_hr_contract_bonus_ids
+msgid "name"
+msgstr "Bono"
+

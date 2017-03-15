@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <!-- Menus -->
+
+        <menuitem name="Contracts"
+            id="submenu_hr_contracts"
+            parent="hr.menu_hr_root"
+            sequence="20" groups="hr.group_hr_user"/>
+
+        <!-- Remove stock Contracts menuitem and put it in the submenu -->
+        <menuitem action="hr_contract.action_hr_contract" id="hr_contract.hr_menu_contract" parent="submenu_hr_contracts" name="Contracts" sequence="10" groups="hr.group_hr_user"/>
+
+        <record id="action_resource_calendar_hr" model="ir.actions.act_window">
+            <field name="name">Jornada de Trabajo</field>
+            <field name="res_model">resource.calendar</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="resource.view_resource_calendar_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Define la jornada de trabajo para los empleados.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_resource_hr_ec"
+                  action="action_resource_calendar_hr"
+                  name="Jornada de Trabajo" parent="hr.menu_human_resources_configuration" sequence="5"/>
+
+        <record id="resource.resource_calendar_form" model="ir.ui.view">
+            <field name="name">resource.calendar.form</field>
+            <field name="model">resource.calendar</field>
+            <field name="arch" type="xml">
+                <form string="Working Time">
+                  <sheet>
+                    <group>
+                      <group>
+                        <field name="name"/>
+                        <field name="tolerance_in" required="1"/>
+                        <field name="company_id" groups="hr.group_multi_company"/>
+                      </group>
+                      <group>
+                        <field name="lunch_max" required="1"/>
+                        <label for="lunch_from" string="Duración"/>
+                        <div>
+                          <field name="lunch_from" required="1" widget="float_time" class="oe_inline"/> - <field name="lunch_to" required="1"  widget="float_time" class="oe_inline"/>
+                        </div>
+                      </group>
+                    </group>
+                    <group string="Detalle">
+                      <field name="attendance_ids" nolabel="1"/>
+                    </group>
+                    <group string="Excepciones">
+                      <field name="exception_ids" nolabel="1">
+                        <tree editable="bottom" colors="blue:state=='draft';gray:state=='confirm'">
+                          <field name="name"/>
+                          <field name="date"/>
+                          <field name="hour_from" widget="float_time"/>
+                          <field name="hour_to" widget="float_time"/>
+                          <field name="state"/>
+                          <button name="action_confirm" icon="gtk-go-forward" states="draft" type="object" confirm="Seguro de confirmar ?"/>
+                        </tree>
+                      </field>
+                    </group>
+                    <field name="leave_ids"/>
+                  </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_contract_view_tree" model="ir.ui.view">
+            <field name="name">hr.contract.tree.state</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='employee_id']" position="before">
+                        <field name="name"/>
+                    </xpath>
+                    <xpath expr="//field[@name='employee_id']" position="after">
+                        <field name="department_id"/>
+                    </xpath>
+                    <xpath expr="//field[@name='date_end']" position="after">
+                        <field name="state"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="view_expiring_contracts_tree" model="ir.ui.view">
+            <field name="name">hr.contract.contract.expire.tree</field>
+            <field name="model">hr.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Expiring Contracts">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="trial_date_end"/>
+                    <field name="date_end"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="open_expiring_contracts" model="ir.actions.act_window">
+            <field name="name">Ending Trials &amp; Contracts</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_expiring_contracts_tree"/>
+            <field name="domain">['|',('state','in',['contract_ending']),('state','in',['trial_ending'])]</field>
+            <field name="help" type="html">
+              <p>
+                There are currently no contracts or trial periods that are about to expire.
+              </p>
+            </field>
+        </record>
+        <menuitem action="open_expiring_contracts"
+                  id="menu_expiring_contracts"
+                  parent="submenu_hr_contracts"
+                  groups="hr.group_hr_user"
+                  sequence="20"/>
+
+        <record id="view_draft_contracts_tree" model="ir.ui.view">
+            <field name="name">hr.contract.contract.draft.tree</field>
+            <field name="model">hr.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Contracts to be Approved">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="open_draft_contracts" model="ir.actions.act_window">
+            <field name="name">Contracts to be Approved</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_draft_contracts_tree"/>
+            <field name="domain">[('state','in',['draft'])]</field>
+            <field name="help" type="html">
+              <p>
+                There are currently no contracts that need to be approved.
+              </p>
+            </field>
+        </record>
+        <menuitem action="open_draft_contracts"
+                  id="menu_draft_contracts"
+                  parent="submenu_hr_contracts"
+                  groups="hr.group_hr_user"
+                  sequence="30"/>
+
+        <record id="view_hr_employee_ec_rl_form" model="ir.ui.view">
+          <field name="name">hr.employee.ec.rl.form</field>
+          <field name="model">hr.employee</field>
+          <field name="inherit_id" ref="hr_holidays.view_employee_form_leave_inherit"/>
+          <field name="arch" type="xml">
+            <data>
+              <field name="remaining_leaves" position="attributes">
+                <attribute name="readonly">1</attribute>
+              </field>
+            </data>
+          </field>
+        </record>
+
+       <!-- HR Contract: Form View -->
+       <record id="view_contract_form" model="ir.ui.view">
+           <field name="name">hr.contract.form.inherit.state</field>
+           <field name="model">hr.contract</field>
+           <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+           <field name="arch" type="xml">
+               <data>
+                   <xpath expr="//header" position="replace">
+                       <header>
+                           <button name="signal_confirm" type="object" string="Confirmar" confirm="Seguro de Confirmar el Contrato ?"
+                                   groups="hr.group_hr_manager" states="draft" class="oe_highlight"/>
+                           <button name="state_open" type="object" string="Trial Successful"
+                                   groups="hr.group_hr_manager" states="trial_ending,trial" class="oe_highlight"/>
+                           <button name="state_done" type="object" string="End Contract"
+                                   groups="hr.group_hr_manager" states="trial,open,pending_done" class="oe_highlight"/>
+                           <field name="state" widget="statusbar"/>
+                       </header>
+                   </xpath>
+                   <field name="working_hours" position="before">
+                     <field name="age_days"/>
+                   </field>
+                   <field name="wage" position="before">
+                     <field name="wage_base_legal"/>
+                   </field>
+                   <field name="job_id" position="attributes">
+                     <attribute name="required">1</attribute>
+                     <attribute name="domain">[('state','=','recruit')]</attribute>
+                   </field>
+                   <field name="trial_date_start" position="after">
+                     <field name="base_trial_days" invisible="1"/>
+                   </field>
+                   <field name="trial_date_start" position="replace">
+                     <field name="trial_date_start" required="1" />
+                   </field>
+                   <xpath expr="//field[@name='trial_date_end']" position="attributes">
+                     <attribute name="readonly">1</attribute>
+                   </xpath>
+                   <xpath expr="//field[@name='date_start']" position="replace">
+                       <field name="date_start" class="oe_inline" />
+                   </xpath>
+                   <xpath expr="//field[@name='trial_date_end']" position="replace">
+                       <field name="trial_date_end" class="oe_inline" attrs="{'required':[('trial_date_start','!=',False)]}"/>
+                   </xpath>
+                   <xpath expr="//field[@name='type_id']" position="after">
+                       <field name="code_contract_id"/>
+                   </xpath>
+                   <xpath expr="//sheet" position="after">
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                   </xpath>
+                   <notebook position="inside">
+                       <page string="Valores Rol Pagos">
+                          <group>
+                             <group string="Prestamos IESS">
+                                <field name="p_quirografario"/>
+                                <field name="p_hipotecario"/>
+                            </group>
+                            <group string="Anticipo Sueldo">
+                                <field name="anticipo_sueldo"/>
+                                <field name="otros_descuentos"/>
+                            </group>
+                          </group>
+                          <group string="Ingresos Extras Fijos">
+                             <field name="bonus_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="amount" required="1"/>
+                                </tree>
+                             </field>
+                          </group>
+                        </page>
+                   </notebook>
+               </data>
+           </field>
+       </record>
+
+       <record id="view_hr_contract_bonus_tree" model="ir.ui.view">
+          <field name="name">hr.contract.bonus.tree</field>
+          <field name="model">hr.contract.bonus</field>
+          <field name="arch" type="xml">
+              <tree string="Bonos" editable="top">
+                  <field name="contract_id" required="1" domain="[('state','=','open')]"/>
+                  <field name="name"/>
+                  <field name="amount"/>
+              </tree>
+          </field>
+       </record>
+
+        <record id="open_hr_contract_bonus" model="ir.actions.act_window">
+            <field name="name">Ingresos Extras</field>
+            <field name="res_model">hr.contract.bonus</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+              <p>
+                  Puede definir montos fijos como ingresos ingresos
+              </p>
+            </field>
+        </record>
+        <menuitem action="open_hr_contract_bonus"
+                  id="menu_hr_contract_bonus"
+                  parent="submenu_hr_contracts"
+                  groups="hr.group_hr_user"
+                  sequence="60"/>
+
+    </data>
+</openerp>

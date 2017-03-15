@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="view_employee_ec_filter" model="ir.ui.view">
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_filter"/>
+      <field name="arch" type="xml">
+	  <field name="name" position="before">
+	      <field name="identification_id"/>
+	      <field name="firstname"/>
+	      <field name="lastname"/>
+	  </field>
+      </field>
+    </record>
+
+    <record id="view_employee_form" model="ir.ui.view">
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+	    <field name="identification_id" position="replace"/>
+            <xpath expr="//div[@class='oe_title']" position="replace">
+                <div class="oe_title">
+                    <h1>
+                        <field name="lastname" placeholder="Apellidos"/>
+                        <field name="firstname" required="1" placeholder="Nombres"/>
+                        <field name="name" invisible="1"/>
+                        <field name="identification_id" required="1" maxlength="10" placeholder="0102030405"/>
+                    </h1>
+                </div>
+            </xpath>
+      </field>
+    </record>
+
+    <menuitem action="hr.action_hr_job" id="menu_hr_job" parent="hr.menu_human_resources_configuration" sequence="6"/>
+
+  </data>
+</openerp>

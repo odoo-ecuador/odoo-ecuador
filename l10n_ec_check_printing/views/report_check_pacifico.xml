@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="reporte_cheque_pacifico" name="Reporte Cheque Pacifico">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="l10n_ec_check_printing.check_layout">
+                        <div class="page">
+                            <div class="row">
+                                <div class="xs-col-2">
+                                    <span> </span>
+                                </div>
+                                <div class="xs-col-6">
+                                    <t t-if="o.to_third_party">
+                                        <span t-esc="o.third_party_name.upper()"/>
+                                    </t>
+                                    <t t-if="not o.to_third_party">
+                                        <span t-esc="o.partner_id.name.upper()"/>
+                                    </t>
+                                </div>
+                                <div class="xs-col-3">
+                                    <span t-esc=" '{:,.2f}'.format(o.amount) "/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="xs-col-12">
+                                    <span t-field="o.check_amount_in_words"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="xs-col-5">
+                                    <span t-field="o.payment_date" t-field-options="{'format': 'Y/MM/dd'}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

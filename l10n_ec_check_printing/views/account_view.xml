@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_journal_check_form" model="ir.ui.view">
+            <field name="name">view.account.journal.check</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form" />
+            <field name="arch" type="xml">
+                <field name="outbound_payment_method_ids" position="after">
+                    <field name="check_report_id" attrs="{'invisible': [('type','!=','bank')]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_payment_third_party_form" model="ir.ui.view">
+            <field name="name">view.account.payment.third.party</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <field name="payment_transaction_id" position="after">
+                    <field name="to_third_party" attrs="{'invisible': [('payment_method_code','!=','check_printing')]}"/>
+                    <field name="third_party_name"
+                           attrs="{'invisible': [('to_third_party','=',False)], 'required' :[('to_third_party','=',True)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
