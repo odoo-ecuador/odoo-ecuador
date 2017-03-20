@@ -73,7 +73,7 @@ class TestEmployeeFirstname(TransactionCase):
         self.assertEqual(self.employee20_id.lastname, 'Carnaud')
 
         # Check for employee30
-        self.assertEqual(self.employee30_id.firstname, False)
+        self.assertEqual(self.employee30_id.firstname, ' ')
         self.assertEqual(self.employee30_id.lastname, 'JenssensFamke')
 
     def test_change_name(self):

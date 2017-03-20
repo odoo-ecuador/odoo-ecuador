@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <menuitem name="Códigos Sectoriales"
+                  id="submenu_hr_contract_codes"
+                  parent="hr.menu_human_resources_configuration"/>
+
+        <record id="view_hr_contract_branch_tree" model="ir.ui.view">
+            <field name="name">hr.contract.branch.tree</field>
+            <field name="model">hr.contract.branch</field>
+            <field name="arch" type="xml">
+                <tree string="Rama Sectorial" editable="top">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_contract_branch_search" model="ir.ui.view">
+            <field name="name">hr.contract.branch.search</field>
+            <field name="model">hr.contract.branch</field>
+            <field name="arch" type="xml">
+                <search string="Rama Sectorial">
+                    <field name="code"/>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hr_contract_branch" model="ir.actions.act_window">
+            <field name="name">Rama Laboral</field>
+            <field name="res_model">hr.contract.branch</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Ramas"
+                  id="submenu_hr_contract_branch"
+                  parent="submenu_hr_contract_codes"
+                  action="action_hr_contract_branch"/>
+
+        <record id="view_hr_contract_commision_tree" model="ir.ui.view">
+            <field name="name">hr.contract.commision.tree</field>
+            <field name="model">hr.contract.commision</field>
+            <field name="arch" type="xml">
+                <tree string="Comision Sectorial" editable="top">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_contract_commision_search" model="ir.ui.view">
+            <field name="name">hr.contract.commision.search</field>
+            <field name="model">hr.contract.commision</field>
+            <field name="arch" type="xml">
+                <tree string="Comision Sectorial" editable="top">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_contract_commision" model="ir.actions.act_window">
+            <field name="name">Comisión Laboral</field>
+            <field name="res_model">hr.contract.commision</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Comisiones"
+                  id="submenu_hr_contract_commision"
+                  parent="submenu_hr_contract_codes"
+                  action="action_hr_contract_commision"/>
+
+        <record id="view_hr_contract_code_tree" model="ir.ui.view">
+            <field name="name">hr.contract.code.tree</field>
+            <field name="model">hr.contract.code</field>
+            <field name="arch" type="xml">
+                <tree string="Codigo Sectorial" editable="top">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_contract_code_search" model="ir.ui.view">
+            <field name="name">hr.contract.code.search</field>
+            <field name="model">hr.contract.code</field>
+            <field name="arch" type="xml">
+                <tree string="Codigo Sectorial" editable="top">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="code_structure"/>
+                    <field name="rama_id"/>
+                    <field name="commision_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_contract_code" model="ir.actions.act_window">
+            <field name="name">Códigos Laborales</field>
+            <field name="res_model">hr.contract.code</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Códigos Laborales"
+                  id="submenu_hr_contract_code"
+                  parent="submenu_hr_contract_codes"
+                  action="action_hr_contract_code"/>
+    </data>
+</openerp>

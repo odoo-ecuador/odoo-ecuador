@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+  <data>
+
+    <record model="resource.calendar" id="jornada_laboral">
+      <field name="name">JORNADA LABORAL</field>
+    </record>
+
+    <record model="resource.calendar.attendance" id="jornada_laboral_lunes">
+      <field name="name">LUNES</field>
+      <field name="dayofweek">0</field>
+      <field name="hour_from">8</field>
+      <field name="hour_to">17</field>
+      <field name="calendar_id" ref="jornada_laboral"/>
+    </record>
+
+    <record model="resource.calendar.attendance" id="jornada_laboral_martes">
+      <field name="name">MARTES</field>
+      <field name="dayofweek">1</field>
+      <field name="hour_from">08</field>
+      <field name="hour_to">17</field>
+      <field name="calendar_id" ref="jornada_laboral"/>
+    </record>
+
+    <record model="resource.calendar.attendance" id="jornada_laboral_miercoles">
+      <field name="name">MIERCOLES</field>
+      <field name="dayofweek">2</field>
+      <field name="hour_from">08</field>
+      <field name="hour_to">17</field>
+      <field name="calendar_id" ref="jornada_laboral"/>
+    </record>
+
+    <record model="resource.calendar.attendance" id="jornada_laboral_jueves">
+      <field name="name">JUEVES</field>
+      <field name="dayofweek">3</field>
+      <field name="hour_from">08</field>
+      <field name="hour_to">17</field>
+      <field name="calendar_id" ref="jornada_laboral"/>
+    </record>
+
+    <record model="resource.calendar.attendance" id="jornada_laboral_viernes">
+      <field name="name">VIERNES</field>
+      <field name="dayofweek">4</field>
+      <field name="hour_from">08</field>
+      <field name="hour_to">17</field>
+      <field name="calendar_id" ref="jornada_laboral"/>
+    </record>
+
+    <record model="hr.holidays.status" id="holiday_status_vac">
+      <field name="name">Vacaciones de Ley</field>
+      <field name="code">VAC</field>
+      <field name="limit">True</field>
+      <field name="color_name">black</field>
+    </record>
+
+    <!-- Sick leave -->
+    <record model="hr.holidays.status" id="holiday_status_enf">
+      <field name="name">Ausencias por Enfermedad</field>
+      <field name="code">ENF</field>
+      <field name="limit">True</field>
+      <field name="color_name">brown</field>
+    </record>
+
+
+    <!-- Compensatory Days -->
+    <record model="hr.holidays.status" id="holiday_status_mat">
+      <field name="name">Ausencias por Maternidad</field>
+      <field name="code">MAT</field>
+      <field name="limit">True</field>
+      <field name="color_name">brown</field>
+    </record>
+
+    <!--Unpaid Leave -->
+    <record model="hr.holidays.status" id="holiday_status_falta">
+      <field name="name">Faltas</field>
+      <field name="code">FALTA</field>
+      <field name="limit">True</field>
+      <field name="color_name">red</field>
+    </record>
+
+    <record id="hr_category_employee_ec" model="hr.employee.category">
+      <field name="name">GENERAL DE EMPLEADOS</field>
+    </record>
+
+    <record id="hr_holidays_legal_ec" model="hr.holidays.status">
+      <field name="name">VACACIONES PRIMER AÑO</field>
+      <field name="active">1</field>
+    </record>
+
+    <record id="hr_holidays_all" model="hr.holidays">
+      <field name="name">VACACIONES POR LEY PRIMER AÑO</field>
+      <field name="holiday_type">category</field>
+      <field name="holiday_status_id" ref="hr_holidays_legal_ec"/>
+      <field name="category_id" ref="hr_category_employee_ec"/>
+      <field name="number_of_days_temp">15</field>
+      <field name="notes">VACACIONES POR LEY AL CUMPLIR PRIMER AÑO DE TRABAJO</field>
+      <field name="state">confirm</field>
+      <field name="type">add</field>
+    </record>
+  </data>
+</openerp>

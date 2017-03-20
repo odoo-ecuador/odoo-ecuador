@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_contract_user,access_hr_contract,model_hr_contract,hr.group_hr_user,1,1,1,1
+access_hr_contract_type_user,access_hr_contract_type,hr_contract.model_hr_contract_type,hr.group_hr_user,1,0,0,0
+access_hr_contract_commision_user,access_hr_contract_commision_user,model_hr_contract_commision,hr.group_hr_user,1,0,0,0
+access_hr_contract_commision_manager,access_hr_contract_commision_manager,model_hr_contract_commision,hr.group_hr_manager,1,1,1,1
+access_hr_contract_branch_user,access_hr_contract_branch_user,model_hr_contract_branch,hr.group_hr_user,1,0,0,0
+access_hr_contract_branch_manager,access_hr_contract_branch_manager,model_hr_contract_branch,hr.group_hr_manager,1,1,1,1
+access_hr_contract_code_user,access_hr_contract_code_user,model_hr_contract_code,hr.group_hr_user,1,0,0,0
+access_hr_contract_code_manager,access_hr_contract_code_manager,model_hr_contract_code,hr.group_hr_manager,1,1,1,1
+access_hr_calendar_exception,access_hr_calendar_exception,model_hr_calendar_exception,hr.group_hr_user,1,1,1,1
+access_hr_contract_bonus,access_hr_contract_bonus,model_hr_contract_bonus,hr.group_hr_user,1,1,1,1
