@@ -10,8 +10,8 @@
         'data/data_einvoice.xml',
         'views/einvoice_view.xml',
         'views/partner_view.xml',
-        'views/report_einvoice.xml',
-        'einvoice_report.xml'
+        'views/report_einvoice.mako',
+        'einvoice_report.xml',
     ],
     'depends': [
         'report_webkit',
