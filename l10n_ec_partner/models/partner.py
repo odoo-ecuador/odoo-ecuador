@@ -55,7 +55,7 @@ class ResPartner(models.Model):
         required=True,
         default='9'
     )
-    is_company = fields.Boolean(default=True)
+    company_type = fields.Selection(default='company')
 
     _constraints = [
         (_check_ced_ruc, 'Error en su Cedula/RUC/Pasaporte', ['ced_ruc'])

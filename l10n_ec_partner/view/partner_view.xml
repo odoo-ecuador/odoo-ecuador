@@ -34,8 +34,8 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//label[@for='name']" position="attributes">
-                    <attribute name="string">Razón Social</attribute>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="placeholder">Razón Social</attribute>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <div>
