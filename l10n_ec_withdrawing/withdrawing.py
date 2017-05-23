@@ -23,15 +23,13 @@
 import time
 import logging
 
-from openerp.osv import osv, fields
-from tools import config
-from tools.translate import _
-from tools import ustr
-import decimal_precision as dp
-import netsvc
+from openerp import models, fields, api, _
+from openerp.exceptions import except_orm, Warning, RedirectWarning
+from openerp.tools import float_compare
+import openerp.addons.decimal_precision as dp
 
 
-class AccountWithdrawing(osv.osv):
+class AccountWithdrawing(models.Model):
 
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
@@ -45,15 +43,11 @@ class AccountWithdrawing(osv.osv):
             res.append((record.id, name))
         return res
 
-    def _amount_total(self, cr, uid, ids, field_name, args, context):
-        res = {}
-        retentions = self.browse(cr, uid, ids, context)
-        for ret in retentions:
-            total = 0
-            for tax in ret.tax_ids:
-                total += tax.amount
-            res[ret.id] = abs(total)
-        return res
+    @api.one
+    @api.depends('tax_ids.amount')
+    def _amount_total(self):
+        total = 0
+        self.amount_total = sum(tax.amount for tax in ret.tax_ids)
 
     def _get_period(self, cr, uid, ids, fields, args, context):
         res = {}
@@ -68,96 +62,108 @@ class AccountWithdrawing(osv.osv):
     _description = 'Withdrawing Documents'
     _order = 'date desc, name desc'
 
-    _columns = {
-        'name': fields.char('Número', size=64, readonly=True,
-                            required=True,
-                            states=STATES_VALUE),
-        'manual': fields.boolean('Numeración Manual', readonly=True,
-                                 states=STATES_VALUE),
-        'num_document': fields.char('Num. Comprobante', size=50,
-                                    readonly=True,
-                                    states=STATES_VALUE),
-        'auth_id': fields.many2one(
-            'account.authorisation',
-            'Autorizacion',
-            readonly=True,
-            states=STATES_VALUE,
-            required=True,
-            domain=[('in_type','=','interno')]
-            ),
-        'type': fields.selection(
-            [('in_invoice','Factura'),
-            ('liq_purchase','Liquidacion Compra')],
-            string='Tipo Comprobante',
-            readonly=True, states=STATES_VALUE
-            ),
-        'in_type': fields.selection(
-            [('ret_in_invoice', u'Retención a Proveedor'),
-            ('ret_out_invoice', u'Retención de Cliente')],
-            string='Tipo',
-            states=STATES_VALUE,
-            readonly=True),
-        'date': fields.date('Fecha Emision', readonly=True,
-                            states={'draft': [('readonly', False)]}, required=True),
-        'period_id': fields.many2one(
-            'account.period',
-            'Periodo',
-            required=True
-            ),
-        'tax_ids': fields.one2many(
-            'account.invoice.tax',
-            'retention_id',
-            'Detalle de Impuestos',
-            readonly=True,
-            states=STATES_VALUE
-            ),
-        'invoice_id': fields.many2one(
-            'account.invoice',
-            string='Documento',
-            required=False,
-            readonly=True,
-            states=STATES_VALUE,
-            domain=[('state','=','open')]
-            ),
-        'partner_id': fields.related(
-            'invoice_id',
-            'partner_id',
-            type='many2one',
-            relation='res.partner',
-            string='Empresa',
-            readonly=True
-            ),
-        'move_id': fields.related(
-            'invoice_id',
-            'move_id',
-            type='many2one',
-            relation='account.move',
-            string='Asiento Contable',
-            readonly=True
-            ),
-        'state': fields.selection(
-            [('draft','Borrador'),
-            ('early','Anticipado'),
-            ('done','Validado'),
-            ('cancel','Anulado')],
-            readonly=True,
-            string='Estado'
-            ),
-        'amount_total': fields.function(
-            _amount_total, string='Total',
-            method=True, store=True,
-            digits_compute=dp.get_precision('Account')
-            ),
-        'to_cancel': fields.boolean('Para anulación',readonly=True, states=STATES_VALUE),
-        'company_id': fields.many2one(
-            'res.company',
-            'Company',
-            required=True,
-            change_default=True,
-            readonly=True,
-            states={'draft':[('readonly',False)]}
-            ),
-        }
+    name = fields.Char(
+        'Número',
+        size=64,
+        readonly=True,
+        required=True,
+        states=STATES_VALUE
+        )
+    manual = fields.Boolean(
+        'Numeración Manual',
+        readonly=True,
+        states=STATES_VALUE
+        )
+    num_document = fields.Char(
+        'Num. Comprobante',
+        size=50,
+        readonly=True,
+        states=STATES_VALUE
+        )
+    auth_id = fields.Many2one(
+        'account.authorisation',
+        'Autorizacion',
+        readonly=True,
+        states=STATES_VALUE,
+        required=True,
+        domain=[('in_type','=','interno')]
+        )
+    type = fields.Selection(
+        [('in_invoice','Factura'),
+        ('liq_purchase','Liquidacion Compra')],
+        string='Tipo Comprobante',
+        readonly=True,
+        states=STATES_VALUE
+        )
+    in_type = fields.Selection(
+        [('ret_in_invoice', u'Retención a Proveedor'),
+        ('ret_out_invoice', u'Retención de Cliente')],
+        string='Tipo',
+        states=STATES_VALUE,
+        readonly=True
+        )
+    date = fields.Date(
+        'Fecha Emision',
+        readonly=True,
+        states={'draft': [('readonly', False)]}, required=True)
+    period_id = fields.Many2one(
+        'account.period',
+        'Periodo',
+        required=True
+        )
+    tax_ids = fields.One2many(
+        'account.invoice.tax',
+        'retention_id',
+        'Detalle de Impuestos',
+        readonly=True,
+        states=STATES_VALUE
+        )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Documento',
+        required=False,
+        readonly=True,
+        states=STATES_VALUE,
+        domain=[('state','=','open')]
+        )
+    partner_id = fields.Many2one(
+        related='invoice_id.partner_id',
+        string='Empresa',
+        store=True
+        )
+    move_id = fields.Many2one(
+        compute='_get_move'
+        'account.move',
+        string='Asiento Contable',
+        readonly=True
+        ),
+    state = fields.Selection(
+        [('draft','Borrador'),
+        ('early','Anticipado'),
+        ('done','Validado'),
+        ('cancel','Anulado')],
+        readonly=True,
+        string='Estado'
+        )
+    amount_total = fields.Float(
+        compute='_amount_total',
+        string='Total',
+        store=True,
+        digits_compute=dp.get_precision('Account')
+        )
+    to_cancel = fields.Boolean(
+        'Para anulación',
+        readonly=True,
+        states=STATES_VALUE
+        )
+    company_id = fields.Many2one(
+        'res.company',
+        'Company',
+        required=True,
+        change_default=True,
+        readonly=True,
+        states={'draft':[('readonly',False)]}
+        )
 
     def _get_period(self, cr, uid, context=None):
         res = self.pool.get('account.period').find(cr, uid, context=context)
@@ -244,13 +250,13 @@ class AccountWithdrawing(osv.osv):
             seq = seq_obj.browse(cr, uid, seq_id)
             ret_num = number
             if number is None:
-                ret_number = seq_obj.get(cr, uid, seq.code)
+                ret_number = seq_obj.get_id(cr, uid, seq_id)
             else:
                 padding = seq.padding
                 ret_number = str(number).zfill(padding)
             self._amount_total(cr, uid, [ret.id], [], {}, {})                
             number = ret.auth_id.serie_entidad + ret.auth_id.serie_emision + ret_number
-            self.write(cr, uid, ret.id, {'state': 'done', 'name':number})
+            self.write(cr, uid, ret.id, {'state': 'done', 'name': number})
             self.log(cr, uid, ret.id, _("La retención %s fue generada.") % number)
         return True
 
@@ -294,14 +300,12 @@ class AccountWithdrawing(osv.osv):
         return True        
 
 
-class AccountInvoiceTax(osv.osv):
+class AccountInvoiceTax(models.Model):
 
-    _name = 'account.invoice.tax'
     _inherit = 'account.invoice.tax'
    
-    _columns = {
-        'fiscal_year' : fields.char('Ejercicio Fiscal', size = 4),
-        'tax_group' : fields.selection([('vat','IVA Diferente de 0%'),
+    fiscal_year = fields.Char('Ejercicio Fiscal', size = 4)
+    tax_group = fields.Selection([('vat','IVA Diferente de 0%'),
                                         ('vat0','IVA 0%'),
                                         ('novat','No objeto de IVA'),
                                         ('ret_vat_b', 'Retención de IVA (Bienes)'),
@@ -310,11 +314,10 @@ class AccountInvoiceTax(osv.osv):
                                         ('no_ret_ir', 'No sujetos a Ret. de Imp. Renta'), 
                                         ('imp_ad', 'Imps. Aduanas'),
                                         ('ice', 'ICE'),
-                                        ('other','Other')], 'Grupo', required=True),        
-        'percent' : fields.char('Porcentaje', size=20),
-        'num_document': fields.char('Num. Comprobante', size=50),
-        'retention_id': fields.many2one('account.retention', 'Retención', select=True),
-        }
+                                        ('other','Other')], 'Grupo', required=True)
+    percent = fields.Char('Porcentaje', size=20)
+    num_document = fields.Char('Num. Comprobante', size=50)
+    retention_id = fields.Many2one('account.retention', 'Retención', select=True)
 
     def compute(self, cr, uid, invoice_id, context=None):
         tax_grouped = {}
@@ -387,7 +390,7 @@ class AccountInvoiceTax(osv.osv):
     }
 
 
-class Invoice(osv.osv):
+class Invoice(models.Model):
     
     _inherit = 'account.invoice'
     __logger = logging.getLogger(_inherit)
@@ -864,14 +867,15 @@ class Invoice(osv.osv):
                 return True
             if obj.type == 'out_invoice':
                 return True
-            if not len(obj.supplier_invoice_number) in LIMITS:
-                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INVOICE_LENGTH_LIMIT)
+            inv_number = obj.supplier_invoice_number
+            if not inv_number:
+                return True
+            if not len(inv_number) in LIMITS:
+                raise osv.except_osv('Error', u'Son %s dígitos en el núm. de Factura.' % INV_MIN_LIMIT)
 
             auth = obj.auth_inv_id
 
-            inv_number = obj.supplier_invoice_number
-
-            if len(obj.supplier_invoice_number) == INV_MAX_LIMIT:
+            if len(inv_number) == INV_MAX_LIMIT:
                 inv_number = obj.supplier_invoice_number[6:15]
             
             if not auth:
@@ -883,7 +887,7 @@ class Invoice(osv.osv):
             # validacion de numero de retencion para facturas de proveedor
             if obj.type == 'in_invoice':
                 if not obj.journal_id.auth_ret_id:
-                    raise except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
+                    raise osv.except_osv('Error', u'No ha cofigurado una autorización de retenciones.')
 
                 if not auth_obj.is_valid_number(cr, uid, obj.journal_id.auth_ret_id.id, int(obj.manual_ret_num)):
                     raise osv.except_osv('Error', u'El número de retención no es válido.')

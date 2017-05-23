@@ -1,3 +1,0 @@
-# Translation of OpenERP Server.
-# This file contains the translation of the following modules:
-# 	* l10n_ec_project_gob

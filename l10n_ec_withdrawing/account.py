@@ -2,8 +2,8 @@
 ##############################################################################
 #
 #    Account Module - Ecuador
-#    Copyright (C) 2010 GnuThink Software All Rights Reserved
-#    info@gnuthink.com
+#    Copyright (C) 2015 Cristian Salamea All Rights Reserved
+#    cristian.salamea@gmail.com
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ import time
 from datetime import datetime
 
 from openerp.osv import osv, fields
-from tools import ustr
 
 
 class account_tax(osv.osv):
