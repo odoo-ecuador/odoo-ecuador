@@ -3,11 +3,10 @@
    :alt: License: AGPL-3
 
 ==============
-{module_title}
+Documentos Electrónicos para Ecuador
 ==============
 
-This module extends the functionality of ... to support ...
-and allow you to ...
+Este módulo permite generar Documentos Electrónicos para Ecuador
 
 Installation
 ============
@@ -40,7 +39,10 @@ To use this module, you need to:
 Known issues / Roadmap
 ======================
 
-* ...
+* Firma Electrónica a través de Python para reemplazar el jar de Java.
+* Generación en Lote de Comprobantes Electrónicos.
+* Comprobantes Electrónicos Esquema Off-line.
+* Importación de Facturas Electrónicas Emitidas al Contribuyente a través de su XML.
 
 Bug Tracker
 ===========
@@ -61,8 +63,8 @@ Images
 Contributors
 ------------
 
-* Firstname Lastname <email.address@example.org>
-* Second Person <second.person@example.org>
+* Cristian Salamea <cristian.salamea@gmail.com>
+* Alcides Rivera VIRTUALSAMI CIA LTDA <alcides.rivera84@gmail.com>
 
 Maintainer
 ----------

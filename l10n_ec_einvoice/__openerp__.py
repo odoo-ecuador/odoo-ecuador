@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+#    Copyright (C) 2017 Cristian Salamea <cristian.salamea@gmail.com>
+#    Copyright (C) 2017 Alcides Rivera VIRTUALSAMI CIA LTDA <alcides.rivera84@gmail.com>
+
 {
-    'name': 'Electronic Documents for Ecuador',
+    'name': 'Documentos Electrónicos para Ecuador',
     'version': '0.1.0',
-    'author': 'Cristian Salamea',
+    'author': "Cristian Salamea <cristian.salamea@gmail.com>, "
+    "Alcides Rivera VIRTUALSAMI CIA LTDA <alcides.rivera84@gmail.com>",
     'category': 'Localization',
     'complexity': 'normal',
     'data': [
@@ -18,6 +22,6 @@
         'l10n_ec_withdrawing',
     ],
     'description': '''
-    This module allows generate Electronic Documents for Ecuador
+    Este módulo permite generar Documentos Electrónicos para Ecuador
     ''',
 }
