@@ -9,7 +9,7 @@ Este proyecto implementa o casi todas todas las funcionalidades
 requeridas para que Odoo pueda implementarse en cualquier
 empresa ecuatoriana.
 
-Si requieres soporte comercial para la implementación envía un mail a cristian.salamea@ayni.com.ec
+Si requieres acceso a la versión comercial puedes llenar el formulario en www.prisehub.com o enviar un mail para soporte comercial a cs@prisehub.com
 
 Referencias de Implementación
 -----------------------------
