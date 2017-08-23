@@ -36,7 +36,7 @@ class AccountWithdrawing(models.Model):
             'obligadoContabilidad': 'SI',
             'tipoIdentificacionSujetoRetenido': utils.tipoIdentificacion[partner.type_ced_ruc],  # noqa
             'razonSocialSujetoRetenido': partner.name,
-            'identificacionSujetoRetenido': partner.ced_ruc,
+            'identificacionSujetoRetenido': partner.vat,
             'periodoFiscal': withdrawing.period_id.name,
             }
         if company.company_registry:

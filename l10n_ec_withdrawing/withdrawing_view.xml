@@ -163,7 +163,7 @@
                         <group>
                             <group>
                                 <field name="partner_id" select="1" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-                                <field name="invoice_id" on_change="onchange_invoice(invoice_id)"
+                                <field name="invoice_id"
                                        attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
                                 <field name="date" select="1"/>
                                 <field name="in_type" required="1"/>

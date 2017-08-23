@@ -5,8 +5,8 @@ function l10n_ec_pos(instance, module) {
 
     _partner_search_string: function(partner){
       var str =  partner.name;
-      if(partner.ced_ruc){
-        str += '|' + partner.ced_ruc;
+      if(partner.vat){
+        str += '|' + partner.vat;
       }
       if(partner.ean13){
         str += '|' + partner.ean13;
@@ -41,7 +41,7 @@ function l10n_ec_pos(instance, module) {
         },{ 
             model:  'res.company',
             fields: [ 'currency_id', 'email', 'website', 'company_registry', 'vat', 'name', 'phone', 'partner_id' , 'country_id'],
-            ids:    function(self){ return [self.user.company_id[0]] },
+            ids:    function(self){ return [self.user.company_id[0]]; },
             loaded: function(self,companies){ self.company = companies[0]; },
         },{
             model:  'decimal.precision',
@@ -73,7 +73,7 @@ function l10n_ec_pos(instance, module) {
             loaded: function(self,users){ self.users = users; },
         },{
             model:  'res.partner',
-            fields: ['type_ced_ruc','ced_ruc','name','street','city','state_id','country_id','vat','phone','zip','mobile','email','ean13','write_date'],
+          fields: ['name','street','city','state_id','country_id','vat','phone','zip','mobile','email','ean13','write_date'],
             domain: [['customer','=',true]],
             loaded: function(self,partners){
                 self.partners = partners;
@@ -256,7 +256,7 @@ function l10n_ec_pos(instance, module) {
                     var height = Math.floor(img.height * ratio);
                     var c = document.createElement('canvas');
                         c.width  = width;
-                        c.height = height
+                        c.height = height;
                     var ctx = c.getContext('2d');
                         ctx.drawImage(self.company_logo,0,0, width, height);
 
@@ -286,5 +286,5 @@ function l10n_ec_pos(instance, module) {
 
         l10n_ec_pos(instance, module);
 
-    }
-})()
+    };
+})();

@@ -33,7 +33,7 @@
         <td width="100" style="font-size:12;">${o.date_invoice or ''}</td>	
     </tr>
     <tr>
-	<td style="font-size:12;">${o.partner_id.ced_ruc or '##########'}</td>	
+	<td style="font-size:12;">${o.partner_id.vat or '##########'}</td>	
         <td style="font-size:12;">${o. address_invoice_id and o.address_invoice_id.city or ''}</td>	
 
     </tr>
