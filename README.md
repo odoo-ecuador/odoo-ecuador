@@ -9,7 +9,7 @@ Este proyecto implementa o casi todas todas las funcionalidades
 requeridas para que Odoo pueda implementarse en cualquier
 empresa ecuatoriana.
 
-Si requieres acceso a la versión comercial puedes llenar el formulario en www.prisehub.com o enviar un mail para soporte comercial a cs@prisehub.com
+Si requieres acceso a la versión comercial puedes llenar el formulario en www.prisehub.com o enviar un mail para soporte comercial a ventas@prisehub.com
 
 Referencias de Implementación
 -----------------------------
