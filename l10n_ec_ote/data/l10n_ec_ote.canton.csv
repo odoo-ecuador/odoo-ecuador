@@ -1,0 +1,222 @@
+id,state_id:id,code,name
+canton_0101,state_ec_01,101,Cuenca
+canton_0102,state_ec_01,102,Giron
+canton_0103,state_ec_01,103,Gualaceo
+canton_0104,state_ec_01,104,Nabon
+canton_0105,state_ec_01,105,Paute
+canton_0106,state_ec_01,106,Pucara
+canton_0107,state_ec_01,107,San Fernando
+canton_0108,state_ec_01,108,Santa Isabel
+canton_0109,state_ec_01,109,Sigsig
+canton_0110,state_ec_01,110,Oña
+canton_0111,state_ec_01,111,Chordeleg
+canton_0112,state_ec_01,112,El Pan
+canton_0113,state_ec_01,113,Sevilla De Oro
+canton_0114,state_ec_01,114,Guachapala
+canton_0115,state_ec_01,115,Camilo Ponce Enriquez
+canton_0201,state_ec_02,201,Guaranda
+canton_0202,state_ec_02,202,Chillanes
+canton_0203,state_ec_02,203,Chimbo
+canton_0204,state_ec_02,204,Echeandia
+canton_0205,state_ec_02,205,San Miguel
+canton_0206,state_ec_02,206,Caluma
+canton_0207,state_ec_02,207,Las Naves
+canton_0301,state_ec_03,301,Azogues
+canton_0302,state_ec_03,302,Biblian
+canton_0303,state_ec_03,303,Cañar
+canton_0304,state_ec_03,304,La Troncal
+canton_0305,state_ec_03,305,El Tambo
+canton_0306,state_ec_03,306,Deleg
+canton_0307,state_ec_03,307,Suscal
+canton_0401,state_ec_04,401,Tulcan
+canton_0402,state_ec_04,402,Bolivar
+canton_0403,state_ec_04,403,Espejo
+canton_0404,state_ec_04,404,Mira
+canton_0405,state_ec_04,405,Montufar
+canton_0406,state_ec_04,406,San Pedro De Huaca
+canton_0501,state_ec_05,501,Latacunga
+canton_0502,state_ec_05,502,La Mana
+canton_0503,state_ec_05,503,Pangua
+canton_0504,state_ec_05,504,Pujili
+canton_0505,state_ec_05,505,Salcedo
+canton_0506,state_ec_05,506,Saquisili
+canton_0507,state_ec_05,507,Sigchos
+canton_0601,state_ec_06,601,Riobamba
+canton_0602,state_ec_06,602,Alausi
+canton_0603,state_ec_06,603,Colta
+canton_0604,state_ec_06,604,Chambo
+canton_0605,state_ec_06,605,Chunchi
+canton_0606,state_ec_06,606,Guamote
+canton_0607,state_ec_06,607,Guano
+canton_0608,state_ec_06,608,Pallatanga
+canton_0609,state_ec_06,609,Penipe
+canton_0610,state_ec_06,610,Cumanda
+canton_0701,state_ec_07,701,Machala
+canton_0702,state_ec_07,702,Arenillas
+canton_0703,state_ec_07,703,Atahualpa
+canton_0704,state_ec_07,704,Balsas
+canton_0705,state_ec_07,705,Chilla
+canton_0706,state_ec_07,706,El Guabo
+canton_0707,state_ec_07,707,Huaquillas
+canton_0708,state_ec_07,708,Marcabeli
+canton_0709,state_ec_07,709,Pasaje
+canton_0710,state_ec_07,710,Piñas
+canton_0711,state_ec_07,711,Portovelo
+canton_0712,state_ec_07,712,Santa Rosa
+canton_0713,state_ec_07,713,Zaruma
+canton_0714,state_ec_07,714,Las Lajas
+canton_0801,state_ec_08,801,Esmeraldas
+canton_0802,state_ec_08,802,Eloy Alfaro
+canton_0803,state_ec_08,803,Muisne
+canton_0804,state_ec_08,804,Quininde
+canton_0805,state_ec_08,805,San Lorenzo
+canton_0806,state_ec_08,806,Atacames
+canton_0807,state_ec_08,807,Rio Verde
+canton_0901,state_ec_09,901,Guayaquil
+canton_0902,state_ec_09,902,Alfredo Baquerizo Moreno
+canton_0903,state_ec_09,903,Balao
+canton_0904,state_ec_09,904,Balzar
+canton_0905,state_ec_09,905,Colimes
+canton_0906,state_ec_09,906,Daule
+canton_0907,state_ec_09,907,Duran
+canton_0908,state_ec_09,908,El Empalme
+canton_0909,state_ec_09,909,El Triunfo
+canton_0910,state_ec_09,910,Milagro
+canton_0911,state_ec_09,911,Naranjal
+canton_0912,state_ec_09,912,Naranjito
+canton_0913,state_ec_09,913,Palestina
+canton_0914,state_ec_09,914,Pedro Carbo
+canton_0916,state_ec_09,916,Samborondon
+canton_0918,state_ec_09,918,Santa Lucia
+canton_0919,state_ec_09,919,Salitre
+canton_0920,state_ec_09,920,San Jacinto De Yaguachi
+canton_0921,state_ec_09,921,Playas (General Villamil)
+canton_0922,state_ec_09,922,Simon Bolivar
+canton_0923,state_ec_09,923,Coronel Marcelino Maridueña
+canton_0924,state_ec_09,924,Lomas De Sargentillo
+canton_0925,state_ec_09,925,Nobol (Vicente Piedrahita)
+canton_0927,state_ec_09,927,General Antonio Elizalde
+canton_0928,state_ec_09,928,Isidro Ayora
+canton_1001,state_ec_10,1001,Ibarra
+canton_1002,state_ec_10,1002,Antonio Ante
+canton_1003,state_ec_10,1003,Cotacachi
+canton_1004,state_ec_10,1004,Otavalo
+canton_1005,state_ec_10,1005,Pimampiro
+canton_1006,state_ec_10,1006,San Miguel De Urcuqui
+canton_1101,state_ec_11,1101,Loja
+canton_1102,state_ec_11,1102,Calvas
+canton_1103,state_ec_11,1103,Catamayo
+canton_1104,state_ec_11,1104,Celica
+canton_1105,state_ec_11,1105,Chahuarpamba
+canton_1106,state_ec_11,1106,Espindola
+canton_1107,state_ec_11,1107,Gonzanama
+canton_1108,state_ec_11,1108,Macara
+canton_1109,state_ec_11,1109,Paltas
+canton_1110,state_ec_11,1110,Puyango
+canton_1111,state_ec_11,1111,Saraguro
+canton_1112,state_ec_11,1112,Sozoranga
+canton_1113,state_ec_11,1113,Zapotillo
+canton_1114,state_ec_11,1114,Pindal
+canton_1115,state_ec_11,1115,Quilanga
+canton_1116,state_ec_11,1116,Olmedo
+canton_1201,state_ec_12,1201,Babahoyo
+canton_1202,state_ec_12,1202,Baba
+canton_1203,state_ec_12,1203,Montalvo
+canton_1204,state_ec_12,1204,Pueblo Viejo
+canton_1205,state_ec_12,1205,Quevedo
+canton_1206,state_ec_12,1206,Urdaneta
+canton_1207,state_ec_12,1207,Ventanas
+canton_1208,state_ec_12,1208,Vinces
+canton_1209,state_ec_12,1209,Palenque
+canton_1210,state_ec_12,1210,Buena Fe
+canton_1211,state_ec_12,1211,Valencia
+canton_1212,state_ec_12,1212,Mocache
+canton_1213,state_ec_12,1213,Quinsaloma
+canton_1301,state_ec_13,1301,Portoviejo
+canton_1302,state_ec_13,1302,Bolivar
+canton_1303,state_ec_13,1303,Chone
+canton_1304,state_ec_13,1304,El Carmen
+canton_1305,state_ec_13,1305,Flavio Alfaro
+canton_1306,state_ec_13,1306,Jipijapa
+canton_1307,state_ec_13,1307,Junin
+canton_1308,state_ec_13,1308,Manta
+canton_1309,state_ec_13,1309,Montecristi
+canton_1310,state_ec_13,1310,Pajan
+canton_1311,state_ec_13,1311,Pichincha
+canton_1312,state_ec_13,1312,Rocafuerte
+canton_1313,state_ec_13,1313,Santa Ana
+canton_1314,state_ec_13,1314,Sucre
+canton_1315,state_ec_13,1315,Tosagua
+canton_1316,state_ec_13,1316,24 De Mayo
+canton_1317,state_ec_13,1317,Pedernales
+canton_1318,state_ec_13,1318,Olmedo
+canton_1319,state_ec_13,1319,Puerto Lopez
+canton_1320,state_ec_13,1320,Jama
+canton_1321,state_ec_13,1321,Jaramijo
+canton_1322,state_ec_13,1322,San Vicente
+canton_1401,state_ec_14,1401,Morona
+canton_1402,state_ec_14,1402,Gualaquiza
+canton_1403,state_ec_14,1403,Limon - Indanza
+canton_1404,state_ec_14,1404,Palora
+canton_1405,state_ec_14,1405,Santiago
+canton_1406,state_ec_14,1406,Sucua
+canton_1407,state_ec_14,1407,Huamboya
+canton_1408,state_ec_14,1408,San Juan Bosco
+canton_1409,state_ec_14,1409,Taisha
+canton_1410,state_ec_14,1410,Logroño
+canton_1411,state_ec_14,1411,Pablo Sexto
+canton_1412,state_ec_14,1412,Tiwintza
+canton_1501,state_ec_15,1501,Tena
+canton_1503,state_ec_15,1503,Archidona
+canton_1504,state_ec_15,1504,El Chaco
+canton_1507,state_ec_15,1507,Quijos
+canton_1509,state_ec_15,1509,Carlos Julio Arosemena T.
+canton_1601,state_ec_16,1601,Pastaza
+canton_1602,state_ec_16,1602,Mera
+canton_1603,state_ec_16,1603,Santa Clara
+canton_1604,state_ec_16,1604,Arajuno
+canton_1701,state_ec_17,1701,Quito
+canton_1702,state_ec_17,1702,Cayambe
+canton_1703,state_ec_17,1703,Mejia
+canton_1704,state_ec_17,1704,Pedro Moncayo
+canton_1705,state_ec_17,1705,Rumiñahui
+canton_1707,state_ec_17,1707,San Miguel De Los Bancos
+canton_1708,state_ec_17,1708,Pedro Vicente Maldonado
+canton_1709,state_ec_17,1709,Puerto Quito
+canton_1801,state_ec_18,1801,Ambato
+canton_1802,state_ec_18,1802,Baños De Agua Santa
+canton_1803,state_ec_18,1803,Cevallos
+canton_1804,state_ec_18,1804,Mocha
+canton_1805,state_ec_18,1805,Patate
+canton_1806,state_ec_18,1806,Quero
+canton_1807,state_ec_18,1807,San Pedro De Pelileo
+canton_1808,state_ec_18,1808,Santiago De Pillaro
+canton_1809,state_ec_18,1809,Tisaleo
+canton_1901,state_ec_19,1901,Zamora
+canton_1902,state_ec_19,1902,Chinchipe
+canton_1903,state_ec_19,1903,Nangaritza
+canton_1904,state_ec_19,1904,Yacuambi
+canton_1905,state_ec_19,1905,Yantzaza
+canton_1906,state_ec_19,1906,El Pangui
+canton_1907,state_ec_19,1907,Centinela Del Condor
+canton_1908,state_ec_19,1908,Palanda
+canton_1909,state_ec_19,1909,Paquisha
+canton_2001,state_ec_20,2001,San Cristobal
+canton_2002,state_ec_20,2002,Isabela
+canton_2003,state_ec_20,2003,Santa Cruz
+canton_2101,state_ec_21,2101,Lago Agrio
+canton_2102,state_ec_21,2102,Gonzalo Pizarro
+canton_2103,state_ec_21,2103,Putumayo
+canton_2104,state_ec_21,2104,Shushufindi
+canton_2105,state_ec_21,2105,Sucumbios
+canton_2106,state_ec_21,2106,Cascales
+canton_2107,state_ec_21,2107,Cuyabeno
+canton_2201,state_ec_22,2201,Francisco De Orellana
+canton_2202,state_ec_22,2202,Aguarico
+canton_2203,state_ec_22,2203,La Joya De Los Sachas
+canton_2204,state_ec_22,2204,Loreto
+canton_2301,state_ec_23,2301,Santo Domingo
+canton_2302,state_ec_23,2302,La Concordia
+canton_2401,state_ec_24,2401,Santa Elena
+canton_2402,state_ec_24,2402,La Libertad
+canton_2403,state_ec_24,2403,Salinas

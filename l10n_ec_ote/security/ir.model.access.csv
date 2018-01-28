@@ -1,2 +1,3 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_res_country_city,res.country.city,model_res_country_city,base.group_sale_salesman,1,0,0,0
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_l10n_ec_canton_internal_user","l10n_ec_ote.canton_internal_user","model_l10n_ec_ote_canton","base.group_user",1,0,0,0
+"access_l10n_ec_parish_internal_user","l10n_ec_ote.parish_internal_user","model_l10n_ec_ote_parish","base.group_user",1,0,0,0
