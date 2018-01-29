@@ -1,0 +1,1260 @@
+id,canton_id:id,code,name
+parish_010101,canton_0101,10101,Bellavista
+parish_010102,canton_0101,10102,Cañaribamba
+parish_010103,canton_0101,10103,El Batan
+parish_010104,canton_0101,10104,El Sagrario
+parish_010105,canton_0101,10105,El Vecino
+parish_010106,canton_0101,10106,Gil Ramirez Davalos
+parish_010107,canton_0101,10107,Huaynacapac
+parish_010108,canton_0101,10108,Machangara
+parish_010109,canton_0101,10109,Monay
+parish_010110,canton_0101,10110,San Blas
+parish_010111,canton_0101,10111,San Sebastian
+parish_010112,canton_0101,10112,Sucre
+parish_010113,canton_0101,10113,Totoracocha
+parish_010114,canton_0101,10114,Yanuncay
+parish_010115,canton_0101,10115,Hermano Miguel
+parish_010150,canton_0101,10150,Cuenca
+parish_010151,canton_0101,10151,Baños
+parish_010152,canton_0101,10152,Cumbe
+parish_010153,canton_0101,10153,Chaucha
+parish_010154,canton_0101,10154,Checa (Jidcay)
+parish_010155,canton_0101,10155,Chiquintad
+parish_010156,canton_0101,10156,Llacao
+parish_010157,canton_0101,10157,Molleturo
+parish_010158,canton_0101,10158,Nulti
+parish_010159,canton_0101,10159,Octavio Cordero Palacios (Santa Rosa)
+parish_010160,canton_0101,10160,Paccha
+parish_010161,canton_0101,10161,Quingeo
+parish_010162,canton_0101,10162,Ricaurte
+parish_010163,canton_0101,10163,San Joaquin
+parish_010164,canton_0101,10164,Santa Ana
+parish_010165,canton_0101,10165,Sayausi
+parish_010166,canton_0101,10166,Sidcay
+parish_010167,canton_0101,10167,Sinincay
+parish_010168,canton_0101,10168,Tarqui
+parish_010169,canton_0101,10169,Turi
+parish_010170,canton_0101,10170,Valle
+parish_010171,canton_0101,10171,Victoria Del Portete (Irquis)
+parish_010250,canton_0102,10250,Giron
+parish_010251,canton_0102,10251,Asuncion
+parish_010252,canton_0102,10252,San Gerardo
+parish_010350,canton_0103,10350,Gualaceo
+parish_010352,canton_0103,10352,Daniel Cordova Toral (El Oriente)
+parish_010353,canton_0103,10353,Jadan
+parish_010354,canton_0103,10354,Mariano Moreno
+parish_010356,canton_0103,10356,Remigio Crespo Toral (Gulag)
+parish_010357,canton_0103,10357,San Juan
+parish_010358,canton_0103,10358,Zhidmad
+parish_010359,canton_0103,10359,Luis Cordero Vega
+parish_010360,canton_0103,10360,Simón Bolívar (Cab. En Gañanzol)
+parish_010450,canton_0104,10450,Nabon
+parish_010451,canton_0104,10451,Cochapata
+parish_010452,canton_0104,10452,El Progreso
+parish_010453,canton_0104,10453,Las Nieves (Chaya)
+parish_010455,canton_0104,10455,La Paz
+parish_010550,canton_0105,10550,Paute
+parish_010552,canton_0105,10552,Bulan (Jose Victor Izquierdo)
+parish_010553,canton_0105,10553,Chican (Guillermo Ortega)
+parish_010554,canton_0105,10554,El Cabo
+parish_010556,canton_0105,10556,Guarainag
+parish_010559,canton_0105,10559,San Cristobal (Carlos Ordoñez Lazo)
+parish_010561,canton_0105,10561,Tomebamba
+parish_010562,canton_0105,10562,Dug-Dug
+parish_010650,canton_0106,10650,Pucara
+parish_010652,canton_0106,10652,San Rafael De Sharug
+parish_010750,canton_0107,10750,San Fernando
+parish_010751,canton_0107,10751,Chumblin
+parish_010850,canton_0108,10850,Santa Isabel (Chaguarurco)
+parish_010851,canton_0108,10851,Abdon Calderon (La Union)
+parish_010852,canton_0108,10852,El Carmen De Pijili
+parish_010853,canton_0108,10853,Zhaglli (Shaglli)
+parish_010950,canton_0109,10950,Sigsig
+parish_010951,canton_0109,10951,Cuchil (Cutchil)
+parish_010952,canton_0109,10952,Gima
+parish_010953,canton_0109,10953,Guel
+parish_010954,canton_0109,10954,Ludo
+parish_010955,canton_0109,10955,San Bartolome
+parish_010956,canton_0109,10956,San Jose De Raranga
+parish_011050,canton_0110,11050,San Felipe De Oña
+parish_011051,canton_0110,11051,Susudel
+parish_011150,canton_0111,11150,Chordeleg
+parish_011151,canton_0111,11151,Principal
+parish_011152,canton_0111,11152,La Union
+parish_011153,canton_0111,11153,Luis Galarza Orellana
+parish_011154,canton_0111,11154,San Martin De Puzhio
+parish_011250,canton_0112,11250,El Pan
+parish_011253,canton_0112,11253,San Vicente
+parish_011350,canton_0113,11350,Sevilla De Oro
+parish_011351,canton_0113,11351,Amaluza
+parish_011352,canton_0113,11352,Palmas
+parish_011450,canton_0114,11450,Guachapala
+parish_011550,canton_0115,11550,Camilo Ponce Enriquez
+parish_011551,canton_0115,11551,El Carmen De Pijili
+parish_020101,canton_0201,20101,Angel Polibio Chavez
+parish_020102,canton_0201,20102,Gabriel Ignacio Veintimilla
+parish_020103,canton_0201,20103,Guanujo
+parish_020150,canton_0201,20150,Guaranda
+parish_020151,canton_0201,20151,Facundo Vela
+parish_020153,canton_0201,20153,Julio E. Moreno (Catahuan Grande)
+parish_020155,canton_0201,20155,Salinas
+parish_020156,canton_0201,20156,San Lorenzo
+parish_020157,canton_0201,20157,San Simon (Yacoto)
+parish_020158,canton_0201,20158,Santafe (Santa Fe)
+parish_020159,canton_0201,20159,Simiatug
+parish_020160,canton_0201,20160,San Luis De Pambil
+parish_020250,canton_0202,20250,Chillanes
+parish_020251,canton_0202,20251,San Jose Del Tambo (Tambopamba)
+parish_020350,canton_0203,20350,San Jose De Chimbo
+parish_020351,canton_0203,20351,Asuncion (Asancoto)
+parish_020353,canton_0203,20353,Magdalena (Chapacoto)
+parish_020354,canton_0203,20354,San Sebastian
+parish_020355,canton_0203,20355,Telimbela
+parish_020450,canton_0204,20450,Echeandia
+parish_020550,canton_0205,20550,San Miguel
+parish_020551,canton_0205,20551,Balsapamba
+parish_020552,canton_0205,20552,Bilovan
+parish_020553,canton_0205,20553,Regulo De Mora
+parish_020554,canton_0205,20554,San Pablo (San Pablo De Atenas)
+parish_020555,canton_0205,20555,Santiago
+parish_020556,canton_0205,20556,San Vicente
+parish_020650,canton_0206,20650,Caluma
+parish_020701,canton_0207,20701,Las Mercedes
+parish_020702,canton_0207,20702,Las Naves
+parish_020750,canton_0207,20750,Las Naves
+parish_030101,canton_0301,30101,Aurelio Bayas Martinez
+parish_030102,canton_0301,30102,Azogues
+parish_030103,canton_0301,30103,Borrero
+parish_030104,canton_0301,30104,San Francisco
+parish_030150,canton_0301,30150,Azogues
+parish_030151,canton_0301,30151,Cojitambo
+parish_030153,canton_0301,30153,Guapan
+parish_030154,canton_0301,30154,Javier Loyola (Chuquipata)
+parish_030155,canton_0301,30155,Luis Cordero
+parish_030156,canton_0301,30156,Pindilig
+parish_030157,canton_0301,30157,Rivera
+parish_030158,canton_0301,30158,San Miguel
+parish_030160,canton_0301,30160,Taday
+parish_030250,canton_0302,30250,Biblian
+parish_030251,canton_0302,30251,Nazon
+parish_030252,canton_0302,30252,San Francisco De Sageo
+parish_030253,canton_0302,30253,Turupamba
+parish_030254,canton_0302,30254,Jerusalen
+parish_030350,canton_0303,30350,Cañar
+parish_030351,canton_0303,30351,Chontamarca
+parish_030352,canton_0303,30352,Chorocopte
+parish_030353,canton_0303,30353,General Morales (Socarte)
+parish_030354,canton_0303,30354,Gualleturo
+parish_030355,canton_0303,30355,Honorato Vasquez (Tambo Viejo)
+parish_030356,canton_0303,30356,Ingapirca
+parish_030357,canton_0303,30357,Juncal
+parish_030358,canton_0303,30358,San Antonio
+parish_030361,canton_0303,30361,Zhud
+parish_030362,canton_0303,30362,Ventura
+parish_030363,canton_0303,30363,Ducur
+parish_030450,canton_0304,30450,La Troncal
+parish_030451,canton_0304,30451,Manuel J. Calle
+parish_030452,canton_0304,30452,Pancho Negro
+parish_030550,canton_0305,30550,El Tambo
+parish_030650,canton_0306,30650,Deleg
+parish_030651,canton_0306,30651,Solano
+parish_030750,canton_0307,30750,Suscal
+parish_040101,canton_0401,40101,Gonzales Suarez
+parish_040102,canton_0401,40102,Tulcan
+parish_040150,canton_0401,40150,Tulcan
+parish_040151,canton_0401,40151,El Carmelo (EL Pun)
+parish_040153,canton_0401,40153,Julio Andrade (Orejuela)
+parish_040154,canton_0401,40154,Maldonado
+parish_040155,canton_0401,40155,Pioter
+parish_040156,canton_0401,40156,Tobar Donoso (La Bocana De Camumbi)
+parish_040157,canton_0401,40157,Tufiño
+parish_040158,canton_0401,40158,Urbina (Taya)
+parish_040159,canton_0401,40159,El Chical
+parish_040161,canton_0401,40161,Santa Martha De Cuba
+parish_040250,canton_0402,40250,Bolivar
+parish_040251,canton_0402,40251,Garcia Moreno
+parish_040252,canton_0402,40252,Los Andes
+parish_040253,canton_0402,40253,Monte Olivo
+parish_040254,canton_0402,40254,San Vicente De Pusir
+parish_040255,canton_0402,40255,San Rafael
+parish_040301,canton_0403,40301,El Angel
+parish_040302,canton_0403,40302,27 De Septiembre
+parish_040350,canton_0403,40350,El Angel
+parish_040351,canton_0403,40351,El Goaltal
+parish_040352,canton_0403,40352,La Libertad (Alizo)
+parish_040353,canton_0403,40353,San Isidro
+parish_040450,canton_0404,40450,Mira (Chontahuasi)
+parish_040451,canton_0404,40451,Concepcion
+parish_040452,canton_0404,40452,Jijon Y Caamaño
+parish_040453,canton_0404,40453,Juan Montalvo
+parish_040501,canton_0405,40501,Gonzalez Suarez
+parish_040502,canton_0405,40502,San Jose
+parish_040550,canton_0405,40550,San Gabriel
+parish_040551,canton_0405,40551,Cristobal Colon
+parish_040552,canton_0405,40552,Chitan De Navarrete
+parish_040553,canton_0405,40553,Fernandez Salvador
+parish_040554,canton_0405,40554,La Paz
+parish_040555,canton_0405,40555,Piartal
+parish_040650,canton_0406,40650,Huaca
+parish_040651,canton_0406,40651,Mariscal Sucre
+parish_050101,canton_0501,50101,Eloy Alfaro (San Felipe)
+parish_050102,canton_0501,50102,Ignacio Flores (Parque Flores)
+parish_050103,canton_0501,50103,Juan Montalvo (San Sebastian)
+parish_050104,canton_0501,50104,La Matriz
+parish_050105,canton_0501,50105,San Buenaventura
+parish_050150,canton_0501,50150,Latacunga
+parish_050151,canton_0501,50151,Alaques (Alaquez)
+parish_050152,canton_0501,50152,Belisario Quevedo (Guanailin)
+parish_050153,canton_0501,50153,Guaitacama (Guaytacama)
+parish_050154,canton_0501,50154,Joseguango Bajo
+parish_050156,canton_0501,50156,Mulalo
+parish_050157,canton_0501,50157,11 De Noviembre (Ilinchisi)
+parish_050158,canton_0501,50158,Poalo
+parish_050159,canton_0501,50159,San Juan De Pastocalle
+parish_050161,canton_0501,50161,Tanicuchi
+parish_050162,canton_0501,50162,Toacaso
+parish_050202,canton_0502,50202,El Carmen
+parish_050250,canton_0502,50250,La Mana
+parish_050251,canton_0502,50251,Guasaganda
+parish_050252,canton_0502,50252,Pucayacu
+parish_050350,canton_0503,50350,El Corazon
+parish_050351,canton_0503,50351,Moraspungo
+parish_050352,canton_0503,50352,Pinllopata
+parish_050353,canton_0503,50353,Ramon Campaña
+parish_050450,canton_0504,50450,Pujili
+parish_050451,canton_0504,50451,Angamarca
+parish_050453,canton_0504,50453,Guangaje
+parish_050455,canton_0504,50455,La Victoria
+parish_050456,canton_0504,50456,Pilalo
+parish_050457,canton_0504,50457,Tingo
+parish_050458,canton_0504,50458,Zumbahua
+parish_050550,canton_0505,50550,San Miguel
+parish_050551,canton_0505,50551,Antonio Jose Holguin (Santa Lucia)
+parish_050552,canton_0505,50552,Cusubamba
+parish_050553,canton_0505,50553,Mulalillo
+parish_050554,canton_0505,50554,Mulliquindil (Santa Ana)
+parish_050555,canton_0505,50555,Pansaleo
+parish_050650,canton_0506,50650,Saquisili
+parish_050651,canton_0506,50651,Canchagua
+parish_050652,canton_0506,50652,Chantilin
+parish_050653,canton_0506,50653,Cochapamba
+parish_050750,canton_0507,50750,Sigchos
+parish_050751,canton_0507,50751,Chugchilan
+parish_050752,canton_0507,50752,Isinlivi
+parish_050753,canton_0507,50753,Las Pampas
+parish_050754,canton_0507,50754,Palo Quemado
+parish_060101,canton_0601,60101,Lizarzaburu
+parish_060102,canton_0601,60102,Maldonado
+parish_060103,canton_0601,60103,Velasco
+parish_060104,canton_0601,60104,Veloz
+parish_060105,canton_0601,60105,Yaruquies
+parish_060106,canton_0601,60106,Lican
+parish_060150,canton_0601,60150,Riobamba
+parish_060151,canton_0601,60151,Cacha
+parish_060152,canton_0601,60152,Calpi
+parish_060153,canton_0601,60153,Cubijies
+parish_060154,canton_0601,60154,Flores
+parish_060156,canton_0601,60156,Licto
+parish_060157,canton_0601,60157,Pungala
+parish_060158,canton_0601,60158,Punin
+parish_060159,canton_0601,60159,Quimiag
+parish_060160,canton_0601,60160,San Juan
+parish_060161,canton_0601,60161,San Luis
+parish_060250,canton_0602,60250,Alausi
+parish_060251,canton_0602,60251,Achupallas
+parish_060253,canton_0602,60253,Guasuntos
+parish_060254,canton_0602,60254,Huigra
+parish_060255,canton_0602,60255,Multitud
+parish_060256,canton_0602,60256,Pistishi (Nariz Del Diablo)
+parish_060257,canton_0602,60257,Pumallacta (Puma-Lacta)
+parish_060258,canton_0602,60258,Sevilla
+parish_060259,canton_0602,60259,Sibambe
+parish_060260,canton_0602,60260,Tixan
+parish_060301,canton_0603,60301,Cajabamba
+parish_060302,canton_0603,60302,Sicalpa
+parish_060350,canton_0603,60350,Villa La Union (Cajabamba)
+parish_060351,canton_0603,60351,Cañi
+parish_060352,canton_0603,60352,Columbe
+parish_060353,canton_0603,60353,Juan De Velasco (Pangor)
+parish_060354,canton_0603,60354,Santiago De Quito
+parish_060450,canton_0604,60450,Chambo
+parish_060550,canton_0605,60550,Chunchi
+parish_060551,canton_0605,60551,Capzol
+parish_060552,canton_0605,60552,Compud
+parish_060553,canton_0605,60553,Gonzol
+parish_060554,canton_0605,60554,Llagos
+parish_060650,canton_0606,60650,Guamote
+parish_060651,canton_0606,60651,Cebadas
+parish_060652,canton_0606,60652,Palmira
+parish_060701,canton_0607,60701,El Rosario
+parish_060702,canton_0607,60702,La Matriz
+parish_060750,canton_0607,60750,Guano
+parish_060751,canton_0607,60751,Guanando
+parish_060752,canton_0607,60752,Ilapo
+parish_060753,canton_0607,60753,La Providencia
+parish_060754,canton_0607,60754,San Andres
+parish_060755,canton_0607,60755,San Gerardo De Pacaicaguan
+parish_060756,canton_0607,60756,San Isidro De Patulu
+parish_060757,canton_0607,60757,San Jose Del Chazo
+parish_060758,canton_0607,60758,Santa Fe De Galan
+parish_060759,canton_0607,60759,Valparaiso
+parish_060850,canton_0608,60850,Pallatanga
+parish_060950,canton_0609,60950,Penipe
+parish_060951,canton_0609,60951,El Altar
+parish_060952,canton_0609,60952,Matus
+parish_060953,canton_0609,60953,Puela
+parish_060954,canton_0609,60954,San Antonio De Bayushig
+parish_060955,canton_0609,60955,La Candelaria
+parish_060956,canton_0609,60956,Bilbao
+parish_061050,canton_0610,61050,Cumanda
+parish_070101,canton_0701,70101,La Providencia
+parish_070102,canton_0701,70102,Machala
+parish_070103,canton_0701,70103,Puerto Bolivar
+parish_070104,canton_0701,70104,Nueve De Mayo
+parish_070105,canton_0701,70105,El Cambio
+parish_070150,canton_0701,70150,Machala
+parish_070152,canton_0701,70152,El Retiro
+parish_070221,canton_0702,70221,Chacras
+parish_070250,canton_0702,70250,Arenillas
+parish_070254,canton_0702,70254,Palmales
+parish_070255,canton_0702,70255,Carcabon
+parish_070350,canton_0703,70350,Paccha
+parish_070351,canton_0703,70351,Ayapamba
+parish_070352,canton_0703,70352,Cordoncillo
+parish_070353,canton_0703,70353,Milagro
+parish_070354,canton_0703,70354,San Jose
+parish_070355,canton_0703,70355,San Juan De Cerro Azul
+parish_070450,canton_0704,70450,Balsas
+parish_070451,canton_0704,70451,Bellamaria
+parish_070550,canton_0705,70550,Chilla
+parish_070650,canton_0706,70650,El Guabo
+parish_070651,canton_0706,70651,Barbones (Sucre)
+parish_070652,canton_0706,70652,La Iberia
+parish_070653,canton_0706,70653,Tendales (Cab. En Puerto)
+parish_070654,canton_0706,70654,Rio Bonito
+parish_070701,canton_0707,70701,Ecuador
+parish_070702,canton_0707,70702,El Paraiso
+parish_070703,canton_0707,70703,Hualtaco
+parish_070704,canton_0707,70704,Milton Reyes
+parish_070705,canton_0707,70705,Union Lojana
+parish_070750,canton_0707,70750,Huaquillas
+parish_070850,canton_0708,70850,Marcabeli
+parish_070851,canton_0708,70851,El Ingenio
+parish_070901,canton_0709,70901,Bolivar
+parish_070902,canton_0709,70902,Loma De Franco
+parish_070903,canton_0709,70903,Ochoa Leon (Matriz)
+parish_070904,canton_0709,70904,Tres Cerritos
+parish_070950,canton_0709,70950,Pasaje
+parish_070951,canton_0709,70951,Buenavista
+parish_070952,canton_0709,70952,Casacay
+parish_070953,canton_0709,70953,La Peaña
+parish_070954,canton_0709,70954,Progreso
+parish_070955,canton_0709,70955,Uzhcurrumi
+parish_070956,canton_0709,70956,Cañaquemada
+parish_071001,canton_0710,71001,La Matriz
+parish_071002,canton_0710,71002,La Susaya
+parish_071003,canton_0710,71003,Piñas Grande
+parish_071050,canton_0710,71050,Piñas
+parish_071051,canton_0710,71051,Capiro
+parish_071052,canton_0710,71052,La Bocana
+parish_071053,canton_0710,71053,Moromoro (Cab. En El Vado)
+parish_071054,canton_0710,71054,Piedras
+parish_071055,canton_0710,71055,San Roque (Ambrosio Maldonado)
+parish_071056,canton_0710,71056,Saracay
+parish_071150,canton_0711,71150,Portovelo
+parish_071151,canton_0711,71151,Curtincapa
+parish_071152,canton_0711,71152,Morales
+parish_071153,canton_0711,71153,Salati
+parish_071201,canton_0712,71201,Santa Rosa
+parish_071202,canton_0712,71202,Jeli
+parish_071203,canton_0712,71203,Jambelí (Satelite)
+parish_071204,canton_0712,71204,Jumón (Satelite)
+parish_071250,canton_0712,71250,Santa Rosa
+parish_071251,canton_0712,71251,Bellavista
+parish_071252,canton_0712,71252,Jambeli
+parish_071253,canton_0712,71253,La Avanzada
+parish_071254,canton_0712,71254,San Antonio
+parish_071255,canton_0712,71255,Torata
+parish_071256,canton_0712,71256,Victoria
+parish_071257,canton_0712,71257,Bellamaria
+parish_071350,canton_0713,71350,Zaruma
+parish_071351,canton_0713,71351,Abañin
+parish_071352,canton_0713,71352,Arcapamba
+parish_071353,canton_0713,71353,Guanazan
+parish_071354,canton_0713,71354,Guizhaguiña
+parish_071355,canton_0713,71355,Huertas
+parish_071356,canton_0713,71356,Malvas
+parish_071357,canton_0713,71357,Muluncay Grande
+parish_071358,canton_0713,71358,Sinsao
+parish_071359,canton_0713,71359,Salvias
+parish_071401,canton_0714,71401,La Victoria
+parish_071402,canton_0714,71402,Platanillos
+parish_071403,canton_0714,71403,Valle Hermoso
+parish_071450,canton_0714,71450,La Victoria
+parish_071451,canton_0714,71451,La Libertad
+parish_071452,canton_0714,71452,El Paraiso
+parish_071453,canton_0714,71453,San Isidro
+parish_080101,canton_0801,80101,Bartolome Ruiz (Cesar Franco Carrion)
+parish_080102,canton_0801,80102,5 De Agosto
+parish_080103,canton_0801,80103,Esmeraldas
+parish_080104,canton_0801,80104,Luis Tello (Las Palmas)
+parish_080105,canton_0801,80105,Simón Plata Torres
+parish_080150,canton_0801,80150,Esmeraldas
+parish_080152,canton_0801,80152,Camarones
+parish_080153,canton_0801,80153,Crnel. Carlos Concha Torres
+parish_080154,canton_0801,80154,Chinca
+parish_080159,canton_0801,80159,Majua
+parish_080163,canton_0801,80163,San Mateo
+parish_080165,canton_0801,80165,Tabiazo
+parish_080166,canton_0801,80166,Tachina
+parish_080168,canton_0801,80168,Vuelta Larga
+parish_080250,canton_0802,80250,Valdez (Limones)
+parish_080251,canton_0802,80251,Anchayacu
+parish_080252,canton_0802,80252,Atahualpa
+parish_080253,canton_0802,80253,Borbon
+parish_080254,canton_0802,80254,La Tola
+parish_080255,canton_0802,80255,Luis Vargas Torres
+parish_080256,canton_0802,80256,Maldonado
+parish_080257,canton_0802,80257,Pampanal De Bolivar
+parish_080258,canton_0802,80258,San Francisco De Onzole
+parish_080259,canton_0802,80259,Santo Domingo De Onzole
+parish_080260,canton_0802,80260,Selva Alegre
+parish_080261,canton_0802,80261,Telembi
+parish_080262,canton_0802,80262,Colon Eloy Del Maria
+parish_080263,canton_0802,80263,San Jose De Cayapas
+parish_080264,canton_0802,80264,Timbire
+parish_080350,canton_0803,80350,Muisne
+parish_080351,canton_0803,80351,Bolivar
+parish_080352,canton_0803,80352,Daule
+parish_080353,canton_0803,80353,Galera
+parish_080354,canton_0803,80354,Quingue (Olmedo Perdomo Franco)
+parish_080355,canton_0803,80355,Salima
+parish_080356,canton_0803,80356,San Francisco
+parish_080357,canton_0803,80357,San Gregorio
+parish_080358,canton_0803,80358,San Jose De Chamanga
+parish_080450,canton_0804,80450,Rosa Zarate (Quininde)
+parish_080451,canton_0804,80451,Cube
+parish_080452,canton_0804,80452,Chura (Chancama)
+parish_080453,canton_0804,80453,Malimpia
+parish_080454,canton_0804,80454,Viche
+parish_080455,canton_0804,80455,La Union
+parish_080550,canton_0805,80550,San Lorenzo
+parish_080551,canton_0805,80551,Alto Tambo
+parish_080552,canton_0805,80552,Ancon (Pichangal)
+parish_080553,canton_0805,80553,Calderon
+parish_080554,canton_0805,80554,Carondelet
+parish_080555,canton_0805,80555,5 De Junio
+parish_080556,canton_0805,80556,Concepcion
+parish_080557,canton_0805,80557,Mataje
+parish_080558,canton_0805,80558,San Javier De Cachavi
+parish_080559,canton_0805,80559,Santa Rita
+parish_080560,canton_0805,80560,Tambillo
+parish_080561,canton_0805,80561,Tulubi
+parish_080562,canton_0805,80562,Urbina
+parish_080650,canton_0806,80650,Atacames
+parish_080651,canton_0806,80651,La Union
+parish_080652,canton_0806,80652,Sua
+parish_080653,canton_0806,80653,Tonchigue
+parish_080654,canton_0806,80654,Tonsupa
+parish_080750,canton_0807,80750,Rioverde
+parish_080751,canton_0807,80751,Chontaduro
+parish_080752,canton_0807,80752,Chumunde
+parish_080753,canton_0807,80753,Lagarto
+parish_080754,canton_0807,80754,Montalvo
+parish_080755,canton_0807,80755,Rocafuerte
+parish_090101,canton_0901,90101,Ayacucho
+parish_090102,canton_0901,90102,Bolivar (Sagrario)
+parish_090103,canton_0901,90103,Carbo (Concepcion)
+parish_090104,canton_0901,90104,Febres Cordero
+parish_090105,canton_0901,90105,Garcia Moreno
+parish_090106,canton_0901,90106,Letamendi
+parish_090107,canton_0901,90107,Nueve De Octubre
+parish_090108,canton_0901,90108,Olmedo (San Alejo)
+parish_090109,canton_0901,90109,Roca
+parish_090110,canton_0901,90110,Rocafuerte
+parish_090111,canton_0901,90111,Sucre
+parish_090112,canton_0901,90112,Tarqui
+parish_090113,canton_0901,90113,Urdaneta
+parish_090114,canton_0901,90114,Ximena
+parish_090115,canton_0901,90115,Chongon
+parish_090116,canton_0901,90116,Pascuales
+parish_090150,canton_0901,90150,Guayaquil
+parish_090152,canton_0901,90152,Juan Gomez Rendon (Progreso)
+parish_090153,canton_0901,90153,Morro
+parish_090156,canton_0901,90156,Posorja
+parish_090157,canton_0901,90157,Puna
+parish_090158,canton_0901,90158,Tenguel
+parish_090250,canton_0902,90250,Alfredo Baquerizo Moreno
+parish_090350,canton_0903,90350,Balao
+parish_090450,canton_0904,90450,Balzar
+parish_090550,canton_0905,90550,Colimes
+parish_090551,canton_0905,90551,San Jacinto
+parish_090601,canton_0906,90601,Daule
+parish_090602,canton_0906,90602,Banife
+parish_090603,canton_0906,90603,Emiliano Caicedo Marcos
+parish_090604,canton_0906,90604,Magro
+parish_090605,canton_0906,90605,Padre Juan Bautista Aguirre
+parish_090606,canton_0906,90606,Santa Clara
+parish_090607,canton_0906,90607,Vicente Piedrahita
+parish_090650,canton_0906,90650,Daule
+parish_090652,canton_0906,90652,Juan Bautista Aguirre (Los Tintos)
+parish_090653,canton_0906,90653,Laurel
+parish_090654,canton_0906,90654,Limonal
+parish_090656,canton_0906,90656,Las Lojas (Enrique Baquerizo Moreno)
+parish_090750,canton_0907,90750,Eloy Alfaro (Duran)
+parish_090850,canton_0908,90850,Velasco Ibarra (EL Empalme)
+parish_090851,canton_0908,90851,Guayas (Pueblo Nuevo)
+parish_090852,canton_0908,90852,El Rosario
+parish_090950,canton_0909,90950,El Triunfo
+parish_091050,canton_0910,91050,Milagro
+parish_091051,canton_0910,91051,Chobo
+parish_091053,canton_0910,91053,Mariscal Sucre (Huaques)
+parish_091054,canton_0910,91054,Roberto Astudillo
+parish_091150,canton_0911,91150,Naranjal
+parish_091151,canton_0911,91151,Jesus Maria
+parish_091152,canton_0911,91152,San Carlos
+parish_091153,canton_0911,91153,Santa Rosa De Flandes
+parish_091154,canton_0911,91154,Taura
+parish_091250,canton_0912,91250,Naranjito
+parish_091350,canton_0913,91350,Palestina
+parish_091450,canton_0914,91450,Pedro Carbo
+parish_091451,canton_0914,91451,Valle De La Virgen
+parish_091452,canton_0914,91452,Sabanilla
+parish_091601,canton_0916,91601,Samborondón
+parish_091602,canton_0916,91602,La Puntilla (Satelite)
+parish_091650,canton_0916,91650,Samborondon
+parish_091651,canton_0916,91651,Tarifa
+parish_091850,canton_0918,91850,Santa Lucia
+parish_091901,canton_0919,91901,Bocana
+parish_091902,canton_0919,91902,Candilejos
+parish_091903,canton_0919,91903,Central
+parish_091904,canton_0919,91904,Paraiso
+parish_091905,canton_0919,91905,San Mateo
+parish_091950,canton_0919,91950,El Salitre (Las Ramas)
+parish_091951,canton_0919,91951,General Vernaza (Dos Esteros)
+parish_091952,canton_0919,91952,La Victoria (Ñauza)
+parish_091953,canton_0919,91953,Junquillal
+parish_092050,canton_0920,92050,San Jacinto De Yaguachi
+parish_092053,canton_0920,92053,Gral. Pedro J. Montero (Boliche)
+parish_092055,canton_0920,92055,Yaguachi Viejo (Cone)
+parish_092056,canton_0920,92056,Virgen De Fatima
+parish_092150,canton_0921,92150,General Villamil
+parish_092250,canton_0922,92250,Simon Bolivar
+parish_092251,canton_0922,92251,Crnel. Lorenzo De Garaicoa (Pedregal)
+parish_092350,canton_0923,92350,Coronel Marcelino Maridueña
+parish_092450,canton_0924,92450,Lomas De Sargentillo
+parish_092550,canton_0925,92550,Narcisa De Jesus
+parish_092750,canton_0927,92750,General Antonio Elizalde (Bucay)
+parish_092850,canton_0928,92850,Isidro Ayora
+parish_100101,canton_1001,100101,Caranqui
+parish_100102,canton_1001,100102,Guayaquil De Alpachaca
+parish_100103,canton_1001,100103,Sagrario
+parish_100104,canton_1001,100104,San Francisco
+parish_100105,canton_1001,100105,La Dolorosa Del Piorato
+parish_100150,canton_1001,100150,Ibarra
+parish_100151,canton_1001,100151,Ambuqui
+parish_100152,canton_1001,100152,Angochagua
+parish_100153,canton_1001,100153,Carolina
+parish_100154,canton_1001,100154,La Esperanza
+parish_100155,canton_1001,100155,Lita
+parish_100156,canton_1001,100156,Salinas
+parish_100157,canton_1001,100157,San Antonio
+parish_100201,canton_1002,100201,Andrade Marin (Lourdes)
+parish_100202,canton_1002,100202,Atuntaqui
+parish_100250,canton_1002,100250,Atuntaqui
+parish_100251,canton_1002,100251,Imbaya (San Luis De Cobuendo)
+parish_100252,canton_1002,100252,San Francisco De Natabuel
+parish_100253,canton_1002,100253,San Jose De Chaltura
+parish_100254,canton_1002,100254,San Roque
+parish_100301,canton_1003,100301,Sagrario
+parish_100302,canton_1003,100302,San Francisco
+parish_100350,canton_1003,100350,Cotacachi
+parish_100351,canton_1003,100351,Apuela
+parish_100352,canton_1003,100352,Garcia Moreno (Llurimagua)
+parish_100353,canton_1003,100353,Imantag
+parish_100354,canton_1003,100354,Peñaherrera
+parish_100355,canton_1003,100355,Plaza Gutierrez (Calvario)
+parish_100356,canton_1003,100356,Quiroga
+parish_100357,canton_1003,100357,6 De Julio De Cuellaje
+parish_100358,canton_1003,100358,Vacas Galindo (EL Churo)
+parish_100401,canton_1004,100401,Jordan
+parish_100402,canton_1004,100402,San Luis
+parish_100450,canton_1004,100450,Otavalo
+parish_100451,canton_1004,100451,Dr. Miguel Egas Cabezas (Peguche)
+parish_100452,canton_1004,100452,Eugenio Espejo (Calpaqui)
+parish_100453,canton_1004,100453,Gonzalez Suarez
+parish_100454,canton_1004,100454,Pataqui
+parish_100455,canton_1004,100455,San José De Quichinche
+parish_100456,canton_1004,100456,San Juan De Iluman
+parish_100457,canton_1004,100457,San Pablo
+parish_100458,canton_1004,100458,San Rafael
+parish_100459,canton_1004,100459,Selva Alegre
+parish_100550,canton_1005,100550,Pimampiro
+parish_100551,canton_1005,100551,Chuga
+parish_100552,canton_1005,100552,Mariano Acosta
+parish_100553,canton_1005,100553,San Francisco De Sigsipam
+parish_100650,canton_1006,100650,Urcuqui
+parish_100651,canton_1006,100651,Cahuasqui
+parish_100652,canton_1006,100652,La Merced De Buenos Aires
+parish_100653,canton_1006,100653,Pablo Arenas
+parish_100654,canton_1006,100654,San Blas
+parish_100655,canton_1006,100655,Tumbabiro
+parish_110101,canton_1101,110101,El Sagrario
+parish_110102,canton_1101,110102,San Sebastian
+parish_110103,canton_1101,110103,Sucre
+parish_110104,canton_1101,110104,Valle
+parish_110150,canton_1101,110150,Loja
+parish_110151,canton_1101,110151,Chantaco
+parish_110152,canton_1101,110152,Chuquiribamba
+parish_110153,canton_1101,110153,El Cisne
+parish_110154,canton_1101,110154,Gualel
+parish_110155,canton_1101,110155,Jimbilla
+parish_110156,canton_1101,110156,Malacatos (Valladolid)
+parish_110157,canton_1101,110157,San Lucas
+parish_110158,canton_1101,110158,San Pedro De Vilcabamba
+parish_110159,canton_1101,110159,Santiago
+parish_110160,canton_1101,110160,Taquil (Miguel Riofrio)
+parish_110161,canton_1101,110161,Vilcabamba (Victoria)
+parish_110162,canton_1101,110162,Yangana (Arsenio Castillo)
+parish_110163,canton_1101,110163,Quinara
+parish_110201,canton_1102,110201,Cariamanga
+parish_110202,canton_1102,110202,Chile
+parish_110203,canton_1102,110203,San Vicente
+parish_110250,canton_1102,110250,Cariamanga
+parish_110251,canton_1102,110251,Colaisaca
+parish_110252,canton_1102,110252,El Lucero
+parish_110253,canton_1102,110253,Utuana
+parish_110254,canton_1102,110254,Sangillin
+parish_110301,canton_1103,110301,Catamayo
+parish_110302,canton_1103,110302,San Jose
+parish_110350,canton_1103,110350,Catamayo (La Toma)
+parish_110351,canton_1103,110351,El Tambo
+parish_110352,canton_1103,110352,Guayquichuma
+parish_110353,canton_1103,110353,San Pedro De La Bendita
+parish_110354,canton_1103,110354,Zambi
+parish_110450,canton_1104,110450,Celica
+parish_110451,canton_1104,110451,Cruzpamba
+parish_110455,canton_1104,110455,Pozul (San Juan De Pozul)
+parish_110456,canton_1104,110456,Sabanilla
+parish_110457,canton_1104,110457,Tnte. Maximiliano Rodriguez Loayza
+parish_110550,canton_1105,110550,Chaguarpamba
+parish_110551,canton_1105,110551,Buenavista
+parish_110552,canton_1105,110552,El Rosario
+parish_110553,canton_1105,110553,Santa Rufina
+parish_110554,canton_1105,110554,Amarillos
+parish_110650,canton_1106,110650,Amaluza
+parish_110651,canton_1106,110651,Bellavista
+parish_110652,canton_1106,110652,Jimbura
+parish_110653,canton_1106,110653,Santa Teresita
+parish_110654,canton_1106,110654,27 De Abril
+parish_110655,canton_1106,110655,El Ingenio
+parish_110656,canton_1106,110656,El Airo
+parish_110750,canton_1107,110750,Gonzanama
+parish_110751,canton_1107,110751,Changaimina (La Libertad)
+parish_110753,canton_1107,110753,Nambacola
+parish_110754,canton_1107,110754,Purunuma (Eguiguren)
+parish_110756,canton_1107,110756,Sacapalca
+parish_110801,canton_1108,110801,General Eloy Alfaro (San Sebastian)
+parish_110802,canton_1108,110802,Macara (Manuel Enrique Rangel Suquilanda)
+parish_110850,canton_1108,110850,Macara
+parish_110851,canton_1108,110851,Larama
+parish_110852,canton_1108,110852,La Victoria
+parish_110853,canton_1108,110853,Sabiango (La Capilla)
+parish_110901,canton_1109,110901,Catacocha
+parish_110902,canton_1109,110902,Lourdes
+parish_110950,canton_1109,110950,Catacocha
+parish_110951,canton_1109,110951,Cangonama
+parish_110952,canton_1109,110952,Guachanama
+parish_110954,canton_1109,110954,Lauro Guerrero
+parish_110956,canton_1109,110956,Orianga
+parish_110957,canton_1109,110957,San Antonio
+parish_110958,canton_1109,110958,CaSanga
+parish_110959,canton_1109,110959,Yamana
+parish_111050,canton_1110,111050,Alamor
+parish_111051,canton_1110,111051,Ciano
+parish_111052,canton_1110,111052,El Arenal
+parish_111053,canton_1110,111053,El Limo (Mariana De Jesus)
+parish_111054,canton_1110,111054,Mercadillo
+parish_111055,canton_1110,111055,Vicentino
+parish_111150,canton_1111,111150,Saraguro
+parish_111151,canton_1111,111151,El Paraiso De Celen
+parish_111152,canton_1111,111152,El Tablon
+parish_111153,canton_1111,111153,Lluzhapa
+parish_111154,canton_1111,111154,Manu
+parish_111155,canton_1111,111155,San Antonio De Quimbe (Cumbe)
+parish_111156,canton_1111,111156,San Pablo De Tenta
+parish_111157,canton_1111,111157,San Sebastian De Yuluc
+parish_111158,canton_1111,111158,Selva Alegre
+parish_111159,canton_1111,111159,Urdaneta (Paquishapa)
+parish_111160,canton_1111,111160,Sumaypamba
+parish_111250,canton_1112,111250,Sozoranga
+parish_111251,canton_1112,111251,Nueva Fatima
+parish_111252,canton_1112,111252,Tacamoros
+parish_111350,canton_1113,111350,Zapotillo
+parish_111351,canton_1113,111351,Mangahurco
+parish_111352,canton_1113,111352,Garzareal
+parish_111353,canton_1113,111353,Limones
+parish_111354,canton_1113,111354,Paletillas
+parish_111355,canton_1113,111355,Bolaspamba
+parish_111450,canton_1114,111450,Pindal
+parish_111451,canton_1114,111451,Chaquinal
+parish_111452,canton_1114,111452,12 De Diciembre
+parish_111550,canton_1115,111550,Quilanga
+parish_111551,canton_1115,111551,Fundochamba
+parish_111552,canton_1115,111552,San Antonio De Las Aradas
+parish_111650,canton_1116,111650,Olmedo
+parish_111651,canton_1116,111651,Tingue
+parish_120101,canton_1201,120101,Clemente Baquerizo
+parish_120102,canton_1201,120102,Dr. Camilo Ponce
+parish_120103,canton_1201,120103,Barreiro
+parish_120104,canton_1201,120104,El Salto
+parish_120150,canton_1201,120150,Babahoyo
+parish_120152,canton_1201,120152,Caracol
+parish_120153,canton_1201,120153,Febres Cordero
+parish_120154,canton_1201,120154,Pimocha
+parish_120155,canton_1201,120155,La Union
+parish_120250,canton_1202,120250,Baba
+parish_120251,canton_1202,120251,Guare
+parish_120252,canton_1202,120252,Isla De Bejucal
+parish_120350,canton_1203,120350,Montalvo
+parish_120450,canton_1204,120450,Puebloviejo
+parish_120451,canton_1204,120451,Puerto Pechiche
+parish_120452,canton_1204,120452,San Juan
+parish_120501,canton_1205,120501,Quevedo
+parish_120502,canton_1205,120502,San Camilo
+parish_120504,canton_1205,120504,Guayacan
+parish_120505,canton_1205,120505,Nicolas Infante Diaz
+parish_120506,canton_1205,120506,San Cristobal
+parish_120507,canton_1205,120507,Siete De Octubre
+parish_120508,canton_1205,120508,24 De Mayo
+parish_120509,canton_1205,120509,Venus Del Rio Quevedo
+parish_120510,canton_1205,120510,Viva Alfaro
+parish_120550,canton_1205,120550,Quevedo
+parish_120553,canton_1205,120553,San Carlos
+parish_120555,canton_1205,120555,Las Esperanza
+parish_120650,canton_1206,120650,Catarama
+parish_120651,canton_1206,120651,Ricaurte
+parish_120750,canton_1207,120750,Ventanas
+parish_120752,canton_1207,120752,Zapotal
+parish_120850,canton_1208,120850,Vinces
+parish_120851,canton_1208,120851,Antonio Sotomayor
+parish_120950,canton_1209,120950,Palenque
+parish_121001,canton_1210,121001,San Jacinto De Buena Fé
+parish_121002,canton_1210,121002,7 De Agosto
+parish_121003,canton_1210,121003,11 De Octubre
+parish_121050,canton_1210,121050,San Jacinto De Buena Fe
+parish_121051,canton_1210,121051,Patricia Pilar
+parish_121150,canton_1211,121150,Valencia
+parish_121250,canton_1212,121250,Mocache
+parish_121350,canton_1213,121350,Quinsaloma
+parish_130101,canton_1301,130101,Andres De Vera
+parish_130102,canton_1301,130102,Colon
+parish_130103,canton_1301,130103,12 De Marzo
+parish_130104,canton_1301,130104,Picoaza
+parish_130105,canton_1301,130105,Portoviejo
+parish_130106,canton_1301,130106,San Pablo
+parish_130107,canton_1301,130107,18 De Octubre
+parish_130108,canton_1301,130108,Francisco Pacheco
+parish_130109,canton_1301,130109,Simón Bolívar
+parish_130150,canton_1301,130150,Portoviejo
+parish_130151,canton_1301,130151,Abdon Calderon (San Francisco)
+parish_130152,canton_1301,130152,Alhajuela (Bajo Grande)
+parish_130153,canton_1301,130153,Crucita
+parish_130154,canton_1301,130154,Pueblo Nuevo
+parish_130155,canton_1301,130155,Riochico (Rio Chico)
+parish_130156,canton_1301,130156,San Placido
+parish_130157,canton_1301,130157,Chirijos
+parish_130250,canton_1302,130250,Calceta
+parish_130251,canton_1302,130251,Membrillo
+parish_130252,canton_1302,130252,Quiroga
+parish_130301,canton_1303,130301,Chone
+parish_130302,canton_1303,130302,Santa Rita
+parish_130350,canton_1303,130350,Chone
+parish_130351,canton_1303,130351,Boyaca
+parish_130352,canton_1303,130352,Canuto
+parish_130353,canton_1303,130353,Convento
+parish_130354,canton_1303,130354,Chibunga
+parish_130355,canton_1303,130355,Eloy Alfaro
+parish_130356,canton_1303,130356,Ricaurte
+parish_130357,canton_1303,130357,San Antonio
+parish_130401,canton_1304,130401,El Carmen
+parish_130404,canton_1304,130404,4 De Diciembre
+parish_130450,canton_1304,130450,El Carmen
+parish_130451,canton_1304,130451,Wilfrido Loor Moreira (Maicito)
+parish_130452,canton_1304,130452,San Pedro De Suma
+parish_130550,canton_1305,130550,Flavio Alfaro
+parish_130551,canton_1305,130551,San Francisco De Novillo
+parish_130552,canton_1305,130552,Zapallo
+parish_130601,canton_1306,130601,San Lorenzo De Jipijapa
+parish_130602,canton_1306,130602,Dr. Miguel Moran Lucio
+parish_130603,canton_1306,130603,Manuel Inocencio Parrales Y Guale
+parish_130650,canton_1306,130650,Jipijapa
+parish_130651,canton_1306,130651,America
+parish_130652,canton_1306,130652,El Anegado
+parish_130653,canton_1306,130653,Julcuy
+parish_130654,canton_1306,130654,La Union
+parish_130656,canton_1306,130656,Membrillal
+parish_130657,canton_1306,130657,Pedro Pablo Gomez
+parish_130658,canton_1306,130658,Puerto De Cayo
+parish_130750,canton_1307,130750,Junin
+parish_130801,canton_1308,130801,Los Esteros
+parish_130802,canton_1308,130802,Manta
+parish_130803,canton_1308,130803,San Mateo
+parish_130804,canton_1308,130804,Tarqui
+parish_130805,canton_1308,130805,Eloy Alfaro
+parish_130850,canton_1308,130850,Manta
+parish_130851,canton_1308,130851,San Lorenzo
+parish_130852,canton_1308,130852,Santa Marianita (Boca De Pacoche)
+parish_130901,canton_1309,130901,Montecristi
+parish_130902,canton_1309,130902,Anibal San Andres
+parish_130950,canton_1309,130950,Montecristi
+parish_130952,canton_1309,130952,La Pila
+parish_131050,canton_1310,131050,Pajan
+parish_131051,canton_1310,131051,Campozano (La Palma De Pajan)
+parish_131052,canton_1310,131052,Cascol
+parish_131053,canton_1310,131053,Guale
+parish_131054,canton_1310,131054,Lascano
+parish_131150,canton_1311,131150,Pichincha
+parish_131151,canton_1311,131151,Barraganete
+parish_131152,canton_1311,131152,San Sebastian
+parish_131250,canton_1312,131250,Rocafuerte
+parish_131301,canton_1313,131301,Santa Ana
+parish_131302,canton_1313,131302,Lodana
+parish_131350,canton_1313,131350,Santa Ana De Vuelta Larga
+parish_131351,canton_1313,131351,Ayacucho
+parish_131352,canton_1313,131352,Honorato Vasquez
+parish_131353,canton_1313,131353,La Union
+parish_131355,canton_1313,131355,San Pablo
+parish_131401,canton_1314,131401,Bahia De Caraquez
+parish_131402,canton_1314,131402,Leonidas Plaza Gutierrez
+parish_131450,canton_1314,131450,Bahia De Caraquez
+parish_131453,canton_1314,131453,Charapoto
+parish_131457,canton_1314,131457,San Isidro
+parish_131550,canton_1315,131550,Tosagua
+parish_131551,canton_1315,131551,Bachillero
+parish_131552,canton_1315,131552,Angel Pedro Giler
+parish_131650,canton_1316,131650,Sucre
+parish_131651,canton_1316,131651,Bellavista
+parish_131652,canton_1316,131652,Noboa
+parish_131653,canton_1316,131653,Arq. Sixto Duran Ballen
+parish_131750,canton_1317,131750,Pedernales
+parish_131751,canton_1317,131751,Cojimies
+parish_131752,canton_1317,131752,10 De Agosto
+parish_131753,canton_1317,131753,Atahualpa
+parish_131850,canton_1318,131850,Olmedo
+parish_131950,canton_1319,131950,Puerto Lopez
+parish_131951,canton_1319,131951,Machalilla
+parish_131952,canton_1319,131952,Salango
+parish_132050,canton_1320,132050,Jama
+parish_132150,canton_1321,132150,Jaramijo
+parish_132250,canton_1322,132250,San Vicente
+parish_132251,canton_1322,132251,Canoa
+parish_140150,canton_1401,140150,Macas
+parish_140151,canton_1401,140151,Alshi
+parish_140153,canton_1401,140153,General Proaño
+parish_140156,canton_1401,140156,San Isidro
+parish_140157,canton_1401,140157,Sevilla Don Bosco
+parish_140158,canton_1401,140158,Sinai
+parish_140160,canton_1401,140160,Zuña (Zuñac)
+parish_140162,canton_1401,140162,Cuchaentza
+parish_140164,canton_1401,140164,Rio Blanco
+parish_140201,canton_1402,140201,Gualaquiza
+parish_140202,canton_1402,140202,Mercedes Molina
+parish_140250,canton_1402,140250,Gualaquiza
+parish_140251,canton_1402,140251,Amazonas (Rosario De Cuyes)
+parish_140252,canton_1402,140252,Bermejos
+parish_140253,canton_1402,140253,Bomboiza
+parish_140254,canton_1402,140254,Chigüinda
+parish_140255,canton_1402,140255,El Rosario
+parish_140256,canton_1402,140256,Nueva Tarqui
+parish_140257,canton_1402,140257,San Miguel De Cuyes
+parish_140258,canton_1402,140258,El Ideal
+parish_140350,canton_1403,140350,General Leonidas Plaza Gutierrez (Limon)
+parish_140351,canton_1403,140351,Indanza
+parish_140353,canton_1403,140353,San Antonio
+parish_140356,canton_1403,140356,San Miguel De Conchay
+parish_140357,canton_1403,140357,Santa SuSana De Chiviaza
+parish_140358,canton_1403,140358,Yunganza
+parish_140450,canton_1404,140450,Palora (Metzera)
+parish_140451,canton_1404,140451,Arapicos
+parish_140452,canton_1404,140452,Cumanda
+parish_140454,canton_1404,140454,Sangay
+parish_140455,canton_1404,140455,16 De Agosto
+parish_140550,canton_1405,140550,Santiago De Mendez
+parish_140551,canton_1405,140551,Copal
+parish_140552,canton_1405,140552,Chupianza
+parish_140553,canton_1405,140553,Patuca
+parish_140554,canton_1405,140554,San Luis De El Acho
+parish_140556,canton_1405,140556,Tayuza
+parish_140557,canton_1405,140557,San Francisco De Chinimbimi
+parish_140650,canton_1406,140650,Sucua
+parish_140651,canton_1406,140651,Asuncion
+parish_140652,canton_1406,140652,Huambi
+parish_140655,canton_1406,140655,Santa Marianita De Jesus
+parish_140750,canton_1407,140750,Huamboya
+parish_140751,canton_1407,140751,Chiguaza
+parish_140850,canton_1408,140850,San Juan Bosco
+parish_140851,canton_1408,140851,Pan De Azucar
+parish_140852,canton_1408,140852,San Carlos De Limon
+parish_140853,canton_1408,140853,San Jacinto De Wakambeis
+parish_140854,canton_1408,140854,Santiago De Pananza
+parish_140950,canton_1409,140950,Taisha
+parish_140951,canton_1409,140951,Huasaga
+parish_140952,canton_1409,140952,Macuma
+parish_140953,canton_1409,140953,Tuutinentza
+parish_141050,canton_1410,141050,Logroño
+parish_141051,canton_1410,141051,Yaupi
+parish_141052,canton_1410,141052,Shimpis
+parish_141150,canton_1411,141150,Pablo Vi
+parish_141250,canton_1412,141250,Santiago
+parish_141251,canton_1412,141251,San Jose De Morona
+parish_150150,canton_1501,150150,Tena
+parish_150151,canton_1501,150151,Ahuano
+parish_150153,canton_1501,150153,Chontapunta
+parish_150154,canton_1501,150154,Pano
+parish_150155,canton_1501,150155,Puerto Misahualli
+parish_150156,canton_1501,150156,Puerto Napo
+parish_150157,canton_1501,150157,Talag
+parish_150350,canton_1503,150350,Archidona
+parish_150352,canton_1503,150352,Cotundo
+parish_150354,canton_1503,150354,San Pablo De Ushpayacu
+parish_150450,canton_1504,150450,El Chaco
+parish_150451,canton_1504,150451,Gonzalo Diaz De Pineda (EL Bombon)
+parish_150452,canton_1504,150452,Linares
+parish_150453,canton_1504,150453,Oyacachi
+parish_150454,canton_1504,150454,Santa Rosa
+parish_150455,canton_1504,150455,Sardinas
+parish_150750,canton_1507,150750,Baeza
+parish_150751,canton_1507,150751,CoSanga
+parish_150752,canton_1507,150752,Cuyuja
+parish_150753,canton_1507,150753,Papallacta
+parish_150754,canton_1507,150754,San Francisco De Borja (Virgilio Davila)
+parish_150755,canton_1507,150755,San Jose De Payamino
+parish_150756,canton_1507,150756,Sumaco
+parish_150950,canton_1509,150950,Carlos Julio Arosemena T.
+parish_160150,canton_1601,160150,Puyo
+parish_160152,canton_1601,160152,Canelos
+parish_160154,canton_1601,160154,Diez De Agosto
+parish_160155,canton_1601,160155,Fatima
+parish_160156,canton_1601,160156,Montalvo (Andoas)
+parish_160157,canton_1601,160157,Pomona
+parish_160158,canton_1601,160158,Rio Corrientes
+parish_160159,canton_1601,160159,Rio Tigre
+parish_160161,canton_1601,160161,Sarayacu
+parish_160162,canton_1601,160162,Simon Bolivar
+parish_160163,canton_1601,160163,Tarqui
+parish_160164,canton_1601,160164,Teniente Hugo Ortiz
+parish_160165,canton_1601,160165,Veracruz (Indillama)
+parish_160166,canton_1601,160166,El Triunfo
+parish_160250,canton_1602,160250,Mera
+parish_160251,canton_1602,160251,Madre Tierra
+parish_160252,canton_1602,160252,Shell
+parish_160350,canton_1603,160350,Santa Clara
+parish_160351,canton_1603,160351,San Jose
+parish_160450,canton_1604,160450,Arajuno
+parish_160451,canton_1604,160451,Curaray
+parish_170101,canton_1701,170101,Alfaro (Chimbacalle)
+parish_170102,canton_1701,170102,Benalcazar
+parish_170103,canton_1701,170103,Cotocollao
+parish_170104,canton_1701,170104,Chaupicruz (LA Concepcion)
+parish_170105,canton_1701,170105,Chillogallo
+parish_170106,canton_1701,170106,El Salvador
+parish_170107,canton_1701,170107,Gonzalez Suarez
+parish_170108,canton_1701,170108,Guapulo
+parish_170109,canton_1701,170109,La Floresta
+parish_170110,canton_1701,170110,La Libertad
+parish_170111,canton_1701,170111,La Magdalena
+parish_170112,canton_1701,170112,La Vicentina
+parish_170113,canton_1701,170113,San Blas
+parish_170114,canton_1701,170114,San Marcos
+parish_170115,canton_1701,170115,San Roque
+parish_170116,canton_1701,170116,San Sebastian
+parish_170117,canton_1701,170117,Santa Barbara
+parish_170118,canton_1701,170118,Santa Prisca
+parish_170119,canton_1701,170119,Villa Flora
+parish_170120,canton_1701,170120,Carcelen
+parish_170121,canton_1701,170121,Chimbacalle
+parish_170122,canton_1701,170122,El Batan
+parish_170123,canton_1701,170123,El Beaterio
+parish_170124,canton_1701,170124,El Inca
+parish_170125,canton_1701,170125,Eloy Alfaro
+parish_170126,canton_1701,170126,Guamani
+parish_170127,canton_1701,170127,La Concepcion
+parish_170128,canton_1701,170128,Las Cuadras
+parish_170135,canton_1701,170135,Atahualpa (Habaspamba)
+parish_170150,canton_1701,170150,Quito
+parish_170151,canton_1701,170151,Alangasi
+parish_170152,canton_1701,170152,Amaguaña
+parish_170154,canton_1701,170154,Calacali
+parish_170155,canton_1701,170155,Calderon (Carapungo)
+parish_170156,canton_1701,170156,Conocoto
+parish_170157,canton_1701,170157,Cumbaya
+parish_170158,canton_1701,170158,Chavezpamba
+parish_170159,canton_1701,170159,Checa (Chilpa)
+parish_170160,canton_1701,170160,El Quinche
+parish_170161,canton_1701,170161,Gualea
+parish_170162,canton_1701,170162,Guangopolo
+parish_170163,canton_1701,170163,Guayllabamba
+parish_170164,canton_1701,170164,La Merced
+parish_170165,canton_1701,170165,Llano Chico
+parish_170166,canton_1701,170166,Lloa
+parish_170168,canton_1701,170168,Nanegal
+parish_170169,canton_1701,170169,Nanegalito
+parish_170170,canton_1701,170170,Nayon
+parish_170171,canton_1701,170171,Nono
+parish_170172,canton_1701,170172,Pacto
+parish_170174,canton_1701,170174,Perucho
+parish_170175,canton_1701,170175,Pifo
+parish_170176,canton_1701,170176,Pintag
+parish_170177,canton_1701,170177,Pomasqui
+parish_170178,canton_1701,170178,Puellaro
+parish_170179,canton_1701,170179,Puembo
+parish_170180,canton_1701,170180,San Antonio
+parish_170181,canton_1701,170181,San Jose De Minas
+parish_170183,canton_1701,170183,Tababela
+parish_170184,canton_1701,170184,Tumbaco
+parish_170185,canton_1701,170185,Yaruqui
+parish_170186,canton_1701,170186,Zambiza
+parish_170201,canton_1702,170201,Ayora
+parish_170202,canton_1702,170202,Cayambe
+parish_170203,canton_1702,170203,Juan Montalvo
+parish_170250,canton_1702,170250,Cayambe
+parish_170251,canton_1702,170251,Ascazubi
+parish_170252,canton_1702,170252,Cangahua
+parish_170253,canton_1702,170253,Olmedo (Pesillo)
+parish_170254,canton_1702,170254,Oton
+parish_170255,canton_1702,170255,Santa Rosa De Cuzubamba
+parish_170350,canton_1703,170350,Machachi
+parish_170351,canton_1703,170351,Aloag
+parish_170352,canton_1703,170352,Aloasi
+parish_170353,canton_1703,170353,Cutuglahua
+parish_170354,canton_1703,170354,El Chaupi
+parish_170355,canton_1703,170355,Manuel Cornejo Astorga (Tandapi)
+parish_170356,canton_1703,170356,Tambillo
+parish_170357,canton_1703,170357,Uyumbicho
+parish_170450,canton_1704,170450,Tabacundo
+parish_170451,canton_1704,170451,La Esperanza
+parish_170452,canton_1704,170452,Malchingui
+parish_170453,canton_1704,170453,Tocachi
+parish_170454,canton_1704,170454,Tupigachi
+parish_170501,canton_1705,170501,Sangolqui
+parish_170502,canton_1705,170502,San Pedro De Taboada
+parish_170503,canton_1705,170503,San Rafael
+parish_170550,canton_1705,170550,Sangolqui
+parish_170551,canton_1705,170551,Cotogchoa
+parish_170552,canton_1705,170552,Rumipamba
+parish_170750,canton_1707,170750,San Miguel De Los Bancos
+parish_170751,canton_1707,170751,Mindo
+parish_170850,canton_1708,170850,Pedro Vicente Maldonado
+parish_170950,canton_1709,170950,Puerto Quito
+parish_180101,canton_1801,180101,Atocha - Ficoa
+parish_180102,canton_1801,180102,Celiano Monge
+parish_180103,canton_1801,180103,Huachi Chico
+parish_180104,canton_1801,180104,Huachi Loreto
+parish_180105,canton_1801,180105,La Merced
+parish_180106,canton_1801,180106,La Peninsula
+parish_180107,canton_1801,180107,La Matriz
+parish_180108,canton_1801,180108,Pishilata
+parish_180109,canton_1801,180109,San Francisco
+parish_180150,canton_1801,180150,Ambato
+parish_180151,canton_1801,180151,Ambatillo
+parish_180152,canton_1801,180152,Atahualpa (Chisalata)
+parish_180153,canton_1801,180153,Augusto N. Martinez (Mundugleo)
+parish_180154,canton_1801,180154,Constantino Fernandez
+parish_180155,canton_1801,180155,Huachi Grande
+parish_180156,canton_1801,180156,Izamba
+parish_180157,canton_1801,180157,Juan Benigno Vela
+parish_180158,canton_1801,180158,Montalvo
+parish_180159,canton_1801,180159,Pasa
+parish_180160,canton_1801,180160,Picaigua
+parish_180161,canton_1801,180161,Pilaguin (Pilahuin)
+parish_180162,canton_1801,180162,Quisapincha (Quizapincha)
+parish_180163,canton_1801,180163,San Bartolome De Pinllog
+parish_180164,canton_1801,180164,San Fernando (Pasa San Fernando)
+parish_180165,canton_1801,180165,Santa Rosa
+parish_180166,canton_1801,180166,Totoras
+parish_180167,canton_1801,180167,Cunchibamba
+parish_180168,canton_1801,180168,Unamuncho
+parish_180250,canton_1802,180250,Baños De Agua Santa
+parish_180251,canton_1802,180251,Lligua
+parish_180252,canton_1802,180252,Rio Negro
+parish_180253,canton_1802,180253,Rio Verde
+parish_180254,canton_1802,180254,Ulba
+parish_180350,canton_1803,180350,Cevallos
+parish_180450,canton_1804,180450,Mocha
+parish_180451,canton_1804,180451,Pinguili
+parish_180550,canton_1805,180550,Patate
+parish_180551,canton_1805,180551,El Triunfo
+parish_180552,canton_1805,180552,Los Andes
+parish_180553,canton_1805,180553,Sucre
+parish_180650,canton_1806,180650,Quero
+parish_180651,canton_1806,180651,Rumipamba
+parish_180652,canton_1806,180652,Yanayacu - Mochapata
+parish_180701,canton_1807,180701,Pelileo
+parish_180702,canton_1807,180702,Pelileo Grande
+parish_180750,canton_1807,180750,Pelileo
+parish_180751,canton_1807,180751,Benitez (Pachanlica)
+parish_180752,canton_1807,180752,Bolivar
+parish_180753,canton_1807,180753,Cotalo
+parish_180754,canton_1807,180754,Chiquicha
+parish_180755,canton_1807,180755,El Rosario (Rumichaca)
+parish_180756,canton_1807,180756,Garcia Moreno (Chumaqui)
+parish_180757,canton_1807,180757,Guambalo (Huambalo)
+parish_180758,canton_1807,180758,Salasaca
+parish_180801,canton_1808,180801,Ciudad Nueva
+parish_180802,canton_1808,180802,Pillaro
+parish_180850,canton_1808,180850,Pillaro
+parish_180851,canton_1808,180851,Baquerizo Moreno
+parish_180852,canton_1808,180852,Emilio Maria Teran (Rumipamba)
+parish_180853,canton_1808,180853,Marcos Espinel (Chacata)
+parish_180854,canton_1808,180854,Presidente Urbina (Chagrapamba Patzucul)
+parish_180855,canton_1808,180855,San Andres
+parish_180856,canton_1808,180856,San Jose De Poalo
+parish_180857,canton_1808,180857,San Miguelito
+parish_180950,canton_1809,180950,Tisaleo
+parish_180951,canton_1809,180951,Quinchicoto
+parish_190101,canton_1901,190101,Limon
+parish_190102,canton_1901,190102,Zamora
+parish_190150,canton_1901,190150,Zamora
+parish_190151,canton_1901,190151,Cumbaratza
+parish_190152,canton_1901,190152,Guadalupe
+parish_190153,canton_1901,190153,Imbana (LA Victoria De Imbana)
+parish_190155,canton_1901,190155,Sabanilla
+parish_190156,canton_1901,190156,Timbara
+parish_190158,canton_1901,190158,San Carlos De Las Minas
+parish_190250,canton_1902,190250,Zumba
+parish_190251,canton_1902,190251,Chito
+parish_190252,canton_1902,190252,El Chorro
+parish_190254,canton_1902,190254,La Chonta
+parish_190256,canton_1902,190256,Pucapamba
+parish_190259,canton_1902,190259,San Andrés
+parish_190350,canton_1903,190350,Guayzimi
+parish_190351,canton_1903,190351,Zurmi
+parish_190450,canton_1904,190450,28 De Mayo (San Jose De Yacuambi)
+parish_190451,canton_1904,190451,La Paz
+parish_190452,canton_1904,190452,Tutupali
+parish_190550,canton_1905,190550,Yanzatza
+parish_190551,canton_1905,190551,Chicaña
+parish_190553,canton_1905,190553,Los Encuentros
+parish_190650,canton_1906,190650,El Pangui
+parish_190651,canton_1906,190651,El Guismi
+parish_190652,canton_1906,190652,Pachicutza
+parish_190653,canton_1906,190653,Tundayme
+parish_190750,canton_1907,190750,Zumbi
+parish_190850,canton_1908,190850,Palanda
+parish_190851,canton_1908,190851,El Porvenir Del Carmen
+parish_190852,canton_1908,190852,San Francisco De Vergel
+parish_190853,canton_1908,190853,Valladolid
+parish_190950,canton_1909,190950,Paquisha
+parish_190951,canton_1909,190951,Bellavista
+parish_190952,canton_1909,190952,Nuevo Quito
+parish_200150,canton_2001,200150,Puerto Baquerizo Moreno
+parish_200151,canton_2001,200151,El Progreso
+parish_200152,canton_2001,200152,Isla Santa Maria (Floreana)
+parish_200250,canton_2002,200250,Puerto Villamil
+parish_200251,canton_2002,200251,Tomas De Berlanga (Santo Tomas)
+parish_200350,canton_2003,200350,Puerto Ayora
+parish_200351,canton_2003,200351,Bellavista
+parish_200352,canton_2003,200352,Santa Rosa
+parish_210150,canton_2101,210150,Nueva Loja
+parish_210152,canton_2101,210152,Dureno
+parish_210153,canton_2101,210153,General Farfan
+parish_210155,canton_2101,210155,El Eno
+parish_210156,canton_2101,210156,Pacayacu
+parish_210157,canton_2101,210157,Jambeli
+parish_210158,canton_2101,210158,Santa Cecilia
+parish_210250,canton_2102,210250,El Dorado De Cascales (Lumbaqui)
+parish_210251,canton_2102,210251,El Reventador
+parish_210252,canton_2102,210252,Gonzalo Pizarro
+parish_210254,canton_2102,210254,Puerto Libre
+parish_210350,canton_2103,210350,Puerto El Carmen Del Putumayo
+parish_210351,canton_2103,210351,Palma Roja
+parish_210352,canton_2103,210352,Puerto Bolivar (Puerto Montufar)
+parish_210353,canton_2103,210353,Puerto Rodriguez
+parish_210354,canton_2103,210354,Santa Elena
+parish_210450,canton_2104,210450,Shushufindi
+parish_210451,canton_2104,210451,Limoncocha
+parish_210452,canton_2104,210452,Pañacocha
+parish_210453,canton_2104,210453,San Roque
+parish_210454,canton_2104,210454,San Pedro De Los Cofanes
+parish_210455,canton_2104,210455,Siete De Julio
+parish_210550,canton_2105,210550,La Bonita
+parish_210551,canton_2105,210551,El Playon De San Francisco
+parish_210552,canton_2105,210552,La Sofia
+parish_210553,canton_2105,210553,Rosa Florida
+parish_210554,canton_2105,210554,Santa Barbara
+parish_210650,canton_2106,210650,El Dorado De Cascales
+parish_210651,canton_2106,210651,Santa Rosa De Sucumbios
+parish_210652,canton_2106,210652,Sevilla
+parish_210750,canton_2107,210750,Tarapoa
+parish_210751,canton_2107,210751,Cuyabeno
+parish_210752,canton_2107,210752,Aguas Negras
+parish_220150,canton_2201,220150,Puerto Francisco De Orellana (Coca)
+parish_220151,canton_2201,220151,Alejandro Labaca
+parish_220152,canton_2201,220152,Dayuma
+parish_220153,canton_2201,220153,El Dorado
+parish_220154,canton_2201,220154,El Eden
+parish_220155,canton_2201,220155,Garcia Moreno
+parish_220156,canton_2201,220156,Ines Arango
+parish_220157,canton_2201,220157,La Belleza
+parish_220158,canton_2201,220158,Nuevo Paraiso
+parish_220159,canton_2201,220159,San Jose De Guayusa
+parish_220160,canton_2201,220160,San Luis De Armenia
+parish_220161,canton_2201,220161,Taracoa
+parish_220250,canton_2202,220250,Nuevo Rocafuerte
+parish_220251,canton_2202,220251,Capitan Augusto Rivadeneira
+parish_220252,canton_2202,220252,Cononaco
+parish_220253,canton_2202,220253,Santa Maria De Huiririma
+parish_220254,canton_2202,220254,Tiputini
+parish_220255,canton_2202,220255,Yasuni
+parish_220350,canton_2203,220350,La Joya De Los Sachas
+parish_220351,canton_2203,220351,Enokanqui
+parish_220352,canton_2203,220352,Lago San Pedro
+parish_220353,canton_2203,220353,Pompeya
+parish_220354,canton_2203,220354,Rumipamba
+parish_220355,canton_2203,220355,San Carlos
+parish_220356,canton_2203,220356,San Sebastian Del Coca
+parish_220357,canton_2203,220357,Tres De Noviembre
+parish_220358,canton_2203,220358,Union Milagreña
+parish_220450,canton_2204,220450,Loreto
+parish_220451,canton_2204,220451,Avila
+parish_220452,canton_2204,220452,Puerto Murialdo
+parish_220453,canton_2204,220453,San Jose Del Payamino
+parish_220454,canton_2204,220454,San Jose De Dahuano
+parish_220455,canton_2204,220455,San Vicente De Huaticocha
+parish_230101,canton_2301,230101,Abraham Calazacón
+parish_230102,canton_2301,230102,Bomboli
+parish_230103,canton_2301,230103,Chiguilpe
+parish_230104,canton_2301,230104,Río Toachi
+parish_230105,canton_2301,230105,Río Verde
+parish_230106,canton_2301,230106,Santo Domingo De Los Colorados
+parish_230107,canton_2301,230107,Zaracay
+parish_230150,canton_2301,230150,Santo Domingo
+parish_230151,canton_2301,230151,Alluriquín
+parish_230152,canton_2301,230152,Puerto Limón
+parish_230153,canton_2301,230153,Luz De América
+parish_230154,canton_2301,230154,San Jacinto Del Bua
+parish_230155,canton_2301,230155,Valle Hermoso
+parish_230156,canton_2301,230156,El Esfuerzo
+parish_230157,canton_2301,230157,Santa María Del Toachi
+parish_230250,canton_2302,230250,La Concordia
+parish_230251,canton_2302,230251,Monterrey
+parish_230252,canton_2302,230252,Las Villegas
+parish_230253,canton_2302,230253,Plan Piloto
+parish_240101,canton_2401,240101,Ballenita
+parish_240102,canton_2401,240102,Santa Elena
+parish_240150,canton_2401,240150,Santa Elena
+parish_240151,canton_2401,240151,Atahualpa
+parish_240152,canton_2401,240152,Colonche
+parish_240153,canton_2401,240153,Chanduy
+parish_240154,canton_2401,240154,Manglaralto
+parish_240155,canton_2401,240155,Simón Bolívar (Julio Moreno)
+parish_240156,canton_2401,240156,San José De Ancón
+parish_240250,canton_2402,240250,La Libertad
+parish_240301,canton_2403,240301,Carlos Espinoza Larrea
+parish_240302,canton_2403,240302,Gral Alberto Enriquez Gallo
+parish_240303,canton_2403,240303,Vicente Rocafuerte
+parish_240304,canton_2403,240304,Santa Rosa
+parish_240350,canton_2403,240350,Salinas
+parish_240351,canton_2403,240351,Anconcito
+parish_240352,canton_2403,240352,José Luis Tamayo
