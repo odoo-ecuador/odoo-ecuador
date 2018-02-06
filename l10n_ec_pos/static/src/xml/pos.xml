@@ -30,7 +30,7 @@
             </div>
             <div class='client-detail'>
               <span class='label'>RUC</span>
-              <input class='detail client-address-street' name='ced_ruc' t-att-value='partner.ced_ruc' placeholder='Cedula / RUC'></input>
+              <input class='detail client-address-street' name='vat' t-att-value='partner.vat' placeholder='Cedula / RUC'></input>
             </div>
             <div class='client-detail'>
               <span class='label'>Dirección</span>
@@ -55,7 +55,7 @@
   <t t-extend="ClientLine">
     <t t-jquery=".client-line" t-operation="replace">
       <tr class='client-line' t-att-data-id='partner.id'>
-        <td><t t-esc='partner.ced_ruc' /></td>
+        <td><t t-esc='partner.vat' /></td>
         <td><t t-esc='partner.name' /></td>
         <td><t t-esc='partner.address' /></td>
         <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
@@ -106,7 +106,7 @@
             </div>
             <div class='client-detail'>
               <span class='label'>RUC</span>
-              <span class='detail client-address'><t t-esc='partner.ced_ruc' /></span>
+              <span class='detail client-address'><t t-esc='partner.vat' /></span>
             </div>
             <div class='client-detail'>
               <span class='label'>Dirección</span>
@@ -144,7 +144,7 @@
         <div class="pos-center-align"><t t-esc="order.get('name')"/></div>
         <t t-if="order.get_client()">
           <span><t t-esc="order.get_client_name()"/></span><br />
-          <span><t t-esc="order.get_client().ced_ruc"/></span><br />
+          <span><t t-esc="order.get_client().vat"/></span><br />
           <span><t t-esc="order.get_client().street"/></span><br />
         </t>
         <t t-esc="new Date().toString(Date.CultureInfo.formatPatterns.shortDate)"/><br />

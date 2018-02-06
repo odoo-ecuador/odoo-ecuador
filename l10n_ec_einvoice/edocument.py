@@ -67,7 +67,7 @@ class Edocument(models.AbstractModel):
             'tipoEmision': emission_code,
             'razonSocial': company.name,
             'nombreComercial': company.name,
-            'ruc': company.partner_id.ced_ruc,
+            'ruc': company.partner_id.vat,
             'claveAcceso':  access_key,
             'codDoc': utils.tipoDocumento[auth.type_id.code],
             'estab': auth.serie_entidad,
@@ -96,7 +96,7 @@ class Edocument(models.AbstractModel):
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
-        ruc = self.company_id.partner_id.ced_ruc
+        ruc = self.company_id.partner_id.vat
         serie = '{0}{1}'.format(auth.serie_entidad, auth.serie_emision)
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code

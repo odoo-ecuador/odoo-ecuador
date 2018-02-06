@@ -120,7 +120,7 @@ class wizard_ats(orm.TransientModel):
         inv_obj = self.pool.get('account.invoice')
         wiz = self.browse(cr, uid, ids)[0]
         period_id = wiz.period_id.id
-        ruc = wiz.company_id.partner_id.ced_ruc
+        ruc = wiz.company_id.partner_id.vat
         ats = etree.Element('iva')
         etree.SubElement(ats, 'TipoIDInformante').text = 'R'
         etree.SubElement(ats, 'IdInformante').text = str(ruc)
@@ -142,10 +142,10 @@ class wizard_ats(orm.TransientModel):
         for inv in inv_obj.browse(cr, uid, inv_ids):
             detallecompras = etree.Element('detalleCompras')
             etree.SubElement(detallecompras, 'codSustento').text = inv.sustento_id.code  # noqa
-            if not inv.partner_id.ced_ruc:
+            if not inv.partner_id.vat:
                 raise osv.except_osv('Datos incompletos', 'No ha ingresado toda los datos de %s' % inv.partner_id.name)  # noqa
             etree.SubElement(detallecompras, 'tpIdProv').text = tpIdProv[inv.partner_id.type_ced_ruc]  # noqa
-            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.ced_ruc  # noqa
+            etree.SubElement(detallecompras, 'idProv').text = inv.partner_id.vat  # noqa
             if inv.auth_inv_id:
                 tcomp = inv.auth_inv_id.type_id.code
             else:
@@ -229,7 +229,7 @@ class wizard_ats(orm.TransientModel):
                 partner_data = {
                     keyp: {
                         'tpIdCliente': inv.partner_id.type_ced_ruc,
-                        'idCliente': inv.partner_id.ced_ruc,
+                        'idCliente': inv.partner_id.vat,
                         'numeroComprobantes': 0,
                         'basenoGraIva': 0,
                         'baseImponible': 0,

@@ -32,7 +32,7 @@ class TestAuthorisation(TransactionCase):  # pylint: disable=W0232
             cursor,
             user_id,
             {
-                'ced_ruc': '0103893962',
+                'vat': '0103893962',
                 'name': 'CRISTIAN GONZALO SALAMEA MALDONADO',
                 'type_ced_ruc': 'cedula',
                 'tipo_persona': '6'

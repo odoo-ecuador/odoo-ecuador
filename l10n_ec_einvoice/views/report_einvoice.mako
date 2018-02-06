@@ -150,7 +150,7 @@
 	  <div class="invoiceinfo">
 	    <div class="info">
 	      <b>RUC:</b>
-	      ${o.company_id.partner_id.ced_ruc}
+	      ${o.company_id.partner_id.vat}
 	    </div>
 	    <div class="info" style="text-align: center;">
 	      <div style="text-align: center;">
@@ -203,7 +203,7 @@
 		<b>RUC/CI:</b>
 	      </td>
 	      <td style="width: 10%; font-size:14px;">
-		${ o.partner_id.ced_ruc }
+		${ o.partner_id.vat }
 	      </td>
 	    </tr>
 	    <tr>

@@ -34,7 +34,7 @@ class AccountInvoice(models.Model):
             'obligadoContabilidad': 'SI',
             'tipoIdentificacionComprador': utils.tipoIdentificacion[partner.type_ced_ruc],  # noqa
             'razonSocialComprador': partner.name,
-            'identificacionComprador': partner.ced_ruc,
+            'identificacionComprador': partner.vat,
             'totalSinImpuestos': '%.2f' % (invoice.amount_untaxed),
             'totalDescuento': '0.00',
             'propina': '0.00',
