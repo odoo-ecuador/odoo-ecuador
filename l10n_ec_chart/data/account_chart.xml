@@ -32,28 +32,28 @@
         </record>
 
         <!-- Account Templates -->
-	<record model="account.account.template" id="101010101">
+        <record model="account.account.template" id="101010101">
             <field name="name">CAJA CHICA GENERAL</field>
             <field name="code">101010101</field>
             <field name="reconcile" eval="False"/>
             <field ref="account.data_account_type_current_assets" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="101010102">
+        <record model="account.account.template" id="101010102">
             <field name="name">CAJA CHICA VARIOS</field>
             <field name="code">101010102</field>
             <field name="reconcile" eval="False"/>
             <field ref="account.data_account_type_current_assets" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="101010201">
+        <record model="account.account.template" id="101010201">
             <field name="name">BANCO PACIFICO</field>
             <field name="code">101010201</field>
             <field name="reconcile" eval="False"/>
             <field ref="account.data_account_type_liquidity" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="101010202">
+        <record model="account.account.template" id="101010202">
             <field name="name">BANCO PICHINCHA</field>
             <field name="code">101010202</field>
             <field name="reconcile" eval="False"/>
@@ -61,7 +61,7 @@
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
 
-	<record model="account.account.template" id="101010203">
+        <record model="account.account.template" id="101010203">
             <field name="name">BANCO INTERNACIONAL</field>
             <field name="code">101010203</field>
             <field name="reconcile" eval="False"/>
@@ -69,7 +69,7 @@
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
 
-	<record model="account.account.template" id="101010203">
+        <record model="account.account.template" id="101010204">
             <field name="name">INVERSIONES</field>
             <field name="code">101010301</field>
             <field name="reconcile" eval="False"/>
@@ -704,7 +704,7 @@
             <field ref="account.data_account_type_payable" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="2010303">
+        <record model="account.account.template" id="2010303">
             <field name="name">CUENTAS Y DOCUMENTOS POR PAGAR EMPLEADOS</field>
             <field name="code">201030301</field>
             <field name="reconcile" eval="True"/>
@@ -755,7 +755,7 @@
             <field ref="account.data_account_type_current_liabilities" name="user_type_id" />
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="201050102">
+        <record model="account.account.template" id="201050102">
             <field name="name">OTRAS PROVISIONES LOCALES</field>
             <field name="code">201050102</field>
             <field name="reconcile" eval="True" />
@@ -1056,7 +1056,7 @@
             <field ref="account.data_account_type_current_liabilities" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-        <record model="account.account.template" id="2011202">
+        <record model="account.account.template" id="2011203">
             <field name="name">OTROS BENEFICIOS A LARGO PLAZO PARA LOS EMPLEADOS</field>
             <field name="code">201120201</field>
             <field name="reconcile" eval="False"/>
@@ -1402,14 +1402,14 @@
             <field ref="account.data_account_type_other_income" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="411101">
+        <record model="account.account.template" id="411101">
             <field name="name">DEVOLUCIONES EN VENTAS TARIFA DIF DE 0%</field>
             <field name="code">411101</field>
             <field name="reconcile" eval="False"/>
             <field ref="account.data_account_type_other_income" name="user_type_id"/>
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
-	<record model="account.account.template" id="411102">
+        <record model="account.account.template" id="411102">
             <field name="name">DEVOLUCIONES EN VENTAS TARIFA 0%</field>
             <field name="code">411102</field>
             <field name="reconcile" eval="False"/>
@@ -3136,23 +3136,23 @@
                    model="ir.values" name="set_default"
                    eval="('res.partner', 'property_account_payable_id', ref('2020401'))"/>
 
-	<!--
-	    Propiedades de cuentas por cobrar y por pagar
-	-->
+        <!--
+            Propiedades de cuentas por cobrar y por pagar
+        -->
         <record model="ir.property" id="property_account_receivable">
             <field name="name">property_account_receivable_id</field>
             <field name="type">many2one</field>
-	    <field name="fields_id" model="ir.model.fields"
-		   search="[('model', '=', 'res.partner'), ('name', '=', 'property_account_receivable_id')]"/>
-	    <field name="value" ref="101020601"/>
+            <field name="fields_id" model="ir.model.fields"
+                   search="[('model', '=', 'res.partner'), ('name', '=', 'property_account_receivable_id')]"/>
+            <field name="value" ref="101020601"/>
         </record>
 
         <record model="ir.property" id="property_account_payable">
             <field name="name">property_account_payable_id</field>
             <field name="type">many2one</field>
-	    <field name="fields_id" model="ir.model.fields"
-		   search="[('model', '=', 'res.partner'), ('name', '=', 'property_account_payable_id')]"/>
-	    <field name="value" ref="2020401"/>
+            <field name="fields_id" model="ir.model.fields"
+                   search="[('model', '=', 'res.partner'), ('name', '=', 'property_account_payable_id')]"/>
+            <field name="value" ref="2020401"/>
         </record>
 
     </data>
