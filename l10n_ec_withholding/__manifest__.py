@@ -18,7 +18,7 @@
         'data/account.fiscal.position.csv',
         'data/partner.xml',
         'views/report_account_move.xml',
-        'views/reports.xml',
+        'views/report.xml',
         'views/withholding_view.xml'
     ]
 }

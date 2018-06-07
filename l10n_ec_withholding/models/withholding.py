@@ -200,7 +200,7 @@ class AccountWithdrawing(models.Model):
             inv_date = datetime.strptime(self.invoice_id.date_invoice, '%Y-%m-%d')  # noqa
             ret_date = datetime.strptime(self.date, '%Y-%m-%d')  # noqa
             days = ret_date - inv_date
-            if days.days not in range(1, 6):
+            if days.days not in range(0, 6):
                 raise ValidationError(utils.CODE_701)  # noqa
 
     @api.onchange('name')
@@ -209,7 +209,7 @@ class AccountWithdrawing(models.Model):
         length = {
             'in_invoice': 9,
             'liq_purchase': 9,
-            'out_invoice': 15
+            'out_invoice': 15   
         }
         if not self.name or not self.type:
             return
