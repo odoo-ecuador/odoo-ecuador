@@ -5,11 +5,9 @@ import logging
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
+from .utils import validar_identifier
+
 _logger = logging.getLogger(__name__)
-try:
-    from stdnum import ec
-except ImportError as err:
-    _logger.debug('Cannot import stdnum')
 
 
 class ResPartner(models.Model):
@@ -58,22 +56,20 @@ class ResPartner(models.Model):
         return partners.name_get()
 
     @api.one
-    @api.constrains('identifier')
+    @api.constrains('identifier', 'type_identifier')
     def _check_identifier(self):
         res = False
-        if self.type_identifier == 'cedula':
-            res = ec.ci.is_valid(self.identifier)
-        elif self.type_identifier == 'ruc':
-            res = ec.ruc.is_valid(self.identifier)
-        else:
-            return True
+        res = validar_identifier(self.identifier, self.type_identifier)
         if not res:
             raise ValidationError('Error en el identificador.')
+        return True
 
     @api.one
     @api.depends('identifier')
     def _compute_tipo_persona(self):
-        if not self.identifier:
+        if self.type_identifier == 'pasaporte':
+            self.tipo_persona = '0'
+        elif not self.identifier:
             self.tipo_persona = '0'
         elif int(self.identifier[2]) <= 6:
             self.tipo_persona = '6'
@@ -86,13 +82,14 @@ class ResPartner(models.Model):
         'Cedula/ RUC',
         size=13,
         required=True,
+        default='9999999999',
         help='Identificación o Registro Unico de Contribuyentes')
     type_identifier = fields.Selection(
         [
             ('cedula', 'CEDULA'),
             ('ruc', 'RUC'),
             ('pasaporte', 'PASAPORTE')
-            ],
+        ],
         'Tipo ID',
         required=True,
         default='pasaporte'
@@ -123,3 +120,12 @@ class ResCompany(models.Model):
     accountant_id = fields.Many2one('res.partner', 'Contador')
     sri_id = fields.Many2one('res.partner', 'Servicio de Rentas Internas')
     cedula_rl = fields.Char('Cédula Representante Legal', size=10)
+    contribuyente_especial = fields.Selection(
+        [
+            ('SI', 'SI'),
+            ('NO', 'NO')
+        ],
+        string='Contribuyente Especial',
+        required=True,
+        default='NO'
+    )

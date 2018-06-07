@@ -61,6 +61,9 @@
                     <field name="sri_id"/>
                     <field name="cedula_rl"/>
                 </field>
+                <field name="company_registry" position="after">
+                    <field name="contribuyente_especial"/>
+                </field>
             </field>
         </record>
 
