@@ -7,7 +7,7 @@
     'version': '10.0.0.0.0',
     'category': 'Localization',
     'author': 'Cristian Salamea',
-    'website': 'http://www.ayni.com.ec',
+    'website': 'www.prisehub.com',
     'license': 'AGPL-3',
     'data': [
         'view/partner_view.xml',

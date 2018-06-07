@@ -24,4 +24,4 @@ help us smashing it by providing a detailed and welcomed feedback.
 Contacto
 --------
 
-* Cristian Salamea <cristian.salamea@ayni.com.ec>
+* Cristian Salamea <cs@prisehub.com>
