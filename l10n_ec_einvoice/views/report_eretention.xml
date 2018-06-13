@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="report_eretention">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            <div class="row">
+                                <div class="col-xs-5" style="margin-bottom: 7px; border-bottom: 1px solid darkgray;">
+                                    <div class="logo" style="width: 330px; height: 180px;">
+                                        <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
+                                    </div><br/>
+                                    <h4><span t-esc="res_company.name"/></h4>
+                                    <span><strong>DIRECCION: </strong></span><strong></strong><span t-esc="res_company.street"/><br/>
+                                    <span><strong>Contribuyente Especial Nro.: </strong></span>
+                                    <span t-esc="res_company.company_registry or '000' "/><br/>
+                                    <span><strong>Obligado a Llevar contabilidad: </strong> SI</span>
+                                </div>
+                                <div class="col-xs-7">
+                                    <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
+                                    <span><strong>COMPROBANTE RETENCION N°</strong> </span><span t-esc="o.name"/><br/>
+                                    <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
+                                    <span t-esc="o.numero_autorizacion or o.clave_acceso"/><br/>
+                                    <span><strong>FECHA Y HORA DE AUTORIZACION: </strong></span><span t-esc="o.fecha_autorizacion"/><br/>
+                                    <span><strong>AMBIENTE: </strong></span><span t-esc="res_company.env_service == '1' and 'PRUEBAS' or 'PRODUCCION'"/><br/>
+                                    <span><strong>EMISION: </strong><span t-esc="res_company.emission_code == '1' and 'NORMAL' or 'INDISPONIBILIDAD'"/></span><br/>
+                                    <span><strong>CLAVE DE ACCESO</strong></span><br/>
+                                    <span t-esc="o.clave_acceso"/><br/>
+                                </div>
+                            </div>
+                            <div class="row" style="background-color: silver;">
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <span><strong>RAZON SOCIAL</strong></span>
+                                </div>
+                                <div class="col-xs-5" style="padding-left: 0px;">
+                                    <span t-esc="o.partner_id.name.upper()"/>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px; padding-right: 0px;">
+                                    <span><strong>IDENTIFICACION</strong></span>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <span t-esc="o.partner_id.identifier"/>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-bottom: 7px; border-bottom: 1px solid darkgray;">
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <span><strong>FECHA DE EMISION</strong></span>
+                                </div>
+                                <div class="col-xs-5" style="padding-left: 0px;">
+                                    <span t-esc="o.date"/>
+                                </div>
+                                <div class="col-xs-2">
+                                    <br/>
+                                </div>
+                            </div>
+                            <div class="row" style="background-color: silver; text-align: left; margin-bottom: 7px;">
+                                <div class="col-xs-2" style="padding-left: 0px; text-align: left;"><strong>Comprobante</strong></div>
+    							<div class="col-xs-2" style="padding-left: 0px; text-align: left;"><strong>Numero</strong></div>
+    							<div class="col-xs-2" style="padding-left: 0px; text-align: left;"><strong>FechaEmision</strong></div>
+    							<div class="col-xs-2" style="padding-left: 0px; text-align: left;"><strong>EjercicioFiscal</strong></div>
+    							<div class="col-xs-1" style="padding-left: 0px; text-align: left;"><strong>Base</strong></div>
+    							<div class="col-xs-1" style="padding-left: 0px; text-align: left;"><strong>Impto.</strong></div>
+    							<div class="col-xs-1" style="padding-left: 0px; text-align: left;"><strong>Pctje.</strong></div>
+    							<div class="col-xs-1" style="padding-left: 0px; text-align: left;"><strong>Valor</strong></div>
+                            </div>
+                            <t t-foreach="o.tax_ids" t-as="line">
+                                <div class="row" style="margin-bottom: 7px; border-bottom: 1px solid darkgray;">
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
+                                        <span>Factura</span>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.invoice_id.invoice_number"/>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.invoice_id.date_invoice"/>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.invoice_id.date_invoice"/>
+                                    </div>
+                                    <div class="col-xs-1" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.base"/>
+                                    </div>
+                                    <div class="col-xs-1" style="padding-left: 0px; text-align: left;">
+                                        <span t-esc="line.code"/>
+                                    </div>
+                                    <div class="col-xs-1" style="padding-left: 0px; text-align: left;">
+                                        <span t-field="line.tax_id.percent_report"/>
+                                    </div>
+                                     <div class="col-xs-1" style="padding-left: 0px; text-align: left;">
+                                        <span t-field="line.amount"/>
+                                    </div>
+                                </div>
+                            </t>
+                            <div class="row">
+                                <div class="col-xs-7" style="background-color: silver;">
+                                    <span><strong>Información Adicional</strong></span><br/><br/>
+                                    <span><strong>Dirección: </strong></span><span t-esc="o.partner_id.street or '**'"/><br/>
+                                    <span><strong>Teléfono: </strong></span><span t-esc="o.partner_id.phone or '**'"/><br/>
+                                    <span><strong>Email: </strong></span><span t-esc="o.partner_id.email"/><br/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>
