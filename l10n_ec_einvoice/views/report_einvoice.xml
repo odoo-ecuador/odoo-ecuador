@@ -20,17 +20,14 @@
                                 </div>
                                 <div class="col-xs-7">
                                     <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
-                                    <span><h4 style="text-align: center;">FACTURA</h4></span><br/>
-                                    <span><strong>NUMERO</strong> </span><span t-esc="o.invoice_number"/><br/>
+                                    <span><span t-esc="o.type == 'out_invoice' and 'FACTURA N°' or 'NOTA DE CREDITO N°'"/></span><span t-esc="o.invoice_number"/><br/>
                                     <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
-                                    <span t-esc="o.numero_autorizacion"/><br/>
+                                    <span t-esc="o.numero_autorizacion or o.clave_acceso"/><br/>
                                     <span><strong>FECHA Y HORA DE AUTORIZACION: </strong></span><span t-esc="o.fecha_autorizacion"/><br/>
                                     <span><strong>AMBIENTE: </strong></span><span t-esc="res_company.env_service == '1' and 'PRUEBAS' or 'PRODUCCION'"/><br/>
                                     <span><strong>EMISION: </strong><span t-esc="res_company.emission_code == '1' and 'NORMAL' or 'INDISPONIBILIDAD'"/></span><br/>
                                     <span><strong>CLAVE DE ACCESO</strong></span><br/>
-                                    <div class="text-align: left;">
-                                        <img style="text-align: left;" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1' % ('Code128', o.clave_acceso, 450, 60)"/>
-                                    </div><br/>
+                                    <span t-esc="o.clave_acceso"/><br/>
                                 </div>
                             </div>
                             <div class="row" style="background-color: silver;">
@@ -117,7 +114,7 @@
                                             <span><strong>Subtotal diferente de 0%</strong></span>
                                         </div>
                                         <div class="col-xs-5" style="border-bottom: 1px solid darkgray;">
-                                        <span t-field="o.amount_vat"
+                                        <span t-field="o.amount_untaxed"
                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </div>
                                     </div>
