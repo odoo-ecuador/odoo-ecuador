@@ -105,7 +105,8 @@ class Edocument(models.AbstractModel):
             numero = numero[6:15]
         ld.reverse()
         fecha = ''.join(ld)
-        tcomp = utils.tipoDocumento[auth.type_id.code]
+        #tcomp = utils.tipoDocumento[auth.type_id.code]
+        tcomp = utils.tipoDocumento[auth]
         ruc = self.company_id.partner_id.identifier
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
