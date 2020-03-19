@@ -219,6 +219,17 @@ public abstract class GenericXMLSignature {
         return storeManager;
     }
 
+/*los valores de getKeyUsage son: 
+     digitalSignature        (0),
+     nonRepudiation          (1),
+     keyEncipherment         (2),
+     dataEncipherment        (3),
+     keyAgreement            (4),
+     keyCertSign             (5),
+     cRLSign                 (6),
+     encipherOnly            (7),
+     decipherOnly            (8)
+    */
     private X509Certificate getFirstCertificate(IPKStoreManager storeManager) {
         List certs = null;
         try {
@@ -231,6 +242,11 @@ public abstract class GenericXMLSignature {
             System.err.println("Lista de certificados vacía");
             System.exit(-1);
         }
+        
+        for(X509Certificate cert:certs)//recorro todos los certificados almacenados
+            if(cert.getKeyUsage()[0])//si es true se identifica como un certificado de tipo digitalSignature que es el requerido por el SRI 
+                return cert;//retorno unicamente el certificado que exige el SRI
+
         X509Certificate certificate = (X509Certificate) certs.get(0);
         return certificate;
     }
