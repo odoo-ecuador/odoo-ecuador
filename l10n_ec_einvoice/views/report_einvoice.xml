@@ -26,7 +26,7 @@
                                     <span t-esc="o.numero_autorizacion"/><br/>
                                     <span><strong>FECHA Y HORA DE AUTORIZACION: </strong></span><span t-esc="o.fecha_autorizacion"/><br/>
                                     <span><strong>AMBIENTE: </strong></span><span t-esc="res_company.env_service == '1' and 'PRUEBAS' or 'PRODUCCION'"/><br/>
-                                    <span><strong>EMISION: </strong><span t-esc="res_company.emission_code == '1' and 'NORMAL' or 'INDISPONIBILIDAD'"/></span><br/>
+                                    <span><strong>EMISION: </strong><span t-esc="res_company.emission_code"/></span><br/>
                                     <span><strong>CLAVE DE ACCESO</strong></span><br/>
                                     <div class="text-align: left;">
                                         <img style="text-align: left;" t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1' % ('Code128', o.clave_acceso, 450, 60)"/>

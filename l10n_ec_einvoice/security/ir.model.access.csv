@@ -1,3 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_res_company_contingency_key,access_res_company_contingency_key,model_res_company_contingency_key,account.group_account_invoice,1,1,1,1
 access_account_epayment,access_account_epayment,model_account_epayment,account.group_account_invoice,1,1,1,1

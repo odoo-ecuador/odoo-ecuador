@@ -16,14 +16,6 @@
                 <field name="emission_code"/>
                 <field name="env_service"/>
               </group>
-              <group string="Claves de Contingencia">
-                <field name="contingency_key_ids" nolabel="1" widget="one2many_list">
-                  <tree string="Claves de Contingencia" editable="top">
-                    <field name="key"/>
-                    <field name="used"/>
-                  </tree>
-                </field>
-              </group>
             </groups>
           </page>
         </notebook>

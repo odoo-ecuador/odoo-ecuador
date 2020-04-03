@@ -1,53 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
   <data>
-      <!-- Contingency Key Tree -->
-
-      <record id="view_account_epayment_tree" model="ir.ui.view">
-      <field name="name">view.account.epayment.tree</field>
-      <field name="model">account.epayment</field>
-      <field name="arch" type="xml">
-        <tree string="Claves de Contingencia" editable="top">
-          <field name="code"/>
-          <field name="name"/>
-        </tree>
-      </field>
-    </record>
-
-    <record id="view_contingency_key_tree" model="ir.ui.view">
-      <field name="name">res.company.contingency.key.tree</field>
-      <field name="model">res.company.contingency.key</field>
-      <field name="arch" type="xml">
-        <tree string="Claves de Contingencia">
-          <field name="key"/>
-          <field name="used"/>
-          <field name="company_id" invisible="1"/>
-        </tree>
-      </field>
-    </record>
-    <!-- Contingency Key Form -->
-    <record id="view_contingency_key_form" model="ir.ui.view">
-      <field name="name">res.company.contingency.key.form</field>
-      <field name="model">res.company.contingency.key</field>
-      <field name="arch" type="xml">
-        <form string="Clave de Contingencia">
-          <group>
-            <field name="key" required="1"/>
-            <field name="used"/>
-            <field name="company_id"/>
-          </group>
-        </form>
-      </field>
-    </record>
-    <!-- Contingency Key -->
-    <record id="action_contingency_key" model="ir.actions.act_window">
-      <field name="name">Claves de Contingencia</field>
-      <field name="res_model">res.company.contingency.key</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    <!-- Contingency Key MenuItem -->
-
 
     <record id="view_account_epayment_form" model="ir.ui.view">
         <field name="name">account.einvoice.epayment.form</field>
