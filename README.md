@@ -5,7 +5,7 @@
 Localización de Odoo para Ecuador
 =================================
 
-# Si requieres asesoría para la implementación de Odoo para Ecuador con nuestra versión envía un mail a ventas@prisehub.com y podrás acceder a nuestro servicios empresariales.
+# Si requieres asesoría para la implementación de Odoo para Ecuador con nuestra versión envía un mail a ventas@vauxoo.com y podrás acceder a nuestro servicios empresariales.
 
 
 Este proyecto implementa todas o casi todas las funcionalidades
